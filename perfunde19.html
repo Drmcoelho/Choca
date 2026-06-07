@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 19 · Tamponamento · TEP · Pneumotórax</title>
+<meta name="description" content="Três obstrutivos, três fisiologias, três alívios: tamponamento trava o enchimento, TEP a ejeção do VD, pneumotórax o retorno venoso. Discriminador e especificidade do alívio. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.seg button{font:inherit;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+.seg button.on{border-color:var(--art);color:#ffd4da;background:rgba(229,57,78,.14)}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.scene{display:block;width:100%;height:250px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.signs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sign{font-family:var(--mono);font-size:.74rem;padding:3px 9px;border-radius:20px;border:1px solid var(--line);color:var(--ink-faint)}
+.sign.on{border-color:var(--accent);color:#ffe39a;background:rgba(255,207,92,.10)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 19 · ↳ tamponamento · TEP maciço · pneumotórax hipertensivo</div>
+    <h1>Três obstrutivos, três alívios</h1>
+    <p class="sub">O mesmo rótulo — choque obstrutivo — esconde três fisiologias. Um trava o enchimento, outro a ejeção do ventrículo direito, o terceiro o retorno venoso. A assinatura separa os três, e o alívio de um não serve para o outro.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <circle cx="150" cy="27" r="16" fill="none" stroke="var(--art)" stroke-width="2"/><circle cx="150" cy="27" r="22" fill="none" stroke="var(--ven)" stroke-width="1.4" stroke-dasharray="3 3"/>
+      <path d="M420,12 A22 22 0 0 0 420 42" fill="none" stroke="var(--art)" stroke-width="2"/><circle cx="450" cy="20" r="5" fill="var(--art)"/>
+      <path d="M690,10 L690,44 M740,10 L740,44" stroke="var(--ven)" stroke-width="2"/><path d="M715,12 L760,12" stroke="var(--accent)" stroke-width="2"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Três choques obstrutivos, um rótulo só</h2>
+    <p class="lead">Cinco atos. A variável escondida é qual passo da circulação está travado. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Três pacientes, todos com DC baixo, RVS alta e turgência jugular — a cara do obstrutivo. Mas o ultrassom e o exame contam histórias diferentes.</p>
+      <div class="vitais"><span>todos: DC↓, RVS↑, JVD</span><span>causa <b>?</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Obstrutivo é obstrutivo." Mas o alívio de um é inútil — ou perigoso — no outro.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>O paciente A tem <b>derrame pericárdico</b> e <b>pulso paradoxal</b> grande (tamponamento). O B tem <b>VD dilatado, septo em D</b> (TEP). O C tem <b>murmúrio ausente</b> e <b>traqueia desviada</b> (pneumotórax hipertensivo).</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>A trava o <b>enchimento</b> (constrição externa); B trava a <b>ejeção do VD</b> (pós-carga súbita); C trava o <b>retorno venoso</b> (pressão intratorácica + kink de cavas). Mesma queda de DC, três pontos da circulação.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>Os três mecanismos lado a lado, a assinatura que os separa e o alívio que casa com cada um. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">passo impedido</b>: enchimento (A), ejeção do VD (B), retorno venoso (C). O alívio é específico — pericardiocentese em A, trombólise/embolectomia em B, descompressão em C. Aplicar o alívio errado não resolve. Ponte direta ao POCUS (módulo 11).</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Um rótulo, três físicas — siga as setas.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">O que une os três?</div><div class="aa">São <b>obstrutivos</b>: um impedimento <em>mecânico</em> ao fluxo → DC↓, com RVS↑ compensatória e <b>turgência jugular</b> (pressões de enchimento altas a montante).</div></div>
+      <div class="step"><div class="qq">Tamponamento — o que trava?</div><div class="aa">O <b>enchimento diastólico</b>: o líquido sob pressão constringe as câmaras. Assinatura: <b>pulso paradoxal</b> grande (interdependência sob volume pericárdico fixo) e derrame.</div></div>
+      <div class="step"><div class="qq">TEP maciço — o que trava?</div><div class="aa">A <b>ejeção do VD</b>: pós-carga pulmonar súbita → VD dilata, septo em D (a física do módulo 17). Sem derrame; pulso paradoxal pequeno.</div></div>
+      <div class="step"><div class="qq">Pneumotórax hipertensivo — o que trava?</div><div class="aa">O <b>retorno venoso</b>: ar sob pressão eleva a pressão intratorácica e <b>dobra/comprime as cavas</b> (Guyton com pressão externa). Assinatura: MV ausente, hiperressonância, <b>desvio de traqueia</b>.</div></div>
+      <div class="step"><div class="qq">E o alívio?</div><div class="aa">É <b>específico</b>: pericardiocentese drena o derrame (A); trombólise/embolectomia remove a pós-carga (B); descompressão por agulha/dreno libera o ar (C). O alívio de um <b>não</b> resolve o outro.</div></div>
+      <div class="step"><div class="qq">Por que isso importa tanto?</div><div class="aa">Porque a janela é curta e o tratamento é mecânico e dirigido: <b>identificar o passo travado</b> escolhe a manobra. (Rationale físico — sem dose nem decisão de paciente.)</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o mecanismo, a assinatura e o alívio</h2>
+    <p class="lead">Escolha a entidade e a gravidade. O esquema, os sinais e o discriminador acompanham — e a comparação de alívios mostra que só o que casa recupera o débito.</p>
+    <div class="seg" id="segEntidade">
+      <button data-entity="tamponamento" class="on">Tamponamento</button>
+      <button data-entity="tep">TEP maciço</button>
+      <button data-entity="pneumotorax">Pneumotórax hipertensivo</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="scene" class="scene" width="820" height="250" aria-label="mecanismo do obstrutivo selecionado"></canvas>
+      <div class="opbox" id="opbox-scene"></div>
+      <div class="signs" id="signs"></div>
+      <div class="ctrls" style="margin-top:12px">
+        <div class="ctrl"><label>Gravidade <span class="v"><span id="vSev">70</span> %</span></label><input id="iSev" type="range" min="0" max="100" step="5" value="70"></div>
+      </div>
+    </div>
+    <h3>Comparação de alívios (qual recupera o débito?)</h3>
+    <div class="plotwrap">
+      <canvas id="plotRelief" class="plot" width="820" height="200" aria-label="débito após cada alívio"></canvas>
+      <div class="opbox" id="opbox-relief"></div>
+      <p class="hint" style="margin-top:8px">Só o alívio que ataca o passo travado restaura o DC. <b>Rationale físico — sem dose, sem decisão de paciente.</b></p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · qual obstrutivo é este?</h2>
+    <p class="lead">Escolha a entidade e a gravidade; o discriminador lê a assinatura, nomeia o passo travado e o alívio que casa. Os banners explicam a física.</p>
+    <div class="seg" id="segLab">
+      <button data-entity="tamponamento" class="on">Tamponamento</button>
+      <button data-entity="tep">TEP maciço</button>
+      <button data-entity="pneumotorax">Pneumotórax</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="sceneLab" class="scene" width="820" height="250" aria-label="cenário do Lab"></canvas>
+      <div class="signs" id="signsLab"></div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Gravidade <span class="v"><span id="vlSev">70</span> %</span></label><input id="lSev" type="range" min="0" max="100" step="5" value="70"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Discriminador → passo travado → alívio</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner ven" id="ban-comum"><b>O que une os três.</b> Obstrução mecânica → DC↓, RVS↑ e turgência jugular. O rótulo "obstrutivo" não basta: é preciso o passo travado.</div>
+      <div class="banner art" id="ban-tamp"><b>Tamponamento.</b> Constrição pericárdica trava o ENCHIMENTO; pulso paradoxal grande. Alívio: pericardiocentese (drena → libera as câmaras).</div>
+      <div class="banner art" id="ban-tep"><b>TEP maciço.</b> Pós-carga súbita trava a EJEÇÃO do VD (septo em D). Alívio: remover a pós-carga (trombólise/embolectomia — mecanismo).</div>
+      <div class="banner art" id="ban-pnx"><b>Pneumotórax hipertensivo.</b> Ar sob pressão trava o RETORNO venoso (kink de cavas, desvio de mediastino). Alívio: descompressão por agulha/dreno.</div>
+      <div class="banner ven" id="ban-alivio"><b>Especificidade do alívio.</b> O alívio de um não resolve o outro — pericardiocentese não trata pneumotórax. Casar a manobra com o passo travado é a regra.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha um mecanismo (ou a comparação de alívios) ao vivo. Distinga os três e case o alívio — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a física dos três obstrutivos e o <em>rationale</em> dos alívios — <b>nunca</b> indicação, dose ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Os três mecanismos são <b>fatores multiplicativos idealizados</b> sobre o débito; a clínica tem sobreposições (ex.: pneumotórax também eleva a pós-carga do VD). → O pulso paradoxal é uma <b>proxy linear</b> da severidade, não a curva respiratória completa. → Os esquemas são <b>desenhos originais</b>, não imagens diagnósticas; o reconhecimento real é do POCUS (módulo 11). → O "alívio resolve" assume sucesso técnico imediato e isolado. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde18.html">Módulo 18 · Obstrutivo (categoria)</a> — a pressão externa → retorno venoso (ponte ao auto-PEEP do braço 1).</div>
+    <div class="ponte">→ <a href="perfunde17.html">Módulo 17 · O ventrículo direito</a> — a física do VD que o TEP dispara.</div>
+    <div class="ponte">→ <a href="perfunde11.html">Módulo 11 · POCUS &amp; acessos</a> — as janelas que reconhecem derrame, D-shape e pneumotórax.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 19
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model19.js inlined) ===================== -->
+<script>
+function fEnchimento(pp){ return 1-0.72*Math.max(0,Math.min(1,pp)); }
+function fEjecaoVD(em){ return 1-0.72*Math.max(0,Math.min(1,em)); }
+function fRetorno(pn){ return 1-0.72*Math.max(0,Math.min(1,pn)); }
+function co(s){ return 5.0*fEnchimento(s.pp||0)*fEjecaoVD(s.em||0)*fRetorno(s.pn||0); }
+function pulsus(s){ return 4+22*(s.pp||0)+7*(s.pn||0); }
+function signs(s){ return { pulsus:pulsus(s), derrame:(s.pp||0)>0.3, dShape:(s.em||0)>0.4, mvAusente:(s.pn||0)>0.4, desvioTraqueal:(s.pn||0)>0.55, jvd:((s.pp||0)>0.3||(s.em||0)>0.4||(s.pn||0)>0.4) }; }
+function impededStep(e){ return e==='tamponamento'?'enchimento diastólico (constrição externa)':e==='tep'?'ejeção do VD (pós-carga súbita)':e==='pneumotorax'?'retorno venoso (pressão intratorácica + kink de cavas)':'sem obstrução evidente'; }
+function discriminate(s){ var g=signs(s); if(g.derrame&&g.pulsus>12)return 'tamponamento'; if(g.mvAusente||g.desvioTraqueal)return 'pneumotorax'; if(g.dShape)return 'tep'; return 'indeterminado'; }
+function reliefParam(t){ return t==='pericardiocentese'?'pp':t==='trombolise'?'em':t==='descompressao'?'pn':null; }
+function reliefFor(e){ return e==='tamponamento'?'pericardiocentese':e==='tep'?'trombolise':e==='pneumotorax'?'descompressao':null; }
+function applyRelief(s,t){ var p=reliefParam(t); if(!p)return {s:s,co:co(s)}; var s2=Object.assign({},s); s2[p]=Math.min(s2[p]||0,0.1); return {s:s2,co:co(s2)}; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var ENT_LABEL={tamponamento:'Tamponamento',tep:'TEP maciço',pneumotorax:'Pneumotórax hipertensivo'};
+  var inst={entity:'tamponamento', sev:0.7};
+  var lab={entity:'tamponamento', sev:0.7};
+  function stateOf(entity,sev){ return entity==='tamponamento'?{pp:sev,em:0,pn:0}:entity==='tep'?{pp:0,em:sev,pn:0}:{pp:0,em:0,pn:sev}; }
+
+  // ---------- esquemas ----------
+  function bg(ctx,W,H){ ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H); }
+  function drawTamponade(ctx,W,H,sev){ bg(ctx,W,H); var cx=W*0.5,cy=H*0.5;
+    var ring=8+sev*40;
+    ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.ellipse(cx,cy,W*0.13+ring,H*0.30+ring*0.7,0,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(63,130,230,'+(0.06+sev*0.12)+')'; ctx.beginPath(); ctx.ellipse(cx,cy,W*0.13+ring,H*0.30+ring*0.7,0,0,Math.PI*2); ctx.fill();
+    var sq=1-sev*0.45; ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.ellipse(cx,cy,W*0.12*sq,H*0.26*sq,0,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#5e6c87'; ctx.font='12px monospace'; ctx.fillText('coração (câmaras pequenas)',cx-90,cy+H*0.30+ring*0.7+18);
+    ctx.fillStyle='#3f82e6'; ctx.fillText('derrame pericárdico',cx+W*0.10,cy-H*0.30-ring*0.7+4);
+  }
+  function drawTEP(ctx,W,H,sev){ bg(ctx,W,H); var cx=W*0.56,cy=H*0.5,lvr=Math.min(H*0.30,W*0.15);
+    ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2.2; ctx.beginPath(); ctx.ellipse(cx,cy,lvr*(1-0.3*sev),lvr,0,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#3f82e6'; ctx.font='12px monospace'; ctx.fillText('VE',cx-7,cy+4);
+    var rvr=lvr*(0.8+0.8*sev); ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.ellipse(cx-lvr*0.8,cy,rvr*0.7,rvr,0,Math.PI*0.5,Math.PI*1.5); ctx.stroke();
+    ctx.fillStyle='#e5394e'; ctx.fillText('VD dilatado',cx-lvr*1.6,cy+4);
+    if(sev>0.4){ var sx=cx-lvr*0.85,bow=sev*lvr*0.9; ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(sx,cy-lvr*0.8); ctx.quadraticCurveTo(sx+bow,cy,sx,cy+lvr*0.8); ctx.stroke(); ctx.fillStyle='#ffcf5c'; ctx.fillText('septo em D',sx+bow-16,cy-lvr-6); }
+    // artéria pulmonar + trombo
+    ctx.strokeStyle='#9aa6bd'; ctx.lineWidth=8; ctx.beginPath(); ctx.moveTo(cx-lvr*0.4,cy-lvr*1.1); ctx.lineTo(W*0.3,H*0.18); ctx.stroke();
+    ctx.fillStyle='#e5394e'; ctx.beginPath(); ctx.arc(W*0.34,H*0.24,6+sev*5,0,Math.PI*2); ctx.fill(); ctx.fillText('trombo (AP)',W*0.20,H*0.18);
+  }
+  function drawPneumo(ctx,W,H,sev){ bg(ctx,W,H);
+    // caixa torácica
+    ctx.strokeStyle='#26314a'; ctx.lineWidth=2; ctx.strokeRect(W*0.12,H*0.16,W*0.76,H*0.68);
+    var midline=W*0.5 + sev*W*0.16;  // mediastino/traqueia desviado p/ a direita
+    // pulmão direito (normal) à direita do mediastino
+    ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse((midline+W*0.88)/2,H*0.5,(W*0.88-midline)/2-6,H*0.26,0,0,Math.PI*2); ctx.stroke();
+    // hemitórax esquerdo: ar (escuro) + pulmão colapsado pequeno
+    ctx.fillStyle='rgba(229,57,78,'+(0.05+sev*0.10)+')'; ctx.fillRect(W*0.13,H*0.17,(midline-W*0.13),H*0.66);
+    var lung=Math.max(8,(midline-W*0.13)*0.18*(1-sev)); ctx.strokeStyle='#9aa6bd'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(W*0.18,H*0.5,lung,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#e5394e'; ctx.font='12px monospace'; ctx.fillText('ar sob pressão',W*0.15,H*0.30);
+    // traqueia/mediastino desviado
+    ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(W*0.5,H*0.16); ctx.lineTo(midline,H*0.40); ctx.stroke();
+    ctx.fillStyle='#ffcf5c'; ctx.fillText('traqueia/mediastino desviados →',midline-40,H*0.13);
+    // cava comprimida
+    ctx.strokeStyle='#3f82e6'; ctx.lineWidth=Math.max(2,7*(1-sev)); ctx.beginPath(); ctx.moveTo(midline+6,H*0.5); ctx.lineTo(midline+6,H*0.82); ctx.stroke();
+    ctx.fillStyle='#5e6c87'; ctx.fillText('cavas comprimidas (retorno↓)',midline+10,H*0.80);
+  }
+  function drawScene(ctx,W,H,entity,sev){ try{ if(entity==='tamponamento')drawTamponade(ctx,W,H,sev); else if(entity==='tep')drawTEP(ctx,W,H,sev); else drawPneumo(ctx,W,H,sev); }catch(e){} }
+
+  // ---------- comparação de alívios ----------
+  function drawRelief(ctx,W,H,entity,sev){
+    try{
+      var s=stateOf(entity,sev), base=co(s);
+      var rows=[ {label:'sem alívio', co:base, color:'#5e6c87'},
+        {label:'pericardiocentese', co:applyRelief(s,'pericardiocentese').co, color:'#e5394e'},
+        {label:'trombólise', co:applyRelief(s,'trombolise').co, color:'#3f82e6'},
+        {label:'descompressão', co:applyRelief(s,'descompressao').co, color:'#ffcf5c'} ];
+      var padL=14,padR=14,padT=12,padB=20, plotW=W-padL-padR, COMAX=5.4;
+      bg(ctx,W,H); var x=function(v){return padL+(Math.min(COMAX,v)/COMAX)*plotW;};
+      ctx.strokeStyle='#46506b'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(x(4.5),padT); ctx.lineTo(x(4.5),H-padB); ctx.stroke(); ctx.setLineDash([]);
+      var n=rows.length, gap=8, bh=(H-padT-padB-gap*(n-1))/n, match=reliefFor(entity);
+      var mapName={pericardiocentese:'pericardiocentese',trombolise:'trombólise',descompressao:'descompressão'};
+      rows.forEach(function(r,i){ var y=padT+i*(bh+gap); ctx.fillStyle=r.color; ctx.globalAlpha=(i===0)?0.6:1; ctx.fillRect(padL,y,x(r.co)-padL,bh); ctx.globalAlpha=1;
+        ctx.fillStyle='#e9eef7'; ctx.font='12px monospace'; ctx.fillText(r.label+'  CO '+br(r.co,2)+(i>0 && r.label.indexOf(mapName[match])===0?'  ✓ casa':''),padL+6,y+bh/2+4); });
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('CO (L/min) · tracejado ~ alvo',padL,H-6);
+    }catch(e){}
+  }
+
+  function renderSigns(containerId, s){
+    var g=signs(s), box=$(containerId); if(!box) return; box.innerHTML='';
+    var items=[['pulso paradoxal '+Math.round(g.pulsus)+'mmHg', g.pulsus>12],['derrame pericárdico',g.derrame],['VD/septo em D',g.dShape],['MV ausente',g.mvAusente],['desvio traqueal',g.desvioTraqueal],['turgência jugular',g.jvd]];
+    items.forEach(function(it){ var sp=document.createElement('span'); sp.className='sign'+(it[1]?' on':''); sp.textContent=it[0]; box.appendChild(sp); });
+  }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vSev').textContent=Math.round(inst.sev*100);
+    document.querySelectorAll('#segEntidade button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-entity')===inst.entity); });
+    var s=stateOf(inst.entity,inst.sev);
+    var cv=$('scene'); if(cv){var c;try{c=cv.getContext('2d');}catch(e){} if(c) drawScene(c,cv.width||820,cv.height||250,inst.entity,inst.sev);}
+    renderSigns('signs', s);
+    $('opbox-scene').innerHTML='CO <b>'+br(co(s),2)+'</b> L/min · passo travado: <b>'+impededStep(inst.entity)+'</b> · discriminador → <b>'+(discriminate(s)==='tamponamento'?'tamponamento':discriminate(s)==='tep'?'TEP':discriminate(s)==='pneumotorax'?'pneumotórax':'indeterminado')+'</b>';
+    var rc=$('plotRelief'); if(rc){var c2;try{c2=rc.getContext('2d');}catch(e){} if(c2) drawRelief(c2,rc.width||820,rc.height||200,inst.entity,inst.sev);}
+    var match=reliefFor(inst.entity), matchName={pericardiocentese:'pericardiocentese',trombolise:'trombólise',descompressao:'descompressão'}[match];
+    $('opbox-relief').innerHTML='só a <b>'+matchName+'</b> recupera o débito — os outros alívios deixam o CO inalterado (especificidade do alívio)';
+    renderLab();
+  }
+  function renderLab(){
+    $('vlSev').textContent=Math.round(lab.sev*100);
+    document.querySelectorAll('#segLab button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-entity')===lab.entity); });
+    var s=stateOf(lab.entity,lab.sev);
+    var cv=$('sceneLab'); if(cv){var c;try{c=cv.getContext('2d');}catch(e){} if(c) drawScene(c,cv.width||820,cv.height||250,lab.entity,lab.sev);}
+    renderSigns('signsLab', s);
+    var d=discriminate(s), nm={tamponamento:'TAMPONAMENTO',tep:'TEP MACIÇO',pneumotorax:'PNEUMOTÓRAX HIPERTENSIVO',indeterminado:'INDETERMINADO'}[d];
+    var relief=reliefFor(lab.entity), reliefNm={pericardiocentese:'pericardiocentese',trombolise:'trombólise/embolectomia',descompressao:'descompressão (agulha/dreno)'}[relief];
+    $('opbox-lab').innerHTML='CO <b>'+br(co(s),2)+'</b> L/min · pulso paradoxal '+Math.round(pulsus(s))+' mmHg';
+    var vEl=$('lab-veredito'); vEl.className='veredito '+(co(s)<3.5?'crit':'ok');
+    $('lab-vbig').textContent=nm;
+    $('lab-vnum').textContent='passo travado: '+impededStep(lab.entity)+' · alívio que casa: '+reliefNm;
+    show($('ban-comum'), true);
+    show($('ban-tamp'), lab.entity==='tamponamento');
+    show($('ban-tep'), lab.entity==='tep');
+    show($('ban-pnx'), lab.entity==='pneumotorax');
+    show($('ban-alivio'), true);
+  }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    T.push({kind:'scene',entity:'tamponamento',sev:0.7, cap:'Derrame circundando o coração; câmaras pequenas.',
+      q:'Derrame pericárdico + pulso paradoxal grande + câmaras pequenas. O passo travado é:',
+      o:['o enchimento diastólico (tamponamento)','a ejeção do VD','o retorno venoso','a contratilidade do VE'], a:0,
+      fb:'Constrição externa trava o enchimento → tamponamento. Pulso paradoxal grande é a marca.', hint:'Líquido sob pressão ao redor.'});
+    T.push({kind:'scene',entity:'tep',sev:0.75, cap:'VD dilatado, septo em D, trombo na artéria pulmonar.',
+      q:'VD dilatado com septo em D, sem derrame, pulmões limpos. Trata-se de:',
+      o:['tamponamento','TEP maciço (pós-carga do VD)','pneumotórax','hipovolemia'], a:1,
+      fb:'Pós-carga súbita do VD = TEP. A física é a do módulo 17 (interdependência).', hint:'O septo em D e o trombo.'});
+    T.push({kind:'scene',entity:'pneumotorax',sev:0.8, cap:'Ar sob pressão, pulmão colapsado, mediastino desviado.',
+      q:'Murmúrio ausente, hiperressonância, traqueia desviada. O passo travado é:',
+      o:['o enchimento','a ejeção do VD','o retorno venoso (kink de cavas)','a pós-carga do VE'], a:2,
+      fb:'Ar sob pressão eleva a pressão intratorácica e dobra as cavas → retorno venoso travado.', hint:'Desvio de mediastino.'});
+    T.push({kind:'relief',entity:'tamponamento',sev:0.7, cap:'Comparação de alívios no tamponamento.',
+      q:'Qual manobra recupera o débito no tamponamento?',
+      o:['descompressão por agulha','trombólise','pericardiocentese','nenhuma muda'], a:2,
+      fb:'Drenar o derrame (pericardiocentese) libera as câmaras. As outras não atacam o passo travado.', hint:'Tirar o líquido.'});
+    T.push({kind:'relief',entity:'pneumotorax',sev:0.8, cap:'Alívios no pneumotórax hipertensivo.',
+      q:'A pericardiocentese, num pneumotórax hipertensivo, faz o quê com o débito?',
+      o:['recupera totalmente','quase nada (alívio errado)','piora a pós-carga','dobra o retorno'], a:1,
+      fb:'Especificidade: pericardiocentese não toca o ar pleural — o CO segue baixo. Precisa de descompressão.', hint:'Alívio que não casa.'});
+    T.push({kind:'scene',entity:'tamponamento',sev:0.7, cap:'Mecânica do pulso paradoxal.',
+      q:'O pulso paradoxal grande do tamponamento vem de:',
+      o:['arritmia','interdependência sob volume pericárdico fixo (inspiração enche VD e comprime VE)','broncoespasmo','hipovolemia isolada'], a:1,
+      fb:'Volume pericárdico fixo: na inspiração o VD enche e empurra o septo → o VE enche menos → PAS cai mais.', hint:'Septo + volume fixo.'});
+    T.push({kind:'scene',entity:'tep',sev:0.7, cap:'TEP: alívio.',
+      q:'O alívio que ataca o mecanismo do TEP maciço é (mecanismo):',
+      o:['pericardiocentese','descompressão torácica','remover a pós-carga (trombólise/embolectomia)','volume agressivo'], a:2,
+      fb:'Reduzir a pós-carga do VD (desobstruir a artéria pulmonar) é o alvo. Volume tende a piorar (módulo 17).', hint:'Tirar o coágulo.'});
+    T.push({kind:'scene',entity:'pneumotorax',sev:0.6, cap:'Sinal comum.',
+      q:'A turgência jugular aparece em qual(is) dos três?',
+      o:['só no tamponamento','só no pneumotórax','nos três (são obstrutivos, pressão a montante alta)','em nenhum'], a:2,
+      fb:'JVD é comum aos obstrutivos: a pressão de enchimento sobe a montante nos três. Ela não discrimina.', hint:'O que une, não o que separa.'});
+    T.push({kind:'relief',entity:'tep',sev:0.7, cap:'Matriz de alívios no TEP.',
+      q:'Por que a comparação de alívios mostra só UMA barra recuperando?',
+      o:['porque os alívios são equivalentes','porque cada alívio só corrige seu próprio passo travado','porque o CO não muda nunca','por erro do modelo'], a:1,
+      fb:'A especificidade: cada manobra zera um parâmetro; só a que casa com a obstrução ativa recupera o CO.', hint:'A diagonal da matriz.'});
+    T.push({kind:'scene',entity:'tamponamento',sev:0.7, cap:'Síntese.',
+      q:'A lição central deste capstone é:',
+      o:['obstrutivo é tudo igual','identificar o passo travado escolhe o alívio específico','o alívio é sempre o mesmo','volume resolve os três'], a:1,
+      fb:'Três fisiologias sob um rótulo: o passo travado (enchimento/ejeção VD/retorno) define a manobra que casa.', hint:'Decompor antes de aliviar.'});
+    var __tg=[2,0,3,1,2,3,0,1,3,2];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=200; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.kind==='relief'?drawRelief(ctx,W||760,H||200,item.entity,item.sev):drawScene(ctx,W||760,H||200,item.entity,item.sev); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||200); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    document.querySelectorAll('#segEntidade button').forEach(function(b){ b.addEventListener('click',function(){ inst.entity=b.getAttribute('data-entity'); recompute(); }); });
+    $('iSev').addEventListener('input',function(){ inst.sev=parseFloat(this.value)/100; recompute(); });
+    document.querySelectorAll('#segLab button').forEach(function(b){ b.addEventListener('click',function(){ lab.entity=b.getAttribute('data-entity'); renderLab(); }); });
+    $('lSev').addEventListener('input',function(){ lab.sev=parseFloat(this.value)/100; renderLab(); });
+    TUTOR=buildTutor(); recompute(); renderTutor();
+    window.drawScene=drawScene; window.drawRelief=drawRelief; window.activateTab=activate; window.setInst=function(e,s){inst.entity=e;inst.sev=s;recompute();}; window.setLabEntity=function(e,s){lab.entity=e;lab.sev=(s==null?lab.sev:s);renderLab();};
+    window.coFn=co; window.signsFn=signs; window.discriminateFn=discriminate; window.impededStepFn=impededStep; window.reliefForFn=reliefFor; window.applyReliefFn=applyRelief; window.pulsusFn=pulsus;
+    window.TUTOR=TUTOR; window.__inst=inst; window.__lab=lab;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
