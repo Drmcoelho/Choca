@@ -48,7 +48,7 @@ Herdados do braço 1, sem exceção:
 - Saída em **português do Brasil**; raciocínio em prosa com **setas (→)**, não bullets; código auditável e comentado; **sem floreio**.
 - **"Teto, não piso":** cada módulo excede o que o livro-texto entrega, fisiológica e pedagogicamente.
 - **Honestidade no próprio artefato:** limitações do modelo moram no arquivo (disclaimer/nota), não só na conversa.
-- Rodapé de toda peça: **CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira**.
+- Rodapé de toda peça: **CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira** e a dedicatória **"Para a Dani."**
 
 ---
 
@@ -140,3 +140,7 @@ Este é o braço onde a tentação de **prescrever número** é máxima, e onde 
 ## 11. Rito de build
 
 Inalterado em relação ao braço 1: **engine isolado → validação em Node contra âncoras → porta para HTML reusando tokens → validação jsdom (0 falhas obrigatório) → entrega em `/mnt/user-data/outputs/` → `present_files`.** Mecânica completa, armadilhas de ambiente e convenções de nomenclatura em `AGENTS.md`. Subida ao GitHub é responsabilidade do autor; verificação por `web_fetch` ofertada na confirmação da URL.
+
+---
+
+*Para a Dani.*

@@ -170,3 +170,7 @@ Mapeamento **mecanístico**, parando antes do miligrama:
 ## 11. Referências fisiológicas (âncoras)
 
 Equação do conteúdo de O₂ · equação de Fick · curva de Severinghaus (P50, Bohr) · curvas de Frank-Starling · **modelo de retorno venoso de Guyton** (Pmsf, resistência ao retorno venoso) · análise de alça pressão-volume (Ea/Ees, Sunagawa) · curva de dependência VO₂/DO₂ e DO₂crítico · índice de choque · os quatro perfis hemodinâmicos clássicos.
+
+---
+
+*Para a Dani.*
