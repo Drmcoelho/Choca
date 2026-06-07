@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 9 · PAM = DC × RVS · a inversão causal</title>
+<meta name="description" content="O núcleo do braço: PAM é um produto, não uma causa. Mesma PAM por mecânicas opostas (quente/vasodilatado × frio/vasoconstrito), o leque iso-PAM e o choque críptico. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:350px;border-radius:8px;background:#0a0c11}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{font-family:var(--mono);font-size:.76rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--ink-dim)}
+.chip.warm{border-color:var(--art);color:#ffd4da;background:rgba(229,57,78,.12)}
+.chip.cold{border-color:var(--ven);color:#cfe0ff;background:rgba(63,130,230,.12)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.32rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:230px;border-radius:8px;background:#0a0c11;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 9 · PAM = DC × RVS · a inversão causal</div>
+    <h1>A pressão é a sombra do que a gerou</h1>
+    <p class="sub">PAM é um produto, não uma causa. A mesma pressão emerge de mecânicas opostas — débito alto com vasos abertos, ou débito baixo com vasos fechados. Ler o número sem decompô-lo é o erro que mata.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M40,50 C120,16 260,8 420,8 C560,8 720,16 860,50" fill="none" stroke="var(--art)" stroke-width="2"/>
+      <line x1="40" y1="30" x2="860" y2="30" stroke="var(--ven)" stroke-width="1.2" stroke-dasharray="4 4"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Mesma PAM 65, dois pacientes opostos</h2>
+    <p class="lead">Cinco atos. A variável escondida é o que a PAM <em>não</em> diz. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · dois leitos</span><p>Dois pacientes, ambos com <b>PAM 65</b>. No monitor, idênticos.</p>
+      <div class="vitais"><span>A · quente, pulsos amplos</span><span>B · frio, extremidades mosqueadas</span><span>PAM <b>65</b> nos dois</span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"PAM 65 nos dois — mesma situação, mesma conduta." Mas a beira do leito diz o contrário.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>PAM = DC × RVS é um <em>produto</em>. A mesma PAM cabe em infinitos pares (DC, RVS): A vive com débito alto e vasos abertos; B, com débito baixo e vasos fechados.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>A (quente): DC ~8, RVS ~600 — distributivo. B (frio): DC ~3, RVS ~1500 — cardiogênico/hipovolêmico. O que perfunde é o <b>fluxo (DC)</b>, não a pressão. A mesma sombra, dois objetos.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O plano (DC, RVS) e o leque de hipérboles iso-PAM mostram os dois no mesmo nível de pressão. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o par <b style="color:var(--art)">(DC, RVS)</b> por trás da PAM. A mesma PAM define uma <em>hipérbole</em> de soluções; o tratamento depende de qual termo quebrou, não do número-resultante. A PAM normal pode até esconder fluxo baixo — o choque críptico (módulo 26).</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas e decomponha o produto.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">PAM normal significa paciente bem?</div><div class="aa">Não necessariamente. PAM é um <b>resultado</b> — o produto de fluxo e resistência —, não a perfusão em si.</div></div>
+      <div class="step"><div class="qq">Que produto é esse?</div><div class="aa"><b>PAM = DC × RVS</b> (mais a PVC). Dois fatores; o mesmo produto admite combinações opostas.</div></div>
+      <div class="step"><div class="qq">Então a mesma PAM pode esconder o quê?</div><div class="aa">Mecânicas inversas: <b>DC↑/RVS↓</b> (quente, vasodilatado, distributivo) ou <b>DC↓/RVS↑</b> (frio, vasoconstrito, cardiogênico/hipovolêmico).</div></div>
+      <div class="step"><div class="qq">Qual termo perfunde o tecido?</div><div class="aa">O <b>fluxo (DC)</b>. A pressão abre a porta, mas é o débito que leva o O₂. Pressão normal com fluxo baixo ainda é choque.</div></div>
+      <div class="step"><div class="qq">Como ler isso à beira do leito?</div><div class="aa">Pela temperatura/pulsos (tônus → RVS) e por sinais de fluxo (enchimento capilar, lactato, SvO₂). É o embrião dos <b>4 perfis</b> (módulo 27).</div></div>
+      <div class="step"><div class="qq">Por que isso é o núcleo do braço?</div><div class="aa">Porque <b>decompor antes de tratar</b> é a regra que organiza todos os choques: identifique o termo quebrado, escolha a alavanca que age sobre ele (módulo 28).</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o leque iso-PAM</h2>
+    <p class="lead">No plano (DC, RVS), cada <span style="color:var(--art)">hipérbole</span> é uma PAM constante — o leque de soluções. O par <span style="color:var(--accent)">quente</span> e <span style="color:var(--ven)">frio</span> mora na mesma curva. Mexa em DC e RVS e veja a PAM emergir do produto.</p>
+    <div class="plotwrap">
+      <canvas id="plotPAM" class="plot" width="860" height="350" aria-label="plano DC × RVS com hipérboles iso-PAM"></canvas>
+      <div class="legend">
+        <span><i style="background:#46506b"></i>hipérboles iso-PAM (50·65·90·110)</span>
+        <span><i style="background:var(--art)"></i>PAM atual</span>
+        <span><i style="background:var(--accent)"></i>operação</span>
+        <span><i style="background:rgba(62,199,141,.5)"></i>RVS normal (800–1200)</span>
+      </div>
+      <div class="opbox" id="opbox-instr"></div>
+      <div class="chips" id="chips-instr"><span class="chip" id="chip-perfil">perfil</span><span class="chip" id="chip-fluxo">fluxo</span></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>DC (fluxo) <span class="v"><span id="vDc">5.5</span> L/min</span></label><input id="iDc" type="range" min="1.5" max="12" step="0.1" value="5.5"></div>
+        <div class="ctrl"><label>RVS <span class="v"><span id="vRvs">1160</span> dyn·s·cm⁻⁵</span></label><input id="iRvs" type="range" min="300" max="3000" step="20" value="1160"></div>
+        <div class="ctrl"><label>PVC <span class="v"><span id="vPvc">5</span> mmHg</span></label><input id="iPvc" type="range" min="0" max="20" step="1" value="5"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Ande pela mesma hipérbole (suba o DC, desça a RVS) e veja a PAM ficar parada enquanto a mecânica vira do quente ao frio.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · decompor antes de tratar</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>perfil vira</b>; os banners explicam o que a PAM esconde — inclusive o críptico.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="distributivo">Distributivo (quente)</button>
+      <button class="preset" type="button" data-preset="cardiogenico">Cardiogênico (frio)</button>
+      <button class="preset" type="button" data-preset="criptico">Críptico</button>
+      <button class="preset" type="button" data-preset="hiperdinamico">Hiperdinâmico</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotPAMLab" class="plot" width="860" height="350" aria-label="plano DC × RVS no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:#46506b"></i>iso-PAM</span><span><i style="background:var(--art)"></i>PAM atual</span>
+        <span><i style="background:var(--accent)"></i>operação</span><span><i style="background:rgba(62,199,141,.5)"></i>RVS normal</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>DC (fluxo) <span class="v"><span id="vlDc">5.5</span> L/min</span></label><input id="lDc" type="range" min="1.5" max="12" step="0.1" value="5.5"></div>
+        <div class="ctrl"><label>RVS <span class="v"><span id="vlRvs">1160</span> dyn·s·cm⁻⁵</span></label><input id="lRvs" type="range" min="300" max="3000" step="20" value="1160"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Decomposição da PAM</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-inversao"><b>A inversão.</b> Esta mesma PAM existe também no extremo oposto da hipérbole: troque DC por RVS e a pressão não se move. O número não distingue os dois pacientes.</div>
+      <div class="banner art" id="ban-quente"><b>Quente / vasodilatado.</b> RVS baixa com DC alto: padrão distributivo. A alavanca que corrige o termo é a RVS (mecanismo → módulo 28), não mais volume cegamente.</div>
+      <div class="banner ven" id="ban-frio"><b>Frio / vasoconstrito.</b> RVS alta com DC baixo: padrão cardiogênico/hipovolêmico. O termo quebrado é o fluxo — subir a RVS aqui pode piorar a perfusão.</div>
+      <div class="banner art" id="ban-criptico"><b>Choque críptico.</b> PAM "tranquilizadora" (≥65) com DC baixo: a RVS alta sustenta o número enquanto o fluxo já falha. O lactato denuncia antes da pressão cair (módulo 26).</div>
+      <div class="banner ven" id="ban-fluxo"><b>Fluxo ≠ pressão.</b> O que perfunde é o DC; a PAM é a sombra. Pressão normal não garante débito normal.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha o plano (DC, RVS) computado ao vivo. Leia a inversão, o perfil e o críptico — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a decomposição da pressão — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ PAM = DC × RVS é a forma <b>macrocirculatória idealizada</b>: trata a circulação como resistência única e estável, ignora pulsatilidade, complacência arterial e a microcirculação (módulo 11/12). → A RVS é <b>derivada</b>, não medida direta — herda o erro do DC e da PVC. → Os limiares de "quente/frio" (RVS 800/1200) são didáticos; a clínica integra também pele, pulsos, lactato e SvO₂. → "Fluxo ≈ DC" é simplificação: a distribuição regional importa. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde26.html">Módulo 26 · Choque críptico</a> — a PAM normal mascarando DC baixo, literalmente o caso-semente.</div>
+    <div class="ponte">→ <a href="perfunde27.html">Módulo 27 · Os 4 perfis · o radar</a> — quente/frio × seco/úmido: este eixo ganha o segundo.</div>
+    <div class="ponte">→ <a href="perfunde28.html">Módulo 28 · Vasopressores &amp; inotrópicos</a> — qual alavanca move qual termo (mecanismo, sem dose).</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 9
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model9.js inlined) ===================== -->
+<script>
+function pam(dc,rvsDyn,pvc){ if(pvc===undefined)pvc=5; return pvc + dc*rvsDyn/80; }
+function rvsForPam(pamVal,dc,pvc){ if(pvc===undefined)pvc=5; return 80*(pamVal-pvc)/dc; }
+function rvsWood(rvsDyn){ return rvsDyn/80; }
+function profile(dc,rvsDyn){ var temp=(rvsDyn<800)?'quente':(rvsDyn>1200?'frio':'neutro'); var fluxo=(dc<3.5)?'baixo':(dc>7?'alto':'normal');
+  return {temp:temp,fluxo:fluxo,vasodilatado:rvsDyn<800,vasoconstrito:rvsDyn>1200}; }
+function cryptico(dc,rvsDyn,pvc){ return pam(dc,rvsDyn,pvc)>=65 && dc<3.5; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var state={ dc:5.5, rvs:1160, pvc:5 };
+  var PRESETS={
+    normal:       { dc:5.5, rvs:1160, pvc:5 },
+    distributivo: { dc:8.0, rvs:600,  pvc:5 },
+    cardiogenico: { dc:3.2, rvs:1300, pvc:5 },
+    criptico:     { dc:3.0, rvs:2267, pvc:5 },
+    hiperdinamico:{ dc:10,  rvs:450,  pvc:5 }
+  };
+  var DCMAX=12, RVSMAX=3000;
+
+  function drawPAM(ctx,W,H,P,opts){
+    opts=opts||{};
+    try{
+      var padL=52,padB=30,padT=12,padR=14, plotW=W-padL-padR, plotH=H-padT-padB;
+      var px=function(dc){return padL+(dc/DCMAX)*plotW;};
+      var py=function(rvs){return padT+plotH-(Math.max(0,Math.min(RVSMAX,rvs))/RVSMAX)*plotH;};
+      ctx.clearRect(0,0,W,H);
+      // faixa RVS normal 800-1200
+      ctx.fillStyle='rgba(62,199,141,.06)'; ctx.fillRect(padL,py(1200),plotW,py(800)-py(1200));
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gx=0;gx<=DCMAX;gx+=2){ ctx.beginPath(); ctx.moveTo(px(gx),padT); ctx.lineTo(px(gx),padT+plotH); ctx.stroke(); ctx.fillText(gx+'',px(gx)-4,padT+plotH+14); }
+      for(var gy=0;gy<=RVSMAX;gy+=500){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+plotW,py(gy)); ctx.stroke(); ctx.fillText(gy+'',6,py(gy)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('DC — fluxo (L/min)', padL+plotW-140, padT+plotH+14);
+      ctx.save(); ctx.translate(12,padT+60); ctx.rotate(-Math.PI/2); ctx.fillText('RVS (dyn·s·cm⁻⁵)',0,0); ctx.restore();
+      // família de hipérboles iso-PAM
+      var fam=[50,65,90,110], curPAM=pam(P.dc,P.rvs,P.pvc);
+      var hyp=function(pamRef,color,w){ ctx.strokeStyle=color; ctx.lineWidth=w; ctx.beginPath(); var st=false;
+        for(var i=0;i<=plotW;i+=2){ var dc=0.2+i/plotW*DCMAX; var rvs=rvsForPam(pamRef,dc,P.pvc); if(rvs<0||rvs>RVSMAX){st=false;continue;} var X=px(dc),Y=py(rvs); if(!st){ctx.moveTo(X,Y);st=true;} else ctx.lineTo(X,Y);} ctx.stroke(); };
+      fam.forEach(function(pp){ hyp(pp,'#46506b',1.3); ctx.fillStyle='#5e6c87'; var yy=py(rvsForPam(pp,DCMAX*0.92,P.pvc)); if(yy>padT+8&&yy<padT+plotH) ctx.fillText('PAM '+pp, px(DCMAX*0.74), yy-3); });
+      // hipérbole da PAM atual (destaque)
+      hyp(curPAM,'#e5394e',2.2);
+      // par quente/frio na MESMA PAM atual
+      if(opts.showPair){
+        [[8.0,'#ffcf5c','quente'],[3.2,'#3f82e6','frio']].forEach(function(pq){ var dc=pq[0], rvs=rvsForPam(curPAM,dc,P.pvc); if(rvs>0&&rvs<RVSMAX){ ctx.fillStyle=pq[1]; ctx.globalAlpha=.55; ctx.beginPath(); ctx.arc(px(dc),py(rvs),4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; } });
+      }
+      // operação
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(P.dc),py(P.rvs),5.5,0,Math.PI*2); ctx.fill();
+      ctx.setLineDash([2,3]); ctx.strokeStyle='#ffcf5c';
+      ctx.beginPath(); ctx.moveTo(px(P.dc),padT); ctx.lineTo(px(P.dc),padT+plotH); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,py(P.rvs)); ctx.lineTo(padL+plotW,py(P.rvs)); ctx.stroke(); ctx.setLineDash([]);
+      return { pam:curPAM };
+    }catch(e){ return { pam:pam(P.dc,P.rvs,P.pvc) }; }
+  }
+  function drawOn(id,P,opts){ var cv=$(id); if(!cv) return {}; var ctx; try{ctx=cv.getContext('2d');}catch(e){return {};} if(!ctx) return {}; return drawPAM(ctx,cv.width||860,cv.height||350,P,opts); }
+
+  function syncSliders(){ $('iDc').value=state.dc; $('iRvs').value=state.rvs; $('iPvc').value=state.pvc; $('lDc').value=state.dc; $('lRvs').value=state.rvs; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+  function chip(el,cls,txt){ el.className='chip '+(cls||''); el.textContent=txt; }
+
+  function recompute(){
+    $('vDc').textContent=br(state.dc,1); $('vRvs').textContent=Math.round(state.rvs); $('vPvc').textContent=state.pvc;
+    $('vlDc').textContent=br(state.dc,1); $('vlRvs').textContent=Math.round(state.rvs);
+    var pm=pam(state.dc,state.rvs,state.pvc), pr=profile(state.dc,state.rvs), cr=cryptico(state.dc,state.rvs,state.pvc);
+    drawOn('plotPAM', state, {showPair:true});
+    $('opbox-instr').innerHTML='PAM <b>'+br(pm,0)+'</b> mmHg = PVC '+state.pvc+' + DC '+br(state.dc,1)+' × RVS '+Math.round(state.rvs)+'/80 · RVS '+br(rvsWood(state.rvs),1)+' Wood';
+    chip($('chip-perfil'), pr.temp==='quente'?'warm':(pr.temp==='frio'?'cold':''), 'tônus: '+pr.temp);
+    chip($('chip-fluxo'), pr.fluxo==='baixo'?'cold':(pr.fluxo==='alto'?'warm':''), 'fluxo: '+pr.fluxo);
+    drawOn('plotPAMLab', state, {showPair:true});
+    $('opbox-lab').innerHTML='PAM <b>'+br(pm,0)+'</b> · DC <b>'+br(state.dc,1)+'</b> (fluxo) · RVS <b>'+Math.round(state.rvs)+'</b> · perfil '+pr.temp+'/'+pr.fluxo;
+
+    var vEl=$('lab-veredito'), klass, label, sub;
+    var tempLabel = pr.temp==='quente' ? 'QUENTE / VASODILATADO' : (pr.temp==='frio' ? 'FRIO / VASOCONSTRITO' : 'PERFIL NEUTRO');
+    var tempSub = pr.temp==='quente' ? 'RVS baixa, DC alto — padrão distributivo' : (pr.temp==='frio' ? 'RVS alta, DC baixo — padrão cardiogênico/hipovolêmico' : 'RVS na faixa, fluxo adequado');
+    if(cr){ klass='crit'; label='CHOQUE CRÍPTICO'; sub='PAM ok, mas fluxo (DC) baixo — a pressão engana'; }
+    else { label=tempLabel; sub=tempSub; klass = (pr.fluxo==='baixo') ? 'crit' : (pr.temp!=='neutro' ? 'lim' : 'ok'); }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent=sub+' · PAM '+br(pm,0)+' · DC '+br(state.dc,1)+' · RVS '+Math.round(state.rvs);
+
+    show($('ban-inversao'), pr.vasodilatado || pr.vasoconstrito);
+    show($('ban-quente'), pr.vasodilatado);
+    show($('ban-frio'), pr.vasoconstrito);
+    show($('ban-criptico'), cr);
+    show($('ban-fluxo'), pr.fluxo==='baixo');
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor gráfico ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[]; var S=function(o){return Object.assign({dc:5.5,rvs:1160,pvc:5},o);};
+    T.push({S:S({dc:8,rvs:600}), cap:'Plano DC×RVS. Vermelho = hipérbole da PAM atual; pontos = par quente/frio na mesma PAM.',
+      q:'O ponto operante (DC alto, RVS baixa) corresponde a um padrão:',
+      o:['quente / vasodilatado (distributivo)','frio / vasoconstrito','hipovolêmico clássico','obstrutivo puro'], a:0,
+      fb:'DC alto com RVS baixa = quente/vasodilatado, típico do distributivo.', hint:'RVS abaixo da faixa, DC alto.'});
+    T.push({S:S({dc:3.2,rvs:1500}), cap:'Outro ponto na MESMA hipérbole de PAM.',
+      q:'Este ponto (DC baixo, RVS alta) tem, em relação ao anterior:',
+      o:['PAM muito maior','PAM muito menor','praticamente a MESMA PAM','PAM impossível de comparar'], a:2,
+      fb:'Ambos estão na mesma hipérbole iso-PAM: mesma pressão, mecânicas opostas.', hint:'Mesma curva vermelha.'});
+    T.push({S:S({dc:8,rvs:600}), cap:'Mecânica do par.',
+      q:'Entre os dois pacientes de mesma PAM, quem realmente perfunde melhor?',
+      o:['o de RVS mais alta','o de maior PVC','o de DC mais alto (mais fluxo)','são idênticos na perfusão'], a:2,
+      fb:'O que perfunde é o fluxo (DC); a pressão é a sombra. Mesma PAM ≠ mesma perfusão.', hint:'Fluxo = DC.'});
+    T.push({S:S({dc:3.0,rvs:2267}), cap:'PAM 90, DC 3,0, RVS muito alta.',
+      q:'PAM 90 "tranquilizadora" com DC 3,0 e RVS altíssima é:',
+      o:['paciente compensado e estável','choque críptico (pressão ok, fluxo baixo)','hiperdinamismo','erro de medida da PAM'], a:1,
+      fb:'A RVS alta sustenta a pressão enquanto o fluxo já falhou — o críptico. O lactato denuncia antes.', hint:'Pressão normal, fluxo baixo.'});
+    T.push({S:S({dc:5.5,rvs:1160}), cap:'Decompondo a identidade.',
+      q:'Na relação PAM = PVC + DC × RVS/80, a RVS clínica é:',
+      o:['medida diretamente por um sensor arterial','derivada (calculada de PAM, PVC e DC)','igual à pressão de pulso','independente do débito'], a:1,
+      fb:'RVS é derivada — herda o erro do DC e da PVC; não é medida direta.', hint:'É um cálculo.'});
+    T.push({S:S({dc:5.5,rvs:1160}), cap:'Mover-se ao longo da hipérbole.',
+      q:'Se eu subir o DC e baixar a RVS na proporção certa, a PAM:',
+      o:['sobe muito','desce a zero','fica praticamente constante','oscila aleatoriamente'], a:2,
+      fb:'Andar pela hipérbole iso-PAM mantém o produto — a pressão não se move.', hint:'É a definição da iso-PAM.'});
+    T.push({S:S({dc:10,rvs:450}), cap:'DC muito alto, RVS muito baixa.',
+      q:'Esse perfil hiperdinâmico (DC alto, RVS baixa) sugere:',
+      o:['cardiogênico avançado','vasodilatação intensa (ex.: distributivo)','obstrução ao enchimento','tamponamento'], a:1,
+      fb:'RVS muito baixa com DC alto é a assinatura da vasodilatação distributiva.', hint:'Vasos abertos.'});
+    T.push({S:S({dc:2.6,rvs:1900}), cap:'DC baixo, RVS alta.',
+      q:'Subir ainda mais a RVS (vasopressor) neste frio/baixo-fluxo tende a:',
+      o:['melhorar a perfusão sempre','elevar a PAM, mas pode piorar o fluxo','não alterar nada','reduzir a pós-carga'], a:1,
+      fb:'A pressão sobe, mas aumentar a pós-carga num débito baixo pode reduzir o fluxo — decompor antes (mecanismo).', hint:'Pressão ≠ fluxo.'});
+    T.push({S:S({dc:5.5,rvs:1160}), cap:'Faixa verde = RVS normal (800–1200).',
+      q:'Com DC adequado e RVS dentro da faixa verde, o veredito é:',
+      o:['perfil neutro','choque críptico','distributivo','cardiogênico'], a:0,
+      fb:'RVS na faixa e fluxo adequado: perfil neutro, sem assinatura de choque.', hint:'Tudo na faixa.'});
+    T.push({S:S({dc:8,rvs:600}), cap:'Síntese do núcleo.',
+      q:'A lição central de PAM = DC × RVS é:',
+      o:['a PAM basta para guiar a conduta','decompor antes de tratar (achar o termo quebrado)','RVS alta é sempre boa','o DC pouco importa para a perfusão'], a:1,
+      fb:'Decompor o produto revela qual termo quebrou — a base de todo o raciocínio do braço.', hint:'O número-resultante é sombra.'});
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=230; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawPAM(ctx,W||820,H||230,item.S,{showPair:true}); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ drawPAM(ctx,cv.width||820,cv.height||230,item.S,{showPair:true}); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iDc','dc'],['iRvs','rvs'],['iPvc','pvc']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lDc','dc'],['lRvs','rvs']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawPAM=drawPAM; window.activateTab=activate; window.setLabState=setState;
+    window.pamFn=pam; window.rvsForPamFn=rvsForPam; window.profileFn=profile; window.crypticoFn=cryptico; window.rvsWoodFn=rvsWood;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
