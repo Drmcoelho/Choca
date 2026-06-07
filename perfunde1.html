@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 1 · Conteúdo de O₂ (CaO₂)</title>
+<meta name="description" content="CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂. A saturação engana: anemia derruba o conteúdo com SpO₂ perfeita, e a fração dissolvida é quase nada. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:340px;border-radius:8px;background:#0a0c11}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.98rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subst{font-family:var(--mono);font-size:.9rem;color:var(--ink)} .subst .num{color:var(--ven)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:230px;border-radius:8px;background:#0a0c11;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 1 · Conteúdo de O₂ (CaO₂)</div>
+    <h1>A saturação engana</h1>
+    <p class="sub">SpO₂ 96% diz que a hemoglobina que existe está cheia. Não diz <em>quanta</em> hemoglobina existe. O que a célula recebe é o <b>conteúdo</b> — e a anemia o derruba com a saturação intacta. A fração dissolvida, que a gasometria exibe, é quase nada.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,40 90,40 150,12 210,40 270,40 420,40 480,12 540,40 600,40 750,40 810,12 870,40 900,40"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>"Está saturando 96%" — e hipóxica</h2>
+    <p class="lead">Cinco atos. A variável escondida é a diferença entre <em>saturação</em> (uma fração) e <em>conteúdo</em> (uma quantidade). (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Mulher, pálida, taquicárdica, com sinais de sofrimento tecidual. O oxímetro tranquiliza: "SpO₂ 96% — a oxigenação está boa."</p>
+      <div class="vitais"><span>SpO₂ <b>96%</b></span><span>FC <b>120</b></span><span>Hct <b>32</b></span><span>Hb <b>~10,7</b></span><span>lactato <b>3,9</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>Saturação boa = entrega boa? O número da oximetria mede a <em>fração</em> da Hb ocupada — não diz quanta Hb há para ocupar.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂. A SaO₂ é só um fator; o outro, a <b>Hb</b>, despencou (Hct 32 ≈ Hb 10,7). O produto cai mesmo com a saturação perfeita.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Conteúdo ≈ 14 mL/dL contra ~20 do normal: <b>~30% a menos</b> de O₂ por dL de sangue, com SpO₂ "tranquilizadora". A oximetria não vê a anemia.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A barra empilhada de CaO₂ mostra o tijolo grande (Hb-ligado) encolhendo e o farelo (dissolvido) que quase não conta. É o que o Instrumento desenha.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">conteúdo</b>, não a saturação. SpO₂ mede ocupação percentual da Hb presente; a anemia reduz a Hb <em>presente</em>. Por isso "satura 96%" convive com hipóxia tecidual — e a hiperóxia (subir a PaO₂) quase não ajuda, porque o que ela acrescenta é só a fração dissolvida, minúscula.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas da saturação ao conteúdo.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">SpO₂ 96% — a oxigenação está boa?</div><div class="aa">A saturação está boa. Mas SaO₂ é a <b>fração</b> da Hb ocupada por O₂, não a <b>quantidade</b> de O₂ no sangue.</div></div>
+      <div class="step"><div class="qq">Então o que a célula recebe?</div><div class="aa">O <b>conteúdo</b>: CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂. Repare que a Hb entra <b>multiplicando</b> — não é detalhe, é metade do produto.</div></div>
+      <div class="step"><div class="qq">Se a Hb cai pela metade e a SaO₂ fica em 100%?</div><div class="aa">O conteúdo ligado cai pela metade. Saturar 100% de pouca hemoglobina entrega pouco O₂. A oximetria continua dizendo 100%.</div></div>
+      <div class="step"><div class="qq">Anemia e hipoxemia: somam ou se multiplicam?</div><div class="aa">Se <b>multiplicam</b> — estão no mesmo produto (Hb·SaO₂). Anemia <em>com</em> hipoxemia derruba o conteúdo mais do que a soma ingênua sugeriria.</div></div>
+      <div class="step"><div class="qq">E o termo dissolvido, 0,003·PaO₂?</div><div class="aa">Minúsculo. Em PaO₂ 100 são ~0,3 mL/dL contra ~20 ligados (~1,5%). É a letra-miúda — existe, mas não resgata um anêmico.</div></div>
+      <div class="step"><div class="qq">Então hiperóxia conserta o anêmico?</div><div class="aa">Quase nada. Mesmo PaO₂ 500 só acrescenta ~1,2 mL/dL de dissolvido. Sem Hb, não há onde carregar O₂ — o tijolo que faltou não volta com mais pressão.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a barra de conteúdo ao vivo</h2>
+    <p class="lead">O conteúdo empilhado: <span style="color:var(--art)">O₂ ligado à Hb</span> (o tijolo) e <span style="color:var(--accent)">O₂ dissolvido</span> (o farelo). A <span style="color:var(--ink-dim)">barra-fantasma</span> é o normal de referência. Mexa a Hb e veja o tijolo encolher; mexa a PaO₂ e veja como o farelo mal se move.</p>
+    <div class="idcard">
+      <div class="formula"><span class="iso">CaO₂</span> = 1,34 · Hb · SaO₂ &nbsp;+&nbsp; 0,003 · PaO₂ &nbsp;<span style="color:var(--ink-faint)">· mL O₂ / dL</span></div>
+      <div class="subst" id="sub-ca"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotCa" class="plot" width="860" height="340" aria-label="barra empilhada do conteúdo arterial de oxigênio"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>O₂ ligado à Hb (1,34·Hb·SaO₂)</span>
+        <span><i style="background:var(--accent)"></i>O₂ dissolvido (0,003·PaO₂)</span>
+        <span><i style="background:#46506b"></i>normal de referência (~20,4)</span>
+      </div>
+      <div class="opbox" id="opbox-instr"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Hb <span class="v"><span id="vHb">15,0</span> g/dL</span></label><input id="iHb" type="range" min="3" max="20" step="0.1" value="15"></div>
+        <div class="ctrl"><label>SaO₂ <span class="v"><span id="vSat">98</span> %</span></label><input id="iSat" type="range" min="40" max="100" step="1" value="98"></div>
+        <div class="ctrl"><label>PaO₂ <span class="v"><span id="vPao2">95</span> mmHg</span></label><input id="iPao2" type="range" min="30" max="500" step="1" value="95"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">DC mantido fixo em 5 L/min para isolar o <em>conteúdo</em> (o débito é dos módulos 3–9). A DO₂ exibida é o conteúdo já entregue por minuto.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · quebre o conteúdo</h2>
+    <p class="lead">Cenários ou as três alavancas. O <b>veredito vira</b> e os banners dizem qual termo quebrou — anemia, hipoxemia, ou os dois se multiplicando.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="semente">Caso-semente</button>
+      <button class="preset" type="button" data-preset="anemia">Anemia isolada</button>
+      <button class="preset" type="button" data-preset="hipoxemia">Hipoxemia isolada</button>
+      <button class="preset" type="button" data-preset="hiperoxia">Hiperóxia (FiO₂ 100%)</button>
+      <button class="preset" type="button" data-preset="dupla">Anemia + hipoxemia</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotCaLab" class="plot" width="860" height="340" aria-label="barra empilhada de CaO₂ no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>ligado</span>
+        <span><i style="background:var(--accent)"></i>dissolvido</span>
+        <span><i style="background:#46506b"></i>normal (~20,4)</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Hb <span class="v"><span id="vlHb">15,0</span> g/dL</span></label><input id="lHb" type="range" min="3" max="20" step="0.1" value="15"></div>
+        <div class="ctrl"><label>SaO₂ <span class="v"><span id="vlSat">98</span> %</span></label><input id="lSat" type="range" min="40" max="100" step="1" value="98"></div>
+        <div class="ctrl"><label>PaO₂ <span class="v"><span id="vlPao2">95</span> mmHg</span></label><input id="lPao2" type="range" min="30" max="500" step="1" value="95"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Entrega de O₂ (DC fixo 5 L/min)</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-anemia"><b>Anemia mascarada.</b> A SaO₂ está boa, mas o tijolo encolheu: pouca Hb para carregar O₂. O conteúdo cai com a oximetria intacta.</div>
+      <div class="banner art" id="ban-multiplica"><b>Anemia × hipoxemia se multiplicam.</b> Hb baixa <em>e</em> SaO₂ baixa no mesmo produto — o conteúdo despenca mais do que cada quebra isolada.</div>
+      <div class="banner ven" id="ban-hiperoxia"><b>Hiperóxia rende pouco.</b> Subir a PaO₂ só engorda o farelo dissolvido. Sem Hb, não há onde carregar o O₂ — o tijolo não volta com pressão.</div>
+      <div class="banner ven" id="ban-semente"><b>O conteúdo do caso-semente.</b> Hb ~10,7 com SpO₂ 96%: ~14 mL/dL, cerca de 30% abaixo do normal. A saturação "tranquilizadora" sobre um conteúdo já crítico-limítrofe.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a barra de CaO₂ computada ao vivo. Leia o tijolo, o farelo e a barra-fantasma — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do conteúdo de O₂ — <b>nunca</b> dose, gatilho de transfusão, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A constante de Hüfner é fixada em <b>1,34</b> mL/g (a literatura varia 1,34–1,39); o conteúdo é exato <em>dentro</em> dessa convenção. → SaO₂ é tratada como saturação verdadeira; <b>co-oximetria real</b> (carboxi/metaHb) e o viés da SpO₂ na pele escura fogem do modelo. → O <b>DC é mantido fixo</b> em 5 L/min para isolar o conteúdo: na clínica, a anemia dispara compensação por DC↑ (a FC 120 do caso), que este módulo não simula. → <b>Procedimento (conceito físico):</b> a transfusão repõe <em>conteúdo</em> (Hb), não volume nem saturação — apresentado como mecanismo, <b>sem gatilho de hematócrito</b>. Os números são exatos dentro do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="mvp2-interativo.html">Braço 1 · Hb &amp; Severinghaus</a> — a curva que liga PaO₂ a SaO₂: de onde vem a saturação que aqui é só um fator.</div>
+    <div class="ponte">→ <a href="perfunde8.html">Módulo 8 · DO₂/VO₂ &amp; supply-dependence</a> — o conteúdo entra na entrega; abaixo do DO₂ crítico nasce o lactato.</div>
+    <div class="ponte">→ <a href="perfunde15.html">Módulo 15 · Hemorrágico × não-hemorrágico</a> — a hemorragia perde <em>conteúdo</em> (Hb) além de volume; repor um não é repor o outro.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 1
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model1.js inlined) ===================== -->
+<script>
+var K_HUFNER=1.34, K_DISSOLVIDO=0.003, DC_FIXO=5.0;
+function asFrac(sat){ return sat>1 ? sat/100 : sat; }
+function caO2(hb,sat,pao2){ var s=asFrac(sat); var ligado=K_HUFNER*hb*s, dissolvido=K_DISSOLVIDO*pao2;
+  return { ligado:ligado, dissolvido:dissolvido, total:ligado+dissolvido }; }
+function ca(hb,sat,pao2){ return caO2(hb,sat,pao2).total; }
+var CA_NORMAL=caO2(15,1.0,100).total;
+function fracDissolvida(hb,sat,pao2){ var c=caO2(hb,sat,pao2); return c.dissolvido/c.total; }
+function pctNormal(hb,sat,pao2){ return 100*ca(hb,sat,pao2)/CA_NORMAL; }
+function do2(dc,caTotal){ return dc*caTotal*10; }
+function do2At(hb,sat,pao2,dc){ if(dc===undefined) dc=DC_FIXO; return do2(dc, ca(hb,sat,pao2)); }
+function vereditoEntrega(d){ if(d>=800) return 'adequada'; if(d>=500) return 'limitrofe'; return 'critica'; }
+</script>
+
+<!-- ===================== UI · barra de CaO₂ + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+
+  var state={ hb:15, sat:98, pao2:95 };   // sat em %, engine normaliza
+  var PRESETS={
+    normal:    { hb:15,   sat:98,  pao2:95  },
+    semente:   { hb:10.7, sat:96,  pao2:70  },
+    anemia:    { hb:7.5,  sat:98,  pao2:95  },
+    hipoxemia: { hb:15,   sat:72,  pao2:42  },
+    hiperoxia: { hb:15,   sat:100, pao2:450 },
+    dupla:     { hb:7,    sat:82,  pao2:52  }
+  };
+  var CAMAX=24;   // teto do eixo de conteúdo (mL/dL)
+
+  // ---- desenho da barra empilhada de CaO₂ (núcleo gráfico, reusado no tutor) ----
+  function drawBar(ctx,W,H,P){
+    try{
+      var padL=46,padB=42,padT=16,padR=16, plotW=W-padL-padR, plotH=H-padT-padB;
+      var py=function(v){ return padT+plotH-(Math.max(0,Math.min(CAMAX,v))/CAMAX)*plotH; };
+      ctx.clearRect(0,0,W,H);
+      // grade + eixo Y (mL/dL)
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gy=0;gy<=CAMAX;gy+=4){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+plotW,py(gy)); ctx.stroke(); ctx.fillText(gy+'',16,py(gy)+3); }
+      ctx.save(); ctx.translate(12,padT+58); ctx.rotate(-Math.PI/2); ctx.fillText('CaO₂ (mL/dL)',0,0); ctx.restore();
+      // linha de referência normal
+      var refY=py(CA_NORMAL);
+      ctx.strokeStyle='#46506b'; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(padL,refY); ctx.lineTo(padL+plotW,refY); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#7d8aa6'; ctx.fillText('normal ~'+br(CA_NORMAL,1), padL+plotW-92, refY-5);
+
+      var bw=Math.min(150, plotW*0.26);
+      var slots=[ {x:padL+plotW*0.30, lbl:'NORMAL', P:{hb:15,sat:100,pao2:100}, ghost:true},
+                  {x:padL+plotW*0.66, lbl:'ATUAL',  P:P, ghost:false} ];
+      slots.forEach(function(s){
+        var c=caO2(s.P.hb,s.P.sat,s.P.pao2);
+        var x=s.x-bw/2, yBase=py(0), yLig=py(c.ligado), yTot=py(c.total);
+        // ligado (tijolo)
+        ctx.fillStyle = s.ghost ? 'rgba(229,57,78,.18)' : '#e5394e';
+        ctx.fillRect(x, yLig, bw, yBase-yLig);
+        // dissolvido (farelo) empilhado em cima
+        ctx.fillStyle = s.ghost ? 'rgba(255,207,92,.22)' : '#ffcf5c';
+        ctx.fillRect(x, yTot, bw, yLig-yTot);
+        // contorno
+        ctx.strokeStyle = s.ghost ? '#46506b' : '#26314a'; ctx.lineWidth=1;
+        ctx.strokeRect(x, yTot, bw, yBase-yTot);
+        // rótulos
+        ctx.fillStyle = s.ghost ? '#7d8aa6' : '#e9eef7'; ctx.font='11px monospace';
+        ctx.fillText(s.lbl, s.x-ctx.measureText(s.lbl).width/2, yBase+15);
+        ctx.fillStyle = s.ghost ? '#7d8aa6' : '#ffcf5c'; ctx.font='bold 12px monospace';
+        var tot=br(c.total,1); ctx.fillText(tot, s.x-ctx.measureText(tot).width/2, yTot-7);
+      });
+      return { c:caO2(P.hb,P.sat,P.pao2) };
+    }catch(e){ return { c:caO2(P.hb,P.sat,P.pao2) }; }
+  }
+  function drawOn(id,P){ var cv=$(id); if(!cv) return {}; var ctx; try{ctx=cv.getContext('2d');}catch(e){return {};} if(!ctx) return {}; return drawBar(ctx,cv.width||860,cv.height||340,P); }
+
+  function syncSliders(){ $('iHb').value=state.hb; $('iSat').value=state.sat; $('iPao2').value=state.pao2;
+    $('lHb').value=state.hb; $('lSat').value=state.sat; $('lPao2').value=state.pao2; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vHb').textContent=br(state.hb,1); $('vSat').textContent=state.sat; $('vPao2').textContent=state.pao2;
+    $('vlHb').textContent=br(state.hb,1); $('vlSat').textContent=state.sat; $('vlPao2').textContent=state.pao2;
+    var c=caO2(state.hb,state.sat,state.pao2), d=do2At(state.hb,state.sat,state.pao2);
+    var frac=fracDissolvida(state.hb,state.sat,state.pao2), pct=pctNormal(state.hb,state.sat,state.pao2);
+    var s=asFrac(state.sat);
+    $('sub-ca').innerHTML='= 1,34·<span class="num">'+br(state.hb,1)+'</span>·<span class="num">'+br(s,2)+'</span> + 0,003·<span class="num">'+state.pao2+'</span> = '
+      +br(c.ligado,2)+' + '+br(c.dissolvido,2)+' = <b style="color:var(--accent)">'+br(c.total,1)+'</b> mL/dL';
+    drawOn('plotCa', state);
+    $('opbox-instr').innerHTML='CaO₂ <b>'+br(c.total,1)+'</b> mL/dL ('+br(pct,0)+'% do normal) · dissolvido <b>'+br(frac*100,1)+'%</b> do total · DO₂ <b>'+br(d,0)+'</b> mL/min';
+    drawOn('plotCaLab', state);
+    $('opbox-lab').innerHTML='CaO₂ <b>'+br(c.total,1)+'</b> mL/dL · DO₂ <b>'+br(d,0)+'</b> mL/min · '+br(pct,0)+'% do conteúdo normal';
+
+    var ver=vereditoEntrega(d), vEl=$('lab-veredito'), klass, label;
+    if(ver==='adequada'){ klass='ok'; label='ENTREGA ADEQUADA'; }
+    else if(ver==='limitrofe'){ klass='lim'; label='ENTREGA LIMÍTROFE'; }
+    else { klass='crit'; label='ENTREGA CRÍTICA'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='DO₂ '+br(d,0)+' mL/min · CaO₂ '+br(c.total,1)+' mL/dL · '+br(pct,0)+'% do normal';
+
+    show($('ban-anemia'),   state.hb<11 && s>=0.90);
+    show($('ban-multiplica'),state.hb<12 && s<0.90);
+    show($('ban-hiperoxia'), state.pao2>150);
+    show($('ban-semente'),   state.hb>=10 && state.hb<=11.5 && s>=0.94 && s<=0.975);
+  }
+
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor gráfico ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    T.push({P:{hb:15,sat:98,pao2:95}, cap:'Barra de CaO₂. Tijolo vermelho = ligado; farelo âmbar = dissolvido; tracejado = normal.',
+      q:'Qual o conteúdo arterial de O₂ (CaO₂) aqui?',
+      o:['~20 mL/dL','~10 mL/dL','~5 mL/dL','~50 mL/dL'], a:0,
+      fb:'Hb 15, SaO₂ 98% → ~20 mL/dL: a barra ATUAL encosta no normal.', hint:'Topo da barra ATUAL.'});
+    T.push({P:{hb:10.7,sat:96,pao2:70}, cap:'Caso-semente: Hb 10,7 · SpO₂ 96%.',
+      q:'Com SpO₂ 96%, por que o conteúdo está ~30% abaixo do normal?',
+      o:['a Hb caiu — menos tijolo para carregar O₂','a saturação caiu','o dissolvido sumiu','a PaO₂ está alta'], a:0,
+      fb:'A saturação está boa; quem caiu foi a Hb (Hct 32). O tijolo encolheu apesar da oximetria.', hint:'Compare ATUAL e NORMAL: o que mudou foi a altura do tijolo.'});
+    T.push({P:{hb:15,sat:100,pao2:450}, cap:'Hiperóxia: SaO₂ 100%, PaO₂ 450.',
+      q:'A PaO₂ saltou para 450. O conteúdo, comparado ao normal, está:',
+      o:['quase igual — o dissolvido é minúsculo','dobrou','triplicou','caiu'], a:0,
+      fb:'0,003·450 ≈ 1,35 mL/dL: o farelo cresceu pouco. Hiperóxia move quase nada o conteúdo.', hint:'O farelo âmbar mal aparece mesmo com PaO₂ enorme.'});
+    T.push({P:{hb:7.5,sat:98,pao2:95}, cap:'Anemia isolada: Hb 7,5 · SaO₂ 98%.',
+      q:'A oximetria marca 98%. O conteúdo está:',
+      o:['baixo — saturação boa não compensa pouca Hb','normal','alto','indeterminável'], a:0,
+      fb:'Saturar bem pouca Hb entrega pouco O₂: ~10 mL/dL, metade do tijolo normal.', hint:'O tijolo está pela metade, com o topo cheio.'});
+    T.push({P:{hb:7,sat:82,pao2:52}, cap:'Anemia + hipoxemia: Hb 7 · SaO₂ 82%.',
+      q:'Anemia e hipoxemia juntas afetam o conteúdo de forma:',
+      o:['multiplicativa — estão no mesmo produto Hb·SaO₂','aditiva e leve','irrelevante','só a anemia conta'], a:0,
+      fb:'CaO₂ ∝ Hb·SaO₂: as duas quebras se multiplicam, e o tijolo despenca.', hint:'Tijolo curto E topo incompleto ao mesmo tempo.'});
+    T.push({P:{hb:15,sat:72,pao2:42}, cap:'Hipoxemia isolada: Hb 15 · SaO₂ 72%.',
+      q:'Com Hb normal mas SaO₂ 72%, o conteúdo está limitado por:',
+      o:['a saturação (o tijolo não enche até o topo)','a anemia','o dissolvido','a PaO₂ alta'], a:0,
+      fb:'Hb cheia, mas só 72% ocupada: o tijolo existe inteiro, porém não está cheio.', hint:'Largura/altura do tijolo presente, mas o preenchimento até a SaO₂ é parcial.'});
+    T.push({P:{hb:15,sat:98,pao2:95}, cap:'Decomponha a barra normal.',
+      q:'Que fração do conteúdo total vem do O₂ dissolvido?',
+      o:['~1–2%','~25%','~50%','~10%'], a:0,
+      fb:'0,3 de ~20,4 ≈ 1,5%. O dissolvido é a letra-miúda — existe, mas quase não conta.', hint:'O farelo âmbar contra o tijolo inteiro.'});
+    T.push({P:{hb:5,sat:99,pao2:100}, cap:'Anemia grave: Hb 5 · SaO₂ 99%.',
+      q:'SpO₂ 99% com Hb 5 g/dL significa entrega:',
+      o:['gravemente reduzida — pouquíssimo tijolo','adequada, pela saturação','normal','alta'], a:0,
+      fb:'A oximetria mostra 99% de quase nada. O conteúdo é ~⅓ do normal — a saturação não vê isso.', hint:'A barra ATUAL é um toco perto da NORMAL.'});
+    T.push({P:{hb:10.7,sat:96,pao2:70}, cap:'Caso-semente de novo. DC fixo 5 L/min.',
+      q:'A DO₂ (entrega/min) deste conteúdo, com DC 5, é cerca de:',
+      o:['~700 mL/min','~1000 mL/min','~350 mL/min','~1500 mL/min'], a:0,
+      fb:'DO₂ = DC·CaO₂·10 = 5·14·10 ≈ 700 mL/min: limítrofe, contra ~1000 do normal.', hint:'CaO₂ ~14 × 50.'});
+    T.push({P:{hb:15,sat:98,pao2:95}, cap:'Qual alavanca move QUANTO o conteúdo?',
+      q:'Para subir o conteúdo de um anêmico, o que mais rende é:',
+      o:['repor Hb (o tijolo)','subir a PaO₂ (o farelo)','subir a SaO₂ de 98 para 100','nada muda o conteúdo'], a:0,
+      fb:'O conteúdo mora na Hb. Repor o tijolo rende; engordar o farelo (PaO₂) quase não.', hint:'Qual termo domina a barra?'});
+    T.push({P:{hb:13,sat:90,pao2:60}, cap:'Hb 13 · SaO₂ 90% · PaO₂ 60 (o ombro da curva).',
+      q:'Comparado ao normal, este conteúdo está:',
+      o:['levemente reduzido (~85–90%)','dobrado','crítico (<50%)','idêntico ao normal'], a:0,
+      fb:'Hb quase normal e SaO₂ 90%: ~17,6 mL/dL, ~86% do normal. Quebra leve, ainda não crítica.', hint:'A barra ATUAL fica logo abaixo do tracejado.'});
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=230; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawBar(ctx,W||820,H||230,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ drawBar(ctx,cv.width||820,cv.height||230,item.P); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iHb','hb'],['iSat','sat'],['iPao2','pao2']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lHb','hb'],['lSat','sat'],['lPao2','pao2']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawBar=drawBar; window.activateTab=activate; window.setLabState=setState;
+    window.caFn=ca; window.caO2Fn=caO2; window.do2Fn=do2; window.do2AtFn=do2At;
+    window.fracFn=fracDissolvida; window.pctFn=pctNormal; window.vereditoFn=vereditoEntrega;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
