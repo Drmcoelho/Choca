@@ -1,0 +1,18 @@
+{
+  "name": "perfunde-choca",
+  "version": "0.0.0",
+  "private": true,
+  "description": "PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica. Harness de build: engine puro → teste Node → porta HTML → portão jsdom.",
+  "scripts": {
+    "test:0": "node build/m0/test0.node.js",
+    "test:4": "node build/m4/test4.node.js",
+    "test": "npm run test:0 && npm run test:4",
+    "validate:0": "node build/m0/validate0.js perfunde0.html",
+    "validate:4": "node build/m4/validate4.js perfunde4.html",
+    "validate": "npm run validate:0 && npm run validate:4",
+    "check": "npm test && npm run validate"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}
