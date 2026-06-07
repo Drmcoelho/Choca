@@ -111,9 +111,11 @@ function thermoCurve(coTrue, vReal, tInjReal, tb, n){
 // Damping POUPA a PAM (erro de PAM ⇒ nivelamento). Overshoot ⇒ subamortecido; blunting ⇒ superamortecido.
 function vereditoTrace(R){
   var flags=[];
+  // excursão sistólica acima da média — invariante ao offset hidrostático (que cancela em SBP−PAM).
+  var measExc=R.sbpMeas-R.mapMeas, truExc=R.sbpTrue-R.mapTrue;
   if(Math.abs(R.mapMeas - R.mapTrue) > 2.5) flags.push('zero');     // só o nível desloca a PAM
-  if(R.sbpMeas - R.sbpTrue > 5)  flags.push('sub');                 // overshoot sistólico
-  if(R.sbpTrue - R.sbpMeas > 5)  flags.push('super');               // achatamento sistólico
+  if(measExc - truExc > 5)  flags.push('sub');                      // overshoot sistólico (ressonância)
+  if(truExc - measExc > 5)  flags.push('super');                    // achatamento sistólico
   return { ok: flags.length===0, flags: flags };
 }
 

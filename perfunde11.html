@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 11 · POCUS hemodinâmico & acessos</title>
+<meta name="description" content="O ultrassom à beira do leito responde qual termo quebrou: IVC, derrame pericárdico, VD/D-shape, B-lines. E o rationale físico dos acessos (CVC, linha arterial, intraósseo). PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.imgcard{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+.imgcard img{display:block;width:100%;max-width:420px;margin:0 auto;border-radius:8px;background:#000}
+.credit{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);margin-top:8px;text-align:center}
+.credit a{color:var(--ink-dim)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:8px 0 16px}
+.wincard{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:10px}
+.wincard canvas{display:block;width:100%;height:150px;border-radius:6px;background:#06070b}
+.wincard .winlabel{font-family:var(--mono);font-size:.78rem;color:var(--accent);margin-top:8px}
+.wincard .windesc{font-size:.82rem;color:var(--ink-dim);margin-top:3px}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:8px 0 16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+canvas.plot{display:block;width:100%;height:240px;border-radius:8px;background:#06070b}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.2rem;font-weight:700;font-family:var(--mono);margin-top:3px;color:var(--accent)}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.procnote{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r-sm);padding:10px 14px;font-size:.84rem;color:var(--ink-dim);margin-top:10px} .procnote b{color:var(--warn)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 11 · POCUS hemodinâmico &amp; acessos</div>
+    <h1>O ultrassom responde qual termo quebrou</h1>
+    <p class="sub">À beira do leito, sem esperar o laboratório: cada janela responde uma pergunta da equação do braço — a IVC fala da pré-carga, o derrame do enchimento, o VD da pós-carga, as B-lines da congestão. E os acessos têm uma física por trás.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="60" y="20" width="160" height="14" rx="7" fill="none" stroke="var(--ven)" stroke-width="2"/>
+      <circle cx="380" cy="27" r="18" fill="none" stroke="var(--art)" stroke-width="2"/>
+      <path d="M520,40 L520,12 M560,40 L560,12 M600,40 L600,12" stroke="var(--accent)" stroke-width="2"/>
+      <path d="M700,14 L860,14 M700,24 L860,24 M700,34 L860,34" stroke="var(--ven)" stroke-width="1.4" opacity=".7"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Choque indiferenciado, sem laboratório ainda</h2>
+    <p class="lead">Cinco atos. A variável escondida é qual janela responde a pergunta certa. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Hipotensão grave, causa não óbvia. O laboratório vai demorar. O aparelho de ultrassom está ao lado.</p>
+      <div class="vitais"><span>PA <b>75/45</b></span><span>FC <b>122</b></span><span>causa <b>?</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Choque é choque — abre volume e pressor." Mas o termo quebrado muda tudo, e o US o revela em segundos.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Cada janela pergunta uma coisa: <em>derrame</em> com colapso de câmaras (tamponamento, obstrutivo), <em>VD dilatado/D-shape</em> (TEP, obstrutivo), <em>B-lines</em> (congestão), <em>IVC pequena colabável</em> (pré-carga baixa).</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>O US não dá um diagnóstico mágico — dá o <b>termo</b>: enchimento, pós-carga de VD, congestão, pré-carga. Mapeia direto na equação do braço (PAM = DC × RVS, Guyton, supply).</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A galeria de janelas e a IVC interativa mostram o que cada uma revela — e os acessos têm sua física. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é <b style="color:var(--art)">qual janela faz a pergunta certa</b>. O POCUS é um discriminador de <em>termo</em>: ele não substitui a equação — a alimenta com dados de beira de leito, em segundos, antes do laboratório.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Cada janela, uma pergunta.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">A IVC — o que ela responde?</div><div class="aa">A pressão de enchimento (pré-carga): <b>pequena e colabável</b> = pressão baixa (reserva provável); <b>grande e fixa</b> = pressão alta (congestão).</div></div>
+      <div class="step"><div class="qq">Vejo derrame pericárdico. E daí?</div><div class="aa">Se há <b>colapso diastólico</b> de câmaras (e pulso paradoxal), é <b>tamponamento</b> — obstrutivo: o enchimento está mecanicamente impedido.</div></div>
+      <div class="step"><div class="qq">O VD está dilatado, septo em D.</div><div class="aa"><b>Sobrecarga de pressão do VD</b> (TEP, pós-carga aguda de VD): o septo desvia para o VE (D-shape). Outro obstrutivo, outra física.</div></div>
+      <div class="step"><div class="qq">B-lines difusas no pulmão.</div><div class="aa"><b>Síndrome intersticial</b>: água extravascular ↑ (congestão). A favor de cardiogênico/sobrecarga, contra hipovolemia pura.</div></div>
+      <div class="step"><div class="qq">Então o US dá o diagnóstico?</div><div class="aa">Não — dá o <b>termo quebrado</b>. Integra com a equação: o achado vira a alavanca certa (mecanismo, módulo 28), não conduta automática.</div></div>
+      <div class="step"><div class="qq">E os acessos, por que entram aqui?</div><div class="aa">Porque têm <b>física</b>: a ponta do CVC na VCS (o que a PVC mede), o pneumotórax como complicação anatômica, a linha arterial que dá a PAM real, o intraósseo quando a veia colaba.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · as janelas e os acessos</h2>
+    <p class="lead">Uma imagem real (creditada) e esquemas computados. Mexa na IVC e veja a pressão de enchimento mudar.</p>
+
+    <h3>Imagem real · derrame pericárdico (subxifoide)</h3>
+    <div class="imgcard">
+      <img id="realimg" alt="Ultrassom mostrando derrame pericárdico"
+           src="https://commons.wikimedia.org/wiki/Special:FilePath/PericardialeffusionUS.PNG"
+           onerror="this.style.display='none';var f=document.getElementById('realfallback');if(f)f.style.display='block';">
+      <canvas id="realfallback" width="420" height="300" style="display:none;width:100%;max-width:420px;margin:0 auto;border-radius:8px;background:#06070b" aria-label="esquema de derrame pericárdico (fallback offline)"></canvas>
+      <div class="credit">Ultrassom de derrame pericárdico · Wikimedia Commons · CC BY-SA 3.0 ·
+        <a href="https://commons.wikimedia.org/wiki/File:PericardialeffusionUS.PNG" target="_blank" rel="noopener">ver fonte</a> · esquema offline se a imagem não carregar</div>
+    </div>
+
+    <h3>IVC interativa · a pré-carga à beira do leito</h3>
+    <div class="console">
+      <canvas id="plotIVC" class="plot" width="820" height="240" aria-label="IVC com variação respiratória"></canvas>
+      <div class="opbox" id="opbox-ivc"></div>
+      <div class="ctrls" style="margin-top:12px">
+        <div class="ctrl"><label>IVC máx (expiração) <span class="v"><span id="vDmax">2.0</span> cm</span></label><input id="iDmax" type="range" min="0.8" max="3.0" step="0.1" value="2.0"></div>
+        <div class="ctrl"><label>Colapsabilidade <span class="v"><span id="vCi">50</span> %</span></label><input id="iCi" type="range" min="0" max="90" step="5" value="50"></div>
+      </div>
+      <p class="hint" style="margin-top:10px">Pequena e muito colabável → pressão de enchimento baixa. Grande e fixa → pressão alta. (Leitura de mecanismo, não conduta.)</p>
+    </div>
+
+    <h3>Galeria de janelas (esquemas)</h3>
+    <div class="gallery" id="gallery">
+      <div class="wincard"><canvas id="win-subxifoide" width="300" height="200"></canvas><div class="winlabel">Subxifoide · derrame</div><div class="windesc">líquido anecoico ao redor; colapso diastólico = tamponamento.</div></div>
+      <div class="wincard"><canvas id="win-paraesternal" width="300" height="200"></canvas><div class="winlabel">Paraesternal · VD / D-shape</div><div class="windesc">VD dilatado empurra o septo (D) = sobrecarga de pressão de VD.</div></div>
+      <div class="wincard"><canvas id="win-pulmao" width="300" height="200"></canvas><div class="winlabel">Pulmão · A vs B</div><div class="windesc">A-lines = seco; ≥3 B-lines/campo = congestão.</div></div>
+      <div class="wincard"><canvas id="win-ivc" width="300" height="200"></canvas><div class="winlabel">IVC · M-mode</div><div class="windesc">variação respiratória do calibre = pressão de enchimento.</div></div>
+    </div>
+
+    <h3>Acessos · a física por trás (rationale, não decisão)</h3>
+    <div class="gallery" id="proc">
+      <div class="wincard"><canvas id="proc-cvc" width="300" height="200"></canvas><div class="winlabel">CVC</div><div class="windesc">ponta na VCS/junção AD; a PVC mede ali. Pneumotórax = complicação anatômica do trajeto.</div></div>
+      <div class="wincard"><canvas id="proc-art" width="300" height="200"></canvas><div class="winlabel">Linha arterial</div><div class="windesc">traçado pulsátil → a PAM "real" e a PPV; zero/posição do transdutor importam.</div></div>
+      <div class="wincard"><canvas id="proc-io" width="300" height="200"></canvas><div class="winlabel">Acesso intraósseo</div><div class="windesc">o plexo medular não colaba no choque — via de resgate quando a veia some.</div></div>
+    </div>
+    <div class="procnote"><b>Firewall:</b> técnica geral e <em>rationale</em> físico-anatômico como educação. <b>Nunca</b> indicação, escolha de sítio ou conduta para um paciente específico.</div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · qual janela responde?</h2>
+    <p class="lead">Escolha o cenário. O Lab destaca a janela que responde, o achado e o <b>termo</b> que ele aponta na equação do braço.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="tamponamento">Tamponamento</button>
+      <button class="preset" type="button" data-preset="tep">TEP / VD agudo</button>
+      <button class="preset" type="button" data-preset="edema">Edema / congestão</button>
+      <button class="preset" type="button" data-preset="hipovolemia">Hipovolemia</button>
+      <button class="preset" type="button" data-preset="ve_falencia">Falência de VE</button>
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+    </div>
+    <div class="console">
+      <canvas id="plotLab" class="plot" width="820" height="240" aria-label="janela do cenário selecionado"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Janela → achado → termo</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-derrame"><b>Derrame + colapso diastólico = tamponamento.</b> Obstrutivo: o líquido sob pressão impede o enchimento. Sinal clínico irmão: pulso paradoxal. (Ponte ao módulo 19.)</div>
+      <div class="banner art" id="ban-dshape"><b>VD dilatado, septo em D.</b> Sobrecarga aguda de pressão do VD (TEP): a pós-carga do VD disparou. McConnell reforça. (Ponte 17/19.)</div>
+      <div class="banner ven" id="ban-blines"><b>B-lines difusas.</b> Água extravascular alta — congestão. Contra hipovolemia pura; a favor de cardiogênico/sobrecarga.</div>
+      <div class="banner ven" id="ban-ivc"><b>IVC pequena e colabável.</b> Pressão de enchimento baixa — pré-carga reduzida, reserva provável (integrar com responsivo ≠ tolerante, módulo 5).</div>
+      <div class="banner art" id="ban-vefal"><b>VE dilatado e hipocontrátil.</b> O termo é a bomba (contratilidade) — cardiogênico. A alça PV em falência (módulo 7/16).</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha uma janela computada ao vivo. Reconheça o padrão e o termo — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o que cada janela revela e o <em>rationale</em> físico dos acessos — <b>nunca</b> indicação, dose ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Os <b>esquemas são desenhos originais</b> (representações didáticas), não imagens diagnósticas; a imagem real (derrame pericárdico) é do <b>Wikimedia Commons sob CC BY-SA 3.0</b>, creditada, com <b>fallback offline</b> caso não carregue — uma exceção deliberada e escopada ao princípio de zero-dependência do braço. → A estimativa de pressão pela IVC é <b>categórica</b> (regra ASE) e perde validade em ventilação espontânea forçada, VD doente, manobras; é leitura de mecanismo, não medida fina. → O POCUS real depende do operador e da janela; aqui o foco é o raciocínio "janela → termo".</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde10.html">Módulo 10 · Monitorização</a> — de onde vêm os números (linha arterial, termodiluição).</div>
+    <div class="ponte">→ <a href="perfunde19.html">Módulo 19 · Obstrutivo · tamponamento/TEP/pneumotórax</a> — os achados de derrame e D-shape em ação.</div>
+    <div class="ponte">→ <a href="perfunde5.html">Módulo 5 · Responsivo ≠ tolerante</a> — a IVC e a PPV como proxies de responsividade.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 11
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model11.js inlined) ===================== -->
+<script>
+function ivcCI(dmax,dmin){ if(dmax<=0)return 0; return (dmax-dmin)/dmax; }
+function rapFromIVC(dmaxCm,ciFrac){ if(dmaxCm<=2.1 && ciFrac>0.5) return {rap:3,faixa:'baixa'}; if(dmaxCm>2.1 && ciFrac<0.5) return {rap:15,faixa:'alta'}; return {rap:8,faixa:'intermediária'}; }
+function volumeHint(dmaxCm,ciFrac){ var f=rapFromIVC(dmaxCm,ciFrac).faixa; if(f==='baixa')return 'pressão de enchimento baixa — reserva de pré-carga provável'; if(f==='alta')return 'pressão de enchimento alta — pouca reserva, risco de congestão'; return 'zona cinzenta — integrar com clínica e outras janelas'; }
+function lungLines(b){ if(b>=3)return {padrao:'B-lines',leitura:'síndrome intersticial / congestão (EVLW↑)'}; return {padrao:'A-lines',leitura:'pulmão arejado (seco)'}; }
+function windowFor(s){ var M={ tamponamento:{janela:'subxifoide / paraesternal',achado:'derrame pericárdico + colapso diastólico de câmaras',termo:'enchimento (obstrutivo)'},
+ tep:{janela:'paraesternal / apical',achado:'VD dilatado, septo em D (D-shape), McConnell',termo:'pós-carga de VD (obstrutivo)'},
+ edema:{janela:'pulmão (BLUE)',achado:'B-lines difusas bilaterais',termo:'congestão / água extravascular'},
+ hipovolemia:{janela:'IVC',achado:'IVC pequena e muito colabável',termo:'pré-carga baixa'},
+ ve_falencia:{janela:'paraesternal (eixo longo)',achado:'VE dilatado e hipocontrátil',termo:'bomba (contratilidade)'},
+ normal:{janela:'varredura geral',achado:'IVC normal, sem derrame, A-lines, VE/VD normais',termo:'sem quebra evidente'} };
+ return M[s]||M.normal; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var reduce=true; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ reduce=true; }
+  var ivc={ dmax:2.0, ci:0.5 };
+
+  // ---------- desenhos esquemáticos das janelas ----------
+  function clearBg(ctx,W,H){ ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+    // setor de US (leque) decorativo
+    ctx.fillStyle='#0b0e16'; ctx.beginPath(); ctx.moveTo(W/2,4); ctx.lineTo(W*0.12,H-6); ctx.lineTo(W*0.88,H-6); ctx.closePath(); ctx.fill(); }
+  function drawSubxifoide(ctx,W,H,p){ p=p||{}; clearBg(ctx,W,H);
+    var cx=W/2, cy=H*0.56;
+    ctx.strokeStyle='#9aa6bd'; ctx.lineWidth=2;
+    // miocárdio (anel)
+    ctx.beginPath(); ctx.ellipse(cx,cy,W*0.16,H*0.26,0,0,Math.PI*2); ctx.stroke();
+    // câmaras
+    ctx.fillStyle='#11151f'; ctx.beginPath(); ctx.ellipse(cx,cy,W*0.10,H*0.16,0,0,Math.PI*2); ctx.fill();
+    if(p.effusion!==false){ // derrame anecoico ao redor (preto com halo)
+      ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.ellipse(cx,cy,W*0.22,H*0.34,0,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(63,130,230,.10)'; ctx.beginPath(); ctx.ellipse(cx,cy,W*0.22,H*0.34,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#3f82e6'; ctx.font='11px monospace'; ctx.fillText('derrame', cx+W*0.10, cy-H*0.30);
+    }
+  }
+  function drawParaesternal(ctx,W,H,p){ p=p||{}; clearBg(ctx,W,H);
+    var cx=W*0.56, cy=H*0.54, rLV=W*0.15;
+    // VE redondo
+    ctx.strokeStyle='#9aa6bd'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,rLV,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('VE',cx-7,cy+4);
+    // VD (crescente à esquerda); se D-shape, grande e empurra o septo
+    var dilated = p.dShape;
+    ctx.strokeStyle = dilated?'#e5394e':'#9aa6bd'; ctx.lineWidth=2;
+    var rRV = dilated? W*0.17 : W*0.10;
+    ctx.beginPath(); ctx.arc(cx-rLV*0.7, cy, rRV, Math.PI*0.55, Math.PI*1.45); ctx.stroke();
+    ctx.fillStyle=dilated?'#e5394e':'#5e6c87'; ctx.fillText('VD', cx-rLV-18, cy+4);
+    if(dilated){ // septo desviado (D-shape): achata a borda esquerda do VE
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(cx-rLV*0.55, cy-rLV*0.7); ctx.quadraticCurveTo(cx+rLV*0.15,cy, cx-rLV*0.55, cy+rLV*0.7); ctx.stroke();
+      ctx.fillStyle='#e5394e'; ctx.font='11px monospace'; ctx.fillText('septo em D', cx-W*0.02, cy-rLV-6);
+    }
+  }
+  function drawPulmao(ctx,W,H,p){ p=p||{}; clearBg(ctx,W,H);
+    // linha pleural
+    var yp=H*0.30; ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=2.2; ctx.beginPath(); ctx.moveTo(W*0.14,yp); ctx.lineTo(W*0.86,yp); ctx.stroke();
+    ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('pleura',W*0.14,yp-5);
+    if(p.bLines){ // B-lines verticais até o fundo
+      ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2;
+      [0.30,0.45,0.60,0.72].forEach(function(fx){ var x=W*fx; ctx.beginPath(); ctx.moveTo(x,yp); ctx.lineTo(x,H-6); ctx.stroke(); });
+      ctx.fillStyle='#3f82e6'; ctx.fillText('B-lines',W*0.62,yp+16);
+    } else { // A-lines horizontais (reverberação)
+      ctx.strokeStyle='#46506b'; ctx.lineWidth=1.6;
+      [0.5,0.7,0.9].forEach(function(fy){ var y=yp+(H-yp)*fy*0.7; ctx.beginPath(); ctx.moveTo(W*0.16,y); ctx.lineTo(W*0.84,y); ctx.stroke(); });
+      ctx.fillStyle='#5e6c87'; ctx.fillText('A-lines (seco)',W*0.30,H*0.62);
+    }
+  }
+  function drawIVC(ctx,W,H,p){ p=p||{}; clearBg(ctx,W,H);
+    var dmax=p.dmax!=null?p.dmax:2.0, ci=p.ci!=null?p.ci:0.5, phase=p.phase!=null?p.phase:0;
+    // calibre instantâneo oscila entre dmax e dmin com a "respiração"
+    var dmin=dmax*(1-ci);
+    var d = dmax - (dmax-dmin)*(0.5-0.5*Math.cos(phase*2*Math.PI)); // expira→inspira
+    var cy=H*0.52, scale=H*0.16; // cm→px
+    var half=Math.max(3, d*scale/2*1.6);
+    // veia (tubo horizontal) com parede
+    ctx.fillStyle='rgba(63,130,230,.12)'; ctx.fillRect(W*0.12, cy-half, W*0.76, half*2);
+    ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2; ctx.strokeRect(W*0.12, cy-half, W*0.76, half*2);
+    ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('IVC',W*0.04,cy+4);
+    ctx.fillStyle='#9aa6bd'; ctx.fillText('Ø '+br(d,1)+' cm', W*0.5-22, cy-half-6);
+    // marca de variação respiratória
+    ctx.fillStyle='#ffcf5c'; ctx.fillText('respiração →', W*0.62, H-10);
+  }
+  function drawCVC(ctx,W,H){ clearBg(ctx,W,H);
+    // VCS descendo até AD; cateter dentro; pulmão lateral (risco PTX)
+    ctx.strokeStyle='#3f82e6'; ctx.lineWidth=10; ctx.beginPath(); ctx.moveTo(W*0.35,10); ctx.lineTo(W*0.5,H*0.7); ctx.stroke();
+    ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(W*0.22,6); ctx.lineTo(W*0.5,H*0.66); ctx.stroke();
+    ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(W*0.5,H*0.66,4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('ponta VCS/AD',W*0.5+6,H*0.66);
+    ctx.fillText('VCS',W*0.3,H*0.4);
+    // pulmão (apex) — risco de PTX
+    ctx.strokeStyle='#e5394e'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.arc(W*0.78,H*0.5,W*0.16,Math.PI*0.6,Math.PI*1.4); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#e5394e'; ctx.fillText('ápice pulmonar (PTX)',W*0.52,H*0.92);
+  }
+  function drawArt(ctx,W,H){ clearBg(ctx,W,H);
+    // traçado arterial pulsátil
+    ctx.strokeStyle='#e5394e'; ctx.lineWidth=2; ctx.beginPath();
+    for(var i=0;i<=W;i++){ var t=i/W*4; var beat=(t%1); var p=beat<0.18?(beat/0.18):Math.exp(-(beat-0.18)*3); var y=H*0.7-p*H*0.42; if(i===0)ctx.moveTo(i,y); else ctx.lineTo(i,y); }
+    ctx.stroke();
+    ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('traçado arterial → PAM real, PPV',W*0.12,H*0.16);
+  }
+  function drawIO(ctx,W,H){ clearBg(ctx,W,H);
+    // osso (cortical + medular) + agulha
+    ctx.fillStyle='#1b2233'; ctx.fillRect(W*0.2,H*0.3,W*0.6,H*0.4);
+    ctx.fillStyle='#0e1320'; ctx.fillRect(W*0.2,H*0.42,W*0.6,H*0.16);
+    ctx.strokeStyle='#9aa6bd'; ctx.lineWidth=2; ctx.strokeRect(W*0.2,H*0.3,W*0.6,H*0.4);
+    ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(W*0.5,4); ctx.lineTo(W*0.5,H*0.5); ctx.stroke();
+    ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('cortical',W*0.22,H*0.36); ctx.fillText('medular (não colaba)',W*0.30,H*0.52);
+  }
+  function drawWindow(ctx,W,H,kind,p){
+    try{
+      if(kind==='subxifoide') return drawSubxifoide(ctx,W,H,p);
+      if(kind==='paraesternal') return drawParaesternal(ctx,W,H,p);
+      if(kind==='pulmao') return drawPulmao(ctx,W,H,p);
+      if(kind==='ivc') return drawIVC(ctx,W,H,p);
+      if(kind==='cvc') return drawCVC(ctx,W,H);
+      if(kind==='art') return drawArt(ctx,W,H);
+      if(kind==='io') return drawIO(ctx,W,H);
+    }catch(e){}
+  }
+  function drawOnId(id,kind,p){ var cv=$(id); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; drawWindow(ctx,cv.width||300,cv.height||200,kind,p); }
+
+  // ---------- IVC interativa + readout ----------
+  function recomputeIVC(phase){
+    var dmaxCm=ivc.dmax, ci=ivc.ci, rap=rapFromIVC(dmaxCm,ci), hint=volumeHint(dmaxCm,ci);
+    $('vDmax').textContent=br(dmaxCm,1); $('vCi').textContent=Math.round(ci*100);
+    var cv=$('plotIVC'); if(cv){ var ctx; try{ctx=cv.getContext('2d');}catch(e){} if(ctx) drawIVC(ctx,cv.width||820,cv.height||240,{dmax:dmaxCm,ci:ci,phase:phase||0}); }
+    $('opbox-ivc').innerHTML='IVC '+br(dmaxCm,1)+' cm · colapso '+Math.round(ci*100)+'% → pressão de enchimento <b>'+rap.faixa.toUpperCase()+'</b> (~'+rap.rap+' mmHg) · '+hint;
+  }
+
+  // ---------- Lab ----------
+  function setScenario(key){
+    var w=windowFor(key);
+    var kindMap={ tamponamento:'subxifoide', tep:'paraesternal', edema:'pulmao', hipovolemia:'ivc', ve_falencia:'paraesternal', normal:'ivc' };
+    var paramMap={ tamponamento:{effusion:true}, tep:{dShape:true}, edema:{bLines:true}, hipovolemia:{dmax:1.0,ci:0.8,phase:0.5}, ve_falencia:{dShape:false}, normal:{dmax:1.8,ci:0.45,phase:0} };
+    drawOnId('plotLab', kindMap[key], paramMap[key]);
+    $('lab-vbig').textContent = w.janela.toUpperCase();
+    $('lab-vnum').textContent = 'achado: '+w.achado+' · termo: '+w.termo;
+    show($('ban-derrame'), key==='tamponamento');
+    show($('ban-dshape'), key==='tep');
+    show($('ban-blines'), key==='edema');
+    show($('ban-ivc'), key==='hipovolemia');
+    show($('ban-vefal'), key==='ve_falencia');
+  }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); renderGallery(); recomputeIVC(0); renderTutorPlots(); maybeAnimate(); }
+
+  function renderGallery(){
+    drawOnId('win-subxifoide','subxifoide',{effusion:true});
+    drawOnId('win-paraesternal','paraesternal',{dShape:true});
+    drawOnId('win-pulmao','pulmao',{bLines:true});
+    drawOnId('win-ivc','ivc',{dmax:ivc.dmax,ci:ivc.ci,phase:0.3});
+    drawOnId('proc-cvc','cvc'); drawOnId('proc-art','art'); drawOnId('proc-io','io');
+    // fallback do derrame (caso a imagem real não carregue)
+    var fb=$('realfallback'); if(fb){ var c; try{c=fb.getContext('2d');}catch(e){} if(c) drawSubxifoide(c,fb.width||420,fb.height||300,{effusion:true}); }
+  }
+
+  // animação respiratória da IVC (rAF, respeita reduced-motion)
+  var t0=0, animOn=false;
+  function maybeAnimate(){ var active=$('tab-instrumento')&&$('tab-instrumento').getAttribute('aria-selected')==='true'; animOn=active&&!reduce;
+    if(animOn && !maybeAnimate._run){ maybeAnimate._run=true; requestAnimationFrame(frame); } }
+  function frame(){ if(!animOn){ maybeAnimate._run=false; return; } t0=(t0+0.004)%1; recomputeIVC(t0); requestAnimationFrame(frame); }
+
+  // ---------- tutor ----------
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    T.push({kind:'subxifoide',p:{effusion:true}, cap:'Janela subxifoide.',
+      q:'Líquido anecoico circundando o coração com colapso diastólico de câmaras indica:',
+      o:['tamponamento (obstrutivo)','hipovolemia','sobrecarga de VE','pulmão seco'], a:0,
+      fb:'Derrame + colapso diastólico = tamponamento: enchimento mecanicamente impedido.', hint:'O halo escuro ao redor.'});
+    T.push({kind:'paraesternal',p:{dShape:true}, cap:'Paraesternal eixo curto.',
+      q:'VD dilatado empurrando o septo (D-shape) aponta o termo:',
+      o:['pré-carga baixa','pós-carga de VD (ex.: TEP)','contratilidade do VE alta','congestão pulmonar'], a:1,
+      fb:'Sobrecarga aguda de pressão do VD desvia o septo: pós-carga de VD (obstrutivo).', hint:'O septo achatado em D.'});
+    T.push({kind:'pulmao',p:{bLines:true}, cap:'Janela pulmonar.',
+      q:'Múltiplas linhas verticais que vão até o fundo da tela (B-lines) indicam:',
+      o:['pulmão arejado normal','pneumotórax','congestão / água extravascular','derrame pericárdico'], a:2,
+      fb:'≥3 B-lines/campo = síndrome intersticial: congestão (EVLW↑).', hint:'Verticais até o fundo.'});
+    T.push({kind:'pulmao',p:{bLines:false}, cap:'Outra janela pulmonar.',
+      q:'Linhas horizontais de reverberação (A-lines), sem verticais, sugerem:',
+      o:['congestão grave','pulmão arejado (seco)','tamponamento','TEP maciço'], a:1,
+      fb:'A-lines = pulmão arejado; afasta congestão naquele campo.', hint:'Só horizontais.'});
+    T.push({kind:'ivc',p:{dmax:1.0,ci:0.8,phase:0.5}, cap:'IVC pequena, colapso marcado.',
+      q:'IVC fina e muito colabável traduz pressão de enchimento:',
+      o:['alta','baixa (reserva de pré-carga provável)','normal-alta','impossível inferir'], a:1,
+      fb:'Pequena + colabável → pressão baixa: pré-carga reduzida, reserva provável.', hint:'Calibre pequeno, varia muito.'});
+    T.push({kind:'ivc',p:{dmax:2.6,ci:0.1,phase:0.2}, cap:'IVC larga, quase sem variar.',
+      q:'IVC dilatada e fixa traduz pressão de enchimento:',
+      o:['baixa','alta (congestão, pouca reserva)','indeterminada','dependente da FC'], a:1,
+      fb:'Grande + fixa → pressão alta: pouca reserva, risco de congestão.', hint:'Larga e parada.'});
+    T.push({kind:'subxifoide',p:{effusion:false}, cap:'Subxifoide sem halo anecoico.',
+      q:'Ausência de derrame nesta janela, num choque, torna MENOS provável:',
+      o:['tamponamento','hipovolemia','sepse','TEP'], a:0,
+      fb:'Sem derrame, o tamponamento fica improvável — o US exclui rapidamente esse obstrutivo.', hint:'Não há líquido ao redor.'});
+    T.push({kind:'cvc',p:{}, cap:'Acesso venoso central.',
+      q:'A ponta ideal do CVC e uma complicação física do trajeto são:',
+      o:['no VD; sangramento gástrico','na VCS/junção AD; pneumotórax','na artéria; bradicardia','no fígado; hematúria'], a:1,
+      fb:'Ponta na VCS/junção do AD (onde a PVC mede); o ápice pulmonar no trajeto explica o pneumotórax.', hint:'Anatomia do trajeto.'});
+    T.push({kind:'art',p:{}, cap:'Linha arterial.',
+      q:'O traçado arterial invasivo fornece sobretudo:',
+      o:['a PAM real e a variação de pressão de pulso','a saturação venosa central','o débito por termodiluição','a pressão intracraniana'], a:0,
+      fb:'A linha arterial dá a PAM "real" (transdutor zerado) e a PPV — ponte ao módulo 5.', hint:'Pressão batimento a batimento.'});
+    T.push({kind:'io',p:{}, cap:'Acesso intraósseo.',
+      q:'O acesso intraósseo é via de resgate no choque porque:',
+      o:['é mais estéril que a veia','o plexo medular não colaba quando as veias somem','mede a PVC diretamente','dispensa qualquer punção'], a:1,
+      fb:'O espaço medular permanece patente quando as veias periféricas colabam — via rápida no choque.', hint:'O osso não colaba.'});
+    T.push({kind:'paraesternal',p:{dShape:false}, cap:'Paraesternal sem D-shape.',
+      q:'Um VE dilatado e visivelmente hipocontrátil aponta o termo:',
+      o:['bomba / contratilidade (cardiogênico)','pré-carga baixa','pós-carga de VD','congestão isolada'], a:0,
+      fb:'VE grande e fraco = falência de bomba (cardiogênico) — a alça PV em queda (módulos 7/16).', hint:'Ventrículo esquerdo fraco.'});
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=200; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawWindow(ctx,W||760,H||200,item.kind,item.p); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ drawWindow(ctx,cv.width||760,cv.height||200,item.kind,item.p); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    $('iDmax').addEventListener('input',function(){ ivc.dmax=parseFloat(this.value); recomputeIVC(0); renderGallery(); });
+    $('iCi').addEventListener('input',function(){ ivc.ci=parseFloat(this.value)/100; recomputeIVC(0); renderGallery(); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setScenario(b.getAttribute('data-preset')); }); });
+    TUTOR=buildTutor();
+    renderGallery(); recomputeIVC(0); setScenario('tamponamento'); document.querySelector('.preset').classList.add('on'); renderTutor();
+    window.drawWindow=drawWindow; window.activateTab=activate; window.setScenario=setScenario; window.recomputeIVC=recomputeIVC;
+    window.ivcCIFn=ivcCI; window.rapFromIVCFn=rapFromIVC; window.windowForFn=windowFor; window.lungLinesFn=lungLines;
+    window.TUTOR=TUTOR; window.__ivc=ivc;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>

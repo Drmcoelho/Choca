@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 15 · Hemorrágico × não-hemorrágico</title>
+<meta name="description" content="Os dois hipovolêmicos: hemorragia perde volume E conteúdo (Hb); a perda não-hemorrágica hemoconcentra. Repor volume ≠ repor conteúdo. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:210px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{font:inherit;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.seg button.on{border-color:var(--art);color:#ffd4da;background:rgba(229,57,78,.14)}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:180px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 15 · ↳ hemorrágico × não-hemorrágico</div>
+    <h1>Volume não é a mesma coisa que conteúdo</h1>
+    <p class="sub">Os dois hipovolêmicos perdem volume e derrubam o débito por Guyton. Mas só a hemorragia perde <em>conteúdo</em> — a massa de hemoglobina. A entrega leva dois golpes; e repor soro não é repor o que se perdeu.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="90" y="14" width="120" height="26" rx="4" fill="var(--art)" opacity=".5"/>
+      <rect x="90" y="14" width="60" height="26" rx="4" fill="var(--art)"/>
+      <rect x="560" y="14" width="120" height="26" rx="4" fill="var(--ven)" opacity=".5"/>
+      <rect x="560" y="14" width="120" height="26" rx="4" fill="none" stroke="var(--ven)" stroke-width="2"/>
+      <text x="90" y="52" fill="var(--ink-faint)" font-size="11" font-family="monospace">hemorragia: volume+conteúdo</text>
+      <text x="520" y="52" fill="var(--ink-faint)" font-size="11" font-family="monospace">não-hem: só volume</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Dois choques hipovolêmicos, perdas diferentes</h2>
+    <p class="lead">Cinco atos. A variável escondida é <em>o que</em> cada um perdeu. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · dois leitos</span><p>Ambos taquicárdicos, vasoconstritos, com índice de choque alto. Um sangrou; o outro desidratou (vômitos/terceiro espaço).</p>
+      <div class="vitais"><span>A · hemorragia</span><span>B · desidratação</span><span>ambos FC↑, PA limítrofe</span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Hipovolemia é hipovolemia — repõe volume nos dois." A macro até parece igual.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>A perda de <em>volume</em> derruba o DC nos dois (Guyton: Pmsf↓). Mas a hemorragia também perde <b>massa de Hb</b> → o <b>conteúdo</b> (CaO₂) cai. A desidratação até <b>hemoconcentra</b> (Hb sobe).</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>DO₂ = DC × CaO₂. Na hemorragia os <b>dois</b> fatores caem (duplo golpe); na não-hemorrágica, só o DC. Por isso, à mesma perda, a entrega da hemorragia é pior — e o que falta é diferente.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A comparação lado a lado e o painel de reposição mostram volume ≠ conteúdo. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">conteúdo (massa de Hb)</b>, não só o volume. Repor cristaloide restaura o fluxo mas <em>dilui</em> a Hb; na hemorragia, recuperar a DO₂ exige repor <b>conteúdo</b> (hemoderivado — conceito físico, sem gatilho). Ponte direta ao módulo 1 (CaO₂).</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas: volume e conteúdo são eixos diferentes.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">O que os dois têm em comum?</div><div class="aa">Perda de <b>volume</b> → Pmsf↓ → retorno venoso↓ → DC↓ (Guyton, módulo 4/14). A compensação (FC↑, RVS↑) segura a PA até desabar.</div></div>
+      <div class="step"><div class="qq">E o que os separa?</div><div class="aa">O <b>conteúdo</b>: a hemorragia perde massa de hemoglobina (CaO₂↓); a desidratação perde plasma/água e <b>concentra</b> a Hb (CaO₂ até sobe por dL).</div></div>
+      <div class="step"><div class="qq">Como isso afeta a entrega?</div><div class="aa">DO₂ = DC × CaO₂. Hemorragia: <b>os dois fatores caem</b> (duplo golpe). Não-hemorrágica: só o DC. À mesma perda, a DO₂ da hemorragia é menor.</div></div>
+      <div class="step"><div class="qq">Então repor volume resolve?</div><div class="aa">Restaura o <b>fluxo</b> (DC) — mas o cristaloide <b>dilui</b> a Hb, baixando ainda mais o conteúdo. Na hemorragia, fluxo sem conteúdo entrega pouco.</div></div>
+      <div class="step"><div class="qq">O que recupera o conteúdo?</div><div class="aa">Repor o que se perdeu: <b>hemoderivado</b> devolve volume <em>e</em> Hb (conceito físico — sem gatilho/dose). É a diferença entre encher o tanque e devolver os caminhões.</div></div>
+      <div class="step"><div class="qq">E o índice de choque?</div><div class="aa"><b>FC/PAS</b> sobe cedo (a FC dispara antes da PA cair) — detector precoce comum aos dois, que estima a gravidade da perda (classes de hemorragia).</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o duplo golpe e a reposição</h2>
+    <p class="lead">À mesma perda, compare a DO₂ dos dois tipos. Depois veja por que cristaloide e sangue não são intercambiáveis na hemorragia.</p>
+    <div class="plotwrap">
+      <canvas id="plotCompare" class="plot" width="820" height="210" aria-label="DO2 hemorragia vs não-hemorrágica"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>hemorrágico (volume+conteúdo)</span>
+        <span><i style="background:var(--ven)"></i>não-hemorrágico (só volume)</span>
+      </div>
+      <div class="opbox" id="opbox-cmp"></div>
+      <div class="ctrls" style="margin-top:12px">
+        <div class="ctrl"><label>Perda de volemia <span class="v"><span id="vLoss">30</span> %</span></label><input id="iLoss" type="range" min="0" max="50" step="1" value="30"></div>
+      </div>
+    </div>
+    <h3>Reposição numa hemorragia (35% de perda)</h3>
+    <div class="plotwrap">
+      <canvas id="plotResus" class="plot" width="820" height="210" aria-label="DO2 após cristaloide vs sangue"></canvas>
+      <div class="legend">
+        <span><i style="background:#5e6c87"></i>sem reposição</span>
+        <span><i style="background:var(--ven)"></i>cristaloide (volume, dilui Hb)</span>
+        <span><i style="background:var(--art)"></i>sangue (volume + conteúdo)</span>
+      </div>
+      <div class="opbox" id="opbox-resus"></div>
+      <p class="hint" style="margin-top:8px">Conceito físico: cristaloide repõe o tanque (DC↑) mas dilui o conteúdo; sangue devolve os dois. <b>Sem gatilho, sem dose.</b></p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · o que está faltando?</h2>
+    <p class="lead">Escolha o tipo de perda, a gravidade e a reposição. O <b>veredito</b> diz o que falta (volume × conteúdo) e os banners explicam o mecanismo.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="hem2">Hemorragia classe II</button>
+      <button class="preset" type="button" data-preset="hem3">Hemorragia classe III</button>
+      <button class="preset" type="button" data-preset="desid">Desidratação</button>
+      <button class="preset" type="button" data-preset="crist">Hemorragia + cristaloide</button>
+      <button class="preset" type="button" data-preset="sangue">Hemorragia + sangue</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotLab" class="plot" width="820" height="210" aria-label="cenário do Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Perda <span class="v"><span id="vlLoss">35</span> %</span></label><input id="lLoss" type="range" min="0" max="50" step="1" value="35"></div>
+        <div class="ctrl"><label>Tipo de perda</label><div class="seg" id="segTipo"><button data-tipo="hemorragia" class="on">hemorrágico</button><button data-tipo="naohemorragica">não-hemorrágico</button></div></div>
+        <div class="ctrl"><label>Reposição</label><div class="seg" id="segFluido"><button data-fluido="nenhum" class="on">nenhuma</button><button data-fluido="cristaloide">cristaloide</button><button data-fluido="sangue">sangue</button></div></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">O que falta</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-duplo"><b>Duplo golpe.</b> Hemorragia derruba DC (volume) E CaO₂ (perda de massa de Hb): a DO₂ cai pelos dois fatores. Repor só volume não recupera o conteúdo.</div>
+      <div class="banner ven" id="ban-hemoconc"><b>Hemoconcentração.</b> Perda não-hemorrágica concentra a Hb (CaO₂ por dL preservado ou maior): o que falta é sobretudo volume.</div>
+      <div class="banner ven" id="ban-crist"><b>Cristaloide.</b> Restaura o fluxo (Pmsf→DC), mas DILUI a Hb — na hemorragia, a DO₂ sobe pelo fluxo enquanto o conteúdo afunda.</div>
+      <div class="banner art" id="ban-sangue"><b>Conteúdo de volta.</b> O hemoderivado devolve volume E Hb — recupera a DO₂ pelos dois eixos (conceito físico, sem gatilho).</div>
+      <div class="banner art" id="ban-si"><b>Índice de choque elevado.</b> FC/PAS alto: a frequência denuncia a perda antes da PA cair (gravidade ≈ classe de hemorragia).</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a entrega computada ao vivo. Leia o que caiu (fluxo × conteúdo) — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a diferença entre volume e conteúdo — <b>nunca</b> gatilho transfusional, dose ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A queda de DC por perda é uma <b>curva compensação→colapso idealizada</b> (herda o Guyton do módulo 14), sem modelar tempo/realocação de fluidos. → A Hb aguda da hemorragia <b>antes da diluição</b> pode estar normal; aqui representamos o conteúdo <em>efetivo</em> após equilíbrio/reposição. → A hemoconcentração e a diluição usam fatores fixos (idealização). → Hemoderivado/cristaloide entram como <b>conceito físico</b> (devolver conteúdo × só volume), nunca gatilho. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde14.html">Módulo 14 · Choque hipovolêmico (categoria)</a> — o engine de Guyton/compensação que este capstone herda.</div>
+    <div class="ponte">→ <a href="perfunde1.html">Módulo 1 · Conteúdo de O₂ (CaO₂)</a> — por que perder Hb derruba a entrega.</div>
+    <div class="ponte">→ <a href="perfunde8.html">Módulo 8 · DO₂/VO₂</a> — a entrega que despenca cruza o DO₂ crítico → lactato.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 15
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model15.js inlined) ===================== -->
+<script>
+var Hb0=15, SAT=0.97, PAO2=95, DC0=5.0, HR0=75, SBP0=120, HB_CAP=19;
+function caO2(hb){ return 1.34*hb*SAT + 0.003*PAO2; }
+function do2(dc,hb){ return dc*caO2(hb)*10; }
+function hbAfter(lossFrac,tipo){ if(tipo==='hemorragia') return Hb0*(1-lossFrac); return Math.min(HB_CAP, Hb0/(1-Math.min(0.6,lossFrac))); }
+function dcAfter(lossFrac){ return Math.max(0.2*DC0, DC0*(1-1.4*Math.max(0,lossFrac-0.10))); }
+function do2At(lossFrac,tipo){ return do2(dcAfter(lossFrac), hbAfter(lossFrac,tipo)); }
+function hr(lossFrac){ return HR0+110*lossFrac; }
+function sbp(lossFrac){ return SBP0-250*Math.max(0,lossFrac-0.25); }
+function shockIndex(lossFrac){ return hr(lossFrac)/sbp(lossFrac); }
+function hemorrhageClass(lossFrac){ if(lossFrac<0.15)return{classe:'I',sinais:'compensada; FC/PA normais'}; if(lossFrac<0.30)return{classe:'II',sinais:'taquicardia, PA mantida'}; if(lossFrac<0.40)return{classe:'III',sinais:'taquicardia + hipotensão, confusão'}; return{classe:'IV',sinais:'crítica'}; }
+function falta(tipo){ return tipo==='hemorragia'?'volume E conteúdo (perdeu massa de Hb)':'sobretudo volume (conteúdo/Hb preservado)'; }
+function resuscitate(lossFrac,tipo,fluido){ var hb=hbAfter(lossFrac,tipo); var dc=Math.min(DC0, dcAfter(lossFrac)+0.9*(DC0-dcAfter(lossFrac)));
+  if(fluido==='cristaloide') hb=hb*0.72; else if(fluido==='sangue') hb=Math.min(Hb0, hb+(Hb0-hb)*0.7); return {dc:dc,hb:hb,do2:do2(dc,hb)}; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var DO2MAX=1100;
+  var inst={ loss:0.30 };
+  var lab={ loss:0.35, tipo:'hemorragia', fluido:'nenhum' };
+
+  // barras horizontais de DO₂ (rows: {label, do2, sub, color})
+  function drawBars(ctx,W,H,rows){
+    try{
+      var padL=14,padR=14,padT=16,padB=22, plotW=W-padL-padR;
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var x=function(v){ return padL+(Math.min(DO2MAX,v)/DO2MAX)*plotW; };
+      ctx.strokeStyle='#1c2436'; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.lineWidth=1;
+      for(var g=0;g<=DO2MAX;g+=200){ ctx.beginPath(); ctx.moveTo(x(g),padT); ctx.lineTo(x(g),H-padB); ctx.stroke(); ctx.fillText(g+'',x(g)-8,H-padB+14); }
+      // limiar de entrega normal ~1000
+      ctx.strokeStyle='#46506b'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(x(1000),padT); ctx.lineTo(x(1000),H-padB); ctx.stroke(); ctx.setLineDash([]);
+      var n=rows.length, gap=10, bh=(H-padT-padB - gap*(n-1))/n;
+      rows.forEach(function(r,i){ var y=padT+i*(bh+gap);
+        ctx.fillStyle=r.color; ctx.fillRect(padL,y, x(r.do2)-padL, bh);
+        ctx.fillStyle='#e9eef7'; ctx.font='12px monospace'; ctx.fillText(r.label+'  DO₂ '+Math.round(r.do2), padL+6, y+16);
+        if(r.sub){ ctx.fillStyle='#0c0e13'; ctx.font='11px monospace'; ctx.fillText(r.sub, padL+6, y+bh-7); }
+      });
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('DO₂ (mL/min) · tracejado = entrega normal ~1000', padL, H-6);
+    }catch(e){}
+  }
+  function drawOn(id,rows){ var cv=$(id); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; drawBars(ctx,cv.width||820,cv.height||210,rows); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function rowFor(loss,tipo,color){ var hb=hbAfter(loss,tipo), dc=dcAfter(loss);
+    return { label:(tipo==='hemorragia'?'hemorrágico':'não-hemorrágico'), do2:do2(dc,hb), color:color, sub:'DC '+br(dc,1)+' L/min · Hb '+br(hb,1)+' g/dL' }; }
+
+  function recompute(){
+    // Instrumento — comparação
+    $('vLoss').textContent=Math.round(inst.loss*100);
+    drawOn('plotCompare', [ rowFor(inst.loss,'hemorragia','#e5394e'), rowFor(inst.loss,'naohemorragica','#3f82e6') ]);
+    var dh=do2At(inst.loss,'hemorragia'), dn=do2At(inst.loss,'naohemorragica'), cl=hemorrhageClass(inst.loss), si=shockIndex(inst.loss);
+    $('opbox-cmp').innerHTML='perda '+Math.round(inst.loss*100)+'% · classe '+cl.classe+' · índice de choque '+br(si,2)+' · DO₂ hemorragia <b>'+Math.round(dh)+'</b> vs não-hem <b>'+Math.round(dn)+'</b> (duplo golpe = '+Math.round(dn-dh)+' a menos)';
+    // Reposição numa hemorragia 35%
+    var L=0.35, base=do2At(L,'hemorragia'), rc=resuscitate(L,'hemorragia','cristaloide'), rs=resuscitate(L,'hemorragia','sangue');
+    drawOn('plotResus', [
+      { label:'sem reposição', do2:base, color:'#5e6c87', sub:'DC '+br(dcAfter(L),1)+' · Hb '+br(hbAfter(L,'hemorragia'),1) },
+      { label:'cristaloide', do2:rc.do2, color:'#3f82e6', sub:'DC '+br(rc.dc,1)+' · Hb '+br(rc.hb,1)+' (diluiu)' },
+      { label:'sangue', do2:rs.do2, color:'#e5394e', sub:'DC '+br(rs.dc,1)+' · Hb '+br(rs.hb,1) }
+    ]);
+    $('opbox-resus').innerHTML='cristaloide repõe FLUXO (DC '+br(rc.dc,1)+') mas dilui a Hb ('+br(rc.hb,1)+') → DO₂ '+Math.round(rc.do2)+'; sangue devolve conteúdo → DO₂ <b>'+Math.round(rs.do2)+'</b>';
+    renderLab();
+  }
+
+  function renderLab(){
+    $('vlLoss').textContent=Math.round(lab.loss*100);
+    var hb, dc, d2;
+    if(lab.fluido==='nenhum'){ hb=hbAfter(lab.loss,lab.tipo); dc=dcAfter(lab.loss); d2=do2(dc,hb); }
+    else { var r=resuscitate(lab.loss,lab.tipo,lab.fluido); hb=r.hb; dc=r.dc; d2=r.do2; }
+    var cl=hemorrhageClass(lab.loss), si=shockIndex(lab.loss);
+    var color = lab.fluido==='sangue'?'#e5394e':(lab.fluido==='cristaloide'?'#3f82e6':(lab.tipo==='hemorragia'?'#e5394e':'#3f82e6'));
+    drawOn('plotLab', [ { label:(lab.tipo==='hemorragia'?'hemorrágico':'não-hemorrágico')+(lab.fluido!=='nenhum'?(' + '+lab.fluido):''), do2:d2, color:color, sub:'DC '+br(dc,1)+' · Hb '+br(hb,1) } ]);
+    $('opbox-lab').innerHTML='DO₂ <b>'+Math.round(d2)+'</b> mL/min · DC '+br(dc,1)+' · Hb '+br(hb,1)+' · classe '+cl.classe+' · IC '+br(si,2);
+
+    var vEl=$('lab-veredito'), klass = d2>=900?'ok':(d2>=550?'lim':'crit');
+    vEl.className='veredito '+klass;
+    $('lab-vbig').textContent = (lab.tipo==='hemorragia'?'HEMORRÁGICO':'NÃO-HEMORRÁGICO')+' · classe '+cl.classe;
+    $('lab-vnum').textContent = 'falta: '+falta(lab.tipo)+' · DO₂ '+Math.round(d2)+' mL/min';
+
+    show($('ban-duplo'), lab.tipo==='hemorragia');
+    show($('ban-hemoconc'), lab.tipo==='naohemorragica');
+    show($('ban-crist'), lab.fluido==='cristaloide');
+    show($('ban-sangue'), lab.fluido==='sangue');
+    show($('ban-si'), si>0.9);
+  }
+
+  function setLab(p){ for(var k in p){ if(p.hasOwnProperty(k)) lab[k]=p[k]; }
+    $('lLoss').value=lab.loss*100;
+    document.querySelectorAll('#segTipo button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-tipo')===lab.tipo); });
+    document.querySelectorAll('#segFluido button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fluido')===lab.fluido); });
+    renderLab(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    T.push({rows:[rowFor(0.30,'hemorragia','#e5394e'),rowFor(0.30,'naohemorragica','#3f82e6')], cap:'Mesma perda (30%), os dois tipos.',
+      q:'À mesma perda de volemia, por que a DO₂ da hemorragia é menor?',
+      o:['porque o DC cai mais na hemorragia','porque ela perde também conteúdo (Hb), não só volume','porque a FC sobe menos','por erro de medida'], a:1,
+      fb:'O DC cai igual (mesmo volume perdido); o que difere é o conteúdo — a Hb perdida (duplo golpe).', hint:'DC igual, Hb diferente.'});
+    T.push({rows:[rowFor(0.30,'naohemorragica','#3f82e6')], cap:'Perda não-hemorrágica (desidratação) 30%.',
+      q:'Na desidratação, o que acontece com a hemoglobina?',
+      o:['cai como na hemorragia','hemoconcentra (sobe por dL)','vai a zero','não muda nunca'], a:1,
+      fb:'Perde-se plasma/água, não hemácias → a Hb concentra. O que falta é sobretudo volume.', hint:'Sangue mais "concentrado".'});
+    T.push({rows:[{label:'sem reposição',do2:do2At(0.35,'hemorragia'),color:'#5e6c87',sub:'Hb '+br(hbAfter(0.35,'hemorragia'),1)},{label:'cristaloide',do2:resuscitate(0.35,'hemorragia','cristaloide').do2,color:'#3f82e6',sub:'Hb '+br(resuscitate(0.35,'hemorragia','cristaloide').hb,1)}], cap:'Hemorragia 35%, antes × após cristaloide.',
+      q:'O cristaloide, na hemorragia, faz o quê com o conteúdo?',
+      o:['repõe a Hb perdida','dilui a Hb (conteúdo cai ainda mais)','não altera a Hb','converte plasma em hemácias'], a:1,
+      fb:'Restaura o volume/fluxo, mas dilui a Hb — a DO₂ melhora pelo fluxo, não pelo conteúdo.', hint:'Encher o tanque ≠ devolver os caminhões.'});
+    T.push({rows:[{label:'cristaloide',do2:resuscitate(0.35,'hemorragia','cristaloide').do2,color:'#3f82e6'},{label:'sangue',do2:resuscitate(0.35,'hemorragia','sangue').do2,color:'#e5394e'}], cap:'Hemorragia 35%: cristaloide × sangue.',
+      q:'Para recuperar melhor a DO₂ numa hemorragia, o conceito físico aponta:',
+      o:['cristaloide é suficiente','repor conteúdo (sangue devolve volume e Hb)','reduzir a FC','elevar a pós-carga'], a:1,
+      fb:'O sangue devolve os dois eixos (volume e Hb); na hemorragia o conteúdo é parte do que faltou.', hint:'Volume ≠ conteúdo.'});
+    T.push({rows:[rowFor(0.30,'hemorragia','#e5394e')], cap:'DO₂ = DC × CaO₂.',
+      q:'Na hemorragia, a DO₂ cai por:',
+      o:['só pelo débito (volume)','só pelo conteúdo','pelos dois fatores (DC e CaO₂)','por nenhum'], a:2,
+      fb:'Volume↓ derruba o DC; perda de Hb derruba o CaO₂ — os dois fatores do produto caem.', hint:'É um produto.'});
+    T.push({rows:[rowFor(0.40,'hemorragia','#e5394e')], cap:'Perda de 40%.',
+      q:'Perda de ~40% da volemia corresponde a uma hemorragia classe:',
+      o:['I','II','III','IV'], a:3,
+      fb:'≥40% = classe IV (crítica). 30–40% = III; 15–30% = II; <15% = I.', hint:'A mais grave.'});
+    T.push({rows:[rowFor(0.20,'hemorragia','#e5394e'),rowFor(0.20,'naohemorragica','#3f82e6')], cap:'Perda menor (20%).',
+      q:'Com 20% de perda, o índice de choque (FC/PAS) tende a:',
+      o:['estar baixo, abaixo do normal','já estar elevado (FC sobe antes da PA cair)','ser irrelevante','depender só da Hb'], a:1,
+      fb:'A taquicardia precede a hipotensão: o índice de choque sobe cedo, detector precoce.', hint:'FC dispara primeiro.'});
+    T.push({rows:[rowFor(0.30,'naohemorragica','#3f82e6')], cap:'Desidratação 30%, sem sangramento.',
+      q:'Nesta perda não-hemorrágica, o que falta repor é sobretudo:',
+      o:['conteúdo (hemácias)','volume','frequência cardíaca','pós-carga'], a:1,
+      fb:'Conteúdo está preservado/concentrado; o défice é de volume.', hint:'Não perdeu Hb.'});
+    T.push({rows:[{label:'sangue',do2:resuscitate(0.35,'hemorragia','sangue').do2,color:'#e5394e',sub:'Hb '+br(resuscitate(0.35,'hemorragia','sangue').hb,1)}], cap:'Hemorragia 35% após sangue.',
+      q:'Repor conteúdo (hemoderivado) na hemorragia recupera a DO₂ porque:',
+      o:['só aumenta a frequência','devolve volume E Hb (os dois fatores)','reduz a demanda de O₂','dilui o lactato'], a:1,
+      fb:'Volume restaura o DC; Hb restaura o CaO₂ — a DO₂ sobe pelos dois eixos.', hint:'Os dois fatores do produto.'});
+    T.push({rows:[rowFor(0.30,'hemorragia','#e5394e'),rowFor(0.30,'naohemorragica','#3f82e6')], cap:'Síntese.',
+      q:'A lição central deste capstone é:',
+      o:['hipovolemia é tudo igual','volume ≠ conteúdo — o que faltou guia o que repor','só a PA importa','transfundir sempre'], a:1,
+      fb:'Decompor a perda em volume e conteúdo (DC × CaO₂) define o que recompor — mecanismo, não gatilho.', hint:'DO₂ = DC × CaO₂.'});
+    // espalha as corretas por A/B/C/D (gabarito não-enviesado), determinístico
+    var __tg=[2,1,3,0,2,3,1,0,3,2];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=180; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawBars(ctx,W||760,H||180,item.rows); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ drawBars(ctx,cv.width||760,cv.height||180,item.rows); }catch(e){} }); }
+
+  var PRESETS={
+    hem2:{loss:0.25,tipo:'hemorragia',fluido:'nenhum'},
+    hem3:{loss:0.35,tipo:'hemorragia',fluido:'nenhum'},
+    desid:{loss:0.30,tipo:'naohemorragica',fluido:'nenhum'},
+    crist:{loss:0.35,tipo:'hemorragia',fluido:'cristaloide'},
+    sangue:{loss:0.35,tipo:'hemorragia',fluido:'sangue'}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    $('iLoss').addEventListener('input',function(){ inst.loss=parseFloat(this.value)/100; recompute(); });
+    $('lLoss').addEventListener('input',function(){ lab.loss=parseFloat(this.value)/100; renderLab(); });
+    document.querySelectorAll('#segTipo button').forEach(function(b){ b.addEventListener('click',function(){ lab.tipo=b.getAttribute('data-tipo'); document.querySelectorAll('#segTipo button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); renderLab(); }); });
+    document.querySelectorAll('#segFluido button').forEach(function(b){ b.addEventListener('click',function(){ lab.fluido=b.getAttribute('data-fluido'); document.querySelectorAll('#segFluido button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); renderLab(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setLab(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawBars=drawBars; window.activateTab=activate; window.setLab=setLab;
+    window.do2AtFn=do2At; window.hbAfterFn=hbAfter; window.dcAfterFn=dcAfter; window.resuscitateFn=resuscitate; window.shockIndexFn=shockIndex; window.hemorrhageClassFn=hemorrhageClass; window.faltaFn=falta;
+    window.TUTOR=TUTOR; window.__inst=inst; window.__lab=lab;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>

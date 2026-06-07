@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 10 · Monitorização hemodinâmica</title>
+<meta name="description" content="De onde vêm os números — e por que mentem. O transdutor mal-zerado desloca a PAM; o amortecimento distorce a SBP mas poupa a PAM; a termodiluição infla o DC por erro técnico. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:300px;border-radius:8px;background:#0a0c11}
+canvas.plot.short{height:220px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.96rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ven);margin:18px 0 6px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:200px;border-radius:8px;background:#0a0c11;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 10 · Monitorização hemodinâmica</div>
+    <h1>O número que mente</h1>
+    <p class="sub">Todo número do monitor é uma <em>medição</em> — passou por uma coluna de água, um tubo elástico e um algoritmo. Cada etapa tem uma física, e cada física tem um erro. A PAM sobrevive ao amortecimento; o transdutor mal-zerado a corrompe; a termodiluição infla o débito com um descuido de 3&nbsp;mL.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,46 40,46 70,8 95,30 110,26 140,44 150,46 190,46 220,8 245,30 260,26 290,44 300,46 340,46 370,8 395,30 410,26 440,44 450,46 490,46 520,8 545,30 560,26 590,44 600,46 640,46 670,8 695,30 710,26 740,44 750,46 790,46 820,8 845,30 860,26 890,44 900,46"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>A PA "despencou" e o DC "subiu"</h2>
+    <p class="lead">Cinco atos. A variável escondida não está no paciente — está no <em>aparelho</em>. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Paciente estável vira de decúbito; o monitor passa a marcar PA 92/58. A equipe cogita um bolus. Nada mudou no paciente — mudou a <b>altura do transdutor</b>, que ficou acima do eixo flebostático.</p>
+      <div class="vitais"><span>PA monitor <b>92/58</b></span><span>PA real <b>~112/78</b></span><span>transdutor <b>+13 cm</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>Confia-se no número. Mas um transdutor 13 cm acima do eixo subtrai ~10 mmHg de <em>tudo</em> — SBP, DBP e a PAM juntas. A queda é hidrostática, não hemodinâmica.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Mais tarde, a linha arterial parece "afiada demais": SBP 168, pulso largo. É <b>subamortecimento</b> — o sistema cateter-transdutor ressoa e <em>superestima</em> a sistólica. A PAM, porém, mal se altera.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Termodiluição: DC 7,2 L/min "ótimo". Mas injetaram 7 mL em vez de 10, e morno. Menos frio → área menor → o computador, que divide por área, devolve um DC <b>falsamente alto</b>.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>Cada número tem uma origem física e um modo de mentir. O Instrumento mostra o traçado distorcido e a curva de termodiluição ao vivo.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">cadeia de medição</b>. Nivelamento (coluna de água) desloca a PAM. Amortecimento (resposta de 2ª ordem) distorce SBP/DBP mas <em>poupa</em> a PAM — por isso ela é o número mais confiável sob artefato dinâmico (ponte ao módulo 9). Termodiluição inverte com a área: qualquer erro que reduza a área (volume a menos, injetado morno) <em>infla</em> o DC.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas da medição ao artefato.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">De onde vem o número da pressão?</div><div class="aa">De uma coluna de líquido sobre um transdutor. Ele mede a pressão <b>no nível em que está</b> — não onde o paciente está.</div></div>
+      <div class="step"><div class="qq">E se o transdutor está alto ou baixo?</div><div class="aa">Cada cm de desnível vale ~0,74 mmHg. Acima do eixo → lê <b>menos</b>; abaixo → lê <b>mais</b>. O erro desloca SBP, DBP e <b>PAM</b> por igual.</div></div>
+      <div class="step"><div class="qq">Por que o traçado às vezes "exagera" a sistólica?</div><div class="aa">O sistema cateter-transdutor é de <b>2ª ordem</b> (massa-mola-amortecedor). Pouco amortecimento → ressoa → <b>overshoot</b> sistólico e pulso largo.</div></div>
+      <div class="step"><div class="qq">E quando o traçado fica "redondo", sem incisura?</div><div class="aa"><b>Superamortecimento</b> (bolha de ar, coágulo, tubo longo): a sistólica é <em>subestimada</em>, a diastólica superestimada, o pulso estreito.</div></div>
+      <div class="step"><div class="qq">Algum número resiste ao amortecimento?</div><div class="aa">A <b>PAM</b>. Distorcer a forma de onda redistribui a energia, mas a <em>média</em> quase não muda. Por isso a PAM é o número a confiar quando a onda está feia.</div></div>
+      <div class="step"><div class="qq">Como saber em que regime estou?</div><div class="aa">O <b>teste da onda quadrada</b> (fast-flush): solte o flush e conte as oscilações. Muitas e lentas a decair → subamortecido; nenhuma → superamortecido.</div></div>
+      <div class="step"><div class="qq">E o DC da termodiluição?</div><div class="aa">DC = K·V·(Tb−Tinj)/<b>área</b>. O computador <b>divide pela área</b> da curva de frio. Menos volume ou injetado morno → menos área → DC <b>falsamente alto</b>.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o traçado e a curva ao vivo</h2>
+    <p class="lead">A <span style="color:var(--art)">onda medida</span> sobre a <span style="color:var(--ink-dim)">pressão verdadeira</span>. Mexa o <b>nível</b> e veja tudo deslizar; mexa o <b>amortecimento</b> e veja a sistólica distorcer enquanto a PAM resiste.</p>
+    <div class="idcard">
+      <div class="formula"><span class="iso">PAM</span> = média do traçado &nbsp;<span style="color:var(--ink-faint)">· robusta ao amortecimento; deslocada pelo nível</span></div>
+      <div class="formula"><span class="iso">DC</span> = K · V · (Tb − Tinj) / <b style="color:var(--art)">AUC</b> &nbsp;<span style="color:var(--ink-faint)">· o computador divide pela área da curva de frio</span></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotWave" class="plot" width="860" height="300" aria-label="traçado de pressão arterial medido vs verdadeiro"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>medido (monitor)</span>
+        <span><i style="background:#46506b"></i>verdadeiro</span>
+        <span><i style="background:var(--accent)"></i>PAM</span>
+      </div>
+      <div class="opbox" id="opbox-wave"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Nível do transdutor <span class="v"><span id="vLevel">0</span> cm</span></label><input id="iLevel" type="range" min="-20" max="20" step="1" value="0"></div>
+        <div class="ctrl"><label>Amortecimento ζ <span class="v"><span id="vZeta">0,55</span></span></label><input id="iZeta" type="range" min="0.05" max="1.4" step="0.01" value="0.55"></div>
+        <div class="ctrl"><label>Freq. natural fn <span class="v"><span id="vFn">22</span> Hz</span></label><input id="iFn" type="range" min="5" max="35" step="1" value="22"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Nível + = transdutor acima do eixo flebostático (lê menos). ζ baixo = subamortecido (ressoa); ζ alto = superamortecido (achata). fn baixo aproxima a ressonância das harmônicas do pulso.</p>
+    </div>
+
+    <div class="subhead">Termodiluição · a área que vira débito</div>
+    <div class="plotwrap">
+      <canvas id="plotThermo" class="plot short" width="860" height="220" aria-label="curva de termodiluição, área sob a curva"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ven)"></i>curva de frio (ΔT)</span>
+        <span><i style="background:var(--accent)"></i>área (AUC) → DC ∝ 1/AUC</span>
+      </div>
+      <div class="opbox" id="opbox-thermo"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Volume injetado <span class="v"><span id="vVinj">10,0</span> mL</span></label><input id="iVinj" type="range" min="4" max="10" step="0.5" value="10"></div>
+        <div class="ctrl"><label>Temp. do injetado <span class="v"><span id="vTinj">4</span> °C</span></label><input id="iTinj" type="range" min="2" max="24" step="1" value="4"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Nominal: 10 mL a 4 °C, sangue 37 °C. O computador <em>supõe</em> o nominal. Injetar menos ou mais quente reduz a área real → DC superestimado.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · confiável ou artefato?</h2>
+    <p class="lead">Cenários ou as três alavancas do traçado. O <b>veredito vira</b> e os banners dizem qual física quebrou — e se a PAM ainda pode ser confiada.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="confiavel">Confiável</button>
+      <button class="preset" type="button" data-preset="baixo">Transdutor baixo (lê alto)</button>
+      <button class="preset" type="button" data-preset="alto">Transdutor alto (lê baixo)</button>
+      <button class="preset" type="button" data-preset="sub">Subamortecido</button>
+      <button class="preset" type="button" data-preset="super">Superamortecido</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotWaveLab" class="plot" width="860" height="300" aria-label="traçado de pressão no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>medido</span>
+        <span><i style="background:#46506b"></i>verdadeiro</span>
+        <span><i style="background:var(--accent)"></i>PAM</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Nível <span class="v"><span id="vlLevel">0</span> cm</span></label><input id="lLevel" type="range" min="-20" max="20" step="1" value="0"></div>
+        <div class="ctrl"><label>ζ <span class="v"><span id="vlZeta">0,55</span></span></label><input id="lZeta" type="range" min="0.05" max="1.4" step="0.01" value="0.55"></div>
+        <div class="ctrl"><label>fn <span class="v"><span id="vlFn">22</span> Hz</span></label><input id="lFn" type="range" min="5" max="35" step="1" value="22"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Confiabilidade do traçado</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-zero"><b>Mal-zerado / mal-nivelado.</b> Offset hidrostático constante: desloca SBP, DBP <em>e a PAM</em> por igual. Este é o único artefato que corrompe a PAM — o número some junto.</div>
+      <div class="banner art" id="ban-sub"><b>Subamortecido.</b> O sistema ressoa: <em>overshoot</em> sistólico e pulso artificialmente largo. A SBP do monitor está acima da real.</div>
+      <div class="banner art" id="ban-super"><b>Superamortecido.</b> Onda redonda, sem incisura: sistólica subestimada, diastólica superestimada, pulso estreito. Bolha de ar, coágulo ou tubo longo.</div>
+      <div class="banner ven" id="ban-mapok"><b>A PAM resistiu.</b> O amortecimento redistribui a forma, mas a <em>média</em> quase não muda — confie na PAM, não na sistólica. (Ponte ao módulo 9.)</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha um traçado, um fast-flush ou uma curva de termodiluição computados ao vivo. Leia o artefato — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se de onde vêm os números e como mentem — <b>nunca</b> dose, alvo, ou conduta para um paciente específico, nem manual de operação de um aparelho real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ O traçado é gerado por um sistema <b>linear de 2ª ordem</b> sobre um pulso idealizado: captura overshoot/blunting e a robustez da PAM, mas a artéria real tem reflexão de onda, amplificação distal e não-linearidades que o modelo não traz. → A PAM é "robusta", não imune: amortecimentos extremos a movem alguns mmHg. → A <b>termodiluição</b> usa a relação exata DC ∝ 1/AUC (Stewart-Hamilton) com forma de curva fixa; recirculação e arritmia, que sujam a área real, ficam de fora. → <b>Procedimento (rationale, não manual):</b> linha arterial, cateter de termodiluição/PiCCO/Swan aparecem como <em>de onde vem o número e por que erra</em> — anatomia e técnica como educação, <b>sem decisão para um paciente</b>. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde9.html">Módulo 9 · PAM = DC × RVS</a> — por que a PAM é o número-âncora: a medida que o amortecimento poupa é a que decompõe o choque. <span class="pend">(ponte ativa quando o 9 publicar)</span></div>
+    <div class="ponte">→ <a href="perfunde11.html">Módulo 11 · POCUS &amp; acessos</a> — a outra fonte de número à beira do leito; e o acesso (linha arterial, CVC) de onde a pressão é transduzida. <span class="pend">(ponte pendente)</span></div>
+    <div class="ponte">→ <a href="perfunde5.html">Módulo 5 · Responsivo ≠ tolerante</a> — a PPV/VVS que o módulo 5 lê depende de um traçado <em>fiel</em>: artefato dinâmico falsifica a variação respiratória.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 10
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model10.js inlined) ===================== -->
+<script>
+var MMHG_PER_CMH2O=0.73556, KC_THERMO=1.0;
+function rawShape(u){ function g(c,w){ var z=(u-c)/w; return Math.exp(-z*z); }
+  return 1.00*g(0.16,0.052) + 0.42*g(0.34,0.075) - 0.15*g(0.262,0.022); }
+var SHAPE_MIN,SHAPE_MAX;
+(function(){ var mn=1e9,mx=-1e9; for(var i=0;i<1000;i++){ var r=rawShape(i/1000); if(r<mn)mn=r; if(r>mx)mx=r; } SHAPE_MIN=mn; SHAPE_MAX=mx; })();
+function pTrueAt(u,P){ var n=(rawShape(u)-SHAPE_MIN)/(SHAPE_MAX-SHAPE_MIN); return P.dbp + n*(P.sbp-P.dbp); }
+function levelOffset(levelCm){ return -MMHG_PER_CMH2O*levelCm; }
+function measuredCycle(P){
+  var T=60/P.hr, wn=2*Math.PI*P.fn, z=P.zeta, off=levelOffset(P.levelCm);
+  var N=600, dt=T/N, ncyc=6, total=ncyc*N;
+  var y=pTrueAt(0,P), v=0, t=0;
+  function xAt(tt){ var u=(tt/T)%1; if(u<0)u+=1; return pTrueAt(u,P); }
+  function acc(yy,vv,tt){ return wn*wn*(xAt(tt)-yy) - 2*z*wn*vv; }
+  var meas=new Array(N), tru=new Array(N), capStart=total-N;
+  var sbpM=-1e9,dbpM=1e9,sumM=0, sbpT=-1e9,dbpT=1e9,sumT=0, ci=0;
+  for(var i=0;i<total;i++){
+    if(i>=capStart){ var u=(t/T)%1; if(u<0)u+=1; var xt=pTrueAt(u,P); var ym=y+off;
+      meas[ci]=ym; tru[ci]=xt; ci++;
+      if(ym>sbpM)sbpM=ym; if(ym<dbpM)dbpM=ym; sumM+=ym;
+      if(xt>sbpT)sbpT=xt; if(xt<dbpT)dbpT=xt; sumT+=xt; }
+    var k1y=v,k1v=acc(y,v,t);
+    var k2y=v+0.5*dt*k1v,k2v=acc(y+0.5*dt*k1y,v+0.5*dt*k1v,t+0.5*dt);
+    var k3y=v+0.5*dt*k2v,k3v=acc(y+0.5*dt*k2y,v+0.5*dt*k2v,t+0.5*dt);
+    var k4y=v+dt*k3v,k4v=acc(y+dt*k3y,v+dt*k3v,t+dt);
+    y+=dt/6*(k1y+2*k2y+2*k3y+k4y); v+=dt/6*(k1v+2*k2v+2*k3v+k4v); t+=dt;
+  }
+  return { meas:meas, tru:tru, N:N, sbpMeas:sbpM, dbpMeas:dbpM, mapMeas:sumM/N,
+    sbpTrue:sbpT, dbpTrue:dbpT, mapTrue:sumT/N, offset:off };
+}
+function fastFlush(P,dur){
+  var wn=2*Math.PI*P.fn, z=P.zeta, base=P.dbp!==undefined?P.dbp:20;
+  dur=dur||0.6; var dt=1/8000, n=Math.round(dur/dt);
+  var y=300,v=0,samp=[],peaks=[],prev2=null,prev1=null;
+  for(var i=0;i<n;i++){
+    var k1y=v,k1v=wn*wn*(base-y)-2*z*wn*v;
+    var k2y=v+0.5*dt*k1v,k2v=wn*wn*(base-(y+0.5*dt*k1y))-2*z*wn*(v+0.5*dt*k1v);
+    var k3y=v+0.5*dt*k2v,k3v=wn*wn*(base-(y+0.5*dt*k2y))-2*z*wn*(v+0.5*dt*k2v);
+    var k4y=v+dt*k3v,k4v=wn*wn*(base-(y+dt*k3y))-2*z*wn*(v+dt*k3v);
+    y+=dt/6*(k1y+2*k2y+2*k3y+k4y); v+=dt/6*(k1v+2*k2v+2*k3v+k4v); samp.push(y);
+    if(prev2!==null && prev1>prev2 && prev1>=y && (prev1-base)>0.5) peaks.push(prev1-base);
+    prev2=prev1; prev1=y;
+  }
+  var mz=null,mfn=null;
+  if(peaks.length>=2){ var d=Math.log(peaks[0]/peaks[1]); mz=d/Math.sqrt(4*Math.PI*Math.PI+d*d); mfn=P.fn; }
+  return { samp:samp, dt:dt, peaks:peaks, measuredZeta:mz, measuredFn:mfn };
+}
+function coComputed(coTrue,vReal,tInjReal,vNom,tInjNom,tb){ if(tb===undefined)tb=37;
+  return coTrue*(vNom*(tb-tInjNom))/(vReal*(tb-tInjReal)); }
+function thermoCurve(coTrue,vReal,tInjReal,tb,n){ if(tb===undefined)tb=37; n=n||120;
+  var auc=KC_THERMO*vReal*(tb-tInjReal)/coTrue;
+  var a=2.0,tau=1.4,dur=12,baseInt=Math.pow(tau,a+1)*2, A=auc/baseInt, arr=new Array(n);
+  for(var i=0;i<n;i++){ var t=i/(n-1)*dur; arr[i]=-A*Math.pow(t,a)*Math.exp(-t/tau); }
+  return { curve:arr, auc:auc, dur:dur }; }
+function vereditoTrace(R){ var flags=[];
+  var measExc=R.sbpMeas-R.mapMeas, truExc=R.sbpTrue-R.mapTrue;
+  if(Math.abs(R.mapMeas-R.mapTrue)>2.5) flags.push('zero');
+  if(measExc-truExc>5) flags.push('sub');
+  if(truExc-measExc>5) flags.push('super');
+  return { ok:flags.length===0, flags:flags }; }
+</script>
+
+<!-- ===================== UI · traçado + termodiluição + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+
+  var V_NOM=10, T_NOM=4, TB=37;
+  var state={ sbp:120, dbp:80, hr:75, levelCm:0, zeta:0.55, fn:22, vReal:10, tInjReal:4, coTrue:5 };
+  var PRESETS={
+    confiavel:{ levelCm:0,   zeta:0.55, fn:22 },
+    baixo:    { levelCm:-12, zeta:0.55, fn:22 },
+    alto:     { levelCm:12,  zeta:0.55, fn:22 },
+    sub:      { levelCm:0,   zeta:0.12, fn:13 },
+    super:    { levelCm:0,   zeta:1.10, fn:7  }
+  };
+  var curR=null;   // measuredCycle atual (compartilhado instrumento/lab)
+  var reduce=false; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // ---------- desenho: traçado de pressão ----------
+  function drawWave(ctx,W,H,R,scanFrac){
+    try{
+      var padL=44,padB=22,padT=12,padR=12, pw=W-padL-padR, ph=H-padT-padB, pmax=200;
+      var py=function(v){ return padT+ph-(clamp(v,0,pmax)/pmax)*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gy=0;gy<=pmax;gy+=40){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+pw,py(gy)); ctx.stroke(); ctx.fillText(gy+'',16,py(gy)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('mmHg', 14, padT+8);
+      var M=R.N, beats=2.5, tot=Math.round(M*beats), px=function(i){ return padL+(i/(tot-1))*pw; };
+      // verdadeiro (faint)
+      ctx.strokeStyle='#46506b'; ctx.lineWidth=1.3; ctx.beginPath();
+      for(var i=0;i<tot;i++){ var X=px(i),Y=py(R.tru[i%M]); if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); } ctx.stroke();
+      // PAM verdadeira (linha âmbar pontilhada)
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([2,4]); ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(padL,py(R.mapMeas)); ctx.lineTo(padL+pw,py(R.mapMeas)); ctx.stroke(); ctx.setLineDash([]);
+      // medido (art) — varrido até scan
+      var upto = (scanFrac==null)? tot : Math.max(1,Math.floor(scanFrac*tot));
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.2; ctx.beginPath();
+      for(var j=0;j<upto;j++){ var X2=px(j),Y2=py(R.meas[j%M]); if(j===0)ctx.moveTo(X2,Y2); else ctx.lineTo(X2,Y2); } ctx.stroke();
+      if(scanFrac!=null){ var cx=px(upto-1); ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(cx,padT); ctx.lineTo(cx,padT+ph); ctx.stroke(); }
+      // marcas SBP/DBP medidos
+      ctx.fillStyle='#e5394e'; ctx.font='10px monospace';
+      ctx.fillText('SBP '+Math.round(R.sbpMeas), padL+pw-78, py(R.sbpMeas)-3);
+      ctx.fillText('DBP '+Math.round(R.dbpMeas), padL+pw-78, py(R.dbpMeas)+12);
+      ctx.fillStyle='#ffcf5c'; ctx.fillText('PAM '+Math.round(R.mapMeas), padL+4, py(R.mapMeas)-3);
+      return R;
+    }catch(e){ return R; }
+  }
+  // ---------- desenho: curva de termodiluição ----------
+  function drawThermo(ctx,W,H,TC,info){
+    try{
+      var padL=44,padB=24,padT=14,padR=12, pw=W-padL-padR, ph=H-padT-padB;
+      var depth=Math.max(0.001, -Math.min.apply(null,TC.curve))*1.15;
+      var py=function(dT){ return padT + (-dT/depth)*ph; };   // dT≤0; 0 no topo
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL+pw,padT); ctx.stroke();   // base ΔT=0
+      ctx.fillText('ΔT=0', padL+2, padT-3);
+      var n=TC.curve.length, px=function(i){ return padL+(i/(n-1))*pw; };
+      // área sombreada
+      ctx.beginPath(); ctx.moveTo(px(0),py(0));
+      for(var i=0;i<n;i++){ ctx.lineTo(px(i),py(TC.curve[i])); }
+      ctx.lineTo(px(n-1),py(0)); ctx.closePath(); ctx.fillStyle='rgba(255,207,92,.16)'; ctx.fill();
+      // curva
+      ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2.2; ctx.beginPath();
+      for(var j=0;j<n;j++){ var X=px(j),Y=py(TC.curve[j]); if(j===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); } ctx.stroke();
+      ctx.fillStyle='#97a3ba'; ctx.fillText('tempo →', padL+pw-58, padT+ph+16);
+      if(info){ ctx.fillStyle='#ffcf5c'; ctx.font='bold 11px monospace';
+        ctx.fillText('AUC '+br(TC.auc,0)+'  →  DC '+br(info.coComp,1)+' L/min', padL+6, padT+ph-6); }
+      return TC;
+    }catch(e){ return TC; }
+  }
+  // ---------- desenho: fast-flush ----------
+  function drawFlush(ctx,W,H,FF){
+    try{
+      var padL=44,padB=22,padT=12,padR=12, pw=W-padL-padR, ph=H-padT-padB, pmax=320;
+      var py=function(v){ return padT+ph-(clamp(v,0,pmax)/pmax)*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gy=0;gy<=pmax;gy+=80){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+pw,py(gy)); ctx.stroke(); ctx.fillText(gy+'',14,py(gy)+3); }
+      var n=FF.samp.length, px=function(i){ return padL+(i/(n-1))*pw; };
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2; ctx.beginPath();
+      for(var i=0;i<n;i++){ var X=px(i),Y=py(FF.samp[i]); if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); } ctx.stroke();
+      ctx.fillStyle='#97a3ba'; ctx.fillText('liberação do flush →', padL+6, padT+10);
+      return FF;
+    }catch(e){ return FF; }
+  }
+  function drawOnWave(id,R,scanFrac){ var cv=$(id); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; drawWave(ctx,cv.width||860,cv.height||300,R,scanFrac); }
+
+  function syncSliders(){ $('iLevel').value=state.levelCm; $('iZeta').value=state.zeta; $('iFn').value=state.fn;
+    $('lLevel').value=state.levelCm; $('lZeta').value=state.zeta; $('lFn').value=state.fn;
+    $('iVinj').value=state.vReal; $('iTinj').value=state.tInjReal; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vLevel').textContent=state.levelCm; $('vZeta').textContent=br(state.zeta,2); $('vFn').textContent=state.fn;
+    $('vlLevel').textContent=state.levelCm; $('vlZeta').textContent=br(state.zeta,2); $('vlFn').textContent=state.fn;
+    $('vVinj').textContent=br(state.vReal,1); $('vTinj').textContent=state.tInjReal;
+    curR=measuredCycle(state);
+    $('opbox-wave').innerHTML='Monitor <b>'+Math.round(curR.sbpMeas)+'/'+Math.round(curR.dbpMeas)+'</b> (PAM <b>'+Math.round(curR.mapMeas)+'</b>) · verdadeiro '
+      +Math.round(curR.sbpTrue)+'/'+Math.round(curR.dbpTrue)+' (PAM '+Math.round(curR.mapTrue)+') · ΔPAM <b>'+br(curR.mapMeas-curR.mapTrue,1)+'</b>';
+    // termodiluição
+    var TC=thermoCurve(state.coTrue,state.vReal,state.tInjReal,TB), coC=coComputed(state.coTrue,state.vReal,state.tInjReal,V_NOM,T_NOM,TB);
+    var cv=$('plotThermo'); if(cv){ var ctx; try{ctx=cv.getContext('2d');}catch(e){} if(ctx) drawThermo(ctx,cv.width||860,cv.height||220,TC,{coComp:coC}); }
+    var errPct=100*(coC-state.coTrue)/state.coTrue;
+    $('opbox-thermo').innerHTML='DC computado <b>'+br(coC,1)+'</b> L/min · verdadeiro '+br(state.coTrue,1)+' · erro <b>'+(errPct>=0?'+':'')+br(errPct,0)+'%</b>'
+      +(Math.abs(errPct)<1?' · medição fiel':' · DC '+(errPct>0?'falsamente ALTO':'falsamente baixo'));
+    // lab veredito
+    var ver=vereditoTrace(curR), vEl=$('lab-veredito'), klass, label;
+    if(ver.ok){ klass='ok'; label='TRAÇADO CONFIÁVEL'; }
+    else if(ver.flags.indexOf('zero')>=0){ klass='crit'; label='ARTEFATO · MAL-ZERADO'; }
+    else { klass='lim'; label='ARTEFATO · AMORTECIMENTO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='monitor '+Math.round(curR.sbpMeas)+'/'+Math.round(curR.dbpMeas)+' (PAM '+Math.round(curR.mapMeas)+') · real '
+      +Math.round(curR.sbpTrue)+'/'+Math.round(curR.dbpTrue)+' (PAM '+Math.round(curR.mapTrue)+')';
+    $('opbox-lab').innerHTML='ΔSBP <b>'+br(curR.sbpMeas-curR.sbpTrue,0)+'</b> · ΔPAM <b>'+br(curR.mapMeas-curR.mapTrue,1)+'</b> mmHg';
+    show($('ban-zero'), ver.flags.indexOf('zero')>=0);
+    show($('ban-sub'), ver.flags.indexOf('sub')>=0);
+    show($('ban-super'), ver.flags.indexOf('super')>=0);
+    show($('ban-mapok'), ver.flags.indexOf('zero')<0 && (ver.flags.indexOf('sub')>=0||ver.flags.indexOf('super')>=0));
+    if(reduce){ drawOnWave('plotWave',curR,null); drawOnWave('plotWaveLab',curR,null); }
+  }
+
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---------- animação (varredura tipo monitor) ----------
+  var scan=0;
+  function tick(){ scan=(scan+0.0055)%1;
+    if($('panel-instrumento') && $('panel-instrumento').classList.contains('active') && curR) drawOnWave('plotWave',curR,scan);
+    if($('panel-lab') && $('panel-lab').classList.contains('active') && curR) drawOnWave('plotWaveLab',curR,scan);
+    if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick);
+  }
+
+  // ---------- tutor gráfico ----------
+  var TUTOR=[];
+  function buildTutor(){
+    var B={sbp:120,dbp:80,hr:75};
+    function wave(o){ return Object.assign({zeta:0.55,fn:22,levelCm:0}, B, o); }
+    var T=[];
+    T.push({kind:'wave', P:wave({}), cap:'Traçado bem amortecido (ζ 0,55). Vermelho = medido; cinza = verdadeiro; âmbar = PAM.',
+      q:'Quando o sistema está bem amortecido, o traçado medido em relação ao verdadeiro:',
+      o:['coincide — medição fiel','superestima a sistólica','achata tudo','desloca para baixo'], a:0,
+      fb:'Com ζ adequado (~0,4–0,7) e fn alta, medido ≈ verdadeiro. As curvas se sobrepõem.', hint:'As duas linhas quase coincidem.'});
+    T.push({kind:'wave', P:wave({zeta:0.12,fn:13}), cap:'ζ baixo, fn baixa: o sistema ressoa.',
+      q:'A sistólica que o monitor mostra aqui está:',
+      o:['acima da real (overshoot)','abaixo da real','igual à real','negativa'], a:0,
+      fb:'Subamortecimento ressoa nas harmônicas do pulso → overshoot sistólico e pulso largo.', hint:'O pico vermelho ultrapassa o cinza.'});
+    T.push({kind:'wave', P:wave({zeta:0.12,fn:13}), cap:'Mesmo traçado subamortecido. Olhe a linha âmbar.',
+      q:'E a PAM (linha âmbar), comparada à verdadeira?',
+      o:['quase igual — a média resiste','muito acima','muito abaixo','zero'], a:0,
+      fb:'A distorção redistribui a forma, mas a média quase não muda: a PAM é robusta ao amortecimento.', hint:'A âmbar mal se move entre medido e real.'});
+    T.push({kind:'wave', P:wave({zeta:1.15,fn:7}), cap:'ζ alto, fn baixa: bolha de ar / coágulo.',
+      q:'Este traçado redondo, sem incisura, indica:',
+      o:['superamortecido — SBP subestimada','subamortecido','medição fiel','erro de zero'], a:0,
+      fb:'Superamortecimento achata: sistólica subestimada, diastólica superestimada, pulso estreito.', hint:'Pico arredondado e abaixo do cinza.'});
+    T.push({kind:'wave', P:wave({levelCm:-14}), cap:'Transdutor 14 cm ABAIXO do eixo flebostático.',
+      q:'O transdutor abaixo do eixo faz o monitor ler:',
+      o:['tudo MAIS alto, inclusive a PAM','só a sistólica mais alta','tudo mais baixo','só a PAM mais alta'], a:0,
+      fb:'Offset hidrostático constante (+~10 mmHg): desloca SBP, DBP e PAM por igual. Único artefato que corrompe a PAM.', hint:'Vermelho e âmbar todos acima do cinza.'});
+    T.push({kind:'wave', P:wave({levelCm:14}), cap:'Transdutor 14 cm ACIMA do eixo.',
+      q:'E o transdutor acima do eixo:',
+      o:['lê tudo mais baixo (pode simular hipotensão)','lê tudo mais alto','não muda nada','só muda a forma'], a:0,
+      fb:'Menos coluna de água → ~10 mmHg a menos em tudo. Um "despencar" sem nada ter mudado no paciente.', hint:'Tudo deslocado para baixo do cinza.'});
+    T.push({kind:'wave', P:wave({zeta:0.55,fn:22}), cap:'Sob amortecimento, qual número confiar?',
+      q:'Com a forma de onda distorcida, o número mais confiável é:',
+      o:['a PAM','a sistólica','a diastólica','a pressão de pulso'], a:0,
+      fb:'A PAM (média) é a que o amortecimento poupa — ponte ao módulo 9, onde a PAM decompõe o choque.', hint:'Pense em qual sobrevive à distorção da forma.'});
+    T.push({kind:'flush', P:wave({zeta:0.15,fn:18}), cap:'Teste da onda quadrada (fast-flush) liberado.',
+      q:'Várias oscilações que demoram a sumir após o flush indicam:',
+      o:['subamortecimento','superamortecimento','resposta ideal','erro de nível'], a:0,
+      fb:'Muitas oscilações de decaimento lento = ζ baixo = subamortecido (ressoa).', hint:'Conte os repiques após a queda.'});
+    T.push({kind:'flush', P:wave({zeta:0.95,fn:8}), cap:'Outro fast-flush.',
+      q:'Nenhuma oscilação — a onda volta lenta e direto à base. Isso é:',
+      o:['superamortecimento','subamortecimento','medição fiel','artefato de zero'], a:0,
+      fb:'Sem repiques, retorno lento = ζ alto = superamortecido (bolha/coágulo/tubo longo).', hint:'A curva desce e não ultrapassa a base.'});
+    T.push({kind:'thermo', co:5, vReal:10, tInjReal:4, cap:'Termodiluição nominal: 10 mL a 4 °C. Área âmbar = AUC.',
+      q:'Com volume e temperatura nominais, o DC computado é:',
+      o:['igual ao verdadeiro','superestimado','subestimado','zero'], a:0,
+      fb:'Sem erro técnico, AUC real = a esperada → DC_comp = DC_true.', hint:'Referência: nada a corrigir.'});
+    T.push({kind:'thermo', co:5, vReal:7, tInjReal:4, cap:'Injetaram 7 mL (em vez de 10). Compare a área.',
+      q:'Volume injetado a menos torna o DC computado:',
+      o:['falsamente ALTO','falsamente baixo','inalterado','negativo'], a:0,
+      fb:'Menos volume → menos frio → AUC menor. O computador divide por área menor → DC ∝ 1/AUC sobe.', hint:'Área menor que a nominal.'});
+    T.push({kind:'thermo', co:5, vReal:10, tInjReal:14, cap:'Injetado a 14 °C (morno), 10 mL.',
+      q:'Injetado mais quente que o nominal torna o DC computado:',
+      o:['falsamente ALTO','falsamente baixo','inalterado','infinito'], a:0,
+      fb:'Menor ΔT (Tb−Tinj) → menos sinal → AUC menor → DC superestimado, como no volume parcial.', hint:'Curva mais rasa = área menor.'});
+    return T;
+  }
+  function tutorDraw(item,ctx,W,H){
+    if(item.kind==='wave'){ if(!item.R) item.R=measuredCycle(item.P); return drawWave(ctx,W,H,item.R,null); }
+    if(item.kind==='flush'){ if(!item.FF) item.FF=fastFlush(item.P); return drawFlush(ctx,W,H,item.FF); }
+    if(item.kind==='thermo'){ if(!item.TC){ item.TC=thermoCurve(item.co,item.vReal,item.tInjReal,TB); item.coC=coComputed(item.co,item.vReal,item.tInjReal,V_NOM,T_NOM,TB); }
+      return drawThermo(ctx,W,H,item.TC,{coComp:item.coC}); }
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=200; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return tutorDraw(item,ctx,W||820,H||200); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ tutorDraw(item,ctx,cv.width||820,cv.height||200); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iLevel','levelCm'],['iZeta','zeta'],['iFn','fn'],['iVinj','vReal'],['iTinj','tInjReal']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lLevel','levelCm'],['lZeta','zeta'],['lFn','fn']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawWave=drawWave; window.drawThermo=drawThermo; window.drawFlush=drawFlush;
+    window.activateTab=activate; window.setLabState=setState;
+    window.measuredFn=measuredCycle; window.coCompFn=coComputed; window.thermoFn=thermoCurve; window.fastFlushFn=fastFlush;
+    window.vereditoFn=vereditoTrace; window.pTrueFn=pTrueAt; window.levelOffsetFn=levelOffset;
+    window.TUTOR=TUTOR; window.__state=state;
+    if(!reduce && typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick); else { drawOnWave('plotWave',curR,null); drawOnWave('plotWaveLab',curR,null); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>

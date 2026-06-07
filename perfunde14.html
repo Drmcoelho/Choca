@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 14 · Choque hipovolêmico</title>
+<meta name="description" content="O hipovolêmico é um problema de retorno venoso. A Pmsf cai, a interseção de Guyton desce, a compensação segura a PA — até desabar. O índice de choque denuncia antes. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:330px;border-radius:8px;background:#090b10}
+canvas.plot.short{height:250px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.95rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ven);margin:18px 0 6px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:210px;border-radius:8px;background:#090b10;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 14 · Choque hipovolêmico</div>
+    <h1>A PA segura — até desabar</h1>
+    <p class="sub">A hemorragia não baixa a pressão primeiro. Baixa o <em>retorno venoso</em>: a Pmsf cai, a interseção de Guyton desce, o débito despenca. A compensação (vasoconstrição, taquicardia) segura a PA num platô tranquilizador — e quando a reserva acaba, a pressão cai de penhasco. O índice de choque denuncia antes.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,16 240,16 360,18 470,22 560,30 640,40 720,47 820,50 900,51"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>"A pressão está ótima" — e sangrando</h2>
+    <p class="lead">Cinco atos. A variável escondida é por que a PA normal NÃO tranquiliza no que sangra. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Trauma, sangramento ativo. PA 118/86, FC 122, extremidades frias, pulso fino. "A pressão está boa, ele está estável."</p>
+      <div class="vitais"><span>PA <b>118/86</b></span><span>FC <b>122</b></span><span>PP <b>estreita</b></span><span>extremidades <b>frias</b></span><span>SI <b>1,03</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>PA sistólica normal = volemia normal? Não. A vasoconstrição e a taquicardia <em>seguram</em> a sistólica enquanto a diastólica sobe e o pulso estreita.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>O problema não é a bomba nem a resistência — é o que <b>retorna</b>. Sangue perdido → Pmsf cai → gradiente de retorno venoso cai → o coração não pode ejetar o que não chega.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Guyton: a curva de retorno venoso desliza para a esquerda; a interseção com a função cardíaca desce → DC cai. A PA fica no platô da compensação — até a reserva acabar e <b>desabar</b>.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O índice de choque (FC/PAS) já está em 1,03: subiu <em>antes</em> de a pressão cair. O Instrumento mostra a interseção descendo e a curva da PA com o penhasco.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">Pmsf</b> (pressão sistêmica média de enchimento) — o motor do retorno venoso. A hemorragia a derruba; a compensação mascara a queda na PA mas não no <em>fluxo</em>. Por isso o <b>índice de choque</b> sobe cedo e a PA é um indicador tardio. E por isso <b>pressor é ganhar tempo</b> (prop a pressão), enquanto <b>repor volume é corrigir a causa</b> (restaura a Pmsf → o retorno → o débito).</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas do sangue perdido à PA que desaba.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">A hemorragia baixa o quê primeiro?</div><div class="aa">O <b>volume</b> → a <b>Pmsf</b>, não a PA. A pressão é o último dominó; antes dela cai o retorno venoso e o débito.</div></div>
+      <div class="step"><div class="qq">Por que a Pmsf importa tanto?</div><div class="aa">É o motor do retorno venoso: RV = (Pmsf − PVC)/Rvr. Menos Pmsf → menor gradiente → menos sangue volta → o coração ejeta menos (Guyton).</div></div>
+      <div class="step"><div class="qq">E a curva de Guyton, o que faz?</div><div class="aa">A curva de retorno venoso <b>desliza para a esquerda</b> (zera numa Pmsf menor). A interseção com a função cardíaca <b>desce</b> → novo ponto de operação com DC menor.</div></div>
+      <div class="step"><div class="qq">Então por que a PA fica normal um tempo?</div><div class="aa"><b>Compensação:</b> vasoconstrição sobe a RVS (segura a MAP apesar do DC baixo), taquicardia e venoconstrição defendem o débito. A PA fica num <b>platô</b>.</div></div>
+      <div class="step"><div class="qq">O que denuncia antes da PA cair?</div><div class="aa">O <b>índice de choque</b> (FC/PAS) e o <b>pulso estreito</b>. A FC sobe e a PP estreita enquanto a sistólica ainda parece boa.</div></div>
+      <div class="step"><div class="qq">E quando a PA finalmente cai?</div><div class="aa">Quando a <b>reserva esgota</b>: a vasoconstrição não sobe mais, e a PA <b>desaba de penhasco</b>. Aí cada ponto percentual de perda importa muito.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · Guyton descendo + a PA que desaba</h2>
+    <p class="lead">À esquerda, a <span style="color:var(--ven)">curva de retorno venoso</span> deslizando com a Pmsf e a <span style="color:var(--art)">função cardíaca</span>; a <span style="color:var(--accent)">interseção</span> é o débito. À direita, a PA mantida no platô — e o penhasco.</p>
+    <div class="idcard">
+      <div class="formula">retorno venoso <span class="iso">RV</span> = (Pmsf − PVC) / Rvr &nbsp;<span style="color:var(--ink-faint)">· hemorragia → Pmsf↓ → interseção↓</span></div>
+      <div class="formula"><span class="iso">MAP</span> = DC · RVS + PVC &nbsp;·&nbsp; índice de choque = FC / PAS &nbsp;<span style="color:var(--ink-faint)">· RVS↑ mascara DC↓; o SI denuncia antes</span></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotGuyton" class="plot" width="860" height="330" aria-label="interseção de Guyton com a Pmsf caindo pela hemorragia"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ven)"></i>retorno venoso (atual)</span>
+        <span><i style="background:var(--art)"></i>função cardíaca</span>
+        <span><i style="background:#46506b"></i>normovolemia (fantasma)</span>
+        <span><i style="background:var(--accent)"></i>ponto de operação (DC)</span>
+      </div>
+      <div class="opbox" id="opbox-guyton"></div>
+    </div>
+    <div class="subhead">A pressão arterial pela perda volêmica — o platô e o penhasco</div>
+    <div class="plotwrap">
+      <canvas id="plotCurve" class="plot short" width="860" height="250" aria-label="MAP, SBP e índice de choque pela perda volêmica"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>MAP</span>
+        <span><i style="background:#9d4b57"></i>SBP / DBP</span>
+        <span><i style="background:var(--accent)"></i>índice de choque (eixo dir.)</span>
+        <span><i style="background:var(--ink-faint)"></i>perda atual</span>
+      </div>
+      <div class="opbox" id="opbox-curve"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Perda volêmica <span class="v"><span id="vLoss">25</span> %</span></label><input id="iLoss" type="range" min="0" max="50" step="1" value="25"></div>
+        <div class="ctrl"><label>Volume reposto <span class="v"><span id="vRepos">0</span> %</span></label><input id="iRepos" type="range" min="0" max="50" step="1" value="0"></div>
+        <div class="ctrl"><label>Vasopressor <span class="v"><span id="vPressor">0</span> %</span></label><input id="iPressor" type="range" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>Reserva compensatória <span class="v"><span id="vComp">100</span> %</span></label><input id="iComp" type="range" min="20" max="100" step="1" value="100"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Reserva baixa = idoso/β-bloqueado: a PA cai mais cedo. Compare o vasopressor (prop a MAP, não o fluxo) com repor volume (sobe a Pmsf → o retorno → o débito).</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · onde na curva você está</h2>
+    <p class="lead">Cenários ou as quatro alavancas. O <b>veredito vira</b> e os banners dizem se a PA "boa" é compensação mascarando — e por que pressor não substitui volume.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="classe1">Perda leve (~10%)</button>
+      <button class="preset" type="button" data-preset="classe2">Compensado (~22%)</button>
+      <button class="preset" type="button" data-preset="classe3">Descompensando (~34%)</button>
+      <button class="preset" type="button" data-preset="colapso">Colapso (~45%)</button>
+      <button class="preset" type="button" data-preset="pressor">Só pressor (ganha tempo)</button>
+      <button class="preset" type="button" data-preset="volume">Repor volume (corrige)</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotCurveLab" class="plot" width="860" height="330" aria-label="curva da PA pela perda, com o ponto atual no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>MAP</span>
+        <span><i style="background:#9d4b57"></i>SBP / DBP</span>
+        <span><i style="background:var(--accent)"></i>índice de choque</span>
+        <span><i style="background:var(--ink-faint)"></i>você está aqui</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Perda <span class="v"><span id="vlLoss">25</span> %</span></label><input id="lLoss" type="range" min="0" max="50" step="1" value="25"></div>
+        <div class="ctrl"><label>Volume reposto <span class="v"><span id="vlRepos">0</span> %</span></label><input id="lRepos" type="range" min="0" max="50" step="1" value="0"></div>
+        <div class="ctrl"><label>Vasopressor <span class="v"><span id="vlPressor">0</span> %</span></label><input id="lPressor" type="range" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>Reserva compensatória <span class="v"><span id="vlComp">100</span> %</span></label><input id="lComp" type="range" min="20" max="100" step="1" value="100"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Estado hemodinâmico (assinatura fisiológica)</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-comp"><b>Compensação mascarando.</b> PA "normal" sobre um DC baixo: a vasoconstrição segura a MAP e a taquicardia, o débito. O índice de choque já denuncia — não espere a PA cair.</div>
+      <div class="banner art" id="ban-pp"><b>Pulso estreito.</b> SV baixo + vasoconstrição: a diastólica sobe, a sistólica resiste, a PP encolhe. Sinal precoce, antes da hipotensão.</div>
+      <div class="banner crit" id="ban-desaba"><b>Reserva esgotada — a PA desaba.</b> Passado o platô, a vasoconstrição não sobe mais e a MAP cai de penhasco. Agora cada ponto de perda importa muito.</div>
+      <div class="banner art" id="ban-pressor"><b>Pressor ganha tempo, não corrige.</b> Ele propõe a MAP (RVS↑) mas o fluxo (DC) e o lactato seguem ruins — o tanque continua vazio. É ponte, não destino.</div>
+      <div class="banner ven" id="ban-volume"><b>Repor volume corrige a causa.</b> Sobe a Pmsf → o gradiente de retorno → a interseção de Guyton → o DC. A pressão volta porque o <em>fluxo</em> voltou.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a interseção de Guyton ou a curva da PA computadas ao vivo. Leia o platô, o penhasco e o índice de choque — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do hipovolêmico — <b>nunca</b> dose, volume a infundir, alvo de PA, ou conduta para um paciente específico. As "classes" são assinaturas fisiológicas da curva, não roteiro de tratamento.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Guyton é linear-por-trechos: complacência venosa não-linear, zonas de West e interdependência ventricular ficam de fora. → A compensação é resumida numa ativação simpática única que satura suavemente; a reserva real varia com idade, β-bloqueio e anestesia (o slider de reserva). → A perda aqui é de <b>volume</b>; a hemorragia também perde <b>conteúdo</b> (Hb) — essa distinção é o módulo 15. → <b>Farmacologia (mecanismo):</b> o vasopressor age na RVS/tônus venoso (propõe a MAP, "ganha tempo"), <b>não repõe volume</b> — sem dose. <b>Procedimento (conceito):</b> acesso calibroso / intraósseo e controle da fonte como <em>rationale</em> físico, não técnica para um paciente. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde4.html">Módulo 4 · Interseção de Guyton</a> — o engine-mãe: a Pmsf, o retorno venoso e o ponto de operação que aqui a hemorragia desloca.</div>
+    <div class="ponte">→ <a href="perfunde15.html">Módulo 15 · Hemorrágico × não-hemorrágico</a> — a hemorragia perde <em>conteúdo</em> (Hb) além de volume; repor um não é repor o outro. <span class="pend">(ponte pendente)</span></div>
+    <div class="ponte">→ <a href="perfunde25.html">Módulo 25 · Ressuscitação volêmica</a> — o custo do volume: até onde repor ainda rende antes de virar edema. <span class="pend">(ponte pendente)</span></div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 14
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model14.js inlined) ===================== -->
+<script>
+function venousReturn(pra,Pmsf,Rvr,colapso){ if(colapso===undefined)colapso=-4; if(pra>=Pmsf)return 0; var p=(pra<colapso)?colapso:pra; return (Pmsf-p)/Rvr; }
+function cardiacOutput(pra,COmax,pra0,K){ if(pra0===undefined)pra0=-2; if(K===undefined)K=2; var d=pra-pra0; if(d<=0)return 0; return COmax*d/(K+d); }
+function intersecao(P){ var Pmsf=P.Pmsf,Rvr=P.Rvr,COmax=P.COmax,pra0=(P.pra0===undefined?-2:P.pra0),K=(P.K===undefined?2:P.K),colapso=(P.colapso===undefined?-4:P.colapso);
+  var f=function(pra){ return venousReturn(pra,Pmsf,Rvr,colapso)-cardiacOutput(pra,COmax,pra0,K); };
+  var lo=colapso,hi=Pmsf; if(f(lo)<=0){ return {pra:lo,co:cardiacOutput(lo,COmax,pra0,K)}; }
+  for(var i=0;i<80;i++){ var mid=(lo+hi)/2; if(f(mid)>0)lo=mid; else hi=mid; } var praStar=(lo+hi)/2; return {pra:praStar,co:cardiacOutput(praStar,COmax,pra0,K)}; }
+var BASE={ Pmsf0:8.0,Rvr0:1.2,COmax0:7.5,pra0:-2,K:2,colapso:-4,RVS0:17.0,HR0:75,HRmax:170,Cart:1.7,
+  kVol:2.30,kVeno:1.00,kVenoP:0.80,kArt:0.12,kArtP:0.35,kHR:0.60,kCon:0.18,DCcrit:3.2,kLac:2.6 };
+function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function hemoState(p){ var B=BASE,loss=p.loss||0,repos=p.repos||0,pressor=p.pressor||0,compReserve=(p.compReserve===undefined?1:p.compReserve);
+  var d=clampv(loss-repos,0,0.6), A=compReserve*(1-Math.exp(-d/0.10));
+  var Pmsf=Math.max(0.5,B.Pmsf0*(1-B.kVol*d)+B.kVeno*A+B.kVenoP*pressor);
+  var COmax=B.COmax0*(1+B.kCon*A), RVSw=B.RVS0*(1+B.kArt*A+B.kArtP*pressor), HR=Math.min(B.HRmax,B.HR0*(1+B.kHR*A));
+  var inter=intersecao({Pmsf:Pmsf,Rvr:B.Rvr0,COmax:COmax,pra0:B.pra0,K:B.K,colapso:B.colapso});
+  var DC=inter.co,PVC=inter.pra,SVml=DC*1000/HR,PP=SVml/B.Cart,MAP=DC*RVSw+PVC,SBP=MAP+2*PP/3,DBP=MAP-PP/3,SI=HR/SBP;
+  var lactate=Math.min(15,1.0+B.kLac*Math.max(0,B.DCcrit-DC));
+  return {d:d,A:A,Pmsf:Pmsf,Rvr:B.Rvr0,COmax:COmax,pra0:B.pra0,K:B.K,colapso:B.colapso,RVSw:RVSw,HR:HR,DC:DC,PVC:PVC,SVml:SVml,PP:PP,MAP:MAP,SBP:SBP,DBP:DBP,SI:SI,lactate:lactate}; }
+function classeHemo(R){ if(R.d<0.12)return 'compensado'; if(R.d<0.28)return 'limitrofe'; if(R.d<0.40)return 'descompensando'; return 'colapso'; }
+function sweepLoss(p,n,maxLoss){ n=n||60; maxLoss=maxLoss||0.5; var out=[]; for(var i=0;i<n;i++){ var L=i/(n-1)*maxLoss;
+  var R=hemoState({loss:L,repos:0,pressor:(p&&p.pressor)||0,compReserve:(p&&p.compReserve!==undefined)?p.compReserve:1});
+  out.push({loss:L,MAP:R.MAP,SBP:R.SBP,DBP:R.DBP,HR:R.HR,SI:R.SI,DC:R.DC,lactate:R.lactate}); } return out; }
+</script>
+
+<!-- ===================== UI · Guyton + curva da PA + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+
+  var state={ loss:0.25, repos:0, pressor:0, compReserve:1.0 };
+  var PRESETS={
+    classe1:{ loss:0.10, repos:0, pressor:0, compReserve:1 },
+    classe2:{ loss:0.22, repos:0, pressor:0, compReserve:1 },
+    classe3:{ loss:0.34, repos:0, pressor:0, compReserve:1 },
+    colapso:{ loss:0.45, repos:0, pressor:0, compReserve:1 },
+    pressor:{ loss:0.40, repos:0, pressor:0.9, compReserve:1 },
+    volume: { loss:0.40, repos:0.35, pressor:0, compReserve:1 }
+  };
+  var curR=null, reduce=false; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // ---------- desenho: interseção de Guyton ----------
+  function drawGuyton(ctx,W,H,R,phase){
+    try{
+      var padL=44,padB=28,padT=14,padR=14, pw=W-padL-padR, ph=H-padT-padB;
+      var XMIN=-4, XMAX=10, YMAX=10;
+      var px=function(x){ return padL+(x-XMIN)/(XMAX-XMIN)*pw; };
+      var py=function(y){ return padT+ph-(clamp(y,0,YMAX)/YMAX)*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gx=-4;gx<=10;gx+=2){ ctx.beginPath(); ctx.moveTo(px(gx),padT); ctx.lineTo(px(gx),padT+ph); ctx.stroke(); ctx.fillText(gx+'',px(gx)-5,padT+ph+14); }
+      for(var gy=0;gy<=YMAX;gy+=2){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+pw,py(gy)); ctx.stroke(); ctx.fillText(gy+'',18,py(gy)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('PVC / Pra (mmHg)', padL+pw-110, padT+ph+14);
+      ctx.save(); ctx.translate(12,padT+50); ctx.rotate(-Math.PI/2); ctx.fillText('fluxo (L/min)',0,0); ctx.restore();
+      // fantasma normovolemia
+      function curveVR(Pmsf,Rvr,col,dash){ ctx.strokeStyle=col; ctx.lineWidth=1.6; if(dash)ctx.setLineDash(dash); ctx.beginPath(); var st=false;
+        for(var x=XMIN;x<=XMAX;x+=0.1){ var y=venousReturn(x,Pmsf,Rvr,-4); var X=px(x),Y=py(y); if(!st){ctx.moveTo(X,Y);st=true;}else ctx.lineTo(X,Y);} ctx.stroke(); ctx.setLineDash([]); }
+      function curveCO(COmax,col,dash){ ctx.strokeStyle=col; ctx.lineWidth=1.6; if(dash)ctx.setLineDash(dash); ctx.beginPath(); var st=false;
+        for(var x=XMIN;x<=XMAX;x+=0.1){ var y=cardiacOutput(x,COmax,-2,2); var X=px(x),Y=py(y); if(!st){ctx.moveTo(X,Y);st=true;}else ctx.lineTo(X,Y);} ctx.stroke(); ctx.setLineDash([]); }
+      curveVR(BASE.Pmsf0,BASE.Rvr0,'#46506b',[4,4]);
+      curveCO(BASE.COmax0,'#46506b',[4,4]);
+      curveVR(R.Pmsf,R.Rvr,'#3f82e6',null);
+      curveCO(R.COmax,'#e5394e',null);
+      // Pmsf no eixo x
+      ctx.fillStyle='#3f82e6'; ctx.beginPath(); ctx.arc(px(R.Pmsf),py(0),3,0,6.2832); ctx.fill();
+      ctx.fillText('Pmsf '+br(R.Pmsf,1), px(R.Pmsf)-18, py(0)-6);
+      // ponto de operação (pulsa)
+      var pr=4+0.8*(1+Math.sin(phase*6.2832));
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([2,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(px(R.PVC),py(R.DC)); ctx.lineTo(px(R.PVC),padT+ph); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,py(R.DC)); ctx.lineTo(px(R.PVC),py(R.DC)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(R.PVC),py(R.DC),pr,0,6.2832); ctx.fill();
+      ctx.fillText('DC '+br(R.DC,1)+' L/min', px(R.PVC)+8, py(R.DC)-6);
+      return R;
+    }catch(e){ return R; }
+  }
+
+  // ---------- desenho: curva da PA pela perda ----------
+  function drawCurve(ctx,W,H,sw,curLoss){
+    try{
+      var padL=42,padB=26,padT=14,padR=42, pw=W-padL-padR, ph=H-padT-padB;
+      var LMAX=0.5, PMAX=160, SIMAX=3;
+      var px=function(L){ return padL+(L/LMAX)*pw; };
+      var py=function(p){ return padT+ph-(clamp(p,0,PMAX)/PMAX)*ph; };
+      var pySI=function(s){ return padT+ph-(clamp(s,0,SIMAX)/SIMAX)*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gp=0;gp<=PMAX;gp+=40){ ctx.beginPath(); ctx.moveTo(padL,py(gp)); ctx.lineTo(padL+pw,py(gp)); ctx.stroke(); ctx.fillText(gp+'',16,py(gp)+3); }
+      for(var gl=0;gl<=50;gl+=10){ var L=gl/100; ctx.fillText(gl+'%',px(L)-7,padT+ph+14); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('perda volêmica', padL+pw-92, padT+ph+14);
+      ctx.fillStyle='#ffcf5c'; for(var gs=0;gs<=SIMAX;gs+=1){ ctx.fillText('SI '+gs, padL+pw+6, pySI(gs)+3); }
+      // banda SBP/DBP
+      ctx.strokeStyle='#9d4b57'; ctx.lineWidth=1.2;
+      [['SBP'],['DBP']].forEach(function(k){ ctx.beginPath(); var st=false; sw.forEach(function(d){ var X=px(d.loss),Y=py(d[k[0]]); if(!st){ctx.moveTo(X,Y);st=true;}else ctx.lineTo(X,Y);}); ctx.stroke(); });
+      // MAP bold
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.6; ctx.beginPath(); var s0=false;
+      sw.forEach(function(d){ var X=px(d.loss),Y=py(d.MAP); if(!s0){ctx.moveTo(X,Y);s0=true;}else ctx.lineTo(X,Y);}); ctx.stroke();
+      // SI âmbar (eixo direito)
+      ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=1.8; ctx.setLineDash([5,3]); ctx.beginPath(); var s1=false;
+      sw.forEach(function(d){ var X=px(d.loss),Y=pySI(d.SI); if(!s1){ctx.moveTo(X,Y);s1=true;}else ctx.lineTo(X,Y);}); ctx.stroke(); ctx.setLineDash([]);
+      // linha SI=1 (referência de alarme)
+      ctx.strokeStyle='rgba(255,207,92,.3)'; ctx.beginPath(); ctx.moveTo(padL,pySI(1)); ctx.lineTo(padL+pw,pySI(1)); ctx.stroke();
+      // cursor da perda atual
+      var cx=px(curLoss);
+      ctx.strokeStyle='#97a3ba'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(cx,padT); ctx.lineTo(cx,padT+ph); ctx.stroke(); ctx.setLineDash([]);
+      var cur=hemoState({loss:curLoss,repos:state.repos,pressor:state.pressor,compReserve:state.compReserve});
+      ctx.fillStyle='#e5394e'; ctx.beginPath(); ctx.arc(cx,py(cur.MAP),5,0,6.2832); ctx.fill();
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(cx,pySI(cur.SI),4,0,6.2832); ctx.fill();
+      // rótulos platô/penhasco
+      ctx.fillStyle='#5e6c87'; ctx.fillText('PA mantida', px(0.04), py(150)); ctx.fillText('desaba ↓', px(0.40), py(150));
+      return cur;
+    }catch(e){ return null; }
+  }
+  function drawGuytonOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawGuyton(ctx,cv.width||860,cv.height||330,curR,phase); }
+  function drawCurveOn(id){ var cv=$(id); if(!cv)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawCurve(ctx,cv.width||860,cv.height||250,sweepLoss({pressor:state.pressor,compReserve:state.compReserve},60,0.5),state.loss); }
+
+  function syncSliders(){ $('iLoss').value=Math.round(state.loss*100); $('iRepos').value=Math.round(state.repos*100); $('iPressor').value=Math.round(state.pressor*100); $('iComp').value=Math.round(state.compReserve*100);
+    $('lLoss').value=Math.round(state.loss*100); $('lRepos').value=Math.round(state.repos*100); $('lPressor').value=Math.round(state.pressor*100); $('lComp').value=Math.round(state.compReserve*100); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vLoss').textContent=Math.round(state.loss*100); $('vRepos').textContent=Math.round(state.repos*100); $('vPressor').textContent=Math.round(state.pressor*100); $('vComp').textContent=Math.round(state.compReserve*100);
+    $('vlLoss').textContent=Math.round(state.loss*100); $('vlRepos').textContent=Math.round(state.repos*100); $('vlPressor').textContent=Math.round(state.pressor*100); $('vlComp').textContent=Math.round(state.compReserve*100);
+    curR=hemoState(state);
+    $('opbox-guyton').innerHTML='Pmsf <b>'+br(curR.Pmsf,1)+'</b> mmHg · DC <b>'+br(curR.DC,1)+'</b> L/min · PVC '+br(curR.PVC,1)+' · RVS '+br(curR.RVSw,1)+' (Wood)';
+    $('opbox-curve').innerHTML='MAP <b>'+Math.round(curR.MAP)+'</b> · '+Math.round(curR.SBP)+'/'+Math.round(curR.DBP)+' · FC <b>'+Math.round(curR.HR)+'</b> · SI <b>'+br(curR.SI,2)+'</b> · PP '+Math.round(curR.PP)+' · lactato '+br(curR.lactate,1);
+    var cls=classeHemo(curR), vEl=$('lab-veredito'), klass, label;
+    if(cls==='compensado'){ klass='ok'; label='COMPENSADO'; }
+    else if(cls==='limitrofe'){ klass='lim'; label='COMPENSADO LIMÍTROFE'; }
+    else if(cls==='descompensando'){ klass='crit'; label='DESCOMPENSANDO'; }
+    else { klass='crit'; label='COLAPSO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='MAP '+Math.round(curR.MAP)+' · '+Math.round(curR.SBP)+'/'+Math.round(curR.DBP)+' · FC '+Math.round(curR.HR)+' · SI '+br(curR.SI,2)+' · DC '+br(curR.DC,1)+' · lactato '+br(curR.lactate,1);
+    $('opbox-lab').innerHTML='déficit líquido <b>'+Math.round(curR.d*100)+'%</b> · DC <b>'+br(curR.DC,1)+'</b> L/min · '+(classeHemo(curR)==='compensado'?'tecido perfundido':'<b style="color:var(--art)">perfusão ameaçada</b>');
+    show($('ban-comp'), curR.d>0.08 && curR.SI>0.9 && curR.MAP>70);
+    show($('ban-pp'), curR.PP<28);
+    show($('ban-desaba'), cls==='descompensando'||cls==='colapso');
+    show($('ban-pressor'), state.pressor>0.3 && state.repos<0.1 && curR.d>0.10);
+    show($('ban-volume'), state.repos>0.15);
+    if(reduce){ drawGuytonOn('plotGuyton',0.25); } drawCurveOn('plotCurve'); drawCurveOn('plotCurveLab');
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---------- animação (pulso do ponto de operação) ----------
+  var phase=0;
+  function tick(){ phase=(phase+0.012)%1;
+    if($('panel-instrumento') && $('panel-instrumento').classList.contains('active')) drawGuytonOn('plotGuyton',phase);
+    if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick);
+  }
+
+  // ---------- tutor gráfico ----------
+  var TUTOR=[];
+  function buildTutor(){
+    function st(o){ return Object.assign({loss:0,repos:0,pressor:0,compReserve:1}, o); }
+    var T=[];
+    T.push({kind:'guyton', P:st({loss:0}), cap:'Guyton em normovolemia: interseção em ~5 L/min.',
+      q:'O ponto de operação (bolinha âmbar) representa:',
+      o:['o débito cardíaco — onde RV encontra a função cardíaca','a pressão arterial','a RVS','a frequência'], a:0,
+      fb:'A interseção é o DC: o coração ejeta exatamente o que retorna.', hint:'Onde as duas curvas se cruzam.'});
+    T.push({kind:'guyton', P:st({loss:0.35}), cap:'Hemorragia: curva de RV deslizou para a esquerda (linha cheia vs fantasma).',
+      q:'Por que a interseção desceu?',
+      o:['a Pmsf caiu → menos retorno venoso → menos DC','a bomba falhou','a RVS caiu','a FC caiu'], a:0,
+      fb:'O hipovolêmico é um problema de RETORNO: Pmsf↓ desloca a curva, a interseção desce.', hint:'Veja onde a curva azul zera agora.'});
+    T.push({kind:'curve', P:st({loss:0.10}), cap:'Curva da PA pela perda. Cursor em 10%.',
+      q:'Em 10% de perda, a MAP está e o índice de choque está:',
+      o:['MAP quase normal, mas SI já elevado','ambos normais','ambos colapsados','MAP baixa, SI normal'], a:0,
+      fb:'A PA é mantida pela compensação; o SI sobe ANTES — o detector precoce.', hint:'Compare a linha vermelha (MAP) e a âmbar (SI) no cursor.'});
+    T.push({kind:'curve', P:st({loss:0.25}), cap:'Cursor em 25%: ainda no platô da MAP.',
+      q:'A PA "normal" aqui significa que o paciente está bem?',
+      o:['não — é compensação mascarando um DC já baixo','sim, tudo certo','significa hipervolemia','a perda é trivial'], a:0,
+      fb:'Platô da compensação: MAP defendida sobre DC reduzido. A normalidade é enganosa.', hint:'A MAP está alta, mas qual o custo (FC/SI)?'});
+    T.push({kind:'curve', P:st({loss:0.42}), cap:'Cursor em 42%: passou do platô.',
+      q:'O trecho onde a MAP cai abruptamente é:',
+      o:['o penhasco — a reserva compensatória esgotou','um artefato','o início do choque','irrelevante'], a:0,
+      fb:'Esgotada a vasoconstrição, a MAP desaba de penhasco. "Mantida até desabar".', hint:'A queda íngreme da linha vermelha.'});
+    T.push({kind:'guyton', P:st({loss:0.30}), cap:'Guyton em perda de 30%.',
+      q:'A pressão de pulso estreita na hipovolemia porque:',
+      o:['o volume sistólico cai e a vasoconstrição sobe a diastólica','a sistólica sobe muito','a FC cai','a RVS cai'], a:0,
+      fb:'SV baixo → PP menor; vasoconstrição → diastólica maior. Pulso fino, sinal precoce.', hint:'PP = SV/complacência; ambos pioram aqui.'});
+    T.push({kind:'curve', P:st({loss:0.40,pressor:0.9}), cap:'Perda 40% + vasopressor (cheio).',
+      q:'O pressor subiu a MAP. E o débito (fluxo)?',
+      o:['quase não subiu — o tanque segue vazio','foi totalmente restaurado','caiu','dobrou'], a:0,
+      fb:'Pressor propõe a MAP (RVS↑), mas não repõe volume: DC e lactato seguem ruins. Ganha tempo.', hint:'Compare com o preset "repor volume".'});
+    T.push({kind:'curve', P:st({loss:0.40,repos:0.35}), cap:'Perda 40% + reposição de volume.',
+      q:'Repor volume corrige porque:',
+      o:['sobe a Pmsf → o retorno → o DC (a causa)','aperta os vasos','acelera o coração','reduz a demanda'], a:0,
+      fb:'Volume restaura a Pmsf e o gradiente de retorno → a interseção de Guyton sobe → DC volta.', hint:'A correção é causal, não cosmética.'});
+    T.push({kind:'curve', P:st({loss:0.20,compReserve:0.35}), cap:'Perda 20%, reserva compensatória baixa (idoso/β-bloqueio).',
+      q:'Com a reserva embotada, a mesma perda de 20%:',
+      o:['derruba a MAP mais cedo (menos compensação)','não muda nada','melhora a PA','some o lactato'], a:0,
+      fb:'Sem reserva simpática plena, o platô é curto: a PA cai antes. O idoso "descompensa" cedo.', hint:'Compare a altura da MAP com a reserva cheia.'});
+    T.push({kind:'guyton', P:st({loss:0.40,repos:0.35}), cap:'Guyton após repor volume numa perda de 40%.',
+      q:'A interseção voltou a subir. Isso reflete:',
+      o:['Pmsf restaurada → retorno venoso → DC','vasoconstrição','taquicardia','queda da RVS'], a:0,
+      fb:'A curva de RV voltou para a direita (Pmsf↑) e a interseção subiu: fluxo restaurado.', hint:'Curva azul de volta perto do fantasma.'});
+    T.push({kind:'curve', P:st({loss:0.15}), cap:'Cursor em 15%.',
+      q:'Qual número é o detector MAIS precoce de hemorragia aqui?',
+      o:['o índice de choque (FC/PAS)','a PA sistólica','a PA diastólica','a MAP'], a:0,
+      fb:'O SI sobe antes de a PA cair; somado ao pulso estreito, antecipa o colapso.', hint:'Qual linha já se moveu enquanto a MAP nem caiu?'});
+    return T;
+  }
+  function tutorDraw(item,ctx,W,H){
+    if(item.kind==='guyton'){ if(!item.R) item.R=hemoState(item.P); return drawGuyton(ctx,W,H,item.R,0.3); }
+    if(!item.SW) item.SW=sweepLoss({pressor:item.P.pressor,compReserve:item.P.compReserve},60,0.5);
+    return drawCurve(ctx,W,H,item.SW,item.P.loss);
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=210; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return tutorDraw(item,ctx,W||820,H||210); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ tutorDraw(item,ctx,cv.width||820,cv.height||210); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iLoss','loss'],['iRepos','repos'],['iPressor','pressor'],['iComp','compReserve']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; syncSliders(); recompute(); }); });
+    [['lLoss','loss'],['lRepos','repos'],['lPressor','pressor'],['lComp','compReserve']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawGuyton=drawGuyton; window.drawCurve=drawCurve; window.activateTab=activate; window.setLabState=setState;
+    window.hemoFn=hemoState; window.classeFn=classeHemo; window.sweepFn=sweepLoss; window.vrFn=venousReturn; window.coFn=cardiacOutput;
+    window.TUTOR=TUTOR; window.__state=state;
+    if(!reduce && typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick); else drawGuytonOn('plotGuyton',0.25);
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
