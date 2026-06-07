@@ -14,7 +14,8 @@
     "test:8": "node build/m8/test8.node.js",
     "test:9": "node build/m9/test9.node.js",
     "test:11": "node build/m11/test11.node.js",
-    "test": "npm run test:0 && npm run test:2 && npm run test:3 && npm run test:4 && npm run test:5 && npm run test:6 && npm run test:7 && npm run test:8 && npm run test:9 && npm run test:11",
+    "test:13": "node build/m13/test13.node.js",
+    "test": "npm run test:0 && npm run test:2 && npm run test:3 && npm run test:4 && npm run test:5 && npm run test:6 && npm run test:7 && npm run test:8 && npm run test:9 && npm run test:11 && npm run test:13",
     "validate:0": "node build/m0/validate0.js perfunde0.html",
     "validate:2": "node build/m2/validate2.js perfunde2.html",
     "validate:3": "node build/m3/validate3.js perfunde3.html",
@@ -25,7 +26,8 @@
     "validate:8": "node build/m8/validate8.js perfunde8.html",
     "validate:9": "node build/m9/validate9.js perfunde9.html",
     "validate:11": "node build/m11/validate11.js perfunde11.html",
-    "validate": "npm run validate:0 && npm run validate:2 && npm run validate:3 && npm run validate:4 && npm run validate:5 && npm run validate:6 && npm run validate:7 && npm run validate:8 && npm run validate:9 && npm run validate:11",
+    "validate:13": "node build/m13/validate13.js perfunde13.html",
+    "validate": "npm run validate:0 && npm run validate:2 && npm run validate:3 && npm run validate:4 && npm run validate:5 && npm run validate:6 && npm run validate:7 && npm run validate:8 && npm run validate:9 && npm run validate:11 && npm run validate:13",
     "check": "npm test && npm run validate"
   },
   "devDependencies": {

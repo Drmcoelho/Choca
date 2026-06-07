@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 13 · Lactato & depuração</title>
+<meta name="description" content="Lactato é uma balança produção × depuração — não sinônimo de hipoperfusão. Tipo A (anaeróbio) × tipo B (β2, metformina), clearance hepático e a tendência seriada. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b}
+canvas.trend{display:block;width:100%;height:220px;border-radius:8px;background:#06070b;margin-top:6px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.3rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:170px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 13 · Lactato &amp; depuração</div>
+    <h1>Nem todo lactato é hipoperfusão</h1>
+    <p class="sub">Lactato é uma balança: produção contra depuração. O β2-adrenérgico fabrica lactato sem hipóxia; o fígado o limpa; o que prognostica é a tendência, não o número isolado. O 3,9 do caso-semente cabe nessa conta.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="450" y1="6" x2="450" y2="48" stroke="var(--line)" stroke-width="1"/>
+      <rect x="120" y="20" width="260" height="14" rx="3" fill="var(--art)" opacity=".7"/>
+      <rect x="520" y="20" width="180" height="14" rx="3" fill="var(--ven)" opacity=".7"/>
+      <text x="120" y="48" fill="var(--ink-faint)" font-size="11" font-family="monospace">produção</text>
+      <text x="600" y="48" fill="var(--ink-faint)" font-size="11" font-family="monospace">depuração</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Lactato 3,9: anaerobiose ou β2?</h2>
+    <p class="lead">Cinco atos. A variável escondida é o que <em>fez</em> o lactato subir. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>A paciente-semente: normotensa, FC 120, agitada, lactato <b>3,9</b>. "Lactato alto = hipoperfusão, abre volume."</p>
+      <div class="vitais"><span>PA <b>120×80</b></span><span>FC <b>120</b></span><span>lactato <b>3,9</b></span><span>agitação <b>++</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>Trata-se o número como sinônimo de anaerobiose. Mas a PA está boa e a entrega é apenas limítrofe — a conta da hipoperfusão pura não fecha sozinha.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Lactato tem <em>dois</em> tipos: <b>A</b> (anaeróbio, DO₂ < crítico) e <b>B</b> (aeróbio — drive β2-adrenérgico, metformina). A agitação/estresse libera catecolaminas → β2 → lactato <em>sem</em> hipóxia.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Decompondo o 3,9: a maior parte é <b>tipo B</b> (β2), com um componente menor anaeróbio. A balança também tem o outro prato — a <b>depuração hepática</b>, que cai no baixo fluxo e na hepatopatia.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A balança produção × depuração e a tendência seriada mostram de onde vem o lactato e para onde ele vai. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">fonte do lactato</b> (tipo A × tipo B) e a <b>depuração</b>. O 3,9 da semente é predominantemente <em>β2 (tipo B)</em> — perseguir só volume porque "lactato alto" ignora o mecanismo. O sinal que importa é a <b>tendência</b> (clearance %), não o valor único.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas pela balança.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">Lactato alto = hipoperfusão?</div><div class="aa">Nem sempre. É o sinal mais sensível de anaerobiose, mas <b>não específico</b>: há produção aeróbia e há falha de depuração.</div></div>
+      <div class="step"><div class="qq">O que é tipo A?</div><div class="aa">Lactato <b>anaeróbio</b>: quando a DO₂ cai abaixo do crítico (módulo 8), a glicólise vira anaeróbia → lactato proporcional ao déficit.</div></div>
+      <div class="step"><div class="qq">E tipo B?</div><div class="aa"><b>Aeróbio</b>, sem hipóxia: drive <b>β2-adrenérgico</b> (adrenalina, salbutamol) acelera a glicólise e a bomba Na/K; <b>metformina</b> e disfunção mitocondrial também.</div></div>
+      <div class="step"><div class="qq">Quem limpa o lactato?</div><div class="aa">Sobretudo o <b>fígado</b> (ciclo de Cori, oxidação) e o rim. No choque (baixo fluxo) e na hepatopatia, a depuração cai → lactato sobe mesmo com produção estável.</div></div>
+      <div class="step"><div class="qq">Então o número basta?</div><div class="aa">Não: o que prognostica é a <b>tendência seriada</b> — o <em>clearance</em> de lactato (queda % em horas). Um 4,0 que cai rápido é diferente de um 4,0 que não move.</div></div>
+      <div class="step"><div class="qq">Como isso muda o raciocínio?</div><div class="aa"><b>Decompor antes de tratar</b> (outra vez): tipo A pede restaurar a DO₂; tipo B pede tratar o gatilho — não perseguir volume só porque o número está alto.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a balança e a tendência</h2>
+    <p class="lead">A produção (empilhada por fonte) contra a depuração hepática, e o lactato que resulta. Abaixo, a tendência seriada — o que de fato prognostica.</p>
+    <div class="plotwrap">
+      <canvas id="plotBalance" class="plot" width="820" height="200" aria-label="balança produção x depuração de lactato"></canvas>
+      <div class="legend">
+        <span><i style="background:#46506b"></i>basal</span>
+        <span><i style="background:var(--art)"></i>tipo A (anaeróbio)</span>
+        <span><i style="background:var(--accent)"></i>tipo B · β2</span>
+        <span><i style="background:var(--ven)"></i>tipo B · metformina</span>
+      </div>
+      <div class="opbox" id="opbox-bal"></div>
+      <canvas id="plotTrend" class="trend" width="820" height="220" aria-label="tendência seriada do lactato"></canvas>
+      <div class="opbox" id="opbox-trend"></div>
+      <div class="ctrls" style="margin-top:12px">
+        <div class="ctrl"><label>DO₂ <span class="v"><span id="vDo2">1000</span> mL/min</span></label><input id="iDo2" type="range" min="150" max="1400" step="10" value="1000"></div>
+        <div class="ctrl"><label>Demanda VO₂ <span class="v"><span id="vDem">250</span> mL/min</span></label><input id="iDem" type="range" min="150" max="450" step="10" value="250"></div>
+        <div class="ctrl"><label>Drive β2 <span class="v"><span id="vB2">0</span> /10</span></label><input id="iB2" type="range" min="0" max="10" step="0.5" value="0"></div>
+        <div class="ctrl"><label>Metformina <span class="v"><span id="vMet">0</span> /3</span></label><input id="iMet" type="range" min="0" max="3" step="0.5" value="0"></div>
+        <div class="ctrl"><label>Função hepática <span class="v"><span id="vHep">100</span> %</span></label><input id="iHep" type="range" min="20" max="120" step="5" value="100"></div>
+      </div>
+      <p class="hint" style="margin-top:10px">Drive β2 e metformina são intensidades relativas (mecanismo) — <b>nunca</b> doses. A tendência mostra o lactato caindo conforme a fonte é corrigida.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · de onde vem este lactato?</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito vira</b> entre tipo A, tipo B e clearance-limitado; os banners explicam o mecanismo e o que ele implica (sem conduta).</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="tipoA">Tipo A (hipoperfusão)</button>
+      <button class="preset" type="button" data-preset="tipoB">Tipo B (β2, sem hipóxia)</button>
+      <button class="preset" type="button" data-preset="seed">Caso-semente (3,9)</button>
+      <button class="preset" type="button" data-preset="hepatica">Hepatopatia (clearance)</button>
+      <button class="preset" type="button" data-preset="metformina">Metformina</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotBalanceLab" class="plot" width="820" height="200" aria-label="balança no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>DO₂ <span class="v"><span id="vlDo2">1000</span></span></label><input id="lDo2" type="range" min="150" max="1400" step="10" value="1000"></div>
+        <div class="ctrl"><label>Drive β2 <span class="v"><span id="vlB2">0</span></span></label><input id="lB2" type="range" min="0" max="10" step="0.5" value="0"></div>
+        <div class="ctrl"><label>Função hepática <span class="v"><span id="vlHep">100</span> %</span></label><input id="lHep" type="range" min="20" max="120" step="5" value="100"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Mecanismo predominante</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-tipoA"><b>Tipo A (anaeróbio).</b> DO₂ abaixo do crítico: o lactato é proporcional ao déficit de O₂. Aqui restaurar a entrega ataca a causa (mecanismo, módulo 8).</div>
+      <div class="banner art" id="ban-tipoB"><b>Tipo B (aeróbio · β2).</b> Lactato SEM hipóxia, do drive adrenérgico. Perseguir volume porque "lactato alto" erra o alvo — o gatilho é outro.</div>
+      <div class="banner ven" id="ban-metformina"><b>Componente metformina.</b> Inibe gliconeogênese/mitocôndria — tipo B; agrava com disfunção renal/hepática que reduz a depuração.</div>
+      <div class="banner art" id="ban-clearance"><b>Clearance limitado.</b> Produção modesta, lactato alto: o prato que pesa é a <em>depuração</em> (fígado/baixo fluxo), não a produção.</div>
+      <div class="banner ven" id="ban-trend"><b>Olhe a tendência.</b> Um lactato isolado vale pouco: o clearance seriado (queda % em ~2–6 h) é o sinal que prognostica.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a balança computada ao vivo. Leia a fonte e a depuração — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se de onde vem o lactato — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ O lactato aqui é um <b>balanço estacionário linearizado</b> (produção/clearance); a fisiologia real soma muitas fontes (Cori, glicólise aeróbia da bomba Na/K, sepse, convulsão, isquemia regional) e cinéticas não-lineares. → O "drive β2" e a "carga de metformina" são <b>intensidades relativas adimensionais</b>, não doses. → A depuração é tratada como um fator único (fígado), embora rim, músculo e o próprio fluxo participem. → A tendência seriada é um decaimento idealizado. Os números são exatos <em>dentro</em> do modelo — e o lactato real é multifatorial.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde8.html">Módulo 8 · DO₂/VO₂ &amp; supply-dependence</a> — o joelho onde nasce o lactato tipo A.</div>
+    <div class="ponte">→ <a href="perfunde12.html">Módulo 12 · A microcirculação</a> — lactato com macro "ok" e tecido faminto.</div>
+    <div class="ponte">→ <a href="perfunde21.html">Módulo 21 · Séptico</a> — lactato multifatorial, depuração e o β-agonista.</div>
+    <div class="ponte pend">↔ braço 1 (Respira·Ventila): o β2 da DPOC/asma como fonte de lactato tipo B — ponte pendente até publicação conjunta.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 13
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model13.js inlined) ===================== -->
+<script>
+var LAC_BASE=0.8, O2ERMAX=0.6, kA=0.022, kB=0.50, kMet=0.70;
+function o2deficit(do2,demand){ var crit=demand/O2ERMAX; var vo2=(do2>=crit)?demand:O2ERMAX*do2; return Math.max(0,demand-vo2); }
+function prodAnaerobic(do2,demand){ return kA*o2deficit(do2,demand); }
+function prodTypeB(beta2,met){ return kB*(beta2||0)+kMet*(met||0); }
+function lactate(P){ var hep=(P.hepatic===undefined?1:P.hepatic); return LAC_BASE + (prodAnaerobic(P.do2,P.demand)+prodTypeB(P.beta2,P.met))/Math.max(0.1,hep); }
+function typeFraction(P){ var a=prodAnaerobic(P.do2,P.demand),b=prodTypeB(P.beta2,P.met),t=a+b; if(t<=1e-9)return{a:0,b:0}; return {a:a/t,b:b/t}; }
+function classify(P){ var hep=(P.hepatic===undefined?1:P.hepatic); var a=prodAnaerobic(P.do2,P.demand),b=prodTypeB(P.beta2,P.met),t=a+b;
+  var cl=(hep<0.6)&&(t<1.2); var f=typeFraction(P); var tipo;
+  if(t<0.3)tipo='normal'; else if(f.a>=0.6)tipo='tipo A (anaeróbio)'; else if(f.b>=0.6)tipo='tipo B (aeróbio)'; else tipo='misto';
+  return {tipo:tipo,clearanceLimited:cl,fracA:f.a,fracB:f.b,lactato:lactate(P)}; }
+function serial(lac0,lacSteady,hepatic,hH){ hH=hH||6; var tau=2.5/Math.max(0.2,hepatic); var out=[]; for(var h=0;h<=hH;h+=0.5){ out.push({h:h,lac:lacSteady+(lac0-lacSteady)*Math.exp(-h/tau)}); } return out; }
+function clearancePct(l0,lt){ return l0>0?100*(l0-lt)/l0:0; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var state={ do2:1000, demand:250, beta2:0, met:0, hepatic:1.0 };
+  var PRESETS={
+    normal:    { do2:1000, demand:250, beta2:0, met:0, hepatic:1.0 },
+    tipoA:     { do2:250,  demand:250, beta2:0, met:0, hepatic:1.0 },
+    tipoB:     { do2:1000, demand:250, beta2:6, met:0, hepatic:1.0 },
+    seed:      { do2:450,  demand:300, beta2:5, met:0, hepatic:1.0 },
+    hepatica:  { do2:1000, demand:250, beta2:2, met:0, hepatic:0.35 },
+    metformina:{ do2:1000, demand:250, beta2:0, met:2.5, hepatic:0.6 }
+  };
+  var LACMAX=10;
+
+  function drawBalance(ctx,W,H,P){
+    try{
+      var padL=20,padR=14,padT=22,padB=34, plotW=W-padL-padR;
+      var hep=(P.hepatic===undefined?1:P.hepatic);
+      var base=LAC_BASE, a=prodAnaerobic(P.do2,P.demand)/hep, b=kB*(P.beta2||0)/hep, m=kMet*(P.met||0)/hep;
+      var total=base+a+b+m;
+      var x=function(l){ return padL+(Math.min(LACMAX,l)/LACMAX)*plotW; };
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      // escala
+      ctx.strokeStyle='#1c2436'; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.lineWidth=1;
+      for(var g=0;g<=LACMAX;g+=2){ ctx.beginPath(); ctx.moveTo(x(g),padT); ctx.lineTo(x(g),H-padB); ctx.stroke(); ctx.fillText(g+'',x(g)-4,H-padB+14); }
+      // limiares 2 (alto) e 4 (muito alto)
+      ctx.strokeStyle='#46506b'; ctx.setLineDash([3,3]); [2,4].forEach(function(t){ ctx.beginPath(); ctx.moveTo(x(t),padT-6); ctx.lineTo(x(t),H-padB); ctx.stroke(); }); ctx.setLineDash([]);
+      // barra empilhada
+      var y=padT+18, hbar=44, cx=padL;
+      var seg=function(val,color){ if(val<=0)return; var w=x(cx+val)-x(cx); ctx.fillStyle=color; ctx.fillRect(x(cx),y,w,hbar); cx+=val; };
+      seg(base,'#46506b'); seg(a,'#e5394e'); seg(b,'#ffcf5c'); seg(m,'#3f82e6');
+      ctx.strokeStyle='#26314a'; ctx.strokeRect(x(0),y,x(total)-x(0),hbar);
+      // marcador do total
+      ctx.fillStyle='#fff'; ctx.font='12px monospace'; ctx.fillText('lactato '+br(total,1)+' mmol/L', x(total)+6>W-150? x(total)-150 : x(total)+8, y-6);
+      return { total:total };
+    }catch(e){ return { total:lactate(P) }; }
+  }
+  function drawTrend(ctx,W,H,P){
+    try{
+      var padL=34,padR=14,padT=14,padB=28, plotW=W-padL-padR, plotH=H-padT-padB;
+      var lac0=lactate(P); var hep=(P.hepatic===undefined?1:P.hepatic);
+      // estacionário "corrigido": 70% da produção tratada
+      var prod=prodAnaerobic(P.do2,P.demand)+prodTypeB(P.beta2,P.met);
+      var lacSteady=LAC_BASE + (prod*0.3)/Math.max(0.1,hep);
+      var tr=serial(lac0,lacSteady,hep,6);
+      var x=function(h){ return padL+(h/6)*plotW; }, y=function(l){ return padT+plotH-(Math.min(LACMAX,l)/LACMAX)*plotH; };
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.lineWidth=1;
+      for(var g=0;g<=LACMAX;g+=2){ ctx.beginPath(); ctx.moveTo(padL,y(g)); ctx.lineTo(W-padR,y(g)); ctx.stroke(); ctx.fillText(g+'',6,y(g)+3); }
+      for(var hh=0;hh<=6;hh+=2){ ctx.fillText(hh+'h',x(hh)-6,H-padB+14); }
+      // curva
+      ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=2.4; ctx.beginPath();
+      tr.forEach(function(p,i){ var X=x(p.h),Y=y(p.lac); if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }); ctx.stroke();
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(x(0),y(lac0),4,0,Math.PI*2); ctx.fill();
+      var lac2=tr.find(function(p){return p.h===2;}).lac, cl=clearancePct(lac0,lac2);
+      ctx.fillStyle='#97a3ba'; ctx.font='11px monospace'; ctx.fillText('clearance 2h ≈ '+br(cl,0)+'%', padL+8, padT+12);
+      return { lac0:lac0, cl2:cl };
+    }catch(e){ return {}; }
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var ctx; try{ctx=cv.getContext('2d');}catch(e){return {};} if(!ctx) return {}; return fn(ctx,cv.width||820,cv.height||200,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vDo2').textContent=state.do2; $('vDem').textContent=state.demand; $('vB2').textContent=br(state.beta2,1); $('vMet').textContent=br(state.met,1); $('vHep').textContent=Math.round(state.hepatic*100);
+    $('vlDo2').textContent=state.do2; $('vlB2').textContent=br(state.beta2,1); $('vlHep').textContent=Math.round(state.hepatic*100);
+    var c=classify(state), f=typeFraction(state);
+    drawOn('plotBalance', drawBalance, state);
+    $('opbox-bal').innerHTML='lactato <b>'+br(c.lactato,1)+'</b> mmol/L · tipo A '+br(f.a*100,0)+'% · tipo B '+br(f.b*100,0)+'% · depuração '+Math.round(state.hepatic*100)+'%';
+    var tr=drawOn('plotTrend', drawTrend, state);
+    $('opbox-trend').innerHTML='tendência: o que prognostica é o <b>clearance</b> (~'+br(tr.cl2||0,0)+'% em 2 h, fígado '+Math.round(state.hepatic*100)+'%), não o valor isolado';
+    // espelha no Lab
+    drawOn('plotBalanceLab', drawBalance, state);
+    $('opbox-lab').innerHTML='lactato <b>'+br(c.lactato,1)+'</b> · tipo A '+br(f.a*100,0)+'% · tipo B '+br(f.b*100,0)+'% · '+c.tipo;
+
+    var vEl=$('lab-veredito'), klass, label, sub;
+    if(c.lactato < 2){ klass='ok'; label='LACTATO NORMAL'; sub='produção baixa, depuração suficiente'; }
+    else if(c.clearanceLimited){ klass='crit'; label='CLEARANCE LIMITADO'; sub='produção modesta, lactato alto — o fígado/fluxo é o prato pesado'; }
+    else if(c.tipo.indexOf('tipo A')===0){ klass='crit'; label='TIPO A (anaeróbio)'; sub='déficit de O₂ — restaurar a entrega ataca a causa'; }
+    else if(c.tipo.indexOf('tipo B')===0){ klass='lim'; label='TIPO B (aeróbio · β2)'; sub='lactato SEM hipóxia — o gatilho não é volume'; }
+    else { klass='lim'; label='MISTO'; sub='componentes A e B coexistem'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent=sub+' · A '+br(f.a*100,0)+'% / B '+br(f.b*100,0)+'% · lactato '+br(c.lactato,1);
+
+    show($('ban-tipoA'), f.a>=0.6 && c.lactato>=2);
+    show($('ban-tipoB'), f.b>=0.6 && c.lactato>=2 && !c.clearanceLimited);
+    show($('ban-metformina'), state.met>0);
+    show($('ban-clearance'), c.clearanceLimited);
+    show($('ban-trend'), c.lactato>=2);
+  }
+  function syncSliders(){ $('iDo2').value=state.do2; $('iDem').value=state.demand; $('iB2').value=state.beta2; $('iMet').value=state.met; $('iHep').value=state.hepatic*100;
+    $('lDo2').value=state.do2; $('lB2').value=state.beta2; $('lHep').value=state.hepatic*100; }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[]; var S=function(o){return Object.assign({do2:1000,demand:250,beta2:0,met:0,hepatic:1.0},o);};
+    T.push({S:S({do2:250}), cap:'DO₂ baixa (250). Barra: vermelho = tipo A.',
+      q:'Este lactato elevado, com DO₂ abaixo do crítico, é predominantemente:',
+      o:['tipo A (anaeróbio)','tipo B por β2','clearance hepático ruim','artefato laboratorial'], a:0,
+      fb:'Déficit de O₂ → glicólise anaeróbia → lactato tipo A. Restaurar a DO₂ ataca a causa.', hint:'Segmento vermelho domina.'});
+    T.push({S:S({beta2:6}), cap:'DO₂ normal, drive β2 alto (âmbar).',
+      q:'Lactato alto com DO₂ normal e β2 elevado significa:',
+      o:['hipoperfusão oculta','lactato tipo B, SEM hipóxia','erro de medida','depuração aumentada'], a:1,
+      fb:'β2-adrenérgico fabrica lactato aerobicamente — tipo B. Não é gatilho de volume.', hint:'Sem vermelho; só âmbar.'});
+    T.push({S:S({beta2:6}), cap:'Mesmo cenário β2.',
+      q:'Perseguir volume aqui porque "lactato alto" é:',
+      o:['correto sempre','errar o alvo (o gatilho é o β2)','indicado pela tendência','necessário para o clearance'], a:1,
+      fb:'O mecanismo é tipo B; volume não corrige a fonte. Decompor antes de tratar.', hint:'A fonte é adrenérgica.'});
+    T.push({S:S({do2:450,demand:300,beta2:5}), cap:'O caso-semente (lactato ~3,9).',
+      q:'Decompondo o 3,9 da paciente-semente, a maior parte é:',
+      o:['anaeróbia (tipo A)','β2 / tipo B','metformina','depuração'], a:1,
+      fb:'A maior fração é tipo B (β2 da agitação/estresse), com um componente A menor — misto, predominante B.', hint:'Âmbar maior que vermelho.'});
+    T.push({S:S({beta2:2,hepatic:0.35}), cap:'Produção modesta, fígado ruim (35%).',
+      q:'Lactato alto com produção pequena e função hepática baixa indica:',
+      o:['tipo A grave','clearance limitado (depuração)','tipo B puro','lactato normal'], a:1,
+      fb:'O prato que pesa é a depuração: pouco produzido, mal limpo → acumula.', hint:'Pouca barra, mas lactato alto.'});
+    T.push({S:S({met:2.5,hepatic:0.6}), cap:'Carga de metformina (azul).',
+      q:'A metformina contribui para o lactato por:',
+      o:['aumentar a anaerobiose por hipóxia','inibir gliconeogênese/mitocôndria (tipo B)','elevar a DO₂','acelerar a depuração'], a:1,
+      fb:'Metformina é tipo B; piora com disfunção renal/hepática que reduz a depuração.', hint:'Sem déficit de O₂.'});
+    T.push({S:S({do2:300,demand:250}), cap:'Dois lactatos 4,0: um cai rápido, outro não.',
+      q:'O que melhor prognostica, entre dois lactatos iguais?',
+      o:['o valor absoluto','a tendência (clearance % em horas)','a cor do tubo','a hora da coleta'], a:1,
+      fb:'O clearance seriado (queda %) discrimina melhor que o valor único.', hint:'Tendência > número.'});
+    T.push({S:S({do2:1000}), cap:'DO₂ normal, sem β2, sem metformina, fígado normal.',
+      q:'Com produção mínima e depuração normal, o lactato fica:',
+      o:['normal (~0,8–1,5)','sempre acima de 4','indeterminado','dependente da FC'], a:0,
+      fb:'Sem fonte relevante e com boa depuração, o lactato permanece basal.', hint:'Quase só o segmento basal.'});
+    T.push({S:S({do2:1000,beta2:7}), cap:'Adrenalina/β2 em infusão (drive alto).',
+      q:'Um drive β2 intenso (ex.: adrenalina) tende a:',
+      o:['baixar o lactato','elevar o lactato (tipo B), mesmo sem hipóxia','não ter efeito','reduzir a demanda de O₂'], a:1,
+      fb:'É um efeito esperado e benigno do β2 — interpretar como hipoperfusão seria erro.', hint:'Mecanismo aeróbio.'});
+    T.push({S:S({do2:250}), cap:'Síntese.',
+      q:'A lição central do lactato neste braço é:',
+      o:['lactato alto = sempre hipoperfusão','é uma balança produção × depuração, multifatorial','só importa em sepse','substitui a monitorização'], a:1,
+      fb:'Decompor a fonte (A/B) e considerar a depuração e a tendência — não tratar o número isolado.', hint:'Balança, não gatilho único.'});
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=170; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawBalance(ctx,W||760,H||170,item.S); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ drawBalance(ctx,cv.width||760,cv.height||170,item.S); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iDo2','do2'],['iDem','demand'],['iB2','beta2'],['iMet','met']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    $('iHep').addEventListener('input',function(){ state.hepatic=parseFloat(this.value)/100; syncSliders(); recompute(); });
+    [['lDo2','do2'],['lB2','beta2']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    $('lHep').addEventListener('input',function(){ state.hepatic=parseFloat(this.value)/100; syncSliders(); recompute(); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawBalance=drawBalance; window.activateTab=activate; window.setLabState=setState;
+    window.lactateFn=lactate; window.classifyFn=classify; window.typeFractionFn=typeFraction; window.serialFn=serial; window.clearancePctFn=clearancePct; window.o2deficitFn=o2deficit;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
