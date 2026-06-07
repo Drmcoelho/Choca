@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 12 · A microcirculação</title>
+<meta name="description" content="O desacoplamento macro-micro: a PAM e o DC normais, e o tecido faminto. Shunt, glicocálice roto e heterogeneidade derrubam a extração — a ScvO₂ sobe e o lactato denuncia. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:340px;border-radius:8px;background:#090b10}
+canvas.plot.short{height:180px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.95rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ven);margin:18px 0 6px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:210px;border-radius:8px;background:#090b10;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 12 · A microcirculação</div>
+    <h1>A macro mente, o tecido sabe</h1>
+    <p class="sub">PAM 70, débito alto, ScvO₂ 86% — o monitor diz "perfundido". E o lactato sobe, o livedo aparece, o enchimento capilar arrasta. A entrega <em>global</em> está ótima; o problema é que ela não chega — ou não é extraída — onde importa. O choque vive no capilar.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="16" x2="900" y2="16" stroke="var(--ok)" stroke-width="2" opacity=".5"/>
+      <line x1="0" y1="40" x2="900" y2="40" stroke="var(--art)" stroke-width="2" stroke-dasharray="3 5" opacity=".7"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Tudo "ok" no monitor, e o lactato subindo</h2>
+    <p class="lead">Cinco atos. A variável escondida não está em nenhum número da macro — está entre eles, no capilar. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Séptico ressuscitado: PAM 72, débito alto (quente, pulso amplo), ScvO₂ 86%. "Hemodinâmica compensada." Mas o lactato é 4,5 e sobe.</p>
+      <div class="vitais"><span>PAM <b>72</b></span><span>DC <b>alto</b></span><span>ScvO₂ <b>86%</b></span><span>lactato <b>4,5</b></span><span>livedo <b>+</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>ScvO₂ alta = entrega sobrando? Foi como sempre se leu. Mas ScvO₂ alta também é o sangue voltando <em>cheio de O₂ que ninguém extraiu</em>.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>A DO₂ global é boa, mas o O₂ não cruza para a célula: <b>shunt</b> microvascular desvia o fluxo, o <b>glicocálice</b> roto afasta e vaza, a <b>heterogeneidade</b> deixa capilares parados ao lado de rápidos.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Extração efetiva despenca → o tecido fica abaixo da sua demanda → metabolismo anaeróbio → lactato. E o sangue não-extraído volta saturado → ScvO₂ <em>alta</em>. O paradoxo.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O leito capilar vivo mostra hemácias entregando (ou não) O₂, o glicocálice, o shunt e o tecido alimentado × faminto. É o que o Instrumento desenha.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">extração efetiva</b> no compartimento microcirculatório — invisível aos números da macro. ScvO₂ alta no séptico não é folga: é <em>O₂ que passou e voltou sem ser usado</em>. Por isso <b>pressor não conserta a micro</b>: ele sobe a pressão e a DO₂ global, mas o gargalo é a extração (shunt/glicocálice/heterogeneidade), não a entrega.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas da macro ao capilar.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">A macro está boa — o tecido devia estar bem, não?</div><div class="aa">A DO₂ global mede o que <b>sai do coração</b>, não o que <b>cruza para a célula</b>. Entre os dois há a microcirculação, um compartimento com regras próprias.</div></div>
+      <div class="step"><div class="qq">Por que ScvO₂ alta não tranquiliza no séptico?</div><div class="aa">Porque pode ser sangue que <b>passou sem entregar</b>: shunt e capilares rápidos demais não descarregam O₂ → ele volta no venoso → ScvO₂ <b>sobe</b> com o tecido faminto.</div></div>
+      <div class="step"><div class="qq">O que é o shunt microvascular?</div><div class="aa">Fluxo que <b>desvia da troca</b> (não-nutritivo). O O₂ chega à região mas não ao parênquima — entrega global preservada, entrega tecidual não.</div></div>
+      <div class="step"><div class="qq">E o glicocálice?</div><div class="aa">A malha gelatinosa que forra o endotélio. Íntegra, mantém plasma e curta distância de difusão. Rota (sepse), <b>vaza</b> (edema), afasta a hemácia da célula e some a barreira → extração cai.</div></div>
+      <div class="step"><div class="qq">E a heterogeneidade de fluxo?</div><div class="aa">Capilares <b>parados ao lado de rápidos</b>. Os parados causam hipóxia estagnante; os rápidos não têm tempo de descarregar. A média "normal" esconde os extremos.</div></div>
+      <div class="step"><div class="qq">Então subir a pressão (pressor) resolve?</div><div class="aa"><b>Não conserta a micro.</b> Sobe a PAM e a DO₂ global, mas o gargalo é a extração. A ScvO₂ pode até subir mais (mais shunt) — parecer "melhor" e o lactato continuar.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o leito capilar ao vivo</h2>
+    <p class="lead">Hemácias entram <span style="color:#ff5566">brilhantes</span> e deviam sair <span style="color:#7a5c8a">escuras</span> (descarregaram O₂). No <b>shunt</b> saem ainda brilhantes; nos capilares <b>parados</b>, estagnam. O tecido acende <span style="color:var(--ok)">alimentado</span> ou apaga <span style="color:#6a78c8">faminto</span>.</p>
+    <div class="idcard">
+      <div class="formula">extração efetiva <span class="iso">E</span> = E₀ · glicocálice · (1 − k·heterogeneidade)</div>
+      <div class="formula">O₂ ao tecido = DO₂ · (1 − <b style="color:var(--art)">shunt</b>) · E &nbsp;<span style="color:var(--ink-faint)">· abaixo da demanda → lactato; o resto volta → ScvO₂↑</span></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotBed" class="plot" width="860" height="340" aria-label="leito capilar animado: hemácias, glicocálice, shunt, tecido"></canvas>
+      <div class="legend">
+        <span><i style="background:#ff5566"></i>hemácia oxigenada</span>
+        <span><i style="background:#7a5c8a"></i>desoxigenada (entregou)</span>
+        <span><i style="background:#3ec78d"></i>tecido alimentado</span>
+        <span><i style="background:#5a64aa"></i>tecido faminto</span>
+        <span><i style="background:rgba(63,130,230,.5)"></i>edema (glicocálice roto)</span>
+      </div>
+      <div class="opbox" id="opbox-bed"></div>
+    </div>
+    <div class="subhead">Macro × micro · para onde vai o O₂ entregue</div>
+    <div class="plotwrap">
+      <canvas id="plotFlux" class="plot short" width="860" height="180" aria-label="contabilidade macro versus micro do oxigênio"></canvas>
+      <div class="legend">
+        <span><i style="background:#3ec78d"></i>extraído pelo tecido (VO₂)</span>
+        <span><i style="background:#3f82e6"></i>volta no venoso → ScvO₂↑</span>
+        <span><i style="background:#ff5d6c"></i>déficit (demanda não atendida)</span>
+      </div>
+      <div class="opbox" id="opbox-flux"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Shunt (não-nutritivo) <span class="v"><span id="vFs">50</span> %</span></label><input id="iFs" type="range" min="0" max="80" step="1" value="50"></div>
+        <div class="ctrl"><label>Glicocálice (integridade) <span class="v"><span id="vGly">40</span> %</span></label><input id="iGly" type="range" min="10" max="100" step="1" value="40"></div>
+        <div class="ctrl"><label>Heterogeneidade <span class="v"><span id="vHet">70</span> %</span></label><input id="iHet" type="range" min="0" max="100" step="1" value="70"></div>
+        <div class="ctrl"><label>DO₂ global (macro) <span class="v"><span id="vDO2">1100</span> mL/min</span></label><input id="iDO2" type="range" min="600" max="1600" step="20" value="1100"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Arraste o shunt e a heterogeneidade para baixo e o glicocálice para cima: o tecido reacende. Suba só a DO₂ (pressor/volume) e veja a futilidade — a ScvO₂ sobe, o tecido segue faminto.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · acoplado ou desacoplado?</h2>
+    <p class="lead">Cenários ou as quatro alavancas. O <b>veredito vira</b> e os banners dizem qual mecanismo quebrou — e por que a macro não resgata.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="saudavel">Saudável</button>
+      <button class="preset" type="button" data-preset="septico">Séptico (o paradoxo)</button>
+      <button class="preset" type="button" data-preset="shunt">Shunt dominante</button>
+      <button class="preset" type="button" data-preset="glico">Glicocálice roto</button>
+      <button class="preset" type="button" data-preset="pressor">Pressor (só macro↑)</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotBedLab" class="plot" width="860" height="340" aria-label="leito capilar no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:#ff5566"></i>oxigenada</span>
+        <span><i style="background:#7a5c8a"></i>entregou</span>
+        <span><i style="background:#3ec78d"></i>alimentado</span>
+        <span><i style="background:#5a64aa"></i>faminto</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Shunt <span class="v"><span id="vlFs">50</span> %</span></label><input id="lFs" type="range" min="0" max="80" step="1" value="50"></div>
+        <div class="ctrl"><label>Glicocálice <span class="v"><span id="vlGly">40</span> %</span></label><input id="lGly" type="range" min="10" max="100" step="1" value="40"></div>
+        <div class="ctrl"><label>Heterogeneidade <span class="v"><span id="vlHet">70</span> %</span></label><input id="lHet" type="range" min="0" max="100" step="1" value="70"></div>
+        <div class="ctrl"><label>DO₂ global <span class="v"><span id="vlDO2">1100</span></span></label><input id="lDO2" type="range" min="600" max="1600" step="20" value="1100"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Acoplamento macro → tecido</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-shunt"><b>Shunt dominante.</b> Muito fluxo não-nutritivo: o sangue passa e volta saturado. A ScvO₂ sobe sem o tecido ver O₂ algum.</div>
+      <div class="banner art" id="ban-glico"><b>Glicocálice roto.</b> A malha endotelial se foi: permeabilidade↑, edema, distância de difusão maior. O O₂ não cruza a barreira alargada.</div>
+      <div class="banner art" id="ban-het"><b>Heterogeneidade de fluxo.</b> Capilares parados (hipóxia estagnante) ao lado de rápidos (sem tempo de descarregar). A média esconde os extremos.</div>
+      <div class="banner ven" id="ban-paradoxo"><b>O paradoxo séptico.</b> Extração baixa + ScvO₂ alta <em>com</em> tecido faminto e lactato. ScvO₂ "boa" aqui é alarme, não alívio.</div>
+      <div class="banner art" id="ban-pressor"><b>Pressor não conserta a micro.</b> Macro alta não fecha o déficit: o gargalo é a extração, não a entrega. Subir a DO₂ ainda eleva a ScvO₂ — falso conforto.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha o leito capilar ou a contabilidade macro×micro computados ao vivo. Leia o paradoxo — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do desacoplamento macro-micro — <b>nunca</b> dose, alvo de ScvO₂/lactato, ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A microcirculação é reduzida a três alavancas (shunt, glicocálice, heterogeneidade) e uma extração efetiva única; a realidade tem distribuições espaciais de fluxo, recrutamento capilar dinâmico e <b>falência citopática mitocondrial</b> (a célula que não usa o O₂ mesmo quando ele chega) que o modelo macro não captura — declarado. → A ScvO₂ aqui é proxy de conteúdo venoso (1−O₂ER); co-oximetria e shunt anatômico reais fogem disso. → <b>Farmacologia (mecanismo):</b> o vasopressor age na <em>macro</em> (RVS/PAM) e <b>não repara</b> shunt, glicocálice ou heterogeneidade — por isso a micro pode seguir faminta com a macro "corrigida"; sem dose, sem alvo. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde8.html">Módulo 8 · DO₂/VO₂ &amp; supply-dependence</a> — a curva global; aqui o joelho do DO₂crítico se desloca porque a <em>extração</em> quebrou, não a entrega.</div>
+    <div class="ponte">→ <a href="perfunde21.html">Módulo 21 · Choque séptico</a> — onde este compartimento é o protagonista: micro + falência citopática. <span class="pend">(ponte pendente)</span></div>
+    <div class="ponte">→ <a href="perfunde25.html">Módulo 25 · Ressuscitação volêmica</a> — o glicocálice roto que não segura volume: o custo do bolus nasce aqui. <span class="pend">(ponte pendente)</span></div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 12
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model12.js inlined) ===================== -->
+<script>
+var E0=0.70, K_HET=0.45, EPS_SHUNT=0.02, K_LAC=0.02, LAC_BASE=1.0, LAC_MAX=15;
+function effExtraction(gly,het){ return E0*gly*(1-K_HET*het); }
+function micro(p){
+  var SaO2=p.SaO2!==undefined?p.SaO2:0.98, demand=p.demand!==undefined?p.demand:250;
+  var E=effExtraction(p.gly,p.het), nutritive=p.DO2*(1-p.fs), ceiling=nutritive*E;
+  var extracted=Math.min(demand,ceiling), deficit=Math.max(0,demand-ceiling);
+  var O2ER=extracted/p.DO2, ScvO2=SaO2*(1-O2ER), lactate=Math.min(LAC_MAX,LAC_BASE+K_LAC*deficit);
+  return { E:E, nutritive:nutritive, ceiling:ceiling, VO2:extracted, demand:demand,
+    deficit:deficit, O2ER:O2ER, ScvO2:ScvO2, lactate:lactate, DO2:p.DO2, SaO2:SaO2 };
+}
+function vereditoMicro(R){ if(R.deficit<5) return 'acoplado'; if(R.deficit<100) return 'leve'; return 'grave'; }
+function isParadoxo(R){ return R.O2ER<0.18 && R.ScvO2>0.78 && R.deficit>0; }
+</script>
+
+<!-- ===================== UI · leito capilar + macro×micro + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function lerpC(c1,c2,t){ t=clamp(t,0,1); return 'rgb('+Math.round(c1[0]+(c2[0]-c1[0])*t)+','+Math.round(c1[1]+(c2[1]-c1[1])*t)+','+Math.round(c1[2]+(c2[2]-c1[2])*t)+')'; }
+  var OXY=[255,85,102], DEOXY=[122,92,138], FED=[62,199,141], STARV=[90,100,170];
+
+  var DEMAND=280, SaO2=0.98;
+  var state={ DO2:1100, fs:0.50, gly:0.40, het:0.70 };
+  var PRESETS={
+    saudavel:{ DO2:1000, fs:0.05, gly:1.00, het:0.10 },
+    septico: { DO2:1100, fs:0.50, gly:0.40, het:0.70 },
+    shunt:   { DO2:1000, fs:0.65, gly:0.70, het:0.30 },
+    glico:   { DO2:1000, fs:0.20, gly:0.20, het:0.45 },
+    pressor: { DO2:1500, fs:0.50, gly:0.40, het:0.70 }
+  };
+  function params(){ return { DO2:state.DO2, SaO2:SaO2, fs:state.fs, gly:state.gly, het:state.het, demand:DEMAND }; }
+  var curR=null, reduce=false; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // ---------- desenho: leito capilar vivo ----------
+  function drawBed(ctx,W,H,P,phase){
+    try{
+      ctx.clearRect(0,0,W,H);
+      var rng=mulberry32(20240612);
+      var NL=7, padX=18, padT=14, padB=14, areaW=W-2*padX, laneGap=(H-padT-padB)/NL;
+      // tipos de capilar a partir de shunt e heterogeneidade
+      var idx=[]; for(var a=0;a<NL;a++) idx.push(a);
+      for(var s=NL-1;s>0;s--){ var j=Math.floor(rng()*(s+1)); var tmp=idx[s]; idx[s]=idx[j]; idx[j]=tmp; }
+      var nShunt=Math.round(NL*P.fs), nStag=Math.round(NL*P.het*0.4);
+      var type=new Array(NL); for(var b=0;b<NL;b++) type[b]='nut';
+      for(var c=0;c<NL;c++){ var who=idx[c]; if(c<nShunt) type[who]='shunt'; else if(c<nShunt+nStag) type[who]='stag'; }
+      var edema=1-P.gly;
+      // fundo: leve sugestão de interstício/edema
+      if(edema>0.05){ ctx.fillStyle='rgba(63,130,230,'+(0.10*edema).toFixed(3)+')'; ctx.fillRect(padX,padT,areaW,H-padT-padB); }
+      for(var i=0;i<NL;i++){
+        var yc=padT+i*laneGap+laneGap*0.5, vh=laneGap*0.40, vy=yc-vh/2;
+        var t=type[i];
+        // tecido acima e abaixo da lane: alimentado se nutritivo, faminto se shunt/parado
+        var fed=(t==='nut');
+        var pulse=fed?0:(0.5+0.5*Math.sin(phase*6.28+i));
+        var tcol = fed ? lerpC(STARV,FED, 0.55+0.45*P.gly) : lerpC([40,44,66],STARV, 0.4+0.5*pulse);
+        var cellN=9, cw=areaW/cellN;
+        for(var k=0;k<cellN;k++){ var cx=padX+k*cw+cw*0.5;
+          ctx.fillStyle=tcol; var ch=laneGap*0.16;
+          roundRect(ctx, cx-cw*0.32, vy-laneGap*0.30-ch, cw*0.64, ch, 2); ctx.fill();
+          roundRect(ctx, cx-cw*0.32, vy+vh+laneGap*0.16, cw*0.64, ch, 2); ctx.fill(); }
+        // vaso
+        ctx.fillStyle='#0e1117'; roundRect(ctx,padX,vy,areaW,vh,vh*0.5); ctx.fill();
+        // glicocálice: forro tracejado, denso se íntegro; quebrado se roto
+        var segs=Math.round(6+P.gly*26);
+        ctx.strokeStyle='rgba(120,200,255,'+(0.18+0.5*P.gly).toFixed(3)+')'; ctx.lineWidth=2;
+        for(var g=0;g<segs;g++){ if(rng()>P.gly*0.9+0.1) continue; var gx=padX+ (g/segs)*areaW; ctx.beginPath(); ctx.moveTo(gx,vy+1.5); ctx.lineTo(gx+areaW/segs*0.6,vy+1.5); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(gx,vy+vh-1.5); ctx.lineTo(gx+areaW/segs*0.6,vy+vh-1.5); ctx.stroke(); }
+        // hemácias
+        var count=8, speed=(t==='shunt')?1.7:(t==='nut')?0.55:0.05, rr=vh*0.34;
+        for(var m=0;m<count;m++){ var fx=((m/count)+phase*speed)%1; if(fx<0)fx+=1; var x=padX+fx*areaW;
+          var col;
+          if(t==='shunt') col='rgb(255,85,102)';
+          else if(t==='stag') col=lerpC(OXY,DEOXY,0.7+0.2*Math.sin(phase*2+m));
+          else col=lerpC(OXY,DEOXY,fx);   // nutritivo: descarrega ao longo do trajeto
+          ctx.fillStyle=col; ctx.beginPath(); ctx.ellipse(x,yc,rr*1.25,rr,0,0,6.2832); ctx.fill();
+        }
+        // rótulo de tipo
+        ctx.fillStyle=(t==='shunt')?'#ff7a88':(t==='stag')?'#8a93b8':'#6fae8f'; ctx.font='9px monospace';
+        ctx.fillText(t==='shunt'?'shunt':(t==='stag'?'parado':'nutritivo'), padX+2, vy-2);
+      }
+      return P;
+    }catch(e){ return P; }
+  }
+  function roundRect(ctx,x,y,w,h,r){ if(w<2*r)r=w/2; if(h<2*r)r=h/2; ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+  // ---------- desenho: contabilidade macro × micro ----------
+  function drawFlux(ctx,W,H,R,phase){
+    try{
+      ctx.clearRect(0,0,W,H);
+      var padL=14,padR=14,padT=22,padB=22, bw=W-padL-padR;
+      var maxO2=Math.max(R.DO2, R.demand*1.2);
+      var sx=function(v){ return (v/maxO2)*bw; };
+      var rowY=padT, rowH=30;
+      // barra 1: DO2 global
+      ctx.fillStyle='#5e6c87'; ctx.font='11px monospace'; ctx.fillText('DO₂ global (macro)', padL, rowY-6);
+      ctx.fillStyle='#16324a'; roundRect(ctx,padL,rowY,sx(R.DO2),rowH,5); ctx.fill();
+      // chevrons animados de fluxo
+      var nCh=Math.round(sx(R.DO2)/26);
+      ctx.strokeStyle='rgba(120,200,255,.5)'; ctx.lineWidth=2;
+      for(var c=0;c<nCh;c++){ var cx=padL+((c*26 + (phase*60))% Math.max(1,sx(R.DO2))); ctx.beginPath(); ctx.moveTo(cx,rowY+8); ctx.lineTo(cx+7,rowY+rowH/2); ctx.lineTo(cx,rowY+rowH-8); ctx.stroke(); }
+      ctx.fillStyle='#9fb4d6'; ctx.fillText(Math.round(R.DO2)+' mL/min', padL+sx(R.DO2)+6, rowY+rowH-9);
+      // barra 2: destino do O2 — extraído | volta venoso | (déficit marcado)
+      var rowY2=rowY+rowH+30;
+      ctx.fillStyle='#5e6c87'; ctx.fillText('destino do O₂ que chega ao leito', padL, rowY2-6);
+      var ext=sx(R.VO2), ven=sx(R.DO2-R.VO2);
+      ctx.fillStyle='#3ec78d'; roundRect(ctx,padL,rowY2,ext,rowH,5); ctx.fill();
+      ctx.fillStyle='#2c5d96'; ctx.fillRect(padL+ext,rowY2,ven,rowH);
+      ctx.fillStyle='#cfe6d8'; ctx.fillText('VO₂ '+Math.round(R.VO2), padL+4, rowY2+rowH-9);
+      ctx.fillStyle='#bcd2f0'; if(ven>70) ctx.fillText('venoso → ScvO₂ '+Math.round(R.ScvO2*100)+'%', padL+ext+6, rowY2+rowH-9);
+      // marca da demanda + déficit
+      var dx=padL+sx(R.demand);
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(dx,rowY2-4); ctx.lineTo(dx,rowY2+rowH+12); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.fillText('demanda '+R.demand, dx+3, rowY2+rowH+12);
+      if(R.deficit>1){ ctx.fillStyle='rgba(255,93,108,.85)'; var defX=padL+sx(R.VO2);
+        // hachura do déficit entre VO2 e demanda
+        ctx.fillStyle='rgba(255,93,108,.25)'; ctx.fillRect(defX,rowY2,Math.max(0,sx(R.demand)-ext),rowH);
+        ctx.fillStyle='#ff8a96'; ctx.fillText('déficit '+Math.round(R.deficit), defX+4, rowY2-6); }
+      return R;
+    }catch(e){ return R; }
+  }
+  function drawBedOn(id,phase){ var cv=$(id); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; drawBed(ctx,cv.width||860,cv.height||340,{fs:state.fs,gly:state.gly,het:state.het,R:curR},phase); }
+  function drawFluxOn(id,phase){ var cv=$(id); if(!cv||!curR) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; drawFlux(ctx,cv.width||860,cv.height||180,curR,phase); }
+
+  function syncSliders(){ $('iFs').value=Math.round(state.fs*100); $('iGly').value=Math.round(state.gly*100); $('iHet').value=Math.round(state.het*100); $('iDO2').value=state.DO2;
+    $('lFs').value=Math.round(state.fs*100); $('lGly').value=Math.round(state.gly*100); $('lHet').value=Math.round(state.het*100); $('lDO2').value=state.DO2; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vFs').textContent=Math.round(state.fs*100); $('vGly').textContent=Math.round(state.gly*100); $('vHet').textContent=Math.round(state.het*100); $('vDO2').textContent=state.DO2;
+    $('vlFs').textContent=Math.round(state.fs*100); $('vlGly').textContent=Math.round(state.gly*100); $('vlHet').textContent=Math.round(state.het*100); $('vlDO2').textContent=state.DO2;
+    curR=micro(params());
+    var fedPct=100*curR.VO2/curR.demand;
+    $('opbox-bed').innerHTML='Tecido recebe <b>'+Math.round(curR.VO2)+'</b>/'+curR.demand+' mL/min ('+br(fedPct,0)+'% da demanda) · extração efetiva E <b>'+br(curR.E,2)+'</b>';
+    $('opbox-flux').innerHTML='O₂ER <b>'+br(curR.O2ER*100,0)+'%</b> · ScvO₂ <b>'+br(curR.ScvO2*100,0)+'%</b> · lactato <b>'+br(curR.lactate,1)+'</b> mmol/L · déficit <b>'+Math.round(curR.deficit)+'</b> mL/min';
+    var ver=vereditoMicro(curR), vEl=$('lab-veredito'), klass, label;
+    if(ver==='acoplado'){ klass='ok'; label='TECIDO ACOPLADO'; }
+    else if(ver==='leve'){ klass='lim'; label='DESACOPLADO · LEVE'; }
+    else { klass='crit'; label='DESACOPLADO · GRAVE'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='ScvO₂ '+br(curR.ScvO2*100,0)+'% · O₂ER '+br(curR.O2ER*100,0)+'% · lactato '+br(curR.lactate,1)+' · déficit '+Math.round(curR.deficit)+' mL/min';
+    $('opbox-lab').innerHTML='extração efetiva <b>'+br(curR.E,2)+'</b> · tecido '+br(fedPct,0)+'% alimentado · '+(isParadoxo(curR)?'<b style="color:var(--art)">paradoxo ativo</b>':'sem paradoxo');
+    show($('ban-shunt'), state.fs>0.30);
+    show($('ban-glico'), state.gly<0.60);
+    show($('ban-het'),  state.het>0.50);
+    show($('ban-paradoxo'), isParadoxo(curR));
+    show($('ban-pressor'), curR.deficit>5 && state.DO2>1150);
+    if(reduce){ drawBedOn('plotBed',0.3); drawBedOn('plotBedLab',0.3); drawFluxOn('plotFlux',0); }
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---------- animação ----------
+  var phase=0;
+  function tick(){ phase=(phase+0.0045)%1;
+    if($('panel-instrumento') && $('panel-instrumento').classList.contains('active')){ drawBedOn('plotBed',phase); drawFluxOn('plotFlux',phase); }
+    if($('panel-lab') && $('panel-lab').classList.contains('active')) drawBedOn('plotBedLab',phase);
+    if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick);
+  }
+
+  // ---------- tutor gráfico ----------
+  var TUTOR=[];
+  function buildTutor(){
+    function P(o){ return Object.assign({DO2:1000,SaO2:SaO2,fs:0.1,gly:1.0,het:0.1,demand:DEMAND}, o); }
+    var T=[];
+    T.push({kind:'bed', P:P({fs:0.05,gly:1.0,het:0.1}), cap:'Leito saudável: hemácias entram brilhantes e saem escuras.',
+      q:'Num leito acoplado, a hemácia ao longo do capilar nutritivo:',
+      o:['escurece — entregou O₂ ao tecido','permanece brilhante','some','fica azul de imediato'], a:0,
+      fb:'Descarga progressiva: oxigenada (clara) → desoxigenada (escura). O tecido ao lado acende alimentado.', hint:'Acompanhe a cor do início ao fim da lane.'});
+    T.push({kind:'bed', P:P({fs:0.6,gly:0.6,het:0.3}), cap:'Várias lanes marcadas "shunt".',
+      q:'Nas lanes de shunt, a hemácia sai ainda brilhante porque:',
+      o:['passou sem descarregar (não-nutritivo)','recebeu mais O₂','está parada','é venosa'], a:0,
+      fb:'Shunt = fluxo não-nutritivo: o sangue atravessa sem entregar → volta saturado → ScvO₂↑.', hint:'A cor não muda do começo ao fim.'});
+    T.push({kind:'bed', P:P({fs:0.1,gly:0.2,het:0.4}), cap:'Glicocálice em 20%: forro azul esgarçado, fundo com edema.',
+      q:'O glicocálice roto prejudica a entrega porque:',
+      o:['vaza e alarga a distância de difusão','acelera as hemácias','aumenta a Hb','fecha o shunt'], a:0,
+      fb:'Sem a malha, há permeabilidade↑, edema e maior distância — o O₂ não cruza a barreira alargada.', hint:'Veja o fundo azulado (edema) e o forro quebrado.'});
+    T.push({kind:'bed', P:P({fs:0.1,gly:0.9,het:0.8}), cap:'Heterogeneidade alta: lanes "parado" entre nutritivas.',
+      q:'A heterogeneidade de fluxo causa hipóxia tecidual porque:',
+      o:['capilares parados estagnam ao lado de rápidos','todos param juntos','aumenta a extração','eleva a PAM'], a:0,
+      fb:'Parados = hipóxia estagnante; rápidos demais não descarregam. A média "normal" mascara os extremos.', hint:'As lanes "parado" quase não fluem.'});
+    T.push({kind:'flux', P:P({fs:0.5,gly:0.4,het:0.7,DO2:1100}), cap:'Contabilidade macro×micro do séptico.',
+      q:'A ScvO₂ alta nesta barra representa:',
+      o:['O₂ que voltou sem ser extraído','muito O₂ chegando ao tecido','baixa entrega','hemoglobina alta'], a:0,
+      fb:'A faixa azul (venoso) é grande: o O₂ passou e voltou. ScvO₂ alta = pouca extração, não folga.', hint:'Compare a faixa verde (VO₂) com a azul (venoso).'});
+    T.push({kind:'flux', P:P({fs:0.5,gly:0.4,het:0.7,DO2:1100}), cap:'Mesma barra. Linha âmbar = demanda.',
+      q:'A faixa vermelha entre o verde e a demanda é:',
+      o:['o déficit — demanda não atendida → lactato','excesso de O₂','o shunt anatômico','erro de medida'], a:0,
+      fb:'VO₂ < demanda: o tecido fica abaixo do que precisa → anaerobiose → lactato.', hint:'Verde (extraído) não alcança a linha da demanda.'});
+    T.push({kind:'flux', P:P({fs:0.5,gly:0.4,het:0.7,DO2:1500}), cap:'Mesma micro, DO₂ subida a 1500 (pressor/volume).',
+      q:'Subir a DO₂ global (pressor) com a micro intacta:',
+      o:['não fecha o déficit — o gargalo é a extração','zera o lactato','conserta o glicocálice','elimina o shunt'], a:0,
+      fb:'A barra macro cresceu, mas o verde quase não: extração ∝ (1−shunt)·E. Pressor não conserta a micro.', hint:'O déficit persiste apesar da macro maior.'});
+    T.push({kind:'flux', P:P({fs:0.08,gly:0.95,het:0.15,DO2:1000}), cap:'Micro reparada (shunt↓, glicocálice↑, homogêneo).',
+      q:'Reparada a micro (sem mexer só na macro), o tecido:',
+      o:['volta a ser alimentado — déficit fecha','piora','fica igual','depende só da DO₂'], a:0,
+      fb:'Recuperar extração (E) e reduzir shunt fecha o déficit. O alvo é o capilar, não só a pressão.', hint:'Verde alcança a demanda; sem faixa vermelha.'});
+    T.push({kind:'bed', P:P({fs:0.5,gly:0.4,het:0.7}), cap:'Leito séptico: shunt + glicocálice roto + heterogêneo.',
+      q:'Com ScvO₂ alta E lactato alto E tecido faminto, o quadro é:',
+      o:['o paradoxo: extração quebrada, não entrega','entrega excessiva','anemia','hiperóxia'], a:0,
+      fb:'O paradoxo séptico: a macro entrega, a micro não extrai. ScvO₂ "boa" é alarme aqui.', hint:'Pouca lane nutritiva, muito tecido faminto.'});
+    T.push({kind:'bed', P:P({fs:0.05,gly:1.0,het:0.1}), cap:'Compare: leito acoplado.',
+      q:'Que sinal de beira do leito acompanha o tecido FAMINTO (não este)?',
+      o:['lactato alto, livedo, enchimento capilar lento','pele rosada e quente só','diurese alta','PA muito alta'], a:0,
+      fb:'A clínica da micro falida: lactato↑, livedo, tempo de enchimento capilar prolongado.', hint:'Aqui o tecido está alimentado — o oposto.'});
+    T.push({kind:'bed', P:P({fs:0.3,gly:0.55,het:0.5}), cap:'Leito intermediário.',
+      q:'Para reacender o tecido, a alavanca que NÃO ajuda a micro é:',
+      o:['subir só a pressão arterial (pressor)','reduzir o shunt','restaurar o glicocálice','homogeneizar o fluxo'], a:0,
+      fb:'Pressor age na macro. A micro melhora reduzindo shunt, reparando glicocálice e homogeneizando o fluxo.', hint:'Qual alavanca não está no capilar?'});
+    return T;
+  }
+  function tutorDraw(item,ctx,W,H){
+    if(!item.R) item.R=micro(item.P);
+    if(item.kind==='bed') return drawBed(ctx,W,H,{fs:item.P.fs,gly:item.P.gly,het:item.P.het,R:item.R},0.32);
+    return drawFlux(ctx,W,H,item.R,0.2);
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=210; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return tutorDraw(item,ctx,W||820,H||210); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ tutorDraw(item,ctx,cv.width||820,cv.height||210); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iFs','fs',1],['iGly','gly',1],['iHet','het',1],['iDO2','DO2',0]].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=p[2]?parseFloat(el.value)/100:parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lFs','fs',1],['lGly','gly',1],['lHet','het',1],['lDO2','DO2',0]].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=p[2]?parseFloat(el.value)/100:parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawBed=drawBed; window.drawFlux=drawFlux; window.activateTab=activate; window.setLabState=setState;
+    window.microFn=micro; window.effExtractionFn=effExtraction; window.vereditoFn=vereditoMicro; window.paradoxoFn=isParadoxo;
+    window.TUTOR=TUTOR; window.__state=state;
+    if(!reduce && typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick); else { drawBedOn('plotBed',0.3); drawBedOn('plotBedLab',0.3); drawFluxOn('plotFlux',0); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
