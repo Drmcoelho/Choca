@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 18 · Choque obstrutivo</title>
+<meta name="description" content="Guyton invertido: uma pressão externa (pericárdica/intratorácica) eleva a PVC e despenca o débito. A assinatura especular do hipovolêmico: PVC alta com DC baixo. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:330px;border-radius:8px;background:#090b10}
+canvas.plot.short{height:260px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.95rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ven);margin:18px 0 6px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:210px;border-radius:8px;background:#090b10;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 18 · Choque obstrutivo</div>
+    <h1>PVC alta, débito baixo</h1>
+    <p class="sub">A bomba está boa, o tanque está cheio — e o débito despenca. No obstrutivo, uma <em>pressão externa</em> (pericárdica no tamponamento, intratorácica no pneumotórax ou no auto-PEEP) comprime o coração e as cavas. A PVC sobe (o monitor "engana"), mas o enchimento real cai. É o <b>espelho do hipovolêmico</b>: mesmo DC baixo, PVC oposta.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="40" x2="900" y2="20" stroke="#46506b" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <line x1="0" y1="14" x2="900" y2="48" stroke="var(--art)" stroke-width="2"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Choque com as jugulares estufadas</h2>
+    <p class="lead">Cinco atos. A variável escondida é uma pressão que não está no sangue — está <em>em volta</em> do coração. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Choque: PA 80/64, FC 124, frio. Mas as jugulares estão <b>túrgidas</b> e a PVC mede 18. "Não pode ser hipovolemia — a PVC está alta."</p>
+      <div class="vitais"><span>PA <b>80/64</b></span><span>FC <b>124</b></span><span>PVC <b>18</b></span><span>jugulares <b>túrgidas</b></span><span>DC <b>baixo</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>PVC alta → coração cheio → dar volume não ajuda? Mas a PVC alta aqui não é enchimento — é <em>compressão</em>. O número sobe sem o ventrículo encher.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Uma pressão externa (líquido no pericárdio, ou ar/pressão no tórax) empurra o coração por fora. A <b>pressão transmural</b> — a que de fato enche — cai, mesmo com a PVC medida subindo.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Guyton de novo: a curva de retorno venoso colapsa numa PVC mais alta (a externa), a função cardíaca desloca para a direita. A interseção sobe em PVC e <b>desce em fluxo</b>.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O instrumento mostra a interseção subindo e o coração sendo espremido. Volume <em>contra</em> a obstrução ganha tempo; o alívio mecânico (drenar/descomprimir) é a saída.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">pressão externa</b> (Pext). Ela inflaciona a PVC medida sem encher o coração: a <em>transmural</em> é que importa. Por isso a PVC alta no obstrutivo é o oposto do hipovolêmico (PVC baixa) — mesmo DC baixo, sinais venosos opostos. E é a mesma física do <b>auto-PEEP</b> do braço 1: pressão no tórax estrangulando o retorno.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas da pressão externa ao débito.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">Choque com PVC alta — é hipervolemia?</div><div class="aa">Nem sempre. A PVC mede a pressão na entrada do coração; uma <b>compressão externa</b> a eleva sem encher o ventrículo.</div></div>
+      <div class="step"><div class="qq">O que enche o coração, então?</div><div class="aa">A pressão <b>transmural</b> = PVC − Pext. Se a pressão externa sobe junto, a transmural fica baixa → enchimento ruim, apesar da PVC alta.</div></div>
+      <div class="step"><div class="qq">Como isso vira choque?</div><div class="aa">Menos enchimento → menos volume sistólico → menos débito. E a pressão externa também <b>comprime as cavas</b>, limitando o retorno (Guyton de novo).</div></div>
+      <div class="step"><div class="qq">Onde está a diferença do hipovolêmico?</div><div class="aa">No hipovolêmico a PVC é <b>baixa</b> (faltou volume); no obstrutivo é <b>alta</b> (compressão). Mesmo DC baixo, <b>sinais venosos opostos</b> — a PVC discrimina.</div></div>
+      <div class="step"><div class="qq">Dar volume ajuda?</div><div class="aa"><b>Ganha tempo:</b> subir a Pmsf recupera o gradiente de retorno contra a pressão externa (preload-dependência). Mas a PVC sobe junto — é ponte, não solução.</div></div>
+      <div class="step"><div class="qq">Qual a solução?</div><div class="aa">O <b>alívio mecânico</b>: drenar o pericárdio, descomprimir o tórax — baixar a Pext. As curvas voltam, o débito retorna. (Os alívios distintos estão no módulo 19.)</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · Guyton deslocado + o coração espremido</h2>
+    <p class="lead">A <span style="color:var(--ven)">curva de retorno venoso</span> colapsa na <span style="color:var(--accent)">pressão externa</span>; a <span style="color:var(--art)">função cardíaca</span> desloca para a direita. A interseção sobe em PVC e cai em fluxo. À direita, o coração comprimido ao vivo.</p>
+    <div class="idcard">
+      <div class="formula">transmural = <span class="iso">PVC − Pext</span> &nbsp;<span style="color:var(--ink-faint)">· é ela que enche o coração, não a PVC medida</span></div>
+      <div class="formula">obstrutivo: <b style="color:var(--art)">PVC ↑ + DC ↓</b> &nbsp;·&nbsp; hipovolêmico: PVC ↓ + DC ↓ &nbsp;<span style="color:var(--ink-faint)">· a PVC é o discriminador</span></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotGuyton" class="plot" width="860" height="330" aria-label="interseção de Guyton deslocada pela pressão externa"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ven)"></i>retorno venoso (atual)</span>
+        <span><i style="background:var(--art)"></i>função cardíaca</span>
+        <span><i style="background:#46506b"></i>normal (fantasma)</span>
+        <span><i style="background:var(--accent)"></i>operação (PVC, DC)</span>
+      </div>
+      <div class="opbox" id="opbox-guyton"></div>
+    </div>
+    <div class="subhead">A compressão · o coração espremido por fora</div>
+    <div class="plotwrap">
+      <canvas id="plotHeart" class="plot short" width="860" height="260" aria-label="ilustração animada do coração comprimido pela pressão externa"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>câmara / enchimento</span>
+        <span><i style="background:var(--ven)"></i>pressão externa</span>
+        <span><i style="background:var(--accent)"></i>manômetro de PVC</span>
+      </div>
+      <div class="opbox" id="opbox-heart"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Pressão externa (Pext) <span class="v"><span id="vPext">14</span> mmHg</span></label><input id="iPext" type="range" min="0" max="26" step="1" value="14"></div>
+        <div class="ctrl"><label>Volume reposto <span class="v"><span id="vVol">0</span> %</span></label><input id="iVol" type="range" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>Frequência <span class="v"><span id="vHr">90</span> bpm</span></label><input id="iHr" type="range" min="60" max="150" step="1" value="90"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Pext alta = tamponamento (pericárdio) ou pneumotórax/auto-PEEP (tórax). Suba o volume e veja o débito subir contra a obstrução (a PVC sobe junto). Baixe a Pext (alívio) e tudo volta.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · a assinatura e o alívio</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito vira</b> e os banners dizem por que a PVC alta aqui é compressão, não enchimento.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="tamponamento">Tamponamento (pericárdico)</button>
+      <button class="preset" type="button" data-preset="pneumotorax">Pneumotórax / auto-PEEP</button>
+      <button class="preset" type="button" data-preset="colapso">Colapso obstrutivo</button>
+      <button class="preset" type="button" data-preset="volume">Volume (ganha tempo)</button>
+      <button class="preset" type="button" data-preset="alivio">Alívio mecânico</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotGuytonLab" class="plot" width="860" height="330" aria-label="interseção de Guyton no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ven)"></i>retorno venoso</span>
+        <span><i style="background:var(--art)"></i>função cardíaca</span>
+        <span><i style="background:#46506b"></i>normal</span>
+        <span><i style="background:var(--accent)"></i>operação</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Pext <span class="v"><span id="vlPext">14</span> mmHg</span></label><input id="lPext" type="range" min="0" max="26" step="1" value="14"></div>
+        <div class="ctrl"><label>Volume <span class="v"><span id="vlVol">0</span> %</span></label><input id="lVol" type="range" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>FC <span class="v"><span id="vlHr">90</span> bpm</span></label><input id="lHr" type="range" min="60" max="150" step="1" value="90"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Assinatura hemodinâmica (PVC × DC)</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-assinatura"><b>A assinatura obstrutiva.</b> PVC ALTA com DC BAIXO: o oposto especular do hipovolêmico (PVC baixa). A PVC sobe por compressão, não por enchimento — a transmural está baixa.</div>
+      <div class="banner ven" id="ban-autopeep"><b>Pressão externa comprime o retorno.</b> Pericárdica (tamponamento) ou intratorácica (pneumotórax / <em>auto-PEEP</em>): a curva de retorno venoso colapsa numa PVC mais alta. É a mesma física do mvp1 do braço 1.</div>
+      <div class="banner ven" id="ban-volume"><b>Encher contra a obstrução.</b> Subir a Pmsf recupera o gradiente de retorno → o DC sobe (preload-dependência). Mas a PVC sobe junto: ganha tempo, não resolve.</div>
+      <div class="banner art" id="ban-colapso"><b>Colapso obstrutivo.</b> O gradiente de retorno quase zerou; nenhum volume vence a compressão. O <b>alívio mecânico</b> é a única saída — os três alívios distintos no módulo 19.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a interseção deslocada ou o coração comprimido, ao vivo. Leia a PVC alta, o fluxo baixo e o discriminador — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do obstrutivo — <b>nunca</b> dose, volume a infundir, nem conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A obstrução é reduzida a uma <b>pressão externa única</b> (Pext) sobre o plano de Guyton; a categoria reúne fisiologias distintas — tamponamento (restrição pericárdica, <em>pulso paradoxal</em>, interdependência ventricular), pneumotórax hipertensivo (pressão intratorácica + <em>kink</em> das cavas) e TEP maciço (pós-carga de VD), que <b>não</b> são o mesmo mecanismo e ganham curvas próprias no <b>módulo 19</b>. → A compensação (venoconstrição que sobe a Pmsf, taquicardia, RVS) é simplificada. → <b>Procedimento (conceito físico, preview do módulo 19):</b> o <b>alívio mecânico</b> — pericardiocentese, descompressão por agulha/dreno — baixa a Pext e devolve o débito; apresentado como <em>por que alivia</em>, não como técnica para um paciente. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="mvp1-interativo.html">Braço 1 · mecânica &amp; auto-PEEP</a> — a pressão intratorácica que estrangula o retorno venoso: a mesma física, do lado do ventilador. <span class="pend">(ponte ativa quando publicar junto)</span></div>
+    <div class="ponte">→ <a href="perfunde4.html">Módulo 4 · Interseção de Guyton</a> — o engine-mãe: aqui a pressão externa desloca as curvas e eleva a PVC de operação.</div>
+    <div class="ponte">→ <a href="perfunde19.html">Módulo 19 · Tamponamento · TEP · pneumotórax</a> — os três obstrutivos, três curvas, três alívios. <span class="pend">(ponte pendente)</span></div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 18
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model18.js inlined) ===================== -->
+<script>
+function venousReturn(pra,Pmsf,Rvr,colapso){ if(colapso===undefined)colapso=-4; if(pra>=Pmsf)return 0; var p=(pra<colapso)?colapso:pra; return (Pmsf-p)/Rvr; }
+function cardiacOutput(praTm,COmax,pra0,K){ if(pra0===undefined)pra0=-2; if(K===undefined)K=2; var d=praTm-pra0; if(d<=0)return 0; return COmax*d/(K+d); }
+var BASE={ Pmsf0:8.0,Rvr0:1.2,COmax0:7.5,pra0:-2,K:2,RVS0:17.0,HR0:75,HRmax:165,Cart:1.7,kVeno:0.70,volBoost:12,kArt:0.42,kHR:0.55,DCcrit:3.2,kLac:2.6 };
+function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function pmsfEff(Pext,vol){ return BASE.Pmsf0+BASE.kVeno*Pext+BASE.volBoost*(vol||0); }
+function intersecaoObs(Pext,Pmsf,Rvr,COmax,pra0,K){
+  var f=function(pra){ return venousReturn(pra,Pmsf,Rvr,Pext)-cardiacOutput(pra-Pext,COmax,pra0,K); };
+  var lo=Pext+pra0, hi=Pmsf;
+  if(hi<=lo) return {pra:Math.max(Pext,Pmsf),co:0};
+  if(f(lo)<=0) return {pra:lo,co:cardiacOutput(lo-Pext,COmax,pra0,K)};
+  for(var i=0;i<80;i++){ var mid=(lo+hi)/2; if(f(mid)>0)lo=mid; else hi=mid; }
+  var praStar=(lo+hi)/2; return {pra:praStar,co:cardiacOutput(praStar-Pext,COmax,pra0,K)};
+}
+function obsState(p){ var B=BASE,Pext=p.Pext||0,vol=p.vol||0,Pmsf=pmsfEff(Pext,vol);
+  var inter=intersecaoObs(Pext,Pmsf,B.Rvr0,B.COmax0,B.pra0,B.K);
+  var DC=Math.max(0,inter.co),CVP=inter.pra,transmural=CVP-Pext,sev=clampv((5.0-DC)/5.0,0,1);
+  var RVSw=B.RVS0*(1+B.kArt*sev),hr=p.hr||Math.min(B.HRmax,B.HR0*(1+B.kHR*sev));
+  var MAP=DC*RVSw+0.3*CVP,SVml=DC*1000/hr,PP=SVml/B.Cart,SBP=MAP+2*PP/3,DBP=MAP-PP/3,SI=hr/SBP;
+  var lactate=Math.min(15,1.0+B.kLac*Math.max(0,B.DCcrit-DC));
+  return {Pext:Pext,vol:vol,Pmsf:Pmsf,Rvr:B.Rvr0,COmax:B.COmax0,pra0:B.pra0,K:B.K,DC:DC,CVP:CVP,transmural:transmural,RVSw:RVSw,HR:hr,MAP:MAP,SVml:SVml,PP:PP,SBP:SBP,DBP:DBP,SI:SI,lactate:lactate,sev:sev}; }
+function classeObs(R){ var cvpHigh=R.CVP>=10,low=R.DC<3.5; if(R.DC<2.2&&cvpHigh)return 'colapso'; if(cvpHigh&&low)return 'obstrutivo'; if(low)return 'limitrofe'; return 'normal'; }
+function hipoComparavel(DCalvo){ var B=BASE,lo=1.0,hi=8.0; for(var i=0;i<60;i++){ var Pmsf=(lo+hi)/2; var it=intersecaoObs(0,Pmsf,B.Rvr0,B.COmax0,B.pra0,B.K); if(it.co>DCalvo)hi=Pmsf; else lo=Pmsf; }
+  var Pmsf=(lo+hi)/2,it=intersecaoObs(0,Pmsf,B.Rvr0,B.COmax0,B.pra0,B.K); return {Pmsf:Pmsf,DC:it.co,CVP:it.pra}; }
+</script>
+
+<!-- ===================== UI · Guyton deslocado + compressão + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+
+  var state={ Pext:14, vol:0, hr:90 };
+  var PRESETS={
+    normal:{ Pext:0, vol:0, hr:75 },
+    tamponamento:{ Pext:16, vol:0, hr:104 },
+    pneumotorax:{ Pext:18, vol:0, hr:108 },
+    colapso:{ Pext:23, vol:0, hr:130 },
+    volume:{ Pext:18, vol:0.5, hr:96 },
+    alivio:{ Pext:3, vol:0, hr:78 }
+  };
+  var curR=null, reduce=false; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // ---------- desenho: plano de Guyton deslocado ----------
+  function drawGuyton(ctx,W,H,R,phase){
+    try{
+      var padL=44,padB=28,padT=14,padR=14, pw=W-padL-padR, ph=H-padT-padB;
+      var XMIN=-4, XMAX=28, YMAX=10;
+      var px=function(x){ return padL+(x-XMIN)/(XMAX-XMIN)*pw; };
+      var py=function(y){ return padT+ph-clamp(y,0,YMAX)/YMAX*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gx=-4;gx<=28;gx+=4){ ctx.beginPath(); ctx.moveTo(px(gx),padT); ctx.lineTo(px(gx),padT+ph); ctx.stroke(); ctx.fillText(gx+'',px(gx)-5,padT+ph+14); }
+      for(var gy=0;gy<=YMAX;gy+=2){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+pw,py(gy)); ctx.stroke(); ctx.fillText(gy+'',18,py(gy)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('PVC / Pra medido (mmHg)', padL+pw-150, padT+ph+14);
+      ctx.save(); ctx.translate(12,padT+50); ctx.rotate(-Math.PI/2); ctx.fillText('fluxo (L/min)',0,0); ctx.restore();
+      // faixa da pressão externa
+      if(R.Pext>0){ ctx.fillStyle='rgba(255,207,92,.07)'; ctx.fillRect(px(-4),padT,px(R.Pext)-px(-4),ph);
+        ctx.strokeStyle='rgba(255,207,92,.5)'; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(px(R.Pext),padT); ctx.lineTo(px(R.Pext),padT+ph); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle='#ffcf5c'; ctx.fillText('Pext '+Math.round(R.Pext), px(R.Pext)+4, padT+12); }
+      // fantasma normal
+      curveVR(ctx,px,py,XMIN,XMAX,8,1.2,-4,'#46506b',[4,4]); curveCO(ctx,px,py,XMIN,XMAX,7.5,0,'#46506b',[4,4]);
+      // atual
+      curveVR(ctx,px,py,XMIN,XMAX,R.Pmsf,R.Rvr,R.Pext,'#3f82e6',null);
+      curveCO(ctx,px,py,XMIN,XMAX,R.COmax,R.Pext,'#e5394e',null);
+      // operação (pulsa)
+      var pr=4+0.8*(1+Math.sin(phase*6.2832));
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([2,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(px(R.CVP),py(R.DC)); ctx.lineTo(px(R.CVP),padT+ph); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,py(R.DC)); ctx.lineTo(px(R.CVP),py(R.DC)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(R.CVP),py(R.DC),pr,0,6.2832); ctx.fill();
+      ctx.fillText('PVC '+Math.round(R.CVP)+' · DC '+br(R.DC,1), px(R.CVP)+8, py(R.DC)-6);
+      return R;
+    }catch(e){ return R; }
+  }
+  function curveVR(ctx,px,py,XMIN,XMAX,Pmsf,Rvr,col,color,dash){ ctx.strokeStyle=color; ctx.lineWidth=1.6; if(dash)ctx.setLineDash(dash); ctx.beginPath(); var st=false;
+    for(var x=XMIN;x<=XMAX;x+=0.15){ var y=venousReturn(x,Pmsf,Rvr,col); var X=px(x),Y=py(y); if(!st){ctx.moveTo(X,Y);st=true;}else ctx.lineTo(X,Y);} ctx.stroke(); ctx.setLineDash([]); }
+  function curveCO(ctx,px,py,XMIN,XMAX,COmax,Pext,color,dash){ ctx.strokeStyle=color; ctx.lineWidth=1.6; if(dash)ctx.setLineDash(dash); ctx.beginPath(); var st=false;
+    for(var x=XMIN;x<=XMAX;x+=0.15){ var y=cardiacOutput(x-Pext,COmax,-2,2); var X=px(x),Y=py(y); if(!st){ctx.moveTo(X,Y);st=true;}else ctx.lineTo(X,Y);} ctx.stroke(); ctx.setLineDash([]); }
+
+  // ---------- desenho: o coração comprimido ----------
+  function drawHeart(ctx,W,H,R,phase){
+    try{
+      ctx.clearRect(0,0,W,H);
+      var cx=W*0.40, cy=H*0.52, beat=0.5+0.5*Math.sin(phase*6.2832);
+      var fill=clamp((R.transmural+2)/4,0.05,1);          // enchimento transmural (0..1)
+      var rxBase=Math.min(W*0.16,90), ryBase=Math.min(H*0.30,80);
+      var rx=rxBase*(0.62+0.30*beat*fill), ry=ryBase*(0.62+0.30*beat*fill);
+      // anel de pressão externa (espessura ∝ Pext)
+      var ringT=6+R.Pext*2.0;
+      ctx.strokeStyle='rgba(63,130,230,.5)'; ctx.lineWidth=ringT; ctx.beginPath(); ctx.ellipse(cx,cy,rxBase+ringT*0.6,ryBase+ringT*0.6,0,0,6.2832); ctx.stroke();
+      // setas de compressão para dentro
+      var n=10; for(var i=0;i<n;i++){ var a=i/n*6.2832; var ox=cx+Math.cos(a)*(rxBase+ringT+8), oy=cy+Math.sin(a)*(ryBase+ringT+8);
+        var ix=cx+Math.cos(a)*(rxBase+6), iy=cy+Math.sin(a)*(ryBase+6); var k=clamp(R.Pext/26,0,1);
+        ctx.strokeStyle='rgba(120,170,240,'+(0.25+0.5*k).toFixed(2)+')'; ctx.lineWidth=1+2*k;
+        ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ix,iy); ctx.stroke(); arrow(ctx,ox,oy,ix,iy,'rgba(120,170,240,'+(0.4+0.5*k)+')'); }
+      // cavas (entram pelo topo) — lúmen estreita com a compressão
+      var cavaW=clamp((R.Pmsf-R.CVP)/8,0.12,1)*16+4;
+      ctx.fillStyle='#2c5d96'; roundRect(ctx,cx-cavaW/2,cy-ryBase-46,cavaW,46,3); ctx.fill();
+      // câmara (enchimento colore: cheia=vermelho vivo, vazia=escura)
+      var col=lerp([90,30,46],[229,57,78],fill);
+      ctx.fillStyle='rgb('+col[0]+','+col[1]+','+col[2]+')'; ctx.strokeStyle='#7a1d2b'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,6.2832); ctx.fill(); ctx.stroke();
+      // saída (aorta) — largura ∝ DC
+      var aoW=clamp(R.DC/5,0.08,1)*16+3;
+      ctx.fillStyle='#e5394e'; roundRect(ctx,cx+rxBase-2,cy-aoW/2,40,aoW,3); ctx.fill();
+      arrow(ctx,cx+rxBase+20,cy,cx+rxBase+44,cy,'#e5394e');
+      // manômetro de PVC (coluna à direita)
+      var mx=W*0.80, myB=H*0.84, mh=H*0.66, lev=clamp(R.CVP/26,0,1);
+      ctx.strokeStyle='#26314a'; ctx.lineWidth=2; ctx.strokeRect(mx-12,myB-mh,24,mh);
+      ctx.fillStyle='#ffcf5c'; ctx.fillRect(mx-11,myB-mh*lev,22,mh*lev);
+      ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.fillText('PVC',mx-12,myB+14); ctx.fillText(Math.round(R.CVP),mx-6,myB-mh*lev-5);
+      // rótulos
+      ctx.fillStyle='#7da0d6'; ctx.fillText('Pext '+Math.round(R.Pext),cx-rxBase-6,cy-ryBase-ringT-12);
+      ctx.fillStyle='#cfa0a8'; ctx.fillText('enchimento '+Math.round(fill*100)+'%',cx-30,cy+ryBase+ringT+18);
+      ctx.fillStyle='#e5394e'; ctx.fillText('DC '+br(R.DC,1),cx+rxBase+10,cy-aoW-2);
+      return R;
+    }catch(e){ return R; }
+  }
+  function roundRect(ctx,x,y,w,h,r){ if(w<2*r)r=w/2; if(h<2*r)r=h/2; ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function arrow(ctx,x1,y1,x2,y2,col){ try{ var a=Math.atan2(y2-y1,x2-x1); ctx.strokeStyle=col; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-7*Math.cos(a-0.4),y2-7*Math.sin(a-0.4)); ctx.moveTo(x2,y2); ctx.lineTo(x2-7*Math.cos(a+0.4),y2-7*Math.sin(a+0.4)); ctx.stroke(); }catch(e){} }
+  function lerp(c1,c2,t){ t=clamp(t,0,1); return [Math.round(c1[0]+(c2[0]-c1[0])*t),Math.round(c1[1]+(c2[1]-c1[1])*t),Math.round(c1[2]+(c2[2]-c1[2])*t)]; }
+
+  function drawGuytonOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawGuyton(ctx,cv.width||860,cv.height||330,curR,phase); }
+  function drawHeartOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawHeart(ctx,cv.width||860,cv.height||260,curR,phase); }
+
+  function syncSliders(){ $('iPext').value=state.Pext; $('iVol').value=Math.round(state.vol*100); $('iHr').value=state.hr;
+    $('lPext').value=state.Pext; $('lVol').value=Math.round(state.vol*100); $('lHr').value=state.hr; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vPext').textContent=state.Pext; $('vVol').textContent=Math.round(state.vol*100); $('vHr').textContent=state.hr;
+    $('vlPext').textContent=state.Pext; $('vlVol').textContent=Math.round(state.vol*100); $('vlHr').textContent=state.hr;
+    curR=obsState(state);
+    $('opbox-guyton').innerHTML='PVC <b>'+Math.round(curR.CVP)+'</b> mmHg · DC <b>'+br(curR.DC,1)+'</b> L/min · transmural <b>'+br(curR.transmural,1)+'</b> · Pmsf '+br(curR.Pmsf,1);
+    $('opbox-heart').innerHTML='enchimento transmural <b>'+Math.round(clamp((curR.transmural+2)/4,0.05,1)*100)+'%</b> · MAP '+Math.round(curR.MAP)+' · SI '+br(curR.SI,2)+' · lactato '+br(curR.lactate,1);
+    var cls=classeObs(curR), vEl=$('lab-veredito'), klass, label;
+    if(cls==='normal'){ klass='ok'; label='PERFUSÃO NORMAL'; }
+    else if(cls==='limitrofe'){ klass='lim'; label='BAIXO DÉBITO'; }
+    else if(cls==='obstrutivo'){ klass='crit'; label='CHOQUE OBSTRUTIVO'; }
+    else { klass='crit'; label='COLAPSO OBSTRUTIVO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='PVC '+Math.round(curR.CVP)+' · DC '+br(curR.DC,1)+' · transmural '+br(curR.transmural,1)+' · MAP '+Math.round(curR.MAP)+' · lactato '+br(curR.lactate,1);
+    var hipo=hipoComparavel(curR.DC);
+    $('opbox-lab').innerHTML='mesmo DC, o hipovolêmico teria PVC <b>'+Math.round(hipo.CVP)+'</b> (baixa) vs <b>'+Math.round(curR.CVP)+'</b> aqui (alta) — a PVC discrimina';
+    show($('ban-assinatura'), curR.CVP>=10 && curR.DC<3.5);
+    show($('ban-autopeep'), state.Pext>=10);
+    show($('ban-volume'), state.vol>0.2);
+    show($('ban-colapso'), cls==='colapso');
+    if(reduce){ drawGuytonOn('plotGuyton',0.25); drawGuytonOn('plotGuytonLab',0.25); drawHeartOn('plotHeart',0.25); }
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---------- animação ----------
+  var phase=0;
+  function tick(){ phase=(phase+0.010)%1;
+    if($('panel-instrumento') && $('panel-instrumento').classList.contains('active')){ drawGuytonOn('plotGuyton',phase); drawHeartOn('plotHeart',phase); }
+    if($('panel-lab') && $('panel-lab').classList.contains('active')) drawGuytonOn('plotGuytonLab',phase);
+    if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick);
+  }
+
+  // ---------- tutor gráfico ----------
+  var TUTOR=[];
+  function buildTutor(){
+    function st(o){ return Object.assign({Pext:0,vol:0,hr:90}, o); }
+    var T=[];
+    T.push({kind:'guyton', P:st({Pext:0}), cap:'Guyton normal: interseção em ~5 L/min, PVC ~2.',
+      q:'Sem obstrução, o ponto de operação está em:',
+      o:['PVC baixa, fluxo normal','PVC alta, fluxo baixo','PVC alta, fluxo alto','PVC baixa, fluxo baixo'], a:0,
+      fb:'Normal: PVC ~2 mmHg, DC ~5 L/min. A obstrução vai empurrar a interseção para a direita e para baixo.', hint:'Onde as curvas cheias se cruzam.'});
+    T.push({kind:'guyton', P:st({Pext:16}), cap:'Pressão externa 16 (faixa âmbar). Curvas deslocadas.',
+      q:'A interseção agora está em:',
+      o:['PVC alta + fluxo baixo (assinatura obstrutiva)','PVC baixa + fluxo alto','igual ao normal','PVC baixa + fluxo baixo'], a:0,
+      fb:'A pressão externa elevou a PVC de operação e derrubou o fluxo. PVC alta + DC baixo.', hint:'A bolinha âmbar subiu em x e desceu em y.'});
+    T.push({kind:'heart', P:st({Pext:16}), cap:'O coração comprimido: anel de pressão externa, manômetro de PVC.',
+      q:'A PVC medida (manômetro) está alta porque:',
+      o:['a pressão externa comprime — não é enchimento','o coração está muito cheio','o volume sistólico é alto','a FC é baixa'], a:0,
+      fb:'A PVC sobe por compressão; a transmural (o enchimento real) está baixa. O número engana.', hint:'Veja o enchimento (%) baixo apesar da PVC alta.'});
+    T.push({kind:'guyton', P:st({Pext:16}), cap:'Compare com o hipovolêmico (PVC baixa).',
+      q:'O que distingue obstrutivo de hipovolêmico, ambos com DC baixo?',
+      o:['a PVC: alta no obstrutivo, baixa no hipovolêmico','a frequência','o lactato','a SaO₂'], a:0,
+      fb:'Mesmo DC baixo, sinais venosos opostos. A PVC é o discriminador de beira de leito.', hint:'Pense na pressão de enchimento medida.'});
+    T.push({kind:'heart', P:st({Pext:20}), cap:'Pext 20: compressão intensa.',
+      q:'O que acontece com o enchimento transmural ao subir a Pext?',
+      o:['cai — o coração é espremido por fora','sobe','não muda','vira negativo e melhora'], a:0,
+      fb:'Transmural = PVC − Pext: com a externa subindo, sobra pouca pressão para encher.', hint:'A câmara mal expande na diástole.'});
+    T.push({kind:'guyton', P:st({Pext:18,vol:0.5}), cap:'Pext 18 + volume reposto: curva de RV à direita.',
+      q:'Dar volume na obstrução faz o quê?',
+      o:['sobe a Pmsf → recupera o gradiente → DC sobe (mas PVC sobe junto)','não muda nada','baixa a PVC','cura a obstrução'], a:0,
+      fb:'Preload-dependência: encher contra a obstrução recupera o retorno. Ganha tempo; a PVC sobe junto.', hint:'A curva de retorno venoso subiu/deslocou.'});
+    T.push({kind:'guyton', P:st({Pext:3}), cap:'Após o alívio: Pext baixa.',
+      q:'Baixar a pressão externa (drenar/descomprimir):',
+      o:['devolve as curvas ao normal → DC restaurado','piora o débito','sobe a PVC','não tem efeito'], a:0,
+      fb:'O alívio mecânico é a correção causal: Pext↓ → as curvas voltam → débito retorna.', hint:'A interseção voltou para perto do fantasma.'});
+    T.push({kind:'heart', P:st({Pext:23}), cap:'Pext 23: colapso obstrutivo.',
+      q:'No colapso, por que volume sozinho não resgata?',
+      o:['o gradiente quase zerou; a compressão vence o enchimento','falta hemoglobina','a bomba falhou','a RVS caiu'], a:0,
+      fb:'Com a externa altíssima, nenhuma Pmsf plausível vence a compressão — só o alívio mecânico.', hint:'Enchimento ~mínimo apesar de tudo.'});
+    T.push({kind:'guyton', P:st({Pext:14}), cap:'A categoria obstrutiva.',
+      q:'Qual é a mesma física do auto-PEEP (braço 1)?',
+      o:['pressão intratorácica elevando a PVC e estrangulando o retorno','anemia','vasodilatação','taquiarritmia'], a:0,
+      fb:'Pressão no tórax = pressão externa sobre as cavas e o coração: a ponte ao mvp1.', hint:'O que o ventilador faz com a pressão pleural.'});
+    T.push({kind:'heart', P:st({Pext:0}), cap:'Coração sem compressão (referência).',
+      q:'Aqui o enchimento está cheio e o DC normal porque:',
+      o:['sem pressão externa, a transmural enche o ventrículo','a FC é alta','a PVC é alta','há vasoconstrição'], a:0,
+      fb:'Sem Pext, PVC ≈ transmural: o coração enche e ejeta normalmente. A obstrução quebra isso.', hint:'Anel de pressão fino, enchimento alto.'});
+    return T;
+  }
+  function tutorDraw(item,ctx,W,H){ if(!item.R) item.R=obsState(item.P);
+    if(item.kind==='guyton') return drawGuyton(ctx,W,H,item.R,0.3);
+    return drawHeart(ctx,W,H,item.R,0.3); }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=210; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return tutorDraw(item,ctx,W||820,H||210); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ tutorDraw(item,ctx,cv.width||820,cv.height||210); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iPext','Pext',0],['iVol','vol',1],['iHr','hr',0]].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=p[2]?parseFloat(el.value)/100:parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lPext','Pext',0],['lVol','vol',1],['lHr','hr',0]].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=p[2]?parseFloat(el.value)/100:parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawGuyton=drawGuyton; window.drawHeart=drawHeart; window.activateTab=activate; window.setLabState=setState;
+    window.obsFn=obsState; window.classeFn=classeObs; window.hipoFn=hipoComparavel; window.vrFn=venousReturn; window.coFn=cardiacOutput; window.pmsfFn=pmsfEff;
+    window.TUTOR=TUTOR; window.__state=state;
+    if(!reduce && typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick); else { drawGuytonOn('plotGuyton',0.25); drawGuytonOn('plotGuytonLab',0.25); drawHeartOn('plotHeart',0.25); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
