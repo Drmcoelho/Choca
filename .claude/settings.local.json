@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"no-remote-exit:$?\")",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash(git remote *)",
+      "Bash(git fetch *)",
+      "Bash(echo \"mb-exit:$?\")",
+      "Bash(git ls-tree *)",
+      "Bash(git switch *)",
+      "Bash(git merge *)",
+      "Bash(git push *)",
+      "Bash(gh pr create --base main --head feat/modulos-site --title 'Módulos 0 & 4 + site perfunde \\(engine + HTML + build\\)' --body ' *)",
+      "Bash(gh pr *)"
+    ]
+  }
+}
