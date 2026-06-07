@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 16 · Choque cardiogênico</title>
+<meta name="description" content="A bomba que falha, lida na alça PV: Ees↓ encolhe a alça, a congestão sobe a montante, e a espiral DC↓→isquemia→Ees↓→DC↓. Pós-carga não é PA. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:330px;border-radius:8px;background:#090b10}
+canvas.plot.short{height:250px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.95rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ven);margin:18px 0 6px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:210px;border-radius:8px;background:#090b10;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 16 · Choque cardiogênico</div>
+    <h1>A bomba lida na alça</h1>
+    <p class="sub">No cardiogênico a falha é a <em>contratilidade</em>: a inclinação da ESPVR (Ees) cai, a alça pressão-volume encolhe, o volume sistólico despenca. O sangue que não é ejetado <b>congestiona a montante</b> — e o débito baixo estrangula a própria coronária, fechando a espiral. E a pós-carga não é a PA: baixá-la pode <em>subir</em> o débito.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M120,46 C120,18 150,12 230,14 C320,16 360,30 360,46 Z" fill="none" stroke="#46506b" stroke-width="1.5"/>
+      <path d="M170,46 C170,28 190,24 240,25 C300,27 320,36 320,46 Z" fill="none" stroke="var(--art)" stroke-width="2"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>IAM extenso — PA baixa, pulmão cheio, extremidades frias</h2>
+    <p class="lead">Cinco atos. A variável escondida é a inclinação da ESPVR: a contratilidade que ruiu. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Infarto anterior extenso. PA 84/62, FC 104, estertores difusos, extremidades frias, oligúria. "Frio e úmido."</p>
+      <div class="vitais"><span>PA <b>84/62</b></span><span>FC <b>104</b></span><span>EF <b>~25%</b></span><span>congestão <b>+++</b></span><span>extremidades <b>frias</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>PA baixa → subir a pressão com vasopressor? Mas o problema não é o tônus arterial — é a <em>bomba</em>. Apertar mais a saída pode piorar a ejeção.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Na alça PV, a <b>ESPVR despencou</b> (Ees↓): a alça encolheu, o SV caiu, o volume sistólico-final subiu. O ventrículo bate e quase não esvazia.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>O sangue não ejetado <b>represa</b>: o VDF sobe na EDPVR exponencial → pressão de enchimento alta → <b>congestão pulmonar</b>. E o DC baixo reduz a perfusão coronária → mais isquemia → Ees cai mais. <b>A espiral.</b></p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A alça mostra a falência; a espiral mostra o círculo vicioso. Inotrópico levanta a ESPVR; baixar a pós-carga alarga a alça; vasopressor demais aperta a saída.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">Ees</b> (inclinação da ESPVR, a contratilidade). A PA baixa é consequência, não causa. Por isso <b>pós-carga não é PA</b>: no coração fraco, reduzir a Ea (a carga contra a ejeção) <em>aumenta</em> o SV — contraintuitivo para quem só lê a pressão. E o vasopressor, que sobe a Ea, pode propor a MAP enquanto <em>reduz</em> o débito.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas da contratilidade à espiral.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">O que quebrou no cardiogênico?</div><div class="aa">A <b>contratilidade</b> — a inclinação da ESPVR (Ees). A bomba perde força; tudo o mais é consequência.</div></div>
+      <div class="step"><div class="qq">Como isso aparece na alça PV?</div><div class="aa">A <b>alça encolhe</b>: a ESPVR cai, a interseção com a reta de pós-carga (Ea) desce, o <b>SV</b> diminui e o volume sistólico-final aumenta (o ventrículo não esvazia).</div></div>
+      <div class="step"><div class="qq">E o sangue que não foi ejetado?</div><div class="aa"><b>Represa.</b> O VDF sobe na EDPVR exponencial → a pressão de enchimento dispara → <b>congestão pulmonar</b> (o "úmido").</div></div>
+      <div class="step"><div class="qq">Por que a espiral?</div><div class="aa">DC baixo → menor perfusão coronária (diastólica − pressão de enchimento) → <b>isquemia</b> → Ees cai mais → DC cai mais. Um círculo que se fecha.</div></div>
+      <div class="step"><div class="qq">Pós-carga é a pressão arterial?</div><div class="aa"><b>Não.</b> É a Ea, a carga contra a ejeção. No coração fraco, <b>baixar a Ea sobe o SV</b> — a alça alarga. Olhar só a PA esconde isso.</div></div>
+      <div class="step"><div class="qq">Então vasopressor resolve a PA baixa?</div><div class="aa">Ele <b>propõe a MAP</b> (sobe a Ea/RVS), mas no coração fraco <b>aperta a saída e reduz o DC</b>. Inotrópico levanta a ESPVR; descarga (vasodilatador/suporte mecânico) alarga a alça.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a alça PV e a espiral ao vivo</h2>
+    <p class="lead">A <span style="color:var(--art)">alça atual</span> sobre a <span style="color:var(--ink-dim)">alça normal</span>; a <span style="color:var(--art)">ESPVR</span> (contratilidade), a <span style="color:var(--ven)">EDPVR</span> (congestão) e a reta de <span style="color:var(--accent)">pós-carga</span>. Abaixo, a espiral DC↓→isquemia→Ees↓.</p>
+    <div class="idcard">
+      <div class="formula"><span class="iso">SV</span> = Ees·(VDF − V0)/(Ea + Ees) &nbsp;·&nbsp; <span class="iso">EF</span> ≈ 1/(1 + Ea/Ees) &nbsp;<span style="color:var(--ink-faint)">· a EF lê o acoplamento</span></div>
+      <div class="formula">pós-carga = <b style="color:var(--accent)">Ea</b>, não a PA &nbsp;·&nbsp; congestão = pressão de enchimento na EDPVR &nbsp;·&nbsp; espiral: DC↓→coronária↓→Ees↓</div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotLoop" class="plot" width="860" height="330" aria-label="alça pressão-volume na falência cardíaca"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>alça atual</span>
+        <span><i style="background:#46506b"></i>alça normal</span>
+        <span><i style="background:var(--art)"></i>ESPVR (Ees)</span>
+        <span><i style="background:var(--ven)"></i>EDPVR</span>
+        <span><i style="background:var(--accent)"></i>pós-carga (Ea)</span>
+      </div>
+      <div class="opbox" id="opbox-loop"></div>
+    </div>
+    <div class="subhead">A espiral · débito × contratilidade</div>
+    <div class="plotwrap">
+      <canvas id="plotSpiral" class="plot short" width="860" height="250" aria-label="a espiral isquêmica do choque cardiogênico"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>trajetória DC × Ees</span>
+        <span><i style="background:var(--accent)"></i>ponto de operação</span>
+        <span><i style="background:var(--ok)"></i>estável (sem isquemia)</span>
+      </div>
+      <div class="opbox" id="opbox-spiral"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Contratilidade Ees <span class="v"><span id="vEes">0,70</span></span></label><input id="iEes" type="range" min="0.3" max="2.8" step="0.05" value="0.7"></div>
+        <div class="ctrl"><label>Pós-carga Ea <span class="v"><span id="vEa">1,9</span></span></label><input id="iEa" type="range" min="0.8" max="3.6" step="0.05" value="1.9"></div>
+        <div class="ctrl"><label>Pré-carga / enchimento <span class="v"><span id="vPfill">20</span> mmHg</span></label><input id="iPfill" type="range" min="4" max="30" step="1" value="20"></div>
+        <div class="ctrl"><label>Frequência <span class="v"><span id="vHr">80</span> bpm</span></label><input id="iHr" type="range" min="50" max="130" step="1" value="80"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Inotrópico = subir Ees (a ESPVR levanta). Descarga (vasodilatador/BIA/Impella) = baixar Ea (a alça alarga). Vasopressor = subir Ea (a MAP sobe, mas o SV cai).</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · conserte a bomba (ou piore)</h2>
+    <p class="lead">Cenários ou as quatro alavancas. O <b>veredito vira</b> e os banners dizem qual alavanca move qual termo — e por que a pressão pode enganar.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Coração normal</button>
+      <button class="preset" type="button" data-preset="cardiogenico">Cardiogênico</button>
+      <button class="preset" type="button" data-preset="vasopressor">+ vasopressor (↑pós-carga)</button>
+      <button class="preset" type="button" data-preset="descarga">+ descarga (↓pós-carga)</button>
+      <button class="preset" type="button" data-preset="inotropo">+ inotrópico (↑Ees)</button>
+      <button class="preset" type="button" data-preset="espiral">A espiral</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotLoopLab" class="plot" width="860" height="330" aria-label="alça PV no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>alça atual</span>
+        <span><i style="background:#46506b"></i>normal</span>
+        <span><i style="background:var(--ven)"></i>EDPVR</span>
+        <span><i style="background:var(--accent)"></i>Ea</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Ees <span class="v"><span id="vlEes">0,70</span></span></label><input id="lEes" type="range" min="0.3" max="2.8" step="0.05" value="0.7"></div>
+        <div class="ctrl"><label>Ea (pós-carga) <span class="v"><span id="vlEa">1,9</span></span></label><input id="lEa" type="range" min="0.8" max="3.6" step="0.05" value="1.9"></div>
+        <div class="ctrl"><label>Pré-carga <span class="v"><span id="vlPfill">20</span> mmHg</span></label><input id="lPfill" type="range" min="4" max="30" step="1" value="20"></div>
+        <div class="ctrl"><label>FC <span class="v"><span id="vlHr">80</span> bpm</span></label><input id="lHr" type="range" min="50" max="130" step="1" value="80"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Estado da bomba (perfusão × congestão)</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner crit" id="ban-espiral"><b>A espiral.</b> DC baixo → perfusão coronária insuficiente → isquemia → Ees cai → DC cai mais. Sem quebrar o círculo (perfusão/descarga/suporte), a alça encolhe até o colapso.</div>
+      <div class="banner art" id="ban-congestao"><b>Congestão retrógrada.</b> A bomba não ejeta: o VDF sobe na EDPVR exponencial → pressão de enchimento alta → edema pulmonar. O "úmido" do quadrante.</div>
+      <div class="banner art" id="ban-vasopressor"><b>Vasopressor ↑ pós-carga.</b> Aperta a saída do VE fraco: propõe a MAP, mas o <em>SV cai</em>. A pressão melhora no monitor enquanto o fluxo piora.</div>
+      <div class="banner ven" id="ban-descarga"><b>Descarga (↓ pós-carga).</b> Baixar a Ea alarga a alça e <em>sobe o SV</em> — vasodilatador ou suporte mecânico (BIA/Impella) descarregam o VE. Cuidado: unloading demais derruba a MAP.</div>
+      <div class="banner art" id="ban-frio"><b>Frio e úmido.</b> Baixo débito (frio) + congestão (úmido): o quadrante cardiogênico. A bomba é o termo quebrado.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a alça PV em falência ou a espiral, computadas ao vivo. Leia a Ees, a congestão e o acoplamento — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do cardiogênico — <b>nunca</b> dose, alvo, nem conduta para um paciente específico. As "alavancas" são termos da alça, não prescrição.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ ESPVR e Ea são tratadas como retas (Sunagawa); a alça real tem cantos arredondados e o acoplamento varia no ciclo. → A pressão arterial é derivada da Pes (≈0,83·Pes) — uma aproximação didática, não a onda real. → A <b>espiral</b> é um laço isquêmico ilustrativo (contratilidade ∝ perfusão coronária), separado do estado estacionário; a isquemia real depende de território, colaterais e tempo. → <b>Farmacologia (mecanismo):</b> <b>dobutamina → β1 → Ees↑</b> (a ESPVR levanta); <b>vasodilatador → Ea↓</b> (a alça alarga); <b>vasopressor → Ea↑</b> (MAP↑, mas SV↓ no VE fraco) — sem dose. <b>Procedimento (conceito físico):</b> BIA/Impella como <em>descarga</em> do VE (reduzem a carga/ aumentam a perfusão), não manual de aparelho. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde7.html">Módulo 7 · Pós-carga &amp; a alça PV</a> — o engine-mãe: ESPVR/Ea/acoplamento, que aqui a falência (Ees↓) desloca.</div>
+    <div class="ponte">→ <a href="perfunde6.html">Módulo 6 · Frank-Starling</a> — a curva de função que define o SV pelo enchimento; a falência achata-a.</div>
+    <div class="ponte">→ <a href="perfunde24.html">Módulo 24 · O coração-pulmão</a> — por que a pressão intratorácica positiva <em>ajuda</em> o congesto (↓pré e ↓pós-carga do VE). <span class="pend">(ponte pendente)</span></div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 16
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model16.js inlined) ===================== -->
+<script>
+var V0=10, V0D=5, EDPVR_P0=1.4, EDPVR_BETA=0.018, HR0=75, CPP_ON=28, CPP_LO=6, ISCH_FLOOR=0.25;
+function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function ped(edv){ return EDPVR_P0*(Math.exp(EDPVR_BETA*Math.max(0,edv-V0D))-1); }
+function edvFromPfill(Pfill){ return V0D + Math.log(Math.max(0,Pfill)/EDPVR_P0+1)/EDPVR_BETA; }
+function ves(edv,Ees,Ea){ return (Ea*edv+Ees*V0)/(Ea+Ees); }
+function strokeVolume(edv,Ees,Ea){ return Math.max(0,Ees*(edv-V0)/(Ea+Ees)); }
+function pes(edv,Ees,Ea){ return Ea*strokeVolume(edv,Ees,Ea); }
+function ef(edv,Ees,Ea){ return edv>0?strokeVolume(edv,Ees,Ea)/edv:0; }
+function coupling(Ees,Ea){ return Ea/Ees; }
+function loopCorners(edv,Ees,Ea){ var Ve=ves(edv,Ees,Ea),Ps=pes(edv,Ees,Ea),pAo=0.75*Ps; return {A:[edv,ped(edv)],B:[edv,pAo],C:[Ve,Ps],D:[Ve,ped(Ve)]}; }
+function strokeWork(edv,Ees,Ea){ var k=loopCorners(edv,Ees,Ea),p=[k.A,k.B,k.C,k.D],s=0; for(var i=0;i<4;i++){var a=p[i],b=p[(i+1)%4];s+=a[0]*b[1]-b[0]*a[1];} return Math.abs(s)/2; }
+function hemoAt(Ees,Ea,edv,hr){ var SV=strokeVolume(edv,Ees,Ea),Ps=pes(edv,Ees,Ea),EF=ef(edv,Ees,Ea),CO=SV*hr/1000,MAP=0.83*Ps,DBP=0.75*Ps,LVEDP=ped(edv),CPP=Math.max(0,DBP-LVEDP);
+  return {Ees:Ees,Ea:Ea,edv:edv,hr:hr,SV:SV,ESV:edv-SV,Pes:Ps,EF:EF,CO:CO,MAP:MAP,DBP:DBP,LVEDP:LVEDP,CPP:CPP}; }
+function ischemiaFactor(CPP){ if(CPP>=CPP_ON)return 1; if(CPP<=CPP_LO)return ISCH_FLOOR; return ISCH_FLOOR+(1-ISCH_FLOOR)*(CPP-CPP_LO)/(CPP_ON-CPP_LO); }
+function spiralRun(EesSet,Ea,edv,hr){ hr=hr||HR0; var Ees=EesSet,traj=[],relax=0.55;
+  for(var i=0;i<60;i++){ var H=hemoAt(Ees,Ea,edv,hr); traj.push({Ees:Ees,CO:H.CO,MAP:H.MAP,CPP:H.CPP});
+    var next=Ees+relax*(EesSet*ischemiaFactor(H.CPP)-Ees); if(Math.abs(next-Ees)<1e-4){Ees=next;break;} Ees=next; }
+  var Hf=hemoAt(Ees,Ea,edv,hr); return {traj:traj,EesEnd:Ees,COend:Hf.CO,MAPend:Hf.MAP,collapses:(Ees<EesSet-0.03),steps:traj.length}; }
+function cardioState(p){ var Ea=p.Ea,Ees=p.Ees,hr=p.hr||HR0,Pfill=(p.Pfill===undefined?10:p.Pfill),edv=edvFromPfill(Pfill);
+  var H=hemoAt(Ees,Ea,edv,hr),sp=spiralRun(Ees,Ea,edv,hr);
+  H.Pfill=Pfill; H.coupling=coupling(Ees,Ea); H.SW=strokeWork(edv,Ees,Ea); H.corners=loopCorners(edv,Ees,Ea);
+  H.spiralRisk=sp.collapses; H.spiralEnd=sp; H.traj=sp.traj; return H; }
+function vereditoCardio(R){ var cong=R.LVEDP>=18, low=R.CO<3.2; if(R.CO<2.2||(low&&cong))return 'cardiogenico'; if(low||cong)return 'limitrofe'; return 'compensado'; }
+</script>
+
+<!-- ===================== UI · alça PV + espiral + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+
+  var state={ Ees:0.7, Ea:1.9, Pfill:20, hr:80 };
+  var NORMREF={ Ees:2.5, Ea:1.7, Pfill:10, hr:75 };
+  var PRESETS={
+    normal:{ Ees:2.5, Ea:1.7, Pfill:10, hr:75 },
+    cardiogenico:{ Ees:0.7, Ea:1.9, Pfill:20, hr:80 },
+    vasopressor:{ Ees:0.7, Ea:3.2, Pfill:20, hr:80 },
+    descarga:{ Ees:0.7, Ea:1.1, Pfill:20, hr:80 },
+    inotropo:{ Ees:1.7, Ea:1.9, Pfill:20, hr:80 },
+    espiral:{ Ees:0.5, Ea:2.2, Pfill:23, hr:95 }
+  };
+  var curR=null, reduce=false; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // ---------- desenho: alça pressão-volume ----------
+  function drawLoop(ctx,W,H,R,phase){
+    try{
+      var padL=44,padB=28,padT=14,padR=14, pw=W-padL-padR, ph=H-padT-padB;
+      var VMAX=200, PMAX=160;
+      var px=function(v){ return padL+clamp(v,0,VMAX)/VMAX*pw; };
+      var py=function(p){ return padT+ph-clamp(p,0,PMAX)/PMAX*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gv=0;gv<=VMAX;gv+=40){ ctx.beginPath(); ctx.moveTo(px(gv),padT); ctx.lineTo(px(gv),padT+ph); ctx.stroke(); ctx.fillText(gv+'',px(gv)-6,padT+ph+14); }
+      for(var gp=0;gp<=PMAX;gp+=40){ ctx.beginPath(); ctx.moveTo(padL,py(gp)); ctx.lineTo(padL+pw,py(gp)); ctx.stroke(); ctx.fillText(gp+'',16,py(gp)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('volume (mL)', padL+pw-86, padT+ph+14);
+      ctx.save(); ctx.translate(12,padT+54); ctx.rotate(-Math.PI/2); ctx.fillText('pressão (mmHg)',0,0); ctx.restore();
+      // EDPVR (azul)
+      ctx.strokeStyle='#3f82e6'; ctx.lineWidth=1.6; ctx.beginPath(); var s0=false;
+      for(var v=V0D;v<=VMAX;v+=2){ var Y=py(ped(v)),X=px(v); if(!s0){ctx.moveTo(X,Y);s0=true;}else ctx.lineTo(X,Y);} ctx.stroke();
+      // ESPVR (linha de Ees, vermelha) — P=Ees(V−V0)
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=1.4; ctx.setLineDash([6,4]); ctx.beginPath();
+      ctx.moveTo(px(V0),py(0)); var vEnd=V0+PMAX/R.Ees; ctx.lineTo(px(Math.min(VMAX,vEnd)),py(R.Ees*(Math.min(VMAX,vEnd)-V0))); ctx.stroke(); ctx.setLineDash([]);
+      // reta de pós-carga Ea: passa por (EDV,0) e por C
+      var k=R.corners;
+      ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=1.2; ctx.setLineDash([3,3]); ctx.beginPath();
+      ctx.moveTo(px(k.A[0]),py(0)); ctx.lineTo(px(k.C[0]),py(k.C[1])); ctx.stroke(); ctx.setLineDash([]);
+      // alça normal fantasma
+      var nk=loopCorners(edvFromPfill(NORMREF.Pfill),NORMREF.Ees,NORMREF.Ea);
+      ctx.strokeStyle='#46506b'; ctx.lineWidth=1.3; loopPath(ctx,px,py,nk); ctx.stroke();
+      // alça atual (preenchida)
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.4; ctx.fillStyle='rgba(229,57,78,.10)';
+      loopPath(ctx,px,py,k); ctx.fill(); ctx.stroke();
+      // ponto percorrendo o ciclo A→B→C→D
+      var pt=loopPoint(k,phase); ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(pt[0]),py(pt[1]),4.5,0,6.2832); ctx.fill();
+      // rótulos
+      ctx.fillStyle='#e5394e'; ctx.font='10px monospace'; ctx.fillText('ESPVR (Ees '+br(R.Ees,2)+')', px(k.C[0])-10, py(k.C[1])-8);
+      ctx.fillStyle='#9fb4d6'; ctx.fillText('EDPVR', px(150), py(ped(150))-4);
+      return R;
+    }catch(e){ return R; }
+  }
+  function loopPath(ctx,px,py,k){ ctx.beginPath(); ctx.moveTo(px(k.A[0]),py(k.A[1])); ctx.lineTo(px(k.B[0]),py(k.B[1])); ctx.lineTo(px(k.C[0]),py(k.C[1])); ctx.lineTo(px(k.D[0]),py(k.D[1])); ctx.closePath(); }
+  function loopPoint(k,phase){ var seg=[[k.A,k.B],[k.B,k.C],[k.C,k.D],[k.D,k.A]]; var t=(phase%1)*4; var i=Math.floor(t)%4; var f=t-Math.floor(t); var a=seg[i][0],b=seg[i][1]; return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f]; }
+
+  // ---------- desenho: a espiral ----------
+  function drawSpiral(ctx,W,H,R,phase){
+    try{
+      var padL=44,padB=26,padT=14,padR=14, pw=W-padL-padR, ph=H-padT-padB;
+      var EMAX=2.8, COMAX=6;
+      var px=function(e){ return padL+clamp(e,0,EMAX)/EMAX*pw; };
+      var py=function(c){ return padT+ph-clamp(c,0,COMAX)/COMAX*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var ge=0;ge<=EMAX;ge+=0.5){ ctx.beginPath(); ctx.moveTo(px(ge),padT); ctx.lineTo(px(ge),padT+ph); ctx.stroke(); ctx.fillText(br(ge,1),px(ge)-7,padT+ph+13); }
+      for(var gc=0;gc<=COMAX;gc+=1){ ctx.beginPath(); ctx.moveTo(padL,py(gc)); ctx.lineTo(padL+pw,py(gc)); ctx.stroke(); ctx.fillText(gc+'',18,py(gc)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('contratilidade Ees →', padL+pw-128, padT+ph+13);
+      ctx.save(); ctx.translate(12,padT+40); ctx.rotate(-Math.PI/2); ctx.fillText('DC (L/min)',0,0); ctx.restore();
+      var tr=R.traj||[];
+      if(R.spiralRisk && tr.length>2){
+        ctx.strokeStyle='#e5394e'; ctx.lineWidth=2; ctx.beginPath();
+        tr.forEach(function(p,i){ var X=px(p.Ees),Y=py(p.CO); if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }); ctx.stroke();
+        // setas a cada poucos passos
+        for(var i=2;i<tr.length-1;i+=3){ var a=tr[i],b=tr[i+1]; arrow(ctx,px(a.Ees),py(a.CO),px(b.Ees),py(b.CO),'#e5394e'); }
+        var idx=Math.min(tr.length-1, Math.floor((phase%1)*tr.length)); var cp=tr[idx];
+        ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(cp.Ees),py(cp.CO),5,0,6.2832); ctx.fill();
+        ctx.fillStyle='#ff8a96'; ctx.fillText('DC↓ → isquemia → Ees↓ → DC↓', px(0.55), py(5.4));
+        ctx.fillStyle='#5e6c87'; ctx.fillText('colapso', px(R.spiralEnd.EesEnd)+6, py(R.spiralEnd.COend));
+      } else {
+        // ponto estável
+        ctx.fillStyle='#3ec78d'; ctx.beginPath(); ctx.arc(px(R.Ees),py(R.CO),6,0,6.2832); ctx.fill();
+        ctx.strokeStyle='rgba(62,199,141,.4)'; ctx.beginPath(); ctx.arc(px(R.Ees),py(R.CO),11+2*Math.sin(phase*6.28),0,6.2832); ctx.stroke();
+        ctx.fillStyle='#6fae8f'; ctx.fillText('equilíbrio estável (perfusão coronária preservada)', px(0.4), py(5.4));
+      }
+      return R;
+    }catch(e){ return R; }
+  }
+  function arrow(ctx,x1,y1,x2,y2,col){ try{ var a=Math.atan2(y2-y1,x2-x1); ctx.strokeStyle=col; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-7*Math.cos(a-0.4),y2-7*Math.sin(a-0.4)); ctx.moveTo(x2,y2); ctx.lineTo(x2-7*Math.cos(a+0.4),y2-7*Math.sin(a+0.4)); ctx.stroke(); }catch(e){} }
+
+  function drawLoopOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawLoop(ctx,cv.width||860,cv.height||330,curR,phase); }
+  function drawSpiralOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawSpiral(ctx,cv.width||860,cv.height||250,curR,phase); }
+
+  function syncSliders(){ $('iEes').value=state.Ees; $('iEa').value=state.Ea; $('iPfill').value=state.Pfill; $('iHr').value=state.hr;
+    $('lEes').value=state.Ees; $('lEa').value=state.Ea; $('lPfill').value=state.Pfill; $('lHr').value=state.hr; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vEes').textContent=br(state.Ees,2); $('vEa').textContent=br(state.Ea,1); $('vPfill').textContent=state.Pfill; $('vHr').textContent=state.hr;
+    $('vlEes').textContent=br(state.Ees,2); $('vlEa').textContent=br(state.Ea,1); $('vlPfill').textContent=state.Pfill; $('vlHr').textContent=state.hr;
+    curR=cardioState(state);
+    $('opbox-loop').innerHTML='SV <b>'+Math.round(curR.SV)+'</b> mL · EF <b>'+Math.round(curR.EF*100)+'%</b> · EDV '+Math.round(curR.edv)+' · ESV '+Math.round(curR.ESV)+' · DC <b>'+br(curR.CO,2)+'</b> L/min';
+    $('opbox-spiral').innerHTML='Ees '+br(curR.Ees,2)+' · CPP <b>'+Math.round(curR.CPP)+'</b> mmHg · '+(curR.spiralRisk?'<b style="color:var(--art)">espiral ativa → colapso</b>':'equilíbrio estável');
+    var cls=vereditoCardio(curR), vEl=$('lab-veredito'), klass, label;
+    if(cls==='compensado'){ klass='ok'; label='BOMBA COMPENSADA'; }
+    else if(cls==='limitrofe'){ klass='lim'; label='BAIXO DÉBITO / CONGESTÃO'; }
+    else { klass='crit'; label='CHOQUE CARDIOGÊNICO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='DC '+br(curR.CO,2)+' · EF '+Math.round(curR.EF*100)+'% · MAP '+Math.round(curR.MAP)+' · enchimento '+Math.round(curR.LVEDP)+' mmHg · acopl. Ea/Ees '+br(curR.coupling,2);
+    $('opbox-lab').innerHTML='MAP <b>'+Math.round(curR.MAP)+'</b> · SV '+Math.round(curR.SV)+' mL · congestão '+Math.round(curR.LVEDP)+' mmHg · '+(curR.spiralRisk?'<b style="color:var(--art)">risco de espiral</b>':'sem espiral');
+    show($('ban-espiral'), curR.spiralRisk && curR.CPP<26);
+    show($('ban-congestao'), curR.LVEDP>=18);
+    show($('ban-vasopressor'), state.Ea>2.4 && state.Ees<1.5);
+    show($('ban-descarga'), state.Ea<1.4);
+    show($('ban-frio'), curR.CO<3.2 && curR.LVEDP>=18);
+    if(reduce){ drawLoopOn('plotLoop',0.0); drawLoopOn('plotLoopLab',0.0); drawSpiralOn('plotSpiral',0); }
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---------- animação ----------
+  var phase=0;
+  function tick(){ phase=(phase+0.006)%1;
+    if($('panel-instrumento') && $('panel-instrumento').classList.contains('active')){ drawLoopOn('plotLoop',phase); drawSpiralOn('plotSpiral',phase); }
+    if($('panel-lab') && $('panel-lab').classList.contains('active')) drawLoopOn('plotLoopLab',phase);
+    if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick);
+  }
+
+  // ---------- tutor gráfico ----------
+  var TUTOR=[];
+  function buildTutor(){
+    function st(o){ return Object.assign({Ees:2.5,Ea:1.7,Pfill:10,hr:75}, o); }
+    var T=[];
+    T.push({kind:'loop', P:st({}), cap:'Alça PV normal (vermelha) sobre a referência.',
+      q:'A área da alça PV representa:',
+      o:['o trabalho sistólico do ventrículo','a frequência cardíaca','a resistência','o conteúdo de O₂'], a:0,
+      fb:'A área = trabalho sistólico (pressão × volume ejetado). Encolhe na falência.', hint:'É o tamanho do retângulo-alça.'});
+    T.push({kind:'loop', P:st({Ees:0.7,Ea:1.9,Pfill:20,hr:80}), cap:'Alça do cardiogênico vs a normal (fantasma).',
+      q:'Por que a alça encolheu?',
+      o:['a Ees (ESPVR) caiu — contratilidade↓','a pré-carga sumiu','a FC caiu','a pós-carga caiu'], a:0,
+      fb:'A inclinação da ESPVR despencou: menos pressão para cada volume → SV menor. É a falência.', hint:'Compare a inclinação da reta vermelha pontilhada.'});
+    T.push({kind:'loop', P:st({Ees:0.7,Ea:1.9,Pfill:24,hr:80}), cap:'Cardiogênico congesto: VDF deslocado à direita.',
+      q:'O VDF alto sobre a EDPVR exponencial significa:',
+      o:['pressão de enchimento alta → congestão pulmonar','melhor enchimento, bom sinal','baixa pré-carga','nada'], a:0,
+      fb:'Na EDPVR exponencial, encher mais dispara a pressão a montante → edema. O "úmido".', hint:'Onde a alça toca a curva azul, bem à direita.'});
+    T.push({kind:'loop', P:st({Ees:0.7,Ea:3.2,Pfill:20,hr:80}), cap:'Cardiogênico + vasopressor (Ea alto): reta de pós-carga íngreme.',
+      q:'Subir a pós-carga (Ea) no VE fraco faz o SV:',
+      o:['cair (a alça estreita) — apesar da MAP subir','subir','não mudar','dobrar'], a:0,
+      fb:'Mais Ea aperta a saída: SV cai. A MAP até sobe (propõe a pressão), mas o fluxo piora.', hint:'A largura da alça diminuiu.'});
+    T.push({kind:'loop', P:st({Ees:0.7,Ea:1.1,Pfill:20,hr:80}), cap:'Cardiogênico + descarga (Ea baixo).',
+      q:'Baixar a pós-carga (vasodilatador/BIA/Impella) faz o SV:',
+      o:['subir — a alça alarga (descarga do VE)','cair','não mudar','zerar'], a:0,
+      fb:'Menos Ea = menos carga contra a ejeção → SV sobe. Pós-carga não é PA: reduzi-la ajuda o coração fraco.', hint:'A alça ficou mais larga.'});
+    T.push({kind:'loop', P:st({Ees:1.7,Ea:1.9,Pfill:20,hr:80}), cap:'Cardiogênico + inotrópico (Ees↑).',
+      q:'A dobutamina (β1) atua subindo:',
+      o:['a Ees — a ESPVR levanta, a alça cresce','a pré-carga','a FC apenas','a RVS'], a:0,
+      fb:'Inotrópico → β1 → contratilidade (Ees)↑: a ESPVR sobe, SV e EF aumentam.', hint:'A reta de contratilidade ficou mais inclinada.'});
+    T.push({kind:'loop', P:st({Ees:0.7,Ea:1.9,Pfill:20,hr:80}), cap:'Leia o acoplamento.',
+      q:'A fração de ejeção (EF) é, neste framework, a leitura de:',
+      o:['o acoplamento Ea/Ees','a frequência','o conteúdo arterial','a PVC'], a:0,
+      fb:'EF ≈ 1/(1+Ea/Ees): a EF mede o casamento entre pós-carga e contratilidade.', hint:'Relaciona Ea e Ees.'});
+    T.push({kind:'spiral', P:st({Ees:0.5,Ea:2.2,Pfill:23,hr:95}), cap:'O plano DC × Ees: a espiral.',
+      q:'A trajetória descendente representa:',
+      o:['DC↓→isquemia coronária→Ees↓→DC↓','recuperação','a curva de Starling','a pós-carga'], a:0,
+      fb:'O círculo vicioso do cardiogênico: cada queda de DC piora a perfusão coronária e a contratilidade.', hint:'As setas apontam para baixo e à esquerda.'});
+    T.push({kind:'spiral', P:st({Ees:2.4,Ea:1.7,Pfill:10,hr:75}), cap:'Outro caso no plano DC × Ees.',
+      q:'Aqui a perfusão coronária é boa. O ponto:',
+      o:['fica estável — não há espiral','colapsa igual','sobe sem limite','oscila'], a:0,
+      fb:'Com CPP acima do joelho isquêmico, não há feedback: equilíbrio estável.', hint:'Um único ponto verde, sem trajetória.'});
+    T.push({kind:'spiral', P:st({Ees:0.55,Ea:2.0,Pfill:22,hr:90}), cap:'A espiral, de novo.',
+      q:'O que QUEBRA a espiral (mecanismo)?',
+      o:['restaurar perfusão/descarga/suporte mecânico','mais vasopressor sozinho','reduzir a pré-carga a zero','esperar'], a:0,
+      fb:'Subir a contratilidade (inotrópico), descarregar o VE (↓Ea/BIA/Impella) ou perfundir a coronária interrompe o círculo.', hint:'Atacar a contratilidade ou a carga, não só a pressão.'});
+    T.push({kind:'loop', P:st({Ees:0.7,Ea:1.9,Pfill:20,hr:80}), cap:'O quadrante do cardiogênico.',
+      q:'Baixo débito (frio) + congestão (úmido) define:',
+      o:['o quadrante cardiogênico — frio e úmido','o distributivo','o hipovolêmico','o normal'], a:0,
+      fb:'Frio (DC baixo) e úmido (enchimento alto): a assinatura do cardiogênico no radar dos 4 perfis.', hint:'Perfusão ruim + congestão.'});
+    return T;
+  }
+  function tutorDraw(item,ctx,W,H){ if(!item.R) item.R=cardioState(item.P);
+    if(item.kind==='loop') return drawLoop(ctx,W,H,item.R,0.30);
+    return drawSpiral(ctx,W,H,item.R,0.30); }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=210; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return tutorDraw(item,ctx,W||820,H||210); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ tutorDraw(item,ctx,cv.width||820,cv.height||210); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iEes','Ees'],['iEa','Ea'],['iPfill','Pfill'],['iHr','hr']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lEes','Ees'],['lEa','Ea'],['lPfill','Pfill'],['lHr','hr']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawLoop=drawLoop; window.drawSpiral=drawSpiral; window.activateTab=activate; window.setLabState=setState;
+    window.cardioFn=cardioState; window.spiralFn=spiralRun; window.vereditoFn=vereditoCardio; window.efFn=ef; window.couplingFn=coupling; window.pedFn=ped; window.edvFn=edvFromPfill; window.ischemiaFn=ischemiaFactor;
+    window.TUTOR=TUTOR; window.__state=state;
+    if(!reduce && typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick); else { drawLoopOn('plotLoop',0); drawLoopOn('plotLoopLab',0); drawSpiralOn('plotSpiral',0); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>

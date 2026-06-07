@@ -20,7 +20,9 @@
     "test:13": "node build/m13/test13.node.js",
     "test:14": "node build/m14/test14.node.js",
     "test:15": "node build/m15/test15.node.js",
-    "test": "npm run test:0 && npm run test:1 && npm run test:2 && npm run test:3 && npm run test:4 && npm run test:5 && npm run test:6 && npm run test:7 && npm run test:8 && npm run test:9 && npm run test:10 && npm run test:11 && npm run test:12 && npm run test:13 && npm run test:14 && npm run test:15",
+    "test:16": "node build/m16/test16.node.js",
+    "test:17": "node build/m17/test17.node.js",
+    "test": "npm run test:0 && npm run test:1 && npm run test:2 && npm run test:3 && npm run test:4 && npm run test:5 && npm run test:6 && npm run test:7 && npm run test:8 && npm run test:9 && npm run test:10 && npm run test:11 && npm run test:12 && npm run test:13 && npm run test:14 && npm run test:15 && npm run test:16 && npm run test:17",
     "validate:0": "node build/m0/validate0.js perfunde0.html",
     "validate:1": "node build/m1/validate1.js perfunde1.html",
     "validate:2": "node build/m2/validate2.js perfunde2.html",
@@ -37,7 +39,9 @@
     "validate:13": "node build/m13/validate13.js perfunde13.html",
     "validate:14": "node build/m14/validate14.js perfunde14.html",
     "validate:15": "node build/m15/validate15.js perfunde15.html",
-    "validate": "npm run validate:0 && npm run validate:1 && npm run validate:2 && npm run validate:3 && npm run validate:4 && npm run validate:5 && npm run validate:6 && npm run validate:7 && npm run validate:8 && npm run validate:9 && npm run validate:10 && npm run validate:11 && npm run validate:12 && npm run validate:13 && npm run validate:14 && npm run validate:15",
+    "validate:16": "node build/m16/validate16.js perfunde16.html",
+    "validate:17": "node build/m17/validate17.js perfunde17.html",
+    "validate": "npm run validate:0 && npm run validate:1 && npm run validate:2 && npm run validate:3 && npm run validate:4 && npm run validate:5 && npm run validate:6 && npm run validate:7 && npm run validate:8 && npm run validate:9 && npm run validate:10 && npm run validate:11 && npm run validate:12 && npm run validate:13 && npm run validate:14 && npm run validate:15 && npm run validate:16 && npm run validate:17",
     "check": "npm test && npm run validate"
   },
   "devDependencies": {
