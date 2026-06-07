@@ -285,7 +285,3 @@
 `0–2` (fundamentos, reusam mvp2 — baratos, validam o pipeline do braço) → **`4` (Guyton, o engine mais difícil, cedo, para desentortar a arquitetura)** → `3,5,6,7,8` (resto dos determinantes) → `9` (núcleo) → `10–13` (leitura/beira) → `14–22` (os choques; categoria antes do capstone, que herda o engine do pai) → `23–27` (integração) → `28` (fronteira SaMD, o teste de fogo) → `29` (capstone).
 
 → **Economia de esforço:** os capstones de subtipo (15, 17, 19, 21, 22) herdam o engine da categoria-mãe e trocam cenário/parametrização — são "teto" *em conjunto* com o pai, não 9 monstros independentes.
-
----
-
-*Para a Dani.*
