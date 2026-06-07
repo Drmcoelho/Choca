@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 6 · Frank-Starling</title>
+<meta name="description" content="Frank-Starling de verdade: VS×volume satura e nunca cai; o 'ramo descendente' clínico é congestão no eixo de pressão (EDPVR). Famílias por contratilidade. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+.toggle{display:flex;gap:6px;margin-bottom:10px}
+.toggle button{font:inherit;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.toggle button.on{border-color:var(--art);color:#ffd4da;background:rgba(229,57,78,.14)}
+canvas.plot{display:block;width:100%;height:340px;border-radius:8px;background:#0a0c11}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.34rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:230px;border-radius:8px;background:#0a0c11;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 6 · Frank-Starling</div>
+    <h1>A curva sobe, satura — e nunca cai</h1>
+    <p class="sub">Mais enchimento, mais ejeção, até o platô. O "ramo descendente" dos livros antigos não é o sarcômero se rendendo: é a <em>pressão</em> de enchimento disparando enquanto o volume ejetado já não sobe. Dois eixos, duas histórias.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,50 120,38 240,24 380,16 520,12 680,10 900,9"/>
+      <polyline fill="none" stroke="var(--ven)" stroke-width="1.6" stroke-dasharray="5 4" points="0,52 160,49 300,44 430,36 560,26 680,16 800,8 900,4"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Dois corações, a mesma pré-carga</h2>
+    <p class="lead">Cinco atos. A variável escondida é que "mesma pré-carga" não significa "mesma ejeção". (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · dois leitos</span><p>Dois pacientes com a <b>mesma pressão de enchimento</b> (Pench ~10). No papel, "pré-carga igual".</p>
+      <div class="vitais"><span>A · VS <b>72 mL</b></span><span>B · VS <b>36 mL</b></span><span>mesma Pench <b>~10</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Pré-carga adequada nos dois — ambos devem ejetar bem." Mas o débito de B é metade.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Eles estão em <em>curvas diferentes</em>. A de A é íngreme (contratilidade normal); a de B é achatada (falência). Mesma pré-carga, ponto operante em alturas opostas.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Para B ejetar como A, precisaria de muito mais volume — e aí a Pench dispararia (EDPVR exponencial) → congestão pulmonar antes do ganho de VS. A "reserva de Starling" de B acabou.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>As famílias de curvas e o toggle volume↔pressão mostram por que a mesma pré-carga rende ejeções tão diferentes. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">curva (contratilidade)</b> em que cada coração opera. Pré-carga é o eixo x; a ejeção depende de em <em>qual</em> Starling você está. E "empurrar pré-carga" no coração achatado compra congestão (eixo de pressão), não débito.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas — e cuidado com o eixo que você está olhando.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">Por que mais enchimento ejeta mais?</div><div class="aa">Estiramento do sarcômero melhora a sobreposição actina-miosina e a sensibilidade ao cálcio → mais força. É a <b>lei de Frank-Starling</b>.</div></div>
+      <div class="step"><div class="qq">Isso cresce para sempre?</div><div class="aa">Não: <b>satura</b>. Perto da sobreposição ótima, mais volume rende cada vez menos VS — a curva achata num <b>platô</b>.</div></div>
+      <div class="step"><div class="qq">E o famoso "ramo descendente"?</div><div class="aa">No eixo <b>VS × volume</b> ele <em>não existe</em>: a curva é monotônica. O sarcômero não "se solta" fisiologicamente nessa faixa.</div></div>
+      <div class="step"><div class="qq">Então de onde vem a queda dos livros?</div><div class="aa">Do eixo <b>VS × pressão</b>. A relação diastólica pressão-volume (EDPVR) é <b>exponencial</b>: no platô, a pressão dispara enquanto o VS estagna → parece que "piora". É <b>congestão</b>, não overstretch.</div></div>
+      <div class="step"><div class="qq">O que muda a altura da curva?</div><div class="aa">A <b>contratilidade</b>: inotropismo sobe a curva inteira (mais VS na mesma pré-carga); a falência a achata. A <b>pós-carga</b> alta a derruba (afterload mismatch).</div></div>
+      <div class="step"><div class="qq">Por que isso importa no choque?</div><div class="aa">Porque "dar volume" só rende se você está no <b>ramo ascendente</b>. No platô/achatado, volume vira pressão → edema. Liga direto ao responsivo ≠ tolerante (módulo 5).</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · famílias de Starling, dois eixos</h2>
+    <p class="lead">Três curvas por contratilidade (falência · normal · inotrópico). A linha vertical marca a <b>mesma pré-carga</b> cruzando as três — ejeções diferentes. Troque o eixo x para ver a <span style="color:var(--art)">"falsa queda"</span> aparecer na pressão.</p>
+    <div class="plotwrap">
+      <div class="toggle" id="toggle">
+        <button data-mode="edv" class="on">VS × volume (VDF)</button>
+        <button data-mode="pench">VS × pressão de enchimento</button>
+      </div>
+      <canvas id="plotStarling" class="plot" width="860" height="340" aria-label="curvas de Frank-Starling"></canvas>
+      <div class="legend">
+        <span><i style="background:#46506b"></i>falência (contr 0,5)</span>
+        <span><i style="background:var(--art)"></i>curva atual</span>
+        <span><i style="background:#2f6f54"></i>inotrópico (contr 1,5)</span>
+        <span><i style="background:var(--accent)"></i>operação</span>
+        <span><i style="background:rgba(255,93,108,.5)"></i>zona de congestão</span>
+      </div>
+      <div class="opbox" id="opbox-instr"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>VDF (pré-carga) <span class="v"><span id="vVdf">120</span> mL</span></label><input id="iVdf" type="range" min="40" max="260" step="2" value="120"></div>
+        <div class="ctrl"><label>Contratilidade <span class="v"><span id="vContr">1.00</span></span></label><input id="iContr" type="range" min="0.3" max="1.8" step="0.05" value="1"></div>
+        <div class="ctrl"><label>Pós-carga <span class="v"><span id="vAf">80</span></span></label><input id="iAf" type="range" min="40" max="200" step="5" value="80"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">A curva atual (vermelha) acompanha a contratilidade escolhida; as cinza/verde são referências fixas. A zona vermelha à direita é onde a Pench passa de 18 mmHg (congestão).</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · ramo ascendente, platô ou congestão?</h2>
+    <p class="lead">Cenários ou as três alavancas. O <b>veredito vira</b> conforme onde o ponto operante caiu; os banners explicam o mecanismo — inclusive desmontando o mito.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="ascendente">Ramo ascendente (hipovolemia)</button>
+      <button class="preset" type="button" data-preset="plato">Platô (volume cheio)</button>
+      <button class="preset" type="button" data-preset="falencia">Falência + congestão</button>
+      <button class="preset" type="button" data-preset="inotropico">Inotrópico</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotStarlingLab" class="plot" width="860" height="340" aria-label="curvas de Frank-Starling no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:#46506b"></i>falência</span><span><i style="background:var(--art)"></i>atual</span>
+        <span><i style="background:#2f6f54"></i>inotrópico</span><span><i style="background:var(--accent)"></i>operação</span>
+        <span><i style="background:rgba(255,93,108,.5)"></i>congestão</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>VDF <span class="v"><span id="vlVdf">120</span> mL</span></label><input id="lVdf" type="range" min="40" max="260" step="2" value="120"></div>
+        <div class="ctrl"><label>Contratilidade <span class="v"><span id="vlContr">1.00</span></span></label><input id="lContr" type="range" min="0.3" max="1.8" step="0.05" value="1"></div>
+        <div class="ctrl"><label>Pós-carga <span class="v"><span id="vlAf">80</span></span></label><input id="lAf" type="range" min="40" max="200" step="5" value="80"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Ponto operante na curva</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner ven" id="ban-ascendente"><b>Ramo ascendente.</b> A curva é íngreme aqui: mais pré-carga ainda rende VS de verdade. Há reserva de Starling.</div>
+      <div class="banner art" id="ban-plato"><b>No platô.</b> A curva achatou: mais volume quase não sobe o VS. O ganho acabou — o que vem a seguir é pressão.</div>
+      <div class="banner art" id="ban-congestao"><b>Congestão.</b> Pench acima de 18 mmHg: a EDPVR exponencial transformou volume em pressão retrógrada → edema pulmonar, sem ganho de débito.</div>
+      <div class="banner art" id="ban-mito"><b>O mito do ramo descendente.</b> Não há overstretch aqui: no eixo VS×volume a curva só satura. O que parece "descer" é a congestão lida no eixo de pressão.</div>
+      <div class="banner ven" id="ban-inotropo"><b>Inotrópico (mecanismo).</b> Contratilidade↑ desloca a curva inteira para cima: mais VS na mesma pré-carga, e a mesma ejeção a uma pressão menor.</div>
+      <div class="banner art" id="ban-afterload"><b>Afterload mismatch.</b> Pós-carga alta rebaixa a curva: o mesmo enchimento ejeta menos. Baixar a pós-carga pode subir o VS sem tocar na pré-carga.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha as famílias de Starling computadas ao vivo. Leia a curva, o platô e a congestão — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a mecânica da curva — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A Starling aqui é um <b>saturante de Michaelis-Menten</b> no VDF efetivo, não a relação comprimento-tensão de Adair; reproduz o formato e o platô, não a biofísica do sarcômero. → A <b>EDPVR é exponencial idealizada</b>, sem histerese nem interdependência ventricular. → A pós-carga é resumida num fator único (sem acoplamento Ea/Ees — isso é o módulo 7). → O <b>"ramo descendente" é deliberadamente ausente</b> no eixo VS×volume: a fisiologia moderna o atribui a afterload mismatch/congestão, não a overstretch — o modelo toma esse partido explicitamente. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde4.html">Módulo 4 · Interseção de Guyton</a> — a Starling é a curva cardíaca que cruza o retorno venoso.</div>
+    <div class="ponte">→ <a href="perfunde7.html">Módulo 7 · Pós-carga &amp; alça PV</a> — Ea/Ees: a pós-carga e a contratilidade na alça pressão-volume.</div>
+    <div class="ponte">→ <a href="perfunde16.html">Módulo 16 · Cardiogênico</a> — a curva achatada em falência e a espiral congestiva.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 6
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model6.js inlined) ===================== -->
+<script>
+var V0=15, V0D=5, SVMAX_BASE=110, KM=55, EDPVR_P0=1.4, EDPVR_BETA=0.018, CONGESTAO=18;
+function afterloadFactor(af){ if(af===undefined)af=80; return 1/(1+0.008*Math.max(0,af-80)); }
+function starlingVS(vdf,contr,af){ if(contr===undefined)contr=1; if(af===undefined)af=80; var ef=Math.max(0,vdf-V0); return SVMAX_BASE*contr*ef/(KM+ef)*afterloadFactor(af); }
+function edpvr(vdf){ return EDPVR_P0*(Math.exp(EDPVR_BETA*Math.max(0,vdf-V0D))-1); }
+function vdfFromPench(p){ return V0D+Math.log(p/EDPVR_P0+1)/EDPVR_BETA; }
+function ef(vdf,contr,af){ return vdf>0?starlingVS(vdf,contr,af)/vdf:0; }
+function esv(vdf,contr,af){ return vdf-starlingVS(vdf,contr,af); }
+function vsAtPench(p,contr,af){ return starlingVS(vdfFromPench(p),contr,af); }
+function slope(vdf,contr,af,h){ h=h||1; return (starlingVS(vdf+h,contr,af)-starlingVS(vdf-h,contr,af))/(2*h); }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var state={ vdf:120, contr:1.0, af:80, mode:'edv' };
+  var PRESETS={
+    normal:    { vdf:120, contr:1.0, af:80 },
+    ascendente:{ vdf:80,  contr:1.0, af:80 },
+    plato:     { vdf:140, contr:0.6, af:80 },
+    falencia:  { vdf:200, contr:0.5, af:90 },
+    inotropico:{ vdf:120, contr:1.5, af:80 }
+  };
+  var EDVMAX=260, VSMAX=120, PMAX=42;
+
+  function drawStarling(ctx,W,H,P,opts){
+    opts=opts||{}; var mode=opts.mode||'edv';
+    try{
+      var padL=46,padB=30,padT=12,padR=14, plotW=W-padL-padR, plotH=H-padT-padB;
+      var xmax=(mode==='edv')?EDVMAX:PMAX;
+      var px=function(x){return padL+(x/xmax)*plotW;};
+      var py=function(vs){return padT+plotH-(Math.max(0,Math.min(VSMAX,vs))/VSMAX)*plotH;};
+      ctx.clearRect(0,0,W,H);
+      // zona de congestão (Pench>18) — converte p/ x conforme o eixo
+      var xCong = (mode==='edv') ? vdfFromPench(CONGESTAO) : CONGESTAO;
+      if(xCong<xmax){ ctx.fillStyle='rgba(255,93,108,.07)'; ctx.fillRect(px(xCong),padT,px(xmax)-px(xCong),plotH); }
+      // grades
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      var xstep=(mode==='edv')?40:6;
+      for(var gx=0;gx<=xmax;gx+=xstep){ ctx.beginPath(); ctx.moveTo(px(gx),padT); ctx.lineTo(px(gx),padT+plotH); ctx.stroke(); ctx.fillText(gx+'',px(gx)-6,padT+plotH+14); }
+      for(var gy=0;gy<=VSMAX;gy+=20){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+plotW,py(gy)); ctx.stroke(); ctx.fillText(gy+'',16,py(gy)+3); }
+      ctx.fillStyle='#97a3ba';
+      ctx.fillText(mode==='edv'?'VDF — pré-carga (mL)':'Pench — pressão de enchimento (mmHg)', padL+plotW-220, padT+plotH+14);
+      ctx.save(); ctx.translate(12,padT+34); ctx.rotate(-Math.PI/2); ctx.fillText('VS (mL)',0,0); ctx.restore();
+      // curva por contratilidade
+      var curve=function(contr,color,w,dash){
+        ctx.strokeStyle=color; ctx.lineWidth=w; ctx.setLineDash(dash||[]); ctx.beginPath(); var st=false;
+        for(var i=0;i<=plotW;i+=2){ var x=i/plotW*xmax; var vs=(mode==='edv')?starlingVS(x,contr,P.af):vsAtPench(x,contr,P.af);
+          var X=px(x),Y=py(vs); if(!st){ctx.moveTo(X,Y);st=true;} else ctx.lineTo(X,Y);} ctx.stroke(); ctx.setLineDash([]);
+      };
+      // referências fixas: falência (0,5) e inotrópico (1,5)
+      curve(0.5,'#46506b',1.6,[5,4]);
+      curve(1.5,'#2f6f54',1.6,[5,4]);
+      curve(P.contr,'#e5394e',2.6);
+      // "mesma pré-carga": linha vertical no x operante cruzando as 3 curvas (modo edv)
+      var xop = (mode==='edv') ? P.vdf : edpvr(P.vdf);
+      ctx.strokeStyle='#34405c'; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(px(xop),padT); ctx.lineTo(px(xop),padT+plotH); ctx.stroke(); ctx.setLineDash([]);
+      if(mode==='edv'){
+        [[0.5,'#46506b'],[1.5,'#2f6f54']].forEach(function(c){ var vs=starlingVS(P.vdf,c[0],P.af); ctx.fillStyle=c[1]; ctx.beginPath(); ctx.arc(px(P.vdf),py(vs),3.5,0,Math.PI*2); ctx.fill(); });
+      }
+      // ponto operante
+      var vsOp=starlingVS(P.vdf,P.contr,P.af);
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(xop),py(vsOp),5.5,0,Math.PI*2); ctx.fill();
+      ctx.setLineDash([2,3]); ctx.strokeStyle='#ffcf5c'; ctx.beginPath(); ctx.moveTo(padL,py(vsOp)); ctx.lineTo(px(xop),py(vsOp)); ctx.stroke(); ctx.setLineDash([]);
+      return { vs:vsOp };
+    }catch(e){ return { vs:starlingVS(P.vdf,P.contr,P.af) }; }
+  }
+  function drawOn(id,P,opts){ var cv=$(id); if(!cv) return {}; var ctx; try{ctx=cv.getContext('2d');}catch(e){return {};} if(!ctx) return {}; return drawStarling(ctx,cv.width||860,cv.height||340,P,opts); }
+
+  function syncSliders(){ $('iVdf').value=state.vdf; $('iContr').value=state.contr; $('iAf').value=state.af; $('lVdf').value=state.vdf; $('lContr').value=state.contr; $('lAf').value=state.af; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vVdf').textContent=state.vdf; $('vContr').textContent=br(state.contr,2); $('vAf').textContent=state.af;
+    $('vlVdf').textContent=state.vdf; $('vlContr').textContent=br(state.contr,2); $('vlAf').textContent=state.af;
+    var vs=starlingVS(state.vdf,state.contr,state.af), p=edpvr(state.vdf), efr=ef(state.vdf,state.contr,state.af), sl=slope(state.vdf,state.contr,state.af);
+    drawOn('plotStarling', state, {mode:state.mode});
+    $('opbox-instr').innerHTML='VS <b>'+br(vs,0)+'</b> mL · EF <b>'+br(efr*100,0)+'%</b> · Pench <b>'+br(p,1)+'</b> mmHg · inclinação dVS/dVDF <b>'+br(sl,2)+'</b>'+(p>=CONGESTAO?' · <span style="color:var(--crit)">congestão</span>':'');
+    drawOn('plotStarlingLab', state, {mode:'edv'});
+    $('opbox-lab').innerHTML='VS <b>'+br(vs,0)+'</b> mL · EF '+br(efr*100,0)+'% · Pench <b>'+br(p,1)+'</b> mmHg';
+
+    var vEl=$('lab-veredito'), klass, label, sub;
+    if(p>=CONGESTAO){ klass='crit'; label='CONGESTÃO'; sub='Pench > 18 mmHg: volume virou pressão retrógrada'; }
+    else if(sl < 0.16){ klass='lim'; label='NO PLATÔ'; sub='curva achatada: mais volume rende pouco VS'; }
+    else { klass='ok'; label='RAMO ASCENDENTE'; sub='curva íngreme: ainda há reserva de Starling'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label; $('lab-vnum').textContent=sub+' · VS '+br(vs,0)+' mL · EF '+br(efr*100,0)+'%';
+
+    show($('ban-ascendente'), sl>=0.16 && p<CONGESTAO);
+    show($('ban-plato'), sl<0.16 && p<CONGESTAO);
+    show($('ban-congestao'), p>=CONGESTAO);
+    show($('ban-mito'), state.vdf>=190);
+    show($('ban-inotropo'), state.contr>1.1);
+    show($('ban-afterload'), state.af>110);
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor gráfico ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    var S=function(o){return Object.assign({vdf:120,contr:1.0,af:80,mode:'edv'},o);};
+    T.push({S:S({vdf:120,contr:1.0}), cap:'Famílias VS×VDF. Vertical = mesma pré-carga (VDF 120) cruzando as três curvas.',
+      q:'Na MESMA pré-carga, o coração da curva mais alta (contratilidade maior):',
+      o:['ejeta mais (VS maior)','ejeta igual','ejeta menos','não ejeta'], a:0,
+      fb:'Mesma pré-carga, curvas diferentes: contratilidade maior = ponto operante mais alto = mais VS.', hint:'Compare as bolinhas na vertical.'});
+    T.push({S:S({vdf:120,contr:0.5}), cap:'Curva atual = falência (vermelha baixa).',
+      q:'A falência (curva achatada) na pré-carga normal produz:',
+      o:['VS baixo (EF reduzida)','VS normal','VS alto','o mesmo VS do normal'], a:0,
+      fb:'A curva rebaixada entrega pouco VS no mesmo enchimento — a marca da disfunção sistólica.', hint:'Altura do ponto âmbar.'});
+    T.push({S:S({vdf:240,contr:1.0}), cap:'VDF muito alto (240 mL), eixo VS×volume.',
+      q:'Em VDF muito alto, a curva VS×volume:',
+      o:['satura (platô), nunca desce','cai (ramo descendente)','sobe linear','zera'], a:0,
+      fb:'No eixo de volume não há ramo descendente: a Starling só satura. O sarcômero não "se rende" aqui.', hint:'A curva fica plana, não desce.'});
+    T.push({S:S({vdf:200,contr:1.0,mode:'pench'}), cap:'MESMO coração, agora eixo VS × PRESSÃO de enchimento.',
+      q:'Por que a curva clínica (VS×pressão) parece estagnar/"cair"?',
+      o:['a EDPVR exponencial faz a pressão disparar sem ganho de VS','o sarcômero entra em falência','a contratilidade cai sozinha','erro de medida'], a:0,
+      fb:'A "falsa queda": no platô, a pressão sobe muito (EDPVR) e o VS quase não muda → congestão, não overstretch.', hint:'Olhe a zona vermelha de congestão.'});
+    T.push({S:S({vdf:200,contr:1.0}), cap:'Zona vermelha = Pench > 18 mmHg.',
+      q:'Empurrar a pré-carga para dentro da zona vermelha compra:',
+      o:['congestão pulmonar sem ganho de débito','muito mais débito','redução da pós-carga','aumento da contratilidade'], a:0,
+      fb:'No platô + EDPVR exponencial, volume vira pressão retrógrada → edema, sem VS extra.', hint:'VS já no platô; só a pressão sobe.'});
+    T.push({S:S({vdf:120,contr:1.5}), cap:'Inotrópico (contratilidade 1,5).',
+      q:'O inotrópico desloca a curva inteira:',
+      o:['para cima (mais VS na mesma pré-carga)','para baixo','para a direita só','não muda'], a:0,
+      fb:'Inotropismo eleva toda a Starling: mais VS no mesmo enchimento — e a mesma ejeção a pressão menor.', hint:'A vermelha está acima das referências.'});
+    T.push({S:S({vdf:120,contr:1.0,af:170}), cap:'Pós-carga alta (170).',
+      q:'Aumentar a pós-carga, na mesma pré-carga, faz o VS:',
+      o:['cair (afterload mismatch)','subir','não mudar','dobrar'], a:0,
+      fb:'Pós-carga alta rebaixa a curva: o mesmo enchimento ejeta menos. Baixar a pós-carga pode subir o VS.', hint:'A curva atual caiu.'});
+    T.push({S:S({vdf:80,contr:1.0}), cap:'Pré-carga baixa (VDF 80), ramo íngreme.',
+      q:'No ramo ascendente (íngreme), dar volume:',
+      o:['rende VS de verdade (há reserva)','não muda o VS','causa congestão imediata','reduz o VS'], a:0,
+      fb:'Curva íngreme = boa responsividade de Starling: o volume sobe o VS antes de congestionar.', hint:'Inclinação grande.'});
+    T.push({S:S({vdf:120,contr:0.5}), cap:'Coração em falência (curva baixa).',
+      q:'Para a falência igualar o VS do coração normal, precisaria de:',
+      o:['muito mais volume — e aí congestiona antes','um pouco menos volume','a mesma pré-carga','nada, já iguala'], a:0,
+      fb:'A reserva de Starling acabou: subir o VS exige VDF alto → Pench dispara → congestão antes do ganho.', hint:'A curva baixa só alcança VS alto longe à direita.'});
+    T.push({S:S({vdf:120,contr:1.0}), cap:'Leia EF: VS sobre VDF.',
+      q:'Com VS ≈ 72 mL e VDF 120 mL, a fração de ejeção é:',
+      o:['~60%','~30%','~90%','~40%'], a:0,
+      fb:'EF = VS/VDF = 72/120 ≈ 0,60. É a assinatura do coração normal.', hint:'72 ÷ 120.'});
+    T.push({S:S({vdf:230,contr:1.0}), cap:'Resumo: VDF alto, eixo de volume.',
+      q:'A melhor descrição do "ramo descendente de Starling" é:',
+      o:['um artefato do eixo de pressão (congestão), não overstretch','overstretch real do sarcômero','queda da contratilidade','aumento da pós-carga'], a:0,
+      fb:'A fisiologia moderna atribui a "queda" a afterload mismatch/congestão. No eixo VS×volume não há descida.', hint:'Os dois eixos contam histórias diferentes.'});
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=230; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawStarling(ctx,W||820,H||230,item.S,{mode:item.S.mode||'edv'}); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ drawStarling(ctx,cv.width||820,cv.height||230,item.S,{mode:item.S.mode||'edv'}); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    document.querySelectorAll('#toggle button').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('#toggle button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+      state.mode=b.getAttribute('data-mode'); recompute(); }); });
+    [['iVdf','vdf'],['iContr','contr'],['iAf','af']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lVdf','vdf'],['lContr','contr'],['lAf','af']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawStarling=drawStarling; window.activateTab=activate; window.setLabState=setState; window.setMode=function(m){state.mode=m;recompute();};
+    window.starlingVSFn=starlingVS; window.edpvrFn=edpvr; window.efFn=ef; window.slopeFn=slope; window.vsAtPenchFn=vsAtPench;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
