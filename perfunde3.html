@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 3 · Débito cardíaco</title>
+<meta name="description" content="DC = FC × VS e o teto da taquicardia: a diástole encurta, o enchimento cai, o débito desaba. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:340px;border-radius:8px;background:#0a0c11}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.98rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subst{font-family:var(--mono);font-size:.9rem;color:var(--ink)} .subst .num{color:var(--ven)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:230px;border-radius:8px;background:#0a0c11;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 3 · Débito cardíaco</div>
+    <h1>A taquicardia tem teto</h1>
+    <p class="sub">DC = FC × VS parece dizer que mais batimentos é mais débito. Mas cada batimento precisa de tempo para encher — e a diástole encurta antes da sístole. Acima de um ponto, acelerar <em>derruba</em> o débito.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,44 120,32 240,22 340,18 430,20 540,28 660,38 780,46 900,50"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>FC 135, e o débito caindo</h2>
+    <p class="lead">Cinco atos. A variável escondida é o que a frequência <em>faz</em> com o enchimento. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Paciente taquicárdico sustentado. "FC 135 — o coração está trabalhando bastante, deve estar compensando."</p>
+      <div class="vitais"><span>FC <b>135</b></span><span>ritmo <b>sinusal</b></span><span>extremidades <b>frias</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>Confia-se que FC alta = DC alto. Mas a perfusão periférica diz o contrário.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>DC = FC × VS. Se VS despencou, FC 135 pode render <em>menos</em> que FC 70. O produto engana quando se olha só um fator.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>A diástole (o tempo de encher) é o que encurta primeiro com a taquicardia. Em FC 135 sobra pouco tempo de enchimento → VS cai mais rápido do que a FC sobe → o produto desce.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A curva DC×FC mostra o pico e a queda. É o que o Instrumento desenha.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">tempo diastólico de enchimento</b>, que cai com a FC e arrasta o VS junto. FC 135 está <em>além do pico</em> da curva DC×FC — acelerar mais reduz o débito. FC alta não é "coração forte"; é bandeira.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas até o teto.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">DC = FC × VS — mais FC, mais DC?</div><div class="aa">Só se o VS não cair. O produto depende dos <b>dois</b> fatores, e eles não são independentes.</div></div>
+      <div class="step"><div class="qq">O que liga FC e VS?</div><div class="aa">O <b>tempo de enchimento</b>. Cada ciclo dura 60/FC; a sístole é quase fixa, então o que encurta com a taquicardia é a <b>diástole</b>.</div></div>
+      <div class="step"><div class="qq">E menos diástole?</div><div class="aa">Menos tempo para encher o ventrículo → menor volume diastólico final → <b>VS cai</b>.</div></div>
+      <div class="step"><div class="qq">Quem ganha a corrida, FC ou VS?</div><div class="aa">No começo a FC ganha (DC sobe). Passado o <b>pico</b>, a queda do VS supera o ganho de FC → o DC <b>desce</b>.</div></div>
+      <div class="step"><div class="qq">Então FC 130 é bom sinal?</div><div class="aa">Pode ser o contrário: se está além do pico, é <b>taquicardia que engana</b> — DC abaixo do repouso, com sinais de má perfusão.</div></div>
+      <div class="step"><div class="qq">E a bradicardia extrema?</div><div class="aa">O outro lado: VS até cheio, mas pouquíssimos batimentos → DC também limitado. O ótimo é uma janela, não "quanto mais rápido melhor".</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a curva DC × FC ao vivo</h2>
+    <p class="lead">A identidade DC = FC × VS e a curva que ela esconde. O <span style="color:var(--accent)">ponto de operação</span> e o <span style="color:var(--ven)">pico</span> migram com o enchimento basal.</p>
+    <div class="idcard">
+      <div class="formula"><span class="iso">DC</span> = FC × VS &nbsp;<span style="color:var(--ink-faint)">· VS limitado pela diástole disponível</span></div>
+      <div class="subst" id="sub-dc"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotDC" class="plot" width="860" height="340" aria-label="curva débito cardíaco por frequência"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>DC × FC (VS diastólico-limitado)</span>
+        <span><i style="background:var(--accent)"></i>operação (FC atual)</span>
+        <span><i style="background:var(--ven)"></i>pico</span>
+      </div>
+      <div class="opbox" id="opbox-instr"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>FC <span class="v"><span id="vFc">70</span> bpm</span></label><input id="iFc" type="range" min="40" max="200" step="1" value="70"></div>
+        <div class="ctrl"><label>VS basal (enchimento) <span class="v"><span id="vVs">85</span> mL</span></label><input id="iVs" type="range" min="40" max="120" step="1" value="85"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">VS basal = teto de enchimento (pré-carga/contratilidade). O VS <em>atingido</em> cai conforme a FC come a diástole.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · ache o teto</h2>
+    <p class="lead">Cenários ou as duas alavancas. O <b>veredito vira</b> e os banners dizem de que lado do pico você está.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="repouso">Repouso</button>
+      <button class="preset" type="button" data-preset="exercicio">Exercício (inotropismo)</button>
+      <button class="preset" type="button" data-preset="taqui">Taquicardia que engana</button>
+      <button class="preset" type="button" data-preset="extrema">FC extrema</button>
+      <button class="preset" type="button" data-preset="bradi">Bradicardia</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotDCLab" class="plot" width="860" height="340" aria-label="curva DC×FC no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>DC × FC</span>
+        <span><i style="background:var(--accent)"></i>operação</span>
+        <span><i style="background:var(--ven)"></i>pico</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>FC <span class="v"><span id="vlFc">70</span> bpm</span></label><input id="lFc" type="range" min="40" max="200" step="1" value="70"></div>
+        <div class="ctrl"><label>VS basal <span class="v"><span id="vlVs">85</span> mL</span></label><input id="lVs" type="range" min="40" max="120" step="1" value="85"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Débito no ponto de operação</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner ven" id="ban-reserva"><b>Reserva cronotrópica.</b> Abaixo do pico: subir a FC ainda rende DC, porque ainda sobra diástole para encher.</div>
+      <div class="banner art" id="ban-teto"><b>Além do teto.</b> A diástole ficou curta demais: o VS desaba mais rápido do que a FC sobe — acelerar mais <em>reduz</em> o débito.</div>
+      <div class="banner art" id="ban-engana"><b>Taquicardia que engana.</b> FC alta com DC <em>abaixo</em> do repouso. O número alto da frequência mascara o débito baixo.</div>
+      <div class="banner ven" id="ban-bradi"><b>Bradicardia limitante.</b> VS até cheio, mas poucos batimentos: o produto cai por falta de frequência, não de enchimento.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a curva DC×FC computada ao vivo. Leia o pico, a operação e a queda — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do teto da taquicardia — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A sístole é tratada como <b>duração ~constante</b> (na realidade encurta um pouco com a FC) — idealização que coloca o colapso de enchimento em FC mais alta do que o exato. → O enchimento é um <b>saturante de constante única</b>, sem complacência diastólica não-linear nem contribuição atrial. → O VS basal resume pré-carga e contratilidade num só número. → <b>Farmacologia (mecanismo):</b> cronotrópicos movem a FC ao longo do eixo; inotrópicos/volume sobem o VS basal e elevam a curva inteira — sem dose. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde4.html">Módulo 4 · Interseção de Guyton</a> — de onde vem o VS: a pré-carga e o retorno venoso.</div>
+    <div class="ponte">→ <a href="perfunde6.html">Módulo 6 · Frank-Starling</a> — o VS como função do enchimento, a curva por trás do VS basal.</div>
+    <div class="ponte">→ <a href="perfunde16.html">Módulo 16 · Cardiogênico</a> — quando a bomba falha, a taquicardia compensatória bate no teto mais cedo.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 3
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model3.js inlined) ===================== -->
+<script>
+function diastole(fc, sistole){ if(sistole===undefined) sistole=0.30; return Math.max(0, 60/fc - sistole); }
+function svAchieved(fc, vsBasal, tau, sistole){ if(vsBasal===undefined) vsBasal=85; if(tau===undefined) tau=0.30;
+  var td=diastole(fc,sistole); return vsBasal*(1-Math.exp(-td/tau)); }
+function dc(fc, vs){ return fc*vs/1000; }
+function dcAt(fc, vsBasal, tau, sistole){ return dc(fc, svAchieved(fc,vsBasal,tau,sistole)); }
+function peakFC(vsBasal, tau, sistole, lo, hi){ lo=lo||40; hi=hi||200; var best=lo,bestDC=-1;
+  for(var fc=lo; fc<=hi; fc+=0.5){ var d=dcAt(fc,vsBasal,tau,sistole); if(d>bestDC){bestDC=d;best=fc;} }
+  return { fc:best, dc:bestDC }; }
+</script>
+
+<!-- ===================== UI · curva DC×FC + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+
+  var state={ fc:70, vs:85 };          // vs = VS basal (teto de enchimento)
+  var PRESETS={
+    repouso:   { fc:70,  vs:85 },
+    exercicio: { fc:95,  vs:105 },
+    taqui:     { fc:135, vs:80 },
+    extrema:   { fc:175, vs:85 },
+    bradi:     { fc:45,  vs:95 }
+  };
+  var FCMIN=40, FCMAX=200, DCMAX=9;
+
+  function drawDC(ctx,W,H,P,opts){
+    opts=opts||{};
+    try{
+      var padL=44,padB=30,padT=12,padR=14, plotW=W-padL-padR, plotH=H-padT-padB;
+      var px=function(fc){ return padL+(fc-FCMIN)/(FCMAX-FCMIN)*plotW; };
+      var py=function(d){ return padT+plotH-(Math.max(0,Math.min(DCMAX,d))/DCMAX)*plotH; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gx=FCMIN;gx<=FCMAX;gx+=20){ ctx.beginPath(); ctx.moveTo(px(gx),padT); ctx.lineTo(px(gx),padT+plotH); ctx.stroke(); ctx.fillText(gx+'',px(gx)-7,padT+plotH+14); }
+      for(var gy=0;gy<=DCMAX;gy+=1){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+plotW,py(gy)); ctx.stroke(); ctx.fillText(gy+'',16,py(gy)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('FC (bpm)', padL+plotW-64, padT+plotH+14);
+      ctx.save(); ctx.translate(12,padT+34); ctx.rotate(-Math.PI/2); ctx.fillText('DC (L/min)',0,0); ctx.restore();
+      // curva fantasma (repouso VS85) p/ comparação, se pedido
+      if(opts.ghost){ ctx.strokeStyle='#46506b'; ctx.lineWidth=1.4; ctx.setLineDash([5,4]); ctx.beginPath(); var s0=false;
+        for(var f0=FCMIN;f0<=FCMAX;f0+=1){ var Y0=py(dcAt(f0,opts.ghost)),X0=px(f0); if(!s0){ctx.moveTo(X0,Y0);s0=true;} else ctx.lineTo(X0,Y0);} ctx.stroke(); ctx.setLineDash([]); }
+      // curva atual
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.4; ctx.beginPath(); var st=false;
+      for(var f=FCMIN;f<=FCMAX;f+=1){ var Y=py(dcAt(f,P.vs)),X=px(f); if(!st){ctx.moveTo(X,Y);st=true;} else ctx.lineTo(X,Y);} ctx.stroke();
+      // pico
+      var pk=peakFC(P.vs);
+      ctx.setLineDash([2,3]); ctx.strokeStyle='#3f82e6';
+      ctx.beginPath(); ctx.moveTo(px(pk.fc),py(pk.dc)); ctx.lineTo(px(pk.fc),padT+plotH); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#3f82e6'; ctx.beginPath(); ctx.arc(px(pk.fc),py(pk.dc),4,0,Math.PI*2); ctx.fill();
+      ctx.fillText('pico FC '+Math.round(pk.fc), px(pk.fc)+5, py(pk.dc)-6);
+      // operação
+      var dop=dcAt(P.fc,P.vs);
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([2,3]);
+      ctx.beginPath(); ctx.moveTo(px(P.fc),py(dop)); ctx.lineTo(px(P.fc),padT+plotH); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,py(dop)); ctx.lineTo(px(P.fc),py(dop)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(P.fc),py(dop),5,0,Math.PI*2); ctx.fill();
+      return { dop:dop, pk:pk };
+    }catch(e){ return { dop:dcAt(P.fc,P.vs), pk:peakFC(P.vs) }; }
+  }
+  function drawOn(id,P,opts){ var cv=$(id); if(!cv) return {}; var ctx; try{ctx=cv.getContext('2d');}catch(e){return {};} if(!ctx) return {}; return drawDC(ctx,cv.width||860,cv.height||340,P,opts); }
+
+  function syncSliders(){ $('iFc').value=state.fc; $('iVs').value=state.vs; $('lFc').value=state.fc; $('lVs').value=state.vs; }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vFc').textContent=state.fc; $('vVs').textContent=state.vs; $('vlFc').textContent=state.fc; $('vlVs').textContent=state.vs;
+    var vsAch=svAchieved(state.fc,state.vs), dop=dc(state.fc,vsAch), pk=peakFC(state.vs), dRepouso=dcAt(70,state.vs);
+    $('sub-dc').innerHTML='= <span class="num">'+state.fc+'</span> × <span class="num">'+br(vsAch,0)+'</span> mL (VS atingido de '+state.vs+' basal) = <b style="color:var(--accent)">'+br(dop,2)+'</b> L/min';
+    drawOn('plotDC', state, {});
+    $('opbox-instr').innerHTML='FC '+state.fc+' · VS atingido <b>'+br(vsAch,0)+'</b> mL · DC <b>'+br(dop,2)+'</b> L/min · pico em FC <b>'+Math.round(pk.fc)+'</b> ('+br(pk.dc,2)+' L/min)';
+    drawOn('plotDCLab', state, {});
+    $('opbox-lab').innerHTML='DC <b>'+br(dop,2)+'</b> L/min · pico FC '+Math.round(pk.fc)+' · DC repouso(70) '+br(dRepouso,2);
+
+    var vEl=$('lab-veredito'), klass, label;
+    if(dop>=4.5){ klass='ok'; label='DÉBITO SUSTENTADO'; }
+    else if(dop>=3.0){ klass='lim'; label='DÉBITO LIMÍTROFE'; }
+    else { klass='crit'; label='DÉBITO CRÍTICO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='DC '+br(dop,2)+' L/min · VS atingido '+br(vsAch,0)+' mL · pico FC '+Math.round(pk.fc);
+
+    show($('ban-reserva'), state.fc < pk.fc-3 && state.fc < 110);
+    show($('ban-teto'), state.fc > pk.fc+3);
+    show($('ban-engana'), state.fc>=115 && dop < dRepouso);
+    show($('ban-bradi'), state.fc < 55);
+  }
+
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor gráfico ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    T.push({P:{fc:70,vs:85}, cap:'Curva DC×FC (VS basal 85). Bolinha âmbar = operação; azul = pico.',
+      q:'Qual o débito em repouso (FC 70)?',
+      o:['~5,0 L/min','~2,5 L/min','~8 L/min','~10 L/min'], a:0,
+      fb:'DC(70) ≈ 5,0 L/min — o ponto âmbar.', hint:'y da bolinha âmbar em FC 70.'});
+    T.push({P:{fc:70,vs:85}, cap:'Mesma curva.',
+      q:'Em torno de que FC está o PICO do débito?',
+      o:['~90–95 bpm','~70 bpm','~140 bpm','~180 bpm'], a:0,
+      fb:'O pico fica ~FC 93: além dele a queda do VS supera o ganho de FC.', hint:'x do ponto azul.'});
+    T.push({P:{fc:135,vs:85}, ghost:85, cap:'Operação em FC 135 (sólida e fantasma coincidem; VS basal 85).',
+      q:'O DC em FC 135 é, comparado ao de FC 70:',
+      o:['menor (taquicardia que engana)','maior','igual','o dobro'], a:0,
+      fb:'Passado o pico, DC(135) < DC(70): a diástole curta derrubou o VS.', hint:'Compare as alturas em 135 e 70.'});
+    T.push({P:{fc:160,vs:85}, cap:'Operação em FC 160.',
+      q:'Subir a FC de 135 para 160 faz o DC:',
+      o:['cair ainda mais','subir','não mudar','estabilizar no pico'], a:0,
+      fb:'Já à direita do pico, mais FC = menos diástole = menos VS = menos DC.', hint:'A curva está descendo ali.'});
+    T.push({P:{fc:130,vs:85}, cap:'Por que o VS cai em FC alta?',
+      q:'O fator que limita o VS na taquicardia é:',
+      o:['o tempo diastólico de enchimento','a duração da sístole','a pressão arterial','a saturação'], a:0,
+      fb:'A diástole encurta com a FC → menos tempo para encher → menor VS.', hint:'O que encurta primeiro no ciclo?'});
+    T.push({P:{fc:45,vs:95}, cap:'Bradicardia (FC 45), VS basal alto.',
+      q:'Em FC 45 com bom enchimento, o DC está:',
+      o:['limitado pela baixa frequência','no máximo possível','acima do normal','independente da FC'], a:0,
+      fb:'VS pode estar cheio, mas poucos batimentos/min limitam o produto. O ótimo é uma janela.', hint:'DC = FC × VS — e a FC está baixa.'});
+    T.push({P:{fc:95,vs:110}, ghost:85, cap:'Sólida = VS basal 110; pontilhada = VS basal 85.',
+      q:'Aumentar o VS basal (inotropismo/volume) faz a curva:',
+      o:['subir inteira','descer','deslocar o pico para FC baixa','não mudar'], a:0,
+      fb:'Mais enchimento basal eleva todo o DC×FC: mesmo FC, mais débito.', hint:'A sólida está acima da pontilhada.'});
+    T.push({P:{fc:120,vs:85}, cap:'FC 120.',
+      q:'FC 120 sustentada "porque o coração está forte" é:',
+      o:['interpretação errada — pode ser bandeira de baixo DC','sempre sinal de bom débito','irrelevante','prova de contratilidade alta'], a:0,
+      fb:'FC alta não significa DC alto; perto/além do pico, é sinal de alarme, não de força.', hint:'Lembre do teto.'});
+    T.push({P:{fc:100,vs:50}, cap:'Identidade pura: FC 100, VS 50 mL.',
+      q:'DC = FC × VS com FC 100 e VS 50 mL =',
+      o:['5,0 L/min','500 L/min','0,5 L/min','50 L/min'], a:0,
+      fb:'100 × 50 / 1000 = 5,0 L/min. Atenção às unidades (mL→L).', hint:'mL × bpm /1000.'});
+    T.push({P:{fc:185,vs:85}, cap:'FC 185.',
+      q:'Em FC muito extrema, o DC tende a:',
+      o:['cair rumo a valores muito baixos','estabilizar alto','crescer sem limite','igualar o pico'], a:0,
+      fb:'A diástole quase some → VS mínimo → DC despenca apesar da FC altíssima.', hint:'Extremo direito da curva.'});
+    T.push({P:{fc:93,vs:85}, cap:'Operação no próprio pico.',
+      q:'No pico da curva, mover a FC para qualquer lado faz o DC:',
+      o:['cair (é um máximo)','subir dos dois lados','subir só à direita','permanecer no máximo'], a:0,
+      fb:'O pico é um máximo: para os dois lados o DC diminui — à esquerda falta FC, à direita falta diástole.', hint:'Topo da curva.'});
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=230; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return drawDC(ctx,W||820,H||230,item.P,item.ghost?{ghost:item.ghost}:{}); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ drawDC(ctx,cv.width||820,cv.height||230,item.P,item.ghost?{ghost:item.ghost}:{}); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iFc','fc'],['iVs','vs']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); syncSliders(); recompute(); }); });
+    $('lFc').addEventListener('input',function(){ state.fc=parseFloat($('lFc').value); syncSliders(); recompute(); });
+    $('lVs').addEventListener('input',function(){ state.vs=parseFloat($('lVs').value); syncSliders(); recompute(); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawDC=drawDC; window.activateTab=activate; window.setLabState=setState;
+    window.dcFn=dc; window.dcAtFn=dcAt; window.peakFCFn=peakFC; window.svAchievedFn=svAchieved; window.diastoleFn=diastole;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
