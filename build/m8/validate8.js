@@ -66,7 +66,9 @@ ok('mega: todas 4 opções/índice/q-fb-m',mOk);
 ok('mega renderizou no DOM',doc.querySelectorAll('#mega .q').length===(Q?Q.length:0),doc.querySelectorAll('#mega .q').length);
 // cobertura de módulos
 const mods=new Set((Q||[]).map(q=>q.m));
-ok('cobre M0,2,3,4,5,6,7,8', ['M0','M2','M3','M4','M5','M6','M7','M8'].every(m=>mods.has(m)), [...mods].join(','));
+ok('cobre M0,1,2,3,4,5,6,7,8', ['M0','M1','M2','M3','M4','M5','M6','M7','M8'].every(m=>mods.has(m)), [...mods].join(','));
+ok('M1 tem 8 questões dedicadas', (Q||[]).filter(q=>q.m==='M1').length===8, (Q||[]).filter(q=>q.m==='M1').length);
+ok('total de 40 questões', Q.length===40, Q.length);
 // minoria inédita/integrativa
 const integ=(Q||[]).filter(q=>q.m==='integra'||q.m==='tese').length;
 ok('inéditas/integrativas são minoria absoluta (<35%)', integ>0 && integ < Q.length*0.35, integ+'/'+Q.length);
