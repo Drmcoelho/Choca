@@ -54,7 +54,7 @@ Agente de engenharia construindo módulos didáticos single-file para um braço 
 - **Estrutura** — todos os IDs de painel/tutor presentes.
 - **Física** — cada identidade da espinha (`CHOQUE.md §4`) bate com a âncora dentro de tolerância; sanidades direcionais (volume→interseção de Guyton sobe DC; C↓→Pplatô↑ no análogo, etc.).
 - **Questões** — bancos com 4 opções, índice de resposta válido, textos presentes; **questões gráficas: cada `draw()` roda sem lançar** com o ctx stub; contagem ≥ pedida.
-- **Cromo de série** — backlink, kicker, pontes, CRM, "Para a Dani", nota de honestidade.
+- **Cromo de série** — backlink, kicker, pontes, CRM, nota de honestidade.
 - Imprime `N OK · M falhas`; sai 1 se M>0.
 
 ---
@@ -66,7 +66,6 @@ Agente de engenharia construindo módulos didáticos single-file para um braço 
 - [ ] pontes cruzadas (braço 1 + módulos vizinhos do braço 2)
 - [ ] tema "monitor hemodinâmico" (tokens do braço)
 - [ ] rodapé: `CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira`
-- [ ] dedicatória `Para a Dani.`
 - [ ] nota de honestidade do modelo no disclaimer
 
 ---
@@ -104,7 +103,3 @@ Este hard-stop tem precedência sobre "ser útil". Não negociar.
 ## 9. Estilo
 
 Português do Brasil na saída; raciocínio pode ser em inglês quando útil. Prosa com **setas (→)** e encadeamento semântico; listas só quando enumeração/comparação/sequência é a forma real do conteúdo. Código modular, determinístico, auditável, comentado. Sem floreio, sem reasseguramento genérico, sem elogio de abertura. Distinguir evidência estabelecida × inferência informada × estimativa. Discordar quando há fundamento.
-
----
-
-*Para a Dani.*
