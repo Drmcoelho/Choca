@@ -11,9 +11,10 @@ var V0=10;            // volume de pressão zero da ESPVR (mL) — mesmo do m7
 var V0D=5;            // intercepto da EDPVR (mL)
 var EDPVR_P0=1.4, EDPVR_BETA=0.018;   // diástole exponencial (mesma família do m6/m7)
 var HR0=75;
-// Espiral isquêmica:
-var CPP_REF=55;       // perfusão coronária (mmHg) acima da qual não há isquemia
-var ISCH_FLOOR=0.18;  // piso do fator de contratilidade por isquemia extrema
+// Espiral isquêmica (fator saturante: sem isquemia com boa perfusão; runaway só quando ela desaba):
+var CPP_ON=28;        // acima desta perfusão coronária (mmHg) não há isquemia (fator 1)
+var CPP_LO=6;         // abaixo desta, isquemia máxima (fator no piso)
+var ISCH_FLOOR=0.25;  // piso do fator de contratilidade por isquemia extrema
 function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
 
 // ---- diástole (EDPVR) e sua inversa: a pré-carga como pressão ----
@@ -47,35 +48,44 @@ function hemoAt(Ees, Ea, edv, hr){
   return { Ees:Ees, Ea:Ea, edv:edv, hr:hr, SV:SV, ESV:edv-SV, Pes:Ps, EF:EF, CO:CO, MAP:MAP, DBP:DBP, LVEDP:LVEDP, CPP:CPP };
 }
 
-// Fator de contratilidade por isquemia (1 = sem isquemia; cai com baixa perfusão coronária).
-function ischemiaFactor(CPP){ return clampv(CPP/CPP_REF, ISCH_FLOOR, 1); }
-
-// A ESPIRAL: resolve Ees efetivo por ponto-fixo Ees = EesSet·isquemia(CPP(Ees)).
-// Sub-relaxação para convergência estável; guarda a trajetória (Ees, CO) para animar.
-function spiral(EesSet, Ea, edv, hr){
-  hr=hr||HR0;
-  var Ees=EesSet, traj=[], relax=0.55;
-  for (var i=0;i<48;i++){
-    var H=hemoAt(Ees, Ea, edv, hr);
-    traj.push({ Ees:Ees, CO:H.CO, MAP:H.MAP, CPP:H.CPP });
-    var target=EesSet*ischemiaFactor(H.CPP);
-    var next=Ees + relax*(target-Ees);
-    if (Math.abs(next-Ees)<1e-4){ Ees=next; traj.push({Ees:Ees, CO:hemoAt(Ees,Ea,edv,hr).CO, MAP:hemoAt(Ees,Ea,edv,hr).MAP, CPP:hemoAt(Ees,Ea,edv,hr).CPP}); break; }
-    Ees=next;
-  }
-  return { EesEff:Ees, traj:traj, engaged:(Ees < EesSet-1e-3) };
+// Fator de contratilidade por isquemia: 1 acima de CPP_ON, cai linearmente até o piso em CPP_LO.
+// O platô em perfusão boa cria um equilíbrio ESTÁVEL de baixo débito (cardiogênico compensado);
+// só quando a CPP cruza o joelho o ponto-fixo dispara a espiral até o colapso.
+function ischemiaFactor(CPP){
+  if (CPP>=CPP_ON) return 1;
+  if (CPP<=CPP_LO) return ISCH_FLOOR;
+  return ISCH_FLOOR + (1-ISCH_FLOOR)*(CPP-CPP_LO)/(CPP_ON-CPP_LO);
 }
 
-// Estado completo dado o cenário do Lab.
-// p = { Ees (contratilidade set), Ea (pós-carga), Pfill (pré-carga/enchimento mmHg), hr }
+// A ESPIRAL (fenômeno à parte, ILUSTRATIVO — não contamina o estado estacionário do Lab).
+// Parte do ponto de operação e itera o ponto-fixo Ees ← EesSet·isquemia(CPP(Ees)): se a
+// perfusão coronária inicial já é baixa, a contratilidade cai, a CPP cai, e a espiral corre
+// até o colapso; se a perfusão é boa, fica num único ponto estável. Guarda a trajetória.
+function spiralRun(EesSet, Ea, edv, hr){
+  hr=hr||HR0;
+  var Ees=EesSet, traj=[], relax=0.55, last=Ees;
+  for (var i=0;i<60;i++){
+    var H=hemoAt(Ees, Ea, edv, hr);
+    traj.push({ Ees:Ees, CO:H.CO, MAP:H.MAP, CPP:H.CPP });
+    var next=Ees + relax*(EesSet*ischemiaFactor(H.CPP) - Ees);
+    if (Math.abs(next-Ees)<1e-4){ Ees=next; break; }
+    Ees=next;
+  }
+  var Hf=hemoAt(Ees,Ea,edv,hr);
+  return { traj:traj, EesEnd:Ees, COend:Hf.CO, MAPend:Hf.MAP,
+           collapses:(Ees < EesSet-0.03), steps:traj.length };
+}
+
+// Estado estacionário dado o cenário do Lab (no Ees AJUSTADO — sem laço isquêmico).
+// p = { Ees (contratilidade), Ea (pós-carga), Pfill (pré-carga/enchimento mmHg), hr }
 function cardioState(p){
-  var Ea=p.Ea, EesSet=p.Ees, hr=p.hr||HR0, Pfill=(p.Pfill===undefined?10:p.Pfill);
+  var Ea=p.Ea, Ees=p.Ees, hr=p.hr||HR0, Pfill=(p.Pfill===undefined?10:p.Pfill);
   var edv=edvFromPfill(Pfill);
-  var sp=spiral(EesSet, Ea, edv, hr);
-  var H=hemoAt(sp.EesEff, Ea, edv, hr);
-  H.EesSet=EesSet; H.EesEff=sp.EesEff; H.spiralEngaged=sp.engaged; H.traj=sp.traj;
-  H.Pfill=Pfill; H.coupling=coupling(sp.EesEff, Ea); H.SW=strokeWork(edv, sp.EesEff, Ea);
-  H.corners=loopCorners(edv, sp.EesEff, Ea);
+  var H=hemoAt(Ees, Ea, edv, hr);
+  var sp=spiralRun(Ees, Ea, edv, hr);
+  H.Pfill=Pfill; H.coupling=coupling(Ees, Ea); H.SW=strokeWork(edv, Ees, Ea);
+  H.corners=loopCorners(edv, Ees, Ea);
+  H.spiralRisk=sp.collapses; H.spiralEnd=sp; H.traj=sp.traj;
   return H;
 }
 
@@ -90,5 +100,5 @@ function vereditoCardio(R){
 
 if (typeof module!=='undefined' && module.exports){
   module.exports = { V0, V0D, HR0, ped, edvFromPfill, ves, strokeVolume, pes, ef, coupling,
-    loopCorners, strokeWork, hemoAt, ischemiaFactor, spiral, cardioState, vereditoCardio };
+    loopCorners, strokeWork, hemoAt, ischemiaFactor, spiralRun, cardioState, vereditoCardio };
 }

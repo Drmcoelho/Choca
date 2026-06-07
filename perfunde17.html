@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 17 · O ventrículo direito</title>
+<meta name="description" content="O VD esquecido: intolerante a pós-carga, interdependência ventricular (septo em D), a espiral do VD e os paradoxos — volume demais piora, vasopressor sistêmico salva. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.heart{display:block;width:100%;height:280px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:220px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 17 · ↳ o ventrículo direito</div>
+    <h1>A bomba que o livro ignora</h1>
+    <p class="sub">O VD é outro animal: de parede fina, feito para baixa pós-carga. Intolerante à pressão pulmonar, ele dilata, empurra o septo para dentro do VE e arrasta o débito para baixo — uma espiral em que o volume piora e o vasopressor, contraintuitivamente, salva.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <circle cx="600" cy="27" r="20" fill="none" stroke="var(--ink-dim)" stroke-width="2"/>
+      <path d="M540,10 A30 30 0 0 0 540 44" fill="none" stroke="var(--art)" stroke-width="2"/>
+      <path d="M575,12 Q600,27 575,42" fill="none" stroke="var(--art)" stroke-width="2" stroke-dasharray="3 3"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Hipotensão que piora ao receber volume</h2>
+    <p class="lead">Cinco atos. A variável escondida é que o ventrículo certo é o direito. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Dispneia súbita, hipotensão, VD dilatado ao ultrassom. Suspeita de TEP. Abre-se volume — e a pressão <em>cai mais</em>.</p>
+      <div class="vitais"><span>PA <b>80/55</b></span><span>VD <b>dilatado</b></span><span>septo <b>em D</b></span><span>VE <b>pequeno</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Hipotenso = dar volume." Mas o VE está <em>pequeno</em>, não vazio por hipovolemia — está sendo espremido.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>O VD não tolera a pós-carga súbita (RVP↑ do TEP): dilata. O septo desvia para o VE (D-shape) e <b>rouba o enchimento</b> dele. O VE, normal, ejeta pouco porque recebe pouco.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Volume demais <b>distende mais o VD</b> → piora o desvio septal → VE enche ainda menos → DC cai. E a MAP baixa compromete a <b>coronária do VD</b> → isquemia → mais dilatação: a <b>espiral</b>.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>As duas câmaras com o septo desviando e a curva CO×volume mostram por que mais volume piora — e por que subir a MAP ajuda. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">interdependência ventricular</b>: o VD falido sequestra o enchimento do VE pelo septo. Logo, volume <em>distende</em> e piora; reduzir a RVP (pós-carga do VD) e sustentar a MAP (perfusão coronária do VD) são as alavancas mecânicas — sem dose.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">O VD é outro animal — siga as setas.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">Por que o VD é tão sensível à pós-carga?</div><div class="aa">Parede fina, feito para a baixa resistência pulmonar. Pequenas altas de RVP/Ppa (TEP, hipóxia, SDRA) <b>derrubam</b> o fluxo anterógrado — ele não tem reserva contra pressão.</div></div>
+      <div class="step"><div class="qq">O que acontece quando ele falha?</div><div class="aa"><b>Dilata</b>. E como divide o septo e o pericárdio com o VE, a dilatação <b>desvia o septo</b> para a esquerda (D-shape).</div></div>
+      <div class="step"><div class="qq">E o VE, que está normal?</div><div class="aa">Enche menos por <b>dois</b> caminhos: em <em>série</em> (o VD não bombeia sangue suficiente através do pulmão) e em <em>paralelo</em> (o septo desviado reduz o volume/complacência do VE). Ejeta pouco porque recebe pouco — <b>interdependência</b>.</div></div>
+      <div class="step"><div class="qq">Então dou volume para encher?</div><div class="aa">No VD falido, volume <b>distende</b> ainda mais → piora o desvio septal → VE enche menos → DC <b>cai</b>. O paradoxo: mais pré-carga, menos débito.</div></div>
+      <div class="step"><div class="qq">Como o ciclo se fecha?</div><div class="aa">A <b>espiral</b>: DC↓ → MAP↓ → menos perfusão coronária do VD → isquemia → contratilidade do VD↓ → mais dilatação → DC↓.</div></div>
+      <div class="step"><div class="qq">O que quebra a espiral? (mecanismo)</div><div class="aa">Reduzir a <b>RVP</b> (pós-carga do VD) e <b>sustentar a MAP</b> com vasopressor sistêmico — que restaura o gradiente de perfusão da <em>coronária do VD</em>. Sem dose, sem alvo de paciente.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · as duas câmaras e o paradoxo do volume</h2>
+    <p class="lead">O <span style="color:var(--art)">VD</span> dilata com a pós-carga; o <span style="color:var(--accent)">septo</span> desvia e espreme o <span style="color:var(--ven)">VE</span>. Abaixo, a curva CO×volume revela por que mais volume piora.</p>
+    <div class="plotwrap">
+      <canvas id="plotHeart" class="heart" width="820" height="280" aria-label="duas câmaras com desvio septal"></canvas>
+      <div class="opbox" id="opbox-heart"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotCOvol" class="plot" width="820" height="220" aria-label="curva CO por volume do VD"></canvas>
+      <div class="legend"><span><i style="background:var(--art)"></i>CO × volume (na pós-carga atual)</span><span><i style="background:var(--accent)"></i>operação</span></div>
+      <div class="opbox" id="opbox-covol"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>RVP / pós-carga do VD <span class="v"><span id="vPvr">1.0</span> ×</span></label><input id="iPvr" type="range" min="1" max="4" step="0.1" value="1"></div>
+        <div class="ctrl"><label>Volume (pré-carga VD) <span class="v"><span id="vVol">1.0</span> ×</span></label><input id="iVol" type="range" min="0.4" max="2" step="0.05" value="1"></div>
+        <div class="ctrl"><label>MAP (coronária do VD) <span class="v"><span id="vMap">75</span> mmHg</span></label><input id="iMap" type="range" min="40" max="95" step="1" value="75"></div>
+        <div class="ctrl"><label>Contratilidade do VD <span class="v"><span id="vContr">1.00</span></span></label><input id="iContr" type="range" min="0.3" max="1.3" step="0.05" value="1"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">No VD falido a curva CO×volume tem corcova: passado o pico, mais volume distende e o DC desce. Suba a MAP e veja a coronária resgatar.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · o VD em cena</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito vira</b> e os banners explicam os mecanismos contraintuitivos.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="tep">TEP (pós-carga aguda)</button>
+      <button class="preset" type="button" data-preset="iamvd">IAM de VD</button>
+      <button class="preset" type="button" data-preset="volume">Volume demais (paradoxo)</button>
+      <button class="preset" type="button" data-preset="pressor">Espiral → pressor</button>
+      <button class="preset" type="button" data-preset="reduzpvr">Reduzir a RVP</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotHeartLab" class="heart" width="820" height="280" aria-label="câmaras no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>RVP <span class="v"><span id="vlPvr">1.0</span> ×</span></label><input id="lPvr" type="range" min="1" max="4" step="0.1" value="1"></div>
+        <div class="ctrl"><label>Volume <span class="v"><span id="vlVol">1.0</span> ×</span></label><input id="lVol" type="range" min="0.4" max="2" step="0.05" value="1"></div>
+        <div class="ctrl"><label>MAP <span class="v"><span id="vlMap">75</span> mmHg</span></label><input id="lMap" type="range" min="40" max="95" step="1" value="75"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Estado do VD</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-afterload"><b>Intolerância a pós-carga.</b> RVP↑ derruba o fluxo anterógrado do VD — pequenas altas, grandes quedas. Reduzir a RVP (pós-carga) é alavanca direta (mecanismo).</div>
+      <div class="banner art" id="ban-interdep"><b>Interdependência (septo em D).</b> O VD dilatado desvia o septo e rouba o enchimento do VE. O VE está normal — ejeta pouco porque recebe pouco.</div>
+      <div class="banner art" id="ban-volume"><b>Paradoxo do volume.</b> Mais volume distende o VD → pior desvio septal → VE enche menos → DC CAI. Encher o VD falido piora.</div>
+      <div class="banner ven" id="ban-pressor"><b>O pressor que salva.</b> MAP baixa reduz a perfusão coronária do VD (espiral). Subir a MAP restaura o gradiente coronário → contratilidade do VD melhora (mecanismo, sem dose).</div>
+      <div class="banner ven" id="ban-reduzpvr"><b>Reduzir a RVP.</b> Tratar a causa da pós-carga (mecanismo) descomprime o VD, reduz a dilatação e o desvio septal, e libera o VE.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha as câmaras (ou a curva CO×volume) ao vivo. Leia a interdependência e os paradoxos — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a mecânica do VD e seus paradoxos — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A interdependência é modelada como <b>limites em série e em paralelo</b> idealizados (sem pericárdio explícito nem geometria 3D). → A pós-carga do VD é um <b>fator único</b> (RVP normalizada), sem distinguir resistência de impedância pulsátil. → A perfusão coronária do VD é reduzida à <b>MAP</b> (na realidade depende do gradiente aorta−VD em sístole e diástole). → A "corcova" de pré-carga resume overdistensão/pericárdio. Os deslocamentos são qualitativamente fiéis; os números, exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde16.html">Módulo 16 · Cardiogênico (categoria)</a> — a bomba em falência; aqui, a bomba direita.</div>
+    <div class="ponte">→ <a href="perfunde19.html">Módulo 19 · Obstrutivo · TEP</a> — a pós-carga aguda de VD que dispara tudo.</div>
+    <div class="ponte">→ <a href="perfunde24.html">Módulo 24 · O coração-pulmão</a> — PEEP/pressão intratorácica e a pós-carga do VD.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 17
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model17.js inlined) ===================== -->
+<script>
+function afterloadFactor(pvr){ return 1/(1+1.3*Math.max(0,pvr-1)); }
+function coronaryFactor(map){ return Math.max(0,Math.min(1,(map-40)/25)); }
+function rvEffContr(rvContr,map){ return rvContr*(0.55+0.45*coronaryFactor(map)); }
+function preloadHump(vol){ return vol<=0?0:vol*Math.exp(1-vol); }
+function rvForward(P){ return rvEffContr(P.rvContr,P.map)*preloadHump(P.vol)*afterloadFactor(P.pvr); }
+function rvDilation(P){ return Math.max(0,P.vol-1)*0.7 + (1-afterloadFactor(P.pvr))*1.0; }
+function septalShift(P){ return Math.min(0.8, 0.5*rvDilation(P)); }
+function lvFill(P){ return Math.max(0, Math.min(rvForward(P), 1-septalShift(P))); }
+function lvStarling(f){ return f<=0?0:1.4*f/(0.4+f); }
+function co(P){ return 5.0*lvStarling(lvFill(P)); }
+function spiral(P){ return P.pvr>1.6 && P.map<60 && co(P)<3.2; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var inst={ pvr:1, vol:1, map:75, rvContr:1 };
+  var lab={ pvr:1, vol:1, map:75, rvContr:1 };
+
+  // ---- desenho das duas câmaras com septo desviado ----
+  function drawHeart(ctx,W,H,P){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var cy=H*0.52, lvx=W*0.62, lvr=Math.min(H*0.32,W*0.16);
+      var shift=septalShift(P), dil=rvDilation(P);
+      // VE (círculo) — comprimido pelo septo (achata a borda esquerda)
+      ctx.strokeStyle='#3f82e6'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.ellipse(lvx,cy, lvr*(1-0.35*shift), lvr, 0, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle='rgba(63,130,230,.08)'; ctx.fill();
+      ctx.fillStyle='#3f82e6'; ctx.font='13px monospace'; ctx.fillText('VE', lvx-8, cy+5);
+      // septo: linha entre as câmaras, bojo para a DIREITA (dentro do VE) ∝ shift
+      var sx=lvx-lvr*0.92, bow=shift*lvr*1.1;
+      ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=3; ctx.beginPath();
+      ctx.moveTo(sx, cy-lvr*0.9); ctx.quadraticCurveTo(sx+bow, cy, sx, cy+lvr*0.9); ctx.stroke();
+      if(shift>0.25){ ctx.fillStyle='#ffcf5c'; ctx.font='11px monospace'; ctx.fillText('septo em D', sx+bow-20, cy-lvr-6); }
+      // VD (crescente à esquerda), tamanho cresce com a dilatação
+      var rvr=lvr*(0.8+0.7*Math.min(1.4,dil));
+      ctx.strokeStyle = dil>0.4?'#e5394e':'#9aa6bd'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.ellipse(sx-rvr*0.5, cy, rvr*0.7, rvr, 0, Math.PI*0.5, Math.PI*1.5); ctx.stroke();
+      ctx.fillStyle = dil>0.4?'rgba(229,57,78,.10)':'rgba(154,166,189,.06)';
+      ctx.beginPath(); ctx.ellipse(sx-rvr*0.5, cy, rvr*0.7, rvr, 0, Math.PI*0.5, Math.PI*1.5); ctx.fill();
+      ctx.fillStyle = dil>0.4?'#e5394e':'#9aa6bd'; ctx.font='13px monospace'; ctx.fillText('VD', sx-rvr*0.7, cy+5);
+    }catch(e){}
+  }
+  // ---- curva CO × volume (corcova / paradoxo) na pós-carga atual ----
+  function drawCOvol(ctx,W,H,P){
+    try{
+      var padL=44,padR=14,padT=12,padB=28, plotW=W-padL-padR, plotH=H-padT-padB;
+      var VMIN=0.4, VMAX=2.0, COMAX=6;
+      var x=function(v){ return padL+(v-VMIN)/(VMAX-VMIN)*plotW; }, y=function(c){ return padT+plotH-(Math.min(COMAX,c)/COMAX)*plotH; };
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.lineWidth=1;
+      for(var gc=0;gc<=COMAX;gc+=1){ ctx.beginPath(); ctx.moveTo(padL,y(gc)); ctx.lineTo(W-padR,y(gc)); ctx.stroke(); ctx.fillText(gc+'',12,y(gc)+3); }
+      for(var gv=0.5;gv<=VMAX;gv+=0.5){ ctx.fillText(br(gv,1),x(gv)-8,H-padB+14); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('volume (pré-carga VD ×)', padL+plotW-150, H-padB+14);
+      ctx.save(); ctx.translate(12,padT+30); ctx.rotate(-Math.PI/2); ctx.fillText('CO (L/min)',0,0); ctx.restore();
+      ctx.strokeStyle='#e5394e'; ctx.lineWidth=2.4; ctx.beginPath(); var st=false;
+      for(var i=0;i<=plotW;i+=2){ var v=VMIN+i/plotW*(VMAX-VMIN); var c=co({pvr:P.pvr,vol:v,map:P.map,rvContr:P.rvContr}); var X=x(v),Y=y(c); if(!st){ctx.moveTo(X,Y);st=true;} else ctx.lineTo(X,Y); }
+      ctx.stroke();
+      // operação
+      var cop=co(P); ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(x(P.vol),y(cop),5.5,0,Math.PI*2); ctx.fill();
+      ctx.setLineDash([2,3]); ctx.strokeStyle='#ffcf5c'; ctx.beginPath(); ctx.moveTo(x(P.vol),padT); ctx.lineTo(x(P.vol),padT+plotH); ctx.stroke(); ctx.setLineDash([]);
+      return { co:cop };
+    }catch(e){ return { co:co(P) }; }
+  }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vPvr').textContent=br(inst.pvr,1); $('vVol').textContent=br(inst.vol,2); $('vMap').textContent=inst.map; $('vContr').textContent=br(inst.rvContr,2);
+    var cv=$('plotHeart'); if(cv){var c;try{c=cv.getContext('2d');}catch(e){} if(c) drawHeart(c,cv.width||820,cv.height||280,inst);}
+    drawCOvol2('plotCOvol', inst);
+    var cop=co(inst);
+    $('opbox-heart').innerHTML='CO <b>'+br(cop,2)+'</b> L/min · fluxo VD '+br(rvForward(inst)*100,0)+'% · desvio septal '+br(septalShift(inst)*100,0)+'% · enchimento VE '+br(lvFill(inst)*100,0)+'%'+(spiral(inst)?' · <span style="color:var(--crit)">espiral</span>':'');
+    // pico da curva (onde o volume deixa de ajudar)
+    var best=0,bestC=-1; for(var v=0.4;v<=2;v+=0.02){ var cc=co({pvr:inst.pvr,vol:v,map:inst.map,rvContr:inst.rvContr}); if(cc>bestC){bestC=cc;best=v;} }
+    $('opbox-covol').innerHTML='pico de CO em volume ≈ <b>'+br(best,2)+'×</b> ('+br(bestC,2)+' L/min) — além disso, mais volume DERRUBA o débito';
+    renderLab();
+  }
+  function drawCOvol2(id,P){ var cv=$(id); if(!cv) return; var c; try{c=cv.getContext('2d');}catch(e){return;} if(c) drawCOvol(c,cv.width||820,cv.height||220,P); }
+
+  function renderLab(){
+    $('vlPvr').textContent=br(lab.pvr,1); $('vlVol').textContent=br(lab.vol,2); $('vlMap').textContent=lab.map;
+    var cv=$('plotHeartLab'); if(cv){var c;try{c=cv.getContext('2d');}catch(e){} if(c) drawHeart(c,cv.width||820,cv.height||280,lab);}
+    var cop=co(lab), sh=septalShift(lab), sp=spiral(lab);
+    $('opbox-lab').innerHTML='CO <b>'+br(cop,2)+'</b> L/min · RVP '+br(lab.pvr,1)+'× · desvio septal '+br(sh*100,0)+'% · MAP '+lab.map;
+    var vEl=$('lab-veredito'), klass, label, sub;
+    if(sp){ klass='crit'; label='ESPIRAL DO VD'; sub='RVP alta + MAP baixa + débito baixo — o ciclo vicioso'; }
+    else if(cop<3.2 && lab.pvr>1.5){ klass='crit'; label='FALÊNCIA DE VD (pós-carga)'; sub='RVP intolerável: fluxo anterógrado e enchimento do VE despencam'; }
+    else if(sh>0.3){ klass='lim'; label='INTERDEPENDÊNCIA (septo em D)'; sub='VD dilatado roubando o enchimento do VE'; }
+    else if(cop>=4){ klass='ok'; label='VD COMPENSADO'; sub='pós-carga tolerável, septo neutro'; }
+    else { klass='lim'; label='VD LIMÍTROFE'; sub='reserva estreita'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label; $('lab-vnum').textContent=sub+' · CO '+br(cop,2)+' L/min';
+
+    show($('ban-afterload'), lab.pvr>1.5);
+    show($('ban-interdep'), sh>0.25);
+    show($('ban-volume'), lab.vol>1.3);
+    show($('ban-pressor'), lab.map<60);
+    show($('ban-reduzpvr'), lab.pvr>1.5);
+  }
+  function setLab(p){ for(var k in p){ if(p.hasOwnProperty(k)) lab[k]=p[k]; } if(lab.rvContr===undefined) lab.rvContr=1;
+    $('lPvr').value=lab.pvr; $('lVol').value=lab.vol; $('lMap').value=lab.map; renderLab(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[]; var P=function(o){return Object.assign({pvr:1,vol:1,map:75,rvContr:1},o);};
+    T.push({mode:'heart',P:P({pvr:3}), cap:'TEP: RVP alta, VD dilatado, septo em D.',
+      q:'Por que o VE ejeta pouco se a contratilidade dele está normal?',
+      o:['porque o septo desviado e o baixo fluxo do VD o subenchem (interdependência)','porque o VE infartou','porque a pós-carga do VE subiu','porque a FC caiu'], a:0,
+      fb:'Interdependência: o VD falido rouba o enchimento do VE (série + septo). O VE recebe pouco, ejeta pouco.', hint:'Olhe o septo e o tamanho do VE.'});
+    T.push({mode:'heart',P:P({pvr:1.6}), cap:'Pequena alta de pós-carga do VD.',
+      q:'O VD, comparado ao VE, tolera aumentos de pós-carga:',
+      o:['muito melhor','muito pior (parede fina, baixa reserva)','igual','sem qualquer efeito'], a:1,
+      fb:'O VD é feito para baixa pós-carga: pequenas altas de RVP derrubam seu fluxo anterógrado.', hint:'Outro animal.'});
+    T.push({mode:'covol',P:P({pvr:3,vol:1}), cap:'Curva CO×volume no VD falido (RVP3).',
+      q:'Dar mais volume a este VD dilatado tende a:',
+      o:['subir o CO sempre','reduzir o CO (distende, piora o septo)','não mudar o CO','normalizar a RVP'], a:1,
+      fb:'O paradoxo do volume: além do pico, mais pré-carga distende o VD, piora o desvio septal e o DC cai.', hint:'A curva tem corcova e desce.'});
+    T.push({mode:'heart',P:P({pvr:3,vol:1.2,map:50}), cap:'RVP alta, MAP 50.',
+      q:'A MAP baixa piora o VD porque:',
+      o:['aumenta a pré-carga','reduz a perfusão coronária do VD → isquemia (espiral)','reduz a RVP','melhora o septo'], a:1,
+      fb:'MAP baixa compromete a coronária do VD → isquemia → menos contratilidade → mais dilatação: a espiral.', hint:'Coronária do VD.'});
+    T.push({mode:'heart',P:P({pvr:3,vol:1.2,map:82}), cap:'Mesmo VD, agora com MAP 82 (vasopressor sistêmico).',
+      q:'Subir a MAP com vasopressor, no VD em espiral:',
+      o:['piora sempre (aumenta a pós-carga do VE)','pode RESGATAR (restaura a coronária do VD)','não tem efeito no VD','reduz a contratilidade'], a:1,
+      fb:'O pressor sistêmico restaura o gradiente coronário do VD → melhora a contratilidade e quebra a espiral (mecanismo).', hint:'Compare com a MAP 50.'});
+    T.push({mode:'covol',P:P({pvr:3,vol:1}), cap:'Reduzir a RVP (tratar a causa).',
+      q:'Reduzir a RVP (pós-carga do VD) faz o quê com o débito?',
+      o:['reduz','aumenta (descomprime o VD)','não muda','aumenta o desvio septal'], a:1,
+      fb:'Menos pós-carga → mais fluxo anterógrado, menos dilatação/septo → o VE enche e o DC sobe.', hint:'A alavanca direta do VD.'});
+    T.push({mode:'heart',P:P({pvr:1,vol:1}), cap:'Coração normal.',
+      q:'No normal, o desvio septal e o tamanho do VD estão:',
+      o:['acentuados','neutros (sem D-shape)','invertidos','indeterminados'], a:1,
+      fb:'Sem sobrecarga, o septo é neutro e o VD tem tamanho normal — o VE enche pleno.', hint:'Septo reto.'});
+    T.push({mode:'heart',P:P({pvr:1.4,vol:1,rvContr:0.5,map:65}), cap:'IAM de VD: contratilidade do VD reduzida.',
+      q:'No infarto de VD, o ventrículo torna-se especialmente:',
+      o:['tolerante a volume e pós-carga','pré-carga-dependente e intolerante a pós-carga','hipercontrátil','indiferente à MAP'], a:1,
+      fb:'VD isquêmico depende de pré-carga adequada (não excessiva) e não tolera pós-carga; a MAP sustenta sua coronária.', hint:'Pré-carga-dependente, afterload-intolerante.'});
+    T.push({mode:'covol',P:P({pvr:2,vol:1}), cap:'CO×volume em pós-carga moderada.',
+      q:'O "ponto ótimo" de volume do VD falido é:',
+      o:['quanto mais volume, melhor','um pico — além dele, volume PIORA','irrelevante','sempre acima de 1,8×'], a:1,
+      fb:'Há um ótimo: pré-carga suficiente sem overdistensão. Passá-lo aciona a interdependência contra você.', hint:'O topo da corcova.'});
+    T.push({mode:'heart',P:P({pvr:3,vol:1.6,map:55}), cap:'Síntese: VD falido, volume e MAP baixa.',
+      q:'A conduta MECÂNICA que faz sentido neste VD (sem dose) é:',
+      o:['encher mais o VD','reduzir a RVP e sustentar a MAP, evitando sobrecarga de volume','aumentar a pós-carga do VD','ignorar a MAP'], a:1,
+      fb:'Descomprimir o VD (↓RVP), sustentar a coronária (MAP) e não sobrecarregar de volume — os três eixos do VD.', hint:'Junta tudo do módulo.'});
+    var __tg=[0,1,1,1,1,1,1,1,1,1]; // será reespalhado abaixo
+    __tg=[2,0,3,1,2,3,0,1,3,2];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=200; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.mode==='covol'?drawCOvol(ctx,W||760,H||200,item.P):drawHeart(ctx,W||760,H||200,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||200); }catch(e){} }); }
+
+  var PRESETS={
+    normal:{pvr:1,vol:1,map:75,rvContr:1},
+    tep:{pvr:3,vol:1,map:65,rvContr:1},
+    iamvd:{pvr:1.4,vol:1,map:65,rvContr:0.5},
+    volume:{pvr:2.4,vol:1.8,map:65,rvContr:1},
+    pressor:{pvr:3,vol:1.2,map:50,rvContr:1},
+    reduzpvr:{pvr:2.6,vol:1,map:72,rvContr:1}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iPvr','pvr'],['iVol','vol'],['iMap','map'],['iContr','rvContr']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ inst[p[1]]=parseFloat(el.value); recompute(); }); });
+    [['lPvr','pvr'],['lVol','vol'],['lMap','map']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ lab[p[1]]=parseFloat(el.value); renderLab(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setLab(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawHeart=drawHeart; window.drawCOvol=drawCOvol; window.activateTab=activate; window.setLab=setLab;
+    window.coFn=co; window.septalShiftFn=septalShift; window.rvForwardFn=rvForward; window.lvFillFn=lvFill; window.spiralFn=spiral; window.afterloadFactorFn=afterloadFactor; window.rvEffContrFn=rvEffContr;
+    window.TUTOR=TUTOR; window.__inst=inst; window.__lab=lab;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
