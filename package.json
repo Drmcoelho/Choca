@@ -24,7 +24,9 @@
     "test:17": "node build/m17/test17.node.js",
     "test:18": "node build/m18/test18.node.js",
     "test:19": "node build/m19/test19.node.js",
-    "test": "npm run test:0 && npm run test:1 && npm run test:2 && npm run test:3 && npm run test:4 && npm run test:5 && npm run test:6 && npm run test:7 && npm run test:8 && npm run test:9 && npm run test:10 && npm run test:11 && npm run test:12 && npm run test:13 && npm run test:14 && npm run test:15 && npm run test:16 && npm run test:17 && npm run test:18 && npm run test:19",
+    "test:20": "node build/m20/test20.node.js",
+    "test:21": "node build/m21/test21.node.js",
+    "test": "npm run test:0 && npm run test:1 && npm run test:2 && npm run test:3 && npm run test:4 && npm run test:5 && npm run test:6 && npm run test:7 && npm run test:8 && npm run test:9 && npm run test:10 && npm run test:11 && npm run test:12 && npm run test:13 && npm run test:14 && npm run test:15 && npm run test:16 && npm run test:17 && npm run test:18 && npm run test:19 && npm run test:20 && npm run test:21",
     "validate:0": "node build/m0/validate0.js perfunde0.html",
     "validate:1": "node build/m1/validate1.js perfunde1.html",
     "validate:2": "node build/m2/validate2.js perfunde2.html",
@@ -45,7 +47,9 @@
     "validate:17": "node build/m17/validate17.js perfunde17.html",
     "validate:18": "node build/m18/validate18.js perfunde18.html",
     "validate:19": "node build/m19/validate19.js perfunde19.html",
-    "validate": "npm run validate:0 && npm run validate:1 && npm run validate:2 && npm run validate:3 && npm run validate:4 && npm run validate:5 && npm run validate:6 && npm run validate:7 && npm run validate:8 && npm run validate:9 && npm run validate:10 && npm run validate:11 && npm run validate:12 && npm run validate:13 && npm run validate:14 && npm run validate:15 && npm run validate:16 && npm run validate:17 && npm run validate:18 && npm run validate:19",
+    "validate:20": "node build/m20/validate20.js perfunde20.html",
+    "validate:21": "node build/m21/validate21.js perfunde21.html",
+    "validate": "npm run validate:0 && npm run validate:1 && npm run validate:2 && npm run validate:3 && npm run validate:4 && npm run validate:5 && npm run validate:6 && npm run validate:7 && npm run validate:8 && npm run validate:9 && npm run validate:10 && npm run validate:11 && npm run validate:12 && npm run validate:13 && npm run validate:14 && npm run validate:15 && npm run validate:16 && npm run validate:17 && npm run validate:18 && npm run validate:19 && npm run validate:20 && npm run validate:21",
     "check": "npm test && npm run validate"
   },
   "devDependencies": {

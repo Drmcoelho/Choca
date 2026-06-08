@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 21 · Choque séptico</title>
+<meta name="description" content="O paradoxo séptico: macro restaurada, micro e mitocôndria falidas. SvO₂ alta com tecido faminto e lactato alto; por que o pressor (macro) não basta. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:260px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:190px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:190px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 21 · ↳ séptico</div>
+    <h1>A entrega chega — e o tecido continua faminto</h1>
+    <p class="sub">No séptico, a macrocirculação pode estar normal ou exuberante e o tecido ainda sofrer: o O₂ desvia pela microcirculação shuntada e a mitocôndria não o usa. A SvO₂ sobe enquanto o lactato sobe — e o pressor, que conserta a macro, não fecha essa conta.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="40" y="20" width="200" height="14" rx="3" fill="var(--art)" opacity=".7"/>
+      <path d="M260,27 L320,27" stroke="var(--ink-faint)" stroke-width="2"/>
+      <rect x="330" y="20" width="90" height="14" rx="3" fill="var(--ok)"/>
+      <rect x="430" y="20" width="110" height="14" rx="3" fill="var(--ven)" opacity=".5"/>
+      <text x="430" y="48" fill="var(--ink-faint)" font-size="10" font-family="monospace">shunt (volta oxigenado → SvO₂↑)</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>PAM corrigida, lactato que não cede</h2>
+    <p class="lead">Cinco atos. A variável escondida é onde o oxigênio se perde. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Séptico, DC alto, PAM já restaurada com pressor. ScvO₂ <b>82%</b> — "ótima". Mas o lactato sobe e a pele está mosqueada.</p>
+      <div class="vitais"><span>DC <b>alto</b></span><span>PAM <b>65</b> (pressor)</span><span>ScvO₂ <b>82%</b></span><span>lactato <b>↑</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"ScvO₂ alta e PAM ok — está entregando bem." Mas o tecido diz o contrário.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>A entrega <em>macro</em> está boa. O problema é depois: o O₂ <b>desvia</b> pela microcirculação shuntada (volta oxigenado → ScvO₂ alta) e a <b>mitocôndria</b> não o utiliza (falência citopática). Extração baixa, tecido faminto.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Cascata: DO₂ macro → quanto <em>chega</em> (micro) → quanto é <em>usado</em> (mito). A ScvO₂ alta marca extração que falhou — não fartura. O pressor sobe a PAM (macro), mas não toca shunt nem mitocôndria → o déficit e o lactato persistem.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A cascata de três compartimentos e a comparação de intervenções mostram por que "normalizar a macro não basta". É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">desacoplamento macro-micro-mitocôndria</b>. ScvO₂ alta <em>com</em> lactato alto = extração falha (shunt + citopatia), não entrega adequada. As alavancas reais são micro e mito; o pressor corrige a PAM, não a extração. Pontes aos módulos 12 (micro) e 13 (lactato).</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga o oxigênio do vaso à mitocôndria.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">A DO₂ macro está baixa no séptico?</div><div class="aa">Em geral <b>não</b>: é hiperdinâmico (DC alto). A entrega convectiva costuma estar normal ou alta — o problema é <em>depois</em> dela.</div></div>
+      <div class="step"><div class="qq">Onde o O₂ se perde, então?</div><div class="aa">Na <b>microcirculação</b>: glicocálice lesado, heterogeneidade e <b>shunt</b> — capilares super-perfundidos ao lado de capilares parados. O sangue desvia e volta <em>oxigenado</em>.</div></div>
+      <div class="step"><div class="qq">Por que a SvO₂ sobe?</div><div class="aa">Porque o O₂ que desvia não foi extraído: volta para o lado venoso ainda saturado → <b>SvO₂/ScvO₂ alta</b>. Extração baixa não é fartura — é falha.</div></div>
+      <div class="step"><div class="qq">E a mitocôndria?</div><div class="aa">Mesmo o O₂ que chega pode não ser <b>usado</b>: a <b>falência citopática</b> (disfunção mitocondrial) limita a utilização. Dois golpes na extração, um difusivo, outro de uso.</div></div>
+      <div class="step"><div class="qq">Então o pressor resolve?</div><div class="aa">O pressor (α1/V1) sobe a <b>PAM</b> — conserta a <em>macro</em>. Mas não recruta a micro nem religa a mitocôndria → o <b>déficit e o lactato persistem</b>. Normalizar a macro não basta.</div></div>
+      <div class="step"><div class="qq">O que de fato fecha o déficit?</div><div class="aa">Recuperar a <b>micro</b> (reduzir shunt, restaurar glicocálice) e a <b>mitocôndria</b>. São os alvos reais — e os mais difíceis. Aqui isso é mecanismo, não conduta.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a cascata do oxigênio</h2>
+    <p class="lead">Da <span style="color:var(--art)">entrega macro</span> ao <span style="color:var(--ok)">consumo</span>: quanto <span style="color:var(--ven)">desvia</span> (shunt) e quanto é bloqueado pela mitocôndria. A SvO₂ sobe enquanto o déficit cresce.</p>
+    <div class="plotwrap">
+      <canvas id="cascade" class="casc" width="820" height="260" aria-label="cascata convectivo-difusivo-utilização"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>DO₂ macro</span><span><i style="background:var(--ven)"></i>shunt (não chega · SvO₂↑)</span>
+        <span><i style="background:#9aa6bd"></i>bloqueio mitocondrial</span><span><i style="background:var(--ok)"></i>O₂ consumido</span><span><i style="background:var(--crit)"></i>déficit (tecido faminto)</span>
+      </div>
+      <div class="opbox" id="opbox-casc"></div>
+    </div>
+    <h3>Comparação de intervenções (o que fecha o déficit?)</h3>
+    <div class="plotwrap">
+      <canvas id="plotInterv" class="plot" width="820" height="190" aria-label="lactato após cada intervenção"></canvas>
+      <div class="opbox" id="opbox-interv"></div>
+      <div class="pharm">
+        <b>Farmacologia (receptor → termo · mecanismo, sem dose):</b><br>
+        noradrenalina → α1 → RVS↑ (corrige o termo macro) · vasopressina → V1 → RVS↑ não-adrenérgica · adrenalina → α+β → DC↑/RVS↑ (e β2 → lactato) · corticoide → restaura responsividade vascular.
+        <span class="fw">Nenhum corrige sozinho o shunt micro nem a mitocôndria.</span>
+      </div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>DC <span class="v"><span id="vCo">7.0</span> L/min</span></label><input id="iCo" type="range" min="3" max="10" step="0.5" value="7"></div>
+        <div class="ctrl"><label>RVS <span class="v"><span id="vRvs">9</span> Wood</span></label><input id="iRvs" type="range" min="5" max="22" step="1" value="9"></div>
+        <div class="ctrl"><label>Shunt micro <span class="v"><span id="vShunt">50</span> %</span></label><input id="iShunt" type="range" min="0" max="80" step="5" value="50"></div>
+        <div class="ctrl"><label>Glicocálice <span class="v"><span id="vGlyco">60</span> %</span></label><input id="iGlyco" type="range" min="20" max="100" step="5" value="60"></div>
+        <div class="ctrl"><label>Mitocôndria <span class="v"><span id="vMito">60</span> %</span></label><input id="iMito" type="range" min="20" max="100" step="5" value="60"></div>
+        <div class="ctrl"><label>Demanda VO₂ <span class="v"><span id="vDem">280</span></span></label><input id="iDem" type="range" min="180" max="380" step="10" value="280"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · onde o oxigênio se perde</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito</b> marca o paradoxo; os banners explicam a cascata e por que o pressor não basta.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="sepse">Séptico (paradoxo)</button>
+      <button class="preset" type="button" data-preset="pressor">Séptico + pressor</button>
+      <button class="preset" type="button" data-preset="micro">Séptico + recrutar micro</button>
+      <button class="preset" type="button" data-preset="mito">Séptico + recuperar mito</button>
+      <button class="preset" type="button" data-preset="hemorragia">Hemorrágico (contraste)</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="cascadeLab" class="casc" width="820" height="260" aria-label="cascata no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Cascata do oxigênio</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-paradoxo"><b>Paradoxo séptico.</b> SvO₂ ALTA com lactato alto e tecido faminto: a extração falhou (shunt + mitocôndria), não há fartura. SvO₂ alta aqui é alarme, não conforto.</div>
+      <div class="banner ven" id="ban-macro"><b>Macro ok, micro/mito não.</b> A DO₂ convectiva está normal/alta, mas o déficit persiste depois dela. A entrega não é o gargalo.</div>
+      <div class="banner art" id="ban-shunt"><b>Shunt microcirculatório.</b> Capilares desviam o sangue (volta oxigenado). O glicocálice lesado e a heterogeneidade reduzem o O₂ que chega.</div>
+      <div class="banner art" id="ban-mito"><b>Falência citopática.</b> A mitocôndria não usa o O₂ que chega — a utilização está bloqueada. Mesmo recrutar a micro não basta se a mito está parada.</div>
+      <div class="banner ven" id="ban-pressor"><b>O pressor não basta.</b> Subir a PAM corrige a macro (RVS↑), mas não recruta a micro nem religa a mitocôndria → déficit e lactato persistem.</div>
+      <div class="banner ven" id="ban-contraste"><b>Contraste.</b> Na hemorragia (micro/mito intactos), a SvO₂ é BAIXA — extração máxima. SvO₂ alta + lactato alto é a assinatura distributiva/séptica.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a cascata (ou as intervenções) ao vivo. Leia o paradoxo e a alavanca que fecha o déficit — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o desacoplamento macro-micro-mito e o mapa receptor→termo — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A cascata é <b>multiplicativa idealizada</b>; a microcirculação real é heterogênea e dinâmica (o modelo macro não a captura — declarado em CHOQUE.md §10). → "Shunt", "glicocálice" e "mitocôndria" são <b>fatores normalizados</b>, não medidas. → A SvO₂ ≈ SaO₂·(1−O₂ER) ignora o O₂ dissolvido e a regional. → As intervenções assumem efeito isolado e imediato; na vida, micro e mito não são facilmente "ligáveis". Os números são exatos <em>dentro</em> do modelo; o lactato é multifatorial (módulo 13).</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde20.html">Módulo 20 · Distributivo (categoria)</a> — a RVS↓ e a inversão da extração.</div>
+    <div class="ponte">→ <a href="perfunde12.html">Módulo 12 · A microcirculação</a> — o leito capilar, o glicocálice e o shunt.</div>
+    <div class="ponte">→ <a href="perfunde13.html">Módulo 13 · Lactato &amp; depuração</a> — o lactato multifatorial (e o β-agonista).</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 21
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model21.js inlined) ===================== -->
+<script>
+var SAT=0.97, LAC_BASE=1.0, LAC_K=0.045;
+function caO2(hb){ return 1.34*hb*SAT+0.003*95; }
+function macroDO2(co,hb){ return co*caO2(hb)*10; }
+function map(co,rvsWood,pvc){ if(pvc===undefined)pvc=5; return pvc+co*rvsWood; }
+function tissueAvailable(P){ return macroDO2(P.co,P.hb)*(1-Math.max(0,Math.min(0.9,P.shunt)))*Math.max(0,Math.min(1,P.glyco)); }
+function usable(P){ return tissueAvailable(P)*Math.max(0,Math.min(1,P.mito)); }
+function vo2Actual(P){ return Math.min(P.demand, usable(P)); }
+function deficit(P){ return Math.max(0, P.demand-vo2Actual(P)); }
+function lactate(P){ return LAC_BASE+LAC_K*deficit(P); }
+function o2er(P){ var d=macroDO2(P.co,P.hb); return d>0?vo2Actual(P)/d:0; }
+function svo2(P){ return SAT*(1-o2er(P)); }
+function paradoxo(P){ return svo2(P)>0.70 && deficit(P)>0; }
+function applyPressor(P){ var s=Object.assign({},P); s.rvsWood=(P.rvsWood||9)+7; return s; }
+function applyMicro(P){ var s=Object.assign({},P); s.shunt=Math.max(0.05,P.shunt-0.4); s.glyco=Math.min(1,P.glyco+0.3); return s; }
+function applyMito(P){ var s=Object.assign({},P); s.mito=Math.min(1,P.mito+0.35); return s; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var state={ co:7, hb:13, rvsWood:9, shunt:0.5, glyco:0.6, mito:0.6, demand:280 };
+
+  // ---- cascata: barras encadeadas (mL/min) ----
+  function drawCascade(ctx,W,H,P){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var padL=14,padR=14,padT=16, plotW=W-padL-padR;
+      var do2=macroDO2(P.co,P.hb), avail=tissueAvailable(P), use=usable(P), vo2=vo2Actual(P), def=deficit(P);
+      var scale = Math.max(do2, 1200);
+      var x=function(v){ return (v/scale)*plotW; };
+      var bh=34, gap=12, y=padT;
+      // 1) DO2 macro
+      ctx.fillStyle='#e5394e'; ctx.fillRect(padL,y,x(do2),bh);
+      ctx.fillStyle='#fff'; ctx.font='11px monospace'; ctx.fillText('DO₂ macro '+Math.round(do2),padL+6,y+bh/2+4); y+=bh+gap;
+      // 2) chega ao tecido (verde) + shunt (azul) = do2
+      ctx.fillStyle='#3ec78d'; ctx.fillRect(padL,y,x(avail),bh);
+      ctx.fillStyle='#3f82e6'; ctx.fillRect(padL+x(avail),y,x(do2-avail),bh);
+      ctx.fillStyle='#06321f'; ctx.fillText('chega '+Math.round(avail),padL+6,y+bh/2+4);
+      ctx.fillStyle='#cfe0ff'; ctx.fillText('shunt '+Math.round(do2-avail)+' → SvO₂↑',padL+x(avail)+6,y+bh/2+4); y+=bh+gap;
+      // 3) utilizável (verde) + bloqueio mito (cinza) do que chegou
+      ctx.fillStyle='#3ec78d'; ctx.fillRect(padL,y,x(use),bh);
+      ctx.fillStyle='#9aa6bd'; ctx.fillRect(padL+x(use),y,x(avail-use),bh);
+      ctx.fillStyle='#06321f'; ctx.fillText('utilizável '+Math.round(use),padL+6,y+bh/2+4);
+      ctx.fillStyle='#11151f'; ctx.fillText('bloqueio mito '+Math.round(avail-use),padL+x(use)+6,y+bh/2+4); y+=bh+gap;
+      // 4) consumido (verde) + déficit (vermelho) até a demanda
+      ctx.fillStyle='#3ec78d'; ctx.fillRect(padL,y,x(vo2),bh);
+      ctx.fillStyle='#ff5d6c'; ctx.fillRect(padL+x(vo2),y,x(def),bh);
+      ctx.fillStyle='#06321f'; ctx.fillText('consumido '+Math.round(vo2),padL+6,y+bh/2+4);
+      if(def>0){ ctx.fillStyle='#fff'; ctx.fillText('déficit '+Math.round(def)+' (faminto)',padL+x(vo2)+6,y+bh/2+4); }
+      // marca demanda
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(padL+x(P.demand),padT); ctx.lineTo(padL+x(P.demand),y+bh); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.fillText('demanda',padL+x(P.demand)-2,y+bh+12);
+      return { do2:do2, def:def, svo2:svo2(P) };
+    }catch(e){ return {}; }
+  }
+  // ---- intervenções: lactato baseline / pressor / micro / mito ----
+  function drawInterv(ctx,W,H,P){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var rows=[ {label:'séptico (base)', v:lactate(P), color:'#e5394e'},
+        {label:'+ pressor (macro)', v:lactate(applyPressor(P)), color:'#3f82e6'},
+        {label:'+ recrutar micro', v:lactate(applyMicro(P)), color:'#3ec78d'},
+        {label:'+ recuperar mito', v:lactate(applyMito(P)), color:'#3ec78d'} ];
+      var padL=14,padR=14,padT=12,padB=18, plotW=W-padL-padR, LMAX=Math.max(5, lactate(P)+0.5);
+      var x=function(v){return padL+(Math.min(LMAX,v)/LMAX)*plotW;};
+      ctx.strokeStyle='#46506b'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(x(2),padT); ctx.lineTo(x(2),H-padB); ctx.stroke(); ctx.setLineDash([]);
+      var n=rows.length, gap=8, bh=(H-padT-padB-gap*(n-1))/n;
+      rows.forEach(function(r,i){ var y=padT+i*(bh+gap); ctx.fillStyle=r.color; ctx.globalAlpha=(i===0)?0.7:1; ctx.fillRect(padL,y,x(r.v)-padL,bh); ctx.globalAlpha=1;
+        ctx.fillStyle='#e9eef7'; ctx.font='11px monospace'; ctx.fillText(r.label+'  lactato '+br(r.v,1),padL+6,y+bh/2+4); });
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('lactato (mmol/L) · tracejado = 2,0',padL,H-5);
+    }catch(e){}
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||260,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vCo').textContent=br(state.co,1); $('vRvs').textContent=state.rvsWood; $('vShunt').textContent=Math.round(state.shunt*100);
+    $('vGlyco').textContent=Math.round(state.glyco*100); $('vMito').textContent=Math.round(state.mito*100); $('vDem').textContent=state.demand;
+    drawOn('cascade', drawCascade, state);
+    $('opbox-casc').innerHTML='DO₂ macro <b>'+Math.round(macroDO2(state.co,state.hb))+'</b> · SvO₂ <b>'+br(svo2(state)*100,0)+'%</b> · extração '+br(o2er(state)*100,0)+'% · déficit <b>'+Math.round(deficit(state))+'</b> · lactato <b>'+br(lactate(state),1)+'</b>'+(paradoxo(state)?' · <span style="color:var(--crit)">PARADOXO</span>':'');
+    drawOn('plotInterv', drawInterv, state);
+    var lp=lactate(applyPressor(state)), lm=lactate(applyMicro(state));
+    $('opbox-interv').innerHTML='pressor: lactato '+br(lp,1)+' (≈ inalterado — só a macro) · recrutar micro: lactato '+br(lm,1)+' (fecha o déficit)';
+    renderLab();
+  }
+  function renderLab(){
+    drawOn('cascadeLab', drawCascade, state);
+    var par=paradoxo(state), def=deficit(state), sv=svo2(state);
+    $('opbox-lab').innerHTML='SvO₂ <b>'+br(sv*100,0)+'%</b> · déficit '+Math.round(def)+' · lactato '+br(lactate(state),1)+' · DO₂ macro '+Math.round(macroDO2(state.co,state.hb));
+    var vEl=$('lab-veredito'), klass, label, sub;
+    if(par){ klass='crit'; label='PARADOXO SÉPTICO'; sub='SvO₂ alta + tecido faminto: extração falhou (micro/mito)'; }
+    else if(def>0){ klass='lim'; label='DÉFICIT TECIDUAL'; sub='o tecido não recebe/usa o suficiente'; }
+    else { klass='ok'; label='TECIDO PERFUNDIDO'; sub='consumo cobre a demanda'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label; $('lab-vnum').textContent=sub+' · SvO₂ '+br(sv*100,0)+'% · lactato '+br(lactate(state),1);
+    show($('ban-paradoxo'), par);
+    show($('ban-macro'), macroDO2(state.co,state.hb)>=900 && def>0);
+    show($('ban-shunt'), state.shunt>0.3);
+    show($('ban-mito'), state.mito<0.7);
+    show($('ban-pressor'), def>0);
+    show($('ban-contraste'), sv<0.55);
+  }
+  function syncSliders(){ $('iCo').value=state.co; $('iRvs').value=state.rvsWood; $('iShunt').value=state.shunt*100; $('iGlyco').value=state.glyco*100; $('iMito').value=state.mito*100; $('iDem').value=state.demand; }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[]; var S=function(o){return Object.assign({co:7,hb:13,rvsWood:9,shunt:0.5,glyco:0.6,mito:0.6,demand:280},o);};
+    T.push({kind:'casc',P:S({}), cap:'Cascata no séptico: macro alta, shunt e bloqueio mito.',
+      q:'A DO₂ macro está alta e ainda há déficit tecidual. Isso indica:',
+      o:['hipovolemia oculta','desacoplamento macro-micro/mito (a entrega não é o gargalo)','erro de medida','baixa demanda'], a:1,
+      fb:'A entrega convectiva chega, mas shunt + mitocôndria impedem que o O₂ seja usado: o gargalo é depois da macro.', hint:'Olhe onde o O₂ se perde.'});
+    T.push({kind:'casc',P:S({}), cap:'Mesmo cenário — repare na SvO₂.',
+      q:'SvO₂/ScvO₂ ALTA com lactato alto no séptico significa:',
+      o:['entrega excelente, tudo bem','extração que FALHOU (shunt/mito) — não fartura','hemorragia','curva à esquerda'], a:1,
+      fb:'O sangue desvia e volta oxigenado → SvO₂ alta. Com lactato alto, é falha de extração, não conforto.', hint:'O paradoxo.'});
+    T.push({kind:'interv',P:S({}), cap:'Comparação de intervenções (lactato).',
+      q:'O pressor (sobe a PAM) faz o quê com o déficit/lactato do séptico?',
+      o:['zera o lactato','quase nada (só corrige a macro)','dobra o débito tecidual','recruta a microcirculação'], a:1,
+      fb:'Pressor conserta a macro (RVS→PAM), mas não toca shunt nem mitocôndria → déficit e lactato persistem.', hint:'A barra do pressor mal se move.'});
+    T.push({kind:'interv',P:S({}), cap:'Mesma comparação.',
+      q:'Qual intervenção, no modelo, realmente reduz o déficit?',
+      o:['o pressor','recrutar a microcirculação (↓shunt, glicocálice)','aumentar a demanda','nenhuma'], a:1,
+      fb:'Reduzir o shunt e restaurar o glicocálice faz mais O₂ chegar — o déficit cai. (Recuperar a mito também.)', hint:'As barras verdes que encolhem.'});
+    T.push({kind:'casc',P:S({mito:0.4}), cap:'Mitocôndria muito disfuncional.',
+      q:'A "falência citopática" significa que:',
+      o:['o O₂ não chega ao capilar','o O₂ chega mas a mitocôndria não o usa','a DO₂ macro caiu','a Hb está baixa'], a:1,
+      fb:'Citopatia = a célula não utiliza o O₂ entregue. Mesmo recrutar a micro não basta se a mito está parada.', hint:'Bloqueio na utilização.'});
+    T.push({kind:'casc',P:S({shunt:0.05,glyco:1,mito:1,co:3,hb:9,rvsWood:22}), cap:'Contraste: baixa entrega, micro/mito intactos.',
+      q:'Neste caso (entrega baixa, extração preservada), a SvO₂ está:',
+      o:['alta como no séptico','baixa (extração máxima)','igual à SaO₂','indeterminada'], a:1,
+      fb:'Com micro/mito intactos e entrega baixa, o tecido extrai ao máximo → SvO₂ BAIXA. O oposto do paradoxo séptico.', hint:'Extração alta derruba a SvO₂.'});
+    T.push({kind:'casc',P:S({}), cap:'Macrocirculação no séptico.',
+      q:'O débito cardíaco no choque séptico clássico costuma estar:',
+      o:['muito baixo','normal ou alto (hiperdinâmico)','zero','irrelevante'], a:1,
+      fb:'É hiperdinâmico: DC alto, RVS baixa. A macro não é o gargalo — a extração é.', hint:'Distributivo.'});
+    T.push({kind:'interv',P:S({}), cap:'Por que a comparação importa.',
+      q:'A lição "normalizar a macro não basta" aparece porque:',
+      o:['o pressor zera o lactato','corrigir a PAM não corrige a extração micro/mito','a demanda é fixa','o lactato é sempre tipo A'], a:1,
+      fb:'A PAM normalizada (alvo macro) pode coexistir com déficit micro/mito persistente — o lactato denuncia.', hint:'Macro ≠ micro.'});
+    T.push({kind:'casc',P:S({}), cap:'Farmacologia (mecanismo).',
+      q:'Noradrenalina, no séptico, corrige primariamente o termo:',
+      o:['a microcirculação','a RVS (macro, via α1)','a mitocôndria','a demanda de O₂'], a:1,
+      fb:'α1 → RVS↑ → restaura a PAM (macro). É o termo do distributivo — não a extração. (Sem dose.)', hint:'Receptor → termo.'});
+    T.push({kind:'casc',P:S({}), cap:'Síntese.',
+      q:'A assinatura que define o paradoxo séptico é:',
+      o:['SvO₂ baixa + lactato baixo','SvO₂ alta + lactato alto (extração falha)','PAM baixa isolada','Hb baixa isolada'], a:1,
+      fb:'SvO₂ alta com lactato alto e tecido faminto = falha de extração micro/mito, com macro preservada.', hint:'O par de sinais.'});
+    var __tg=[2,0,3,1,2,3,0,1,3,2];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=190; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.kind==='interv'?drawInterv(ctx,W||760,H||190,item.P):drawCascade(ctx,W||760,H||190,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||190); }catch(e){} }); }
+
+  var PRESETS={
+    normal:{co:5,hb:14,rvsWood:16,shunt:0.05,glyco:1,mito:1,demand:250},
+    sepse:{co:7,hb:13,rvsWood:9,shunt:0.5,glyco:0.6,mito:0.6,demand:280},
+    pressor:{co:7,hb:13,rvsWood:16,shunt:0.5,glyco:0.6,mito:0.6,demand:280},
+    micro:{co:7,hb:13,rvsWood:9,shunt:0.12,glyco:0.92,mito:0.6,demand:280},
+    mito:{co:7,hb:13,rvsWood:9,shunt:0.5,glyco:0.6,mito:0.95,demand:280},
+    hemorragia:{co:3,hb:9,rvsWood:22,shunt:0.05,glyco:1,mito:1,demand:250}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iCo','co'],['iRvs','rvsWood'],['iDem','demand']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); recompute(); }); });
+    [['iShunt','shunt'],['iGlyco','glyco'],['iMito','mito']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawCascade=drawCascade; window.drawInterv=drawInterv; window.activateTab=activate; window.setLabState=setState;
+    window.macroDO2Fn=macroDO2; window.deficitFn=deficit; window.svo2Fn=svo2; window.o2erFn=o2er; window.lactateFn=lactate; window.paradoxoFn=paradoxo; window.applyPressorFn=applyPressor; window.applyMicroFn=applyMicro; window.applyMitoFn=applyMito; window.mapFn=map;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
