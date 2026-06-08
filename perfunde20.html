@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 20 · Choque distributivo</title>
+<meta name="description" content="O termo quebrado é a RVS — e a extração se inverte. DC alto, PAM baixa; DO₂ alta, ScvO₂ alta, lactato alto. O α1 é o eixo. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.plot{display:block;width:100%;height:330px;border-radius:8px;background:#090b10}
+canvas.plot.short{height:260px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:5px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.idcard{background:var(--bg-cell);border:1px solid var(--line-soft);border-left:3px solid var(--art);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px}
+.formula{font-family:var(--mono);font-size:.95rem;color:var(--ink-dim);margin:4px 0;line-height:1.8}
+.formula .iso{color:var(--accent);font-weight:700;background:rgba(255,207,92,.10);padding:1px 6px;border-radius:5px}
+.subhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ven);margin:18px 0 6px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.4rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:210px;border-radius:8px;background:#090b10;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 20 · Choque distributivo</div>
+    <h1>Quente, com débito alto — e em choque</h1>
+    <p class="sub">No distributivo o termo quebrado é a <em>RVS</em>: PAM = DC × RVS, e a resistência despencou. O coração até acelera o débito, mas a hipérbole é plana — DC alto não resgata a pressão. E a entrega se inverte: DO₂ sobra, mas o tecido passa fome (ScvO₂ alta, lactato alto). O <b>α1 é o eixo</b> — corrige o termo quebrado.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M40,8 C200,40 500,50 880,52" fill="none" stroke="var(--art)" stroke-width="2"/>
+      <path d="M40,30 C260,46 560,51 880,52" fill="none" stroke="#46506b" stroke-width="1.4" stroke-dasharray="4 4"/>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Pulso amplo, extremidades quentes — PA 78/40</h2>
+    <p class="lead">Cinco atos. A variável escondida é por que a PA cai com o coração bombeando <em>mais</em>. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Choque, mas <b>quente</b>: extremidades aquecidas, pulso amplo, enchimento capilar rápido. PA 78/40, FC 118, ScvO₂ 88%, lactato 4.</p>
+      <div class="vitais"><span>PA <b>78/40</b></span><span>FC <b>118</b></span><span>DC <b>alto</b></span><span>ScvO₂ <b>88%</b></span><span>lactato <b>4</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>DC alto e ScvO₂ alta → entrega de sobra, tudo bem? Mas a PA está baixa e o lactato sobe. Os números "bons" estão mentindo de dois jeitos.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>PAM = DC × RVS. O DC está alto, então quem derrubou a PAM foi a <b>RVS</b> — vasodilatação. E acelerar mais o DC quase não levanta a PAM: a hipérbole é plana em RVS baixa.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>A ScvO₂ alta não é folga: é sangue que <b>passou sem ser extraído</b> (shunt/distribuição). DO₂ sobra, mas o tecido fica faminto → lactato. A extração se inverteu.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O termo quebrado é a RVS → a alavanca certa é o <b>α1</b> (vasopressor), que sobe a RVS e cruza de volta a iso-PAM. Mas o α1 não conserta a micro.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">RVS</b> — e, junto, a <b>extração</b>. Duplo paradoxo: macro (DC alto, PAM baixa porque a RVS caiu) e micro (DO₂ alta, ScvO₂ alta, lactato alto porque a extração falhou). O <em>termo quebrado escolhe a alavanca</em>: aqui o α1 é o eixo. Sagacidade: ScvO₂ alta <b>sozinha</b> não diagnostica — todo estado hiperdinâmico tem ScvO₂ alta; é a ScvO₂ alta <em>com lactato alto</em> que denuncia a falência de extração.</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Siga as setas da RVS à extração invertida.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">PA baixa com DC alto — qual termo quebrou?</div><div class="aa">PAM = DC × RVS. Se o DC está alto e a PAM caiu, a <b>RVS</b> despencou. A vasodilatação é a quebra.</div></div>
+      <div class="step"><div class="qq">Acelerar o DC resolve?</div><div class="aa">Quase não. Em RVS baixa, a hipérbole iso-PAM é <b>plana</b>: precisaria de um DC altíssimo para levantar a PAM. O DC alto compensa pouco.</div></div>
+      <div class="step"><div class="qq">E a ScvO₂ alta — entrega de sobra?</div><div class="aa">Não necessariamente. Pode ser sangue que <b>passou sem ser extraído</b> (shunt/distribuição). A DO₂ sobra, mas não vira VO₂.</div></div>
+      <div class="step"><div class="qq">Como sei se a ScvO₂ alta é benigna ou maligna?</div><div class="aa">Pelo <b>lactato</b>. ScvO₂ alta + lactato normal = estado hiperdinâmico (ok). ScvO₂ alta + <b>lactato alto</b> = falência de extração (alarme). A ScvO₂ sozinha não basta.</div></div>
+      <div class="step"><div class="qq">Qual a alavanca certa?</div><div class="aa">O <b>termo quebrado escolhe a alavanca</b>: a RVS caiu → o <b>α1</b> (vasopressor) sobe a RVS e cruza de volta a iso-PAM. É o eixo da correção macro.</div></div>
+      <div class="step"><div class="qq">O pressor conserta tudo?</div><div class="aa">A <b>macro</b>, sim (PAM volta). A <b>micro</b>, não: a extração segue falha, o lactato persiste. Por que isso acontece é o módulo 21 (séptico).</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a hipérbole iso-PAM + a extração invertida</h2>
+    <p class="lead">No plano <span style="color:var(--accent)">DC × RVS</span>, as curvas de PAM constante. O ponto de operação cai na zona de choque; o <span style="color:var(--art)">pressor</span> o empurra à direita (cruza fácil), o DC para cima (mal cruza). Abaixo, o sangue que passa sem ser usado.</p>
+    <div class="idcard">
+      <div class="formula"><span class="iso">PAM</span> = PVC + DC · RVS / 80 &nbsp;<span style="color:var(--ink-faint)">· RVS↓ é a quebra; DC alto não resgata (hipérbole plana)</span></div>
+      <div class="formula">ScvO₂ = SaO₂·(1 − O₂ER) &nbsp;·&nbsp; <b style="color:var(--art)">ScvO₂↑ + lactato↑</b> = extração falha; ScvO₂↑ só = hiperdinâmico</div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotPAM" class="plot" width="860" height="330" aria-label="plano DC × RVS com hipérboles de PAM constante"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--crit)"></i>iso-PAM 65 (limiar)</span>
+        <span><i style="background:#46506b"></i>iso-PAM 90 (normal)</span>
+        <span><i style="background:var(--accent)"></i>operação (RVS, DC)</span>
+        <span><i style="background:var(--art)"></i>setas das alavancas</span>
+      </div>
+      <div class="opbox" id="opbox-pam"></div>
+    </div>
+    <div class="subhead">A extração invertida · o sangue que passa sem ser usado</div>
+    <div class="plotwrap">
+      <canvas id="plotExtract" class="plot short" width="860" height="260" aria-label="ilustração animada da inversão da extração de oxigênio"></canvas>
+      <div class="legend">
+        <span><i style="background:#ff5566"></i>O₂ arterial (DO₂)</span>
+        <span><i style="background:#7a5c8a"></i>extraído pelo tecido</span>
+        <span><i style="background:#ff5566"></i>shunt → ScvO₂ alta</span>
+        <span><i style="background:#3ec78d"></i>tecido alimentado / faminto</span>
+      </div>
+      <div class="opbox" id="opbox-extract"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Tônus vascular (→ RVS) <span class="v"><span id="vTonus">12</span> %</span></label><input id="iTonus" type="range" min="5" max="100" step="1" value="12"></div>
+        <div class="ctrl"><label>Débito cardíaco <span class="v"><span id="vDC">7,5</span> L/min</span></label><input id="iDC" type="range" min="3" max="11" step="0.1" value="7.5"></div>
+        <div class="ctrl"><label>Vasopressor (α1) <span class="v"><span id="vPressor">0</span> %</span></label><input id="iPressor" type="range" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>Integridade da extração <span class="v"><span id="vExtr">25</span> %</span></label><input id="iExtr" type="range" min="5" max="100" step="1" value="25"></div>
+      </div>
+      <p class="hint" style="margin-top:12px">Suba o vasopressor (α1) e veja o ponto cruzar a iso-PAM (corrige o termo quebrado). Suba o DC e veja como mal levanta a PAM. A integridade da extração move a ScvO₂ e o lactato — mas o pressor não a conserta.</p>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · o termo quebrado e a alavanca certa</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito vira</b> e os banners separam a ScvO₂ alta benigna da maligna — e mostram por que o α1 é o eixo.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="distributivo">Distributivo</button>
+      <button class="preset" type="button" data-preset="hiperdinamico">Hiperdinâmico (ScvO₂ alta benigna)</button>
+      <button class="preset" type="button" data-preset="pressor">+ vasopressor (α1)</button>
+      <button class="preset" type="button" data-preset="precoce">Precoce</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="plotPAMLab" class="plot" width="860" height="330" aria-label="plano DC × RVS no Lab"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--crit)"></i>iso-PAM 65</span>
+        <span><i style="background:#46506b"></i>iso-PAM 90</span>
+        <span><i style="background:var(--accent)"></i>operação</span>
+      </div>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Tônus (RVS) <span class="v"><span id="vlTonus">12</span> %</span></label><input id="lTonus" type="range" min="5" max="100" step="1" value="12"></div>
+        <div class="ctrl"><label>DC <span class="v"><span id="vlDC">7,5</span></span></label><input id="lDC" type="range" min="3" max="11" step="0.1" value="7.5"></div>
+        <div class="ctrl"><label>Vasopressor (α1) <span class="v"><span id="vlPressor">0</span> %</span></label><input id="lPressor" type="range" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>Extração <span class="v"><span id="vlExtr">25</span> %</span></label><input id="lExtr" type="range" min="5" max="100" step="1" value="25"></div>
+      </div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Assinatura hemodinâmica (RVS × extração)</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-rvs"><b>O termo quebrado é a RVS.</b> PAM = DC × RVS, e a RVS despencou (vasodilatação). DC alto não resgata: em RVS baixa a hipérbole iso-PAM é plana.</div>
+      <div class="banner art" id="ban-inversao"><b>A inversão da extração.</b> DO₂ alta, ScvO₂ ALTA <em>e</em> lactato ALTO: o sangue passa e não é usado (shunt/distribuição). ScvO₂ alta aqui é alarme, não folga.</div>
+      <div class="banner ven" id="ban-scvo2"><b>Cuidado com a ScvO₂.</b> Alta <em>sem</em> lactato é estado hiperdinâmico, não falência de extração. A ScvO₂ alta sozinha não diagnostica — o discriminador é o lactato.</div>
+      <div class="banner ven" id="ban-pressor"><b>O α1 é o eixo.</b> Vasopressor (α1 → RVS) restaura o termo quebrado e cruza de volta a iso-PAM. Mas não conserta a micro — a extração segue falha (→ módulo 21).</div>
+      <div class="banner art" id="ban-quente"><b>Quente e hiperdinâmico.</b> Vasodilatado, DC alto, pulso amplo, extremidades quentes — o espelho do frio cardiogênico.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a hipérbole iso-PAM ou a inversão da extração, ao vivo. Leia o termo quebrado, a alavanca e a armadilha da ScvO₂ — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mecanismo do distributivo — <b>nunca</b> dose, alvo de PAM/ScvO₂, nem conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A extração é resumida numa <b>integridade única</b>; a realidade separa shunt microvascular de <b>falência citopática mitocondrial</b> (a célula que não usa o O₂ que chega) — o detalhe é o módulo 21. → A ScvO₂ é proxy de conteúdo venoso (1 − O₂ER); co-oximetria e heterogeneidade reais fogem do modelo. → O DC aqui é um parâmetro; na clínica ele é resposta da pré-carga/contratilidade. → <b>Farmacologia (mecanismo):</b> <b>vasopressor → α1 → RVS↑</b> é o eixo porque corrige o termo quebrado — sem dose; ele <em>não</em> repara shunt/mitocôndria. <b>Procedimento (conceito):</b> CVC para administrar pressor e medir ScvO₂ — <em>rationale</em>, não técnica para um paciente. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde9.html">Módulo 9 · PAM = DC × RVS</a> — o núcleo: a inversão causal e a hipérbole iso-PAM que aqui a vasodilatação rompe.</div>
+    <div class="ponte">→ <a href="perfunde12.html">Módulo 12 · A microcirculação</a> — por que a extração se inverte: shunt, glicocálice, heterogeneidade — e por que o pressor não conserta a micro.</div>
+    <div class="ponte">→ <a href="perfunde21.html">Módulo 21 · Choque séptico</a> — o distributivo protagonista: macro restaurada, micro falida, a mitocôndria que não extrai. <span class="pend">(ponte pendente)</span></div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 20
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model20.js inlined) ===================== -->
+<script>
+function pam(dc,rvsDyn,pvc){ if(pvc===undefined)pvc=5; return pvc+dc*rvsDyn/80; }
+function rvsForPam(pamVal,dc,pvc){ if(pvc===undefined)pvc=5; return 80*(pamVal-pvc)/dc; }
+function rvsWood(rvsDyn){ return rvsDyn/80; }
+var BASE={ RVS_floor:500,kTonus:1100,kPressor:750,PVC:5,SaO2:0.98,CaO2:20,demand:250,E0:0.55,eExp:1.5,kLac:0.020,LAC_MAX:12,HR0:75,HRmax:170 };
+function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function rvsEff(tonus,pressor){ return clampv(BASE.RVS_floor+BASE.kTonus*tonus+BASE.kPressor*(pressor||0),200,2600); }
+function extractionCeil(integ){ return BASE.E0*Math.pow(clampv(integ,0,1),BASE.eExp); }
+function distState(p){ var B=BASE,tonus=p.tonus,DC=p.DC,pressor=p.pressor||0,integ=(p.extracao===undefined?1:p.extracao);
+  var RVSdyn=rvsEff(tonus,pressor),PAM=pam(DC,RVSdyn,B.PVC),DO2=DC*B.CaO2*10,Eeff=extractionCeil(integ),ceiling=DO2*Eeff;
+  var VO2=Math.min(B.demand,ceiling),deficit=Math.max(0,B.demand-ceiling),O2ER=VO2/DO2,ScvO2=B.SaO2*(1-O2ER);
+  var lactate=Math.min(B.LAC_MAX,1.0+B.kLac*deficit),sev=clampv((90-PAM)/40,0,1),hr=p.hr||Math.min(B.HRmax,B.HR0*(1+0.5*sev));
+  return {tonus:tonus,DC:DC,pressor:pressor,extracao:integ,RVSdyn:RVSdyn,RVSwood:rvsWood(RVSdyn),PAM:PAM,PVC:B.PVC,DO2:DO2,Eeff:Eeff,ceiling:ceiling,VO2:VO2,deficit:deficit,O2ER:O2ER,ScvO2:ScvO2,lactate:lactate,HR:hr,sev:sev}; }
+function inversaoExtracao(R){ return R.ScvO2>0.75 && R.lactate>2.0 && R.deficit>0; }
+function scvO2Ambigua(R){ return R.ScvO2>0.75 && R.lactate<1.8; }
+function classeDist(R){ var vaso=R.RVSdyn<900,hypo=R.PAM<65; if(hypo&&vaso)return 'distributivo'; if(hypo||(vaso&&R.lactate>2))return 'limitrofe'; return 'compensado'; }
+function ganhoPAM_porRVS(R){ return R.DC/80*BASE.kPressor; }
+function ganhoPAM_porDC(R){ return R.RVSdyn/80; }
+</script>
+
+<!-- ===================== UI · hipérbole iso-PAM + inversão da extração + abas + lab + tutor ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+
+  var state={ tonus:0.12, DC:7.5, pressor:0, extracao:0.25 };
+  var PRESETS={
+    normal:{ tonus:0.78, DC:5, pressor:0, extracao:1 },
+    distributivo:{ tonus:0.12, DC:7.5, pressor:0, extracao:0.25 },
+    hiperdinamico:{ tonus:0.5, DC:8, pressor:0, extracao:1 },
+    pressor:{ tonus:0.12, DC:7.5, pressor:0.8, extracao:0.25 },
+    precoce:{ tonus:0.3, DC:6.5, pressor:0, extracao:0.6 }
+  };
+  var curR=null, reduce=false; try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // ---------- desenho: plano DC × RVS com hipérboles iso-PAM ----------
+  function drawPAM(ctx,W,H,R,phase){
+    try{
+      var padL=46,padB=28,padT=14,padR=14, pw=W-padL-padR, ph=H-padT-padB;
+      var XMIN=300, XMAX=2200, YMAX=12;   // x=RVS dyn, y=DC L/min
+      var px=function(x){ return padL+(clamp(x,XMIN,XMAX)-XMIN)/(XMAX-XMIN)*pw; };
+      var py=function(y){ return padT+ph-clamp(y,0,YMAX)/YMAX*ph; };
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      for(var gx=400;gx<=2200;gx+=400){ ctx.beginPath(); ctx.moveTo(px(gx),padT); ctx.lineTo(px(gx),padT+ph); ctx.stroke(); ctx.fillText(gx+'',px(gx)-10,padT+ph+14); }
+      for(var gy=0;gy<=YMAX;gy+=2){ ctx.beginPath(); ctx.moveTo(padL,py(gy)); ctx.lineTo(padL+pw,py(gy)); ctx.stroke(); ctx.fillText(gy+'',20,py(gy)+3); }
+      ctx.fillStyle='#97a3ba'; ctx.fillText('RVS (dyn·s·cm⁻⁵)', padL+pw-120, padT+ph+14);
+      ctx.save(); ctx.translate(12,padT+44); ctx.rotate(-Math.PI/2); ctx.fillText('DC (L/min)',0,0); ctx.restore();
+      // zona de choque (abaixo da iso-PAM65) levemente sombreada
+      ctx.fillStyle='rgba(255,93,108,.06)';
+      ctx.beginPath(); ctx.moveTo(px(XMIN),py(0));
+      for(var x=XMIN;x<=XMAX;x+=20){ var d=80*(65-5)/x; ctx.lineTo(px(x),py(Math.min(YMAX,d))); }
+      ctx.lineTo(px(XMAX),py(0)); ctx.closePath(); ctx.fill();
+      // iso-PAM
+      isoPam(ctx,px,py,XMIN,XMAX,YMAX,65,'#ff5d6c',2);
+      isoPam(ctx,px,py,XMIN,XMAX,YMAX,90,'#46506b',1.4);
+      // ponto normal fantasma
+      ctx.fillStyle='#46506b'; ctx.beginPath(); ctx.arc(px(1358),py(5),4,0,6.2832); ctx.fill();
+      // operação (pulsa)
+      var pr=4+0.8*(1+Math.sin(phase*6.2832));
+      ctx.fillStyle='#ffcf5c'; ctx.beginPath(); ctx.arc(px(R.RVSdyn),py(R.DC),pr,0,6.2832); ctx.fill();
+      ctx.fillText('PAM '+Math.round(R.PAM), px(R.RVSdyn)+8, py(R.DC)-6);
+      // setas das alavancas: pressor (→ RVS) e DC (↑)
+      var aRVS=R.DC/80*750*0.5;   // ganho de PAM aprox por meio-passo de pressor → desloca em RVS
+      arrow(ctx,px(R.RVSdyn),py(R.DC),px(Math.min(XMAX,R.RVSdyn+550)),py(R.DC),'#e5394e');
+      ctx.fillStyle='#ff8a96'; ctx.fillText('α1 (RVS)', px(Math.min(XMAX,R.RVSdyn+560)), py(R.DC)+3);
+      arrow(ctx,px(R.RVSdyn),py(R.DC),px(R.RVSdyn),py(Math.min(YMAX,R.DC+3)),'#7da0d6');
+      ctx.fillStyle='#9fb4d6'; ctx.fillText('DC', px(R.RVSdyn)-6, py(Math.min(YMAX,R.DC+3))-4);
+      return R;
+    }catch(e){ return R; }
+  }
+  function isoPam(ctx,px,py,XMIN,XMAX,YMAX,P,col,lw){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath(); var st=false;
+    for(var x=XMIN;x<=XMAX;x+=12){ var d=80*(P-5)/x; var X=px(x),Y=py(d); if(d>YMAX){st=false;continue;} if(!st){ctx.moveTo(X,Y);st=true;}else ctx.lineTo(X,Y);} ctx.stroke();
+    ctx.fillStyle=col; var dl=80*(P-5)/700; if(dl<=YMAX){ ctx.fillText('PAM '+P, px(700)+2, py(dl)-3); } }
+  function arrow(ctx,x1,y1,x2,y2,col){ try{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); var a=Math.atan2(y2-y1,x2-x1); ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4)); ctx.moveTo(x2,y2); ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4)); ctx.stroke(); }catch(e){} }
+
+  // ---------- desenho: a inversão da extração ----------
+  function drawExtract(ctx,W,H,R,phase){
+    try{
+      ctx.clearRect(0,0,W,H);
+      var padX=16, midY=H*0.40, chanH=clamp(R.DO2/2000,0.3,1)*40+14;  // altura do canal ∝ DO₂
+      var x0=padX, x1=W-padX, xSplit=W*0.42;
+      var fracExtr=clamp(R.Eeff/0.55,0.02,1);   // fração desviada ao tecido (extração relativa)
+      // canal arterial (entra brilhante)
+      ctx.fillStyle='rgba(255,85,102,.18)'; roundRect(ctx,x0,midY-chanH/2,xSplit-x0,chanH,4); ctx.fill();
+      // shunt (continua à direita, brilhante)
+      ctx.fillStyle='rgba(255,85,102,.16)'; roundRect(ctx,xSplit,midY-chanH/2,x1-xSplit,chanH*(1-fracExtr*0.7),4); ctx.fill();
+      // ramo de extração (desce ao tecido)
+      var tissueY=H*0.78, tissueX=xSplit;
+      ctx.strokeStyle='rgba(122,92,138,.5)'; ctx.lineWidth=chanH*fracExtr*0.8+3;
+      ctx.beginPath(); ctx.moveTo(xSplit,midY); ctx.quadraticCurveTo(xSplit+30,tissueY-20,tissueX+70,tissueY); ctx.stroke();
+      // bloco de tecido (alimentado × faminto)
+      var fed=clamp(R.VO2/R.deficit>0?R.VO2/(R.VO2+R.deficit):1,0,1);
+      var tcol=lerp([90,100,170],[62,199,141],fed); var pulse=fed>0.6?0:(0.5+0.5*Math.sin(phase*6.28));
+      ctx.fillStyle='rgb('+tcol[0]+','+Math.round(tcol[1]*(fed>0.6?1:0.6+0.4*pulse))+','+tcol[2]+')';
+      roundRect(ctx,tissueX+44,tissueY-22,150,44,8); ctx.fill();
+      ctx.fillStyle='#0b0d12'; ctx.font='10px monospace'; ctx.fillText('tecido '+(fed>0.6?'alimentado':'FAMINTO'),tissueX+52,tissueY+4);
+      // partículas
+      var nP=18; for(var i=0;i<nP;i++){ var t=((i/nP)+phase)%1; var x=x0+t*(x1-x0);
+        var goesTissue=((i*7)%10)/10 < fracExtr;   // determinístico
+        var col, y=midY;
+        if(x<xSplit){ col='rgb(255,85,102)'; }
+        else if(goesTissue){ // segue rumo ao tecido (escurece)
+          var tt=clamp((x-xSplit)/(tissueX+70-xSplit),0,1); y=midY+(tissueY-midY)*tt; col=lerpCss([255,85,102],[122,92,138],tt); x=Math.min(x,tissueX+70);
+        } else { col='rgb(255,85,102)'; }   // shunt: continua brilhante
+        ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,3,0,6.2832); ctx.fill(); }
+      // retorno venoso (cor = ScvO₂: alto → brilhante)
+      var scv=clamp((R.ScvO2-0.5)/0.45,0,1); var vcol=lerp([45,93,150],[255,85,102],scv);
+      ctx.fillStyle='rgb('+vcol[0]+','+vcol[1]+','+vcol[2]+')'; roundRect(ctx,x1-70,midY-9,60,18,4); ctx.fill();
+      ctx.fillStyle='#cfe0f5'; ctx.fillText('ScvO₂ '+Math.round(R.ScvO2*100)+'%',x1-118,midY-14);
+      // rótulos
+      ctx.fillStyle='#ff8a96'; ctx.fillText('DO₂ '+Math.round(R.DO2),x0+4,midY-chanH/2-6);
+      ctx.fillStyle=(R.lactate>2?'#ff8a96':'#6fae8f'); ctx.fillText('lactato '+br(R.lactate,1),tissueX+52,tissueY+34);
+      return R;
+    }catch(e){ return R; }
+  }
+  function roundRect(ctx,x,y,w,h,r){ if(w<2*r)r=Math.max(0,w/2); if(h<2*r)r=Math.max(0,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function lerp(c1,c2,t){ t=clamp(t,0,1); return [Math.round(c1[0]+(c2[0]-c1[0])*t),Math.round(c1[1]+(c2[1]-c1[1])*t),Math.round(c1[2]+(c2[2]-c1[2])*t)]; }
+  function lerpCss(c1,c2,t){ var c=lerp(c1,c2,t); return 'rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+
+  function drawPAMOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawPAM(ctx,cv.width||860,cv.height||330,curR,phase); }
+  function drawExtractOn(id,phase){ var cv=$(id); if(!cv||!curR)return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx)return; drawExtract(ctx,cv.width||860,cv.height||260,curR,phase); }
+
+  function syncSliders(){ $('iTonus').value=Math.round(state.tonus*100); $('iDC').value=state.DC; $('iPressor').value=Math.round(state.pressor*100); $('iExtr').value=Math.round(state.extracao*100);
+    $('lTonus').value=Math.round(state.tonus*100); $('lDC').value=state.DC; $('lPressor').value=Math.round(state.pressor*100); $('lExtr').value=Math.round(state.extracao*100); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vTonus').textContent=Math.round(state.tonus*100); $('vDC').textContent=br(state.DC,1); $('vPressor').textContent=Math.round(state.pressor*100); $('vExtr').textContent=Math.round(state.extracao*100);
+    $('vlTonus').textContent=Math.round(state.tonus*100); $('vlDC').textContent=br(state.DC,1); $('vlPressor').textContent=Math.round(state.pressor*100); $('vlExtr').textContent=Math.round(state.extracao*100);
+    curR=distState(state);
+    $('opbox-pam').innerHTML='PAM <b>'+Math.round(curR.PAM)+'</b> · RVS <b>'+Math.round(curR.RVSdyn)+'</b> dyn ('+br(curR.RVSwood,1)+' Wood) · DC '+br(curR.DC,1)+' L/min';
+    $('opbox-extract').innerHTML='DO₂ <b>'+Math.round(curR.DO2)+'</b> · O₂ER <b>'+Math.round(curR.O2ER*100)+'%</b> · ScvO₂ <b>'+Math.round(curR.ScvO2*100)+'%</b> · lactato <b>'+br(curR.lactate,1)+'</b> · déficit '+Math.round(curR.deficit);
+    var cls=classeDist(curR), vEl=$('lab-veredito'), klass, label;
+    if(cls==='compensado'){ klass='ok'; label='PERFUSÃO COMPENSADA'; }
+    else if(cls==='limitrofe'){ klass='lim'; label='LIMÍTROFE'; }
+    else { klass='crit'; label='CHOQUE DISTRIBUTIVO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent='PAM '+Math.round(curR.PAM)+' · RVS '+Math.round(curR.RVSdyn)+' · DC '+br(curR.DC,1)+' · ScvO₂ '+Math.round(curR.ScvO2*100)+'% · lactato '+br(curR.lactate,1);
+    $('opbox-lab').innerHTML='corrigir a RVS rende <b>'+br(ganhoPAM_porRVS(curR)/Math.max(0.1,ganhoPAM_porDC(curR)),0)+'×</b> mais PAM que empurrar o DC · '+(inversaoExtracao(curR)?'<b style="color:var(--art)">extração invertida</b>':(scvO2Ambigua(curR)?'ScvO₂ alta benigna':'extração ok'));
+    show($('ban-rvs'), curR.RVSdyn<900);
+    show($('ban-inversao'), inversaoExtracao(curR));
+    show($('ban-scvo2'), scvO2Ambigua(curR));
+    show($('ban-pressor'), state.pressor>0.3);
+    show($('ban-quente'), curR.RVSdyn<900 && curR.DC>=6);
+    if(reduce){ drawPAMOn('plotPAM',0.2); drawPAMOn('plotPAMLab',0.2); drawExtractOn('plotExtract',0.2); }
+  }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---------- animação ----------
+  var phase=0;
+  function tick(){ phase=(phase+0.006)%1;
+    if($('panel-instrumento') && $('panel-instrumento').classList.contains('active')){ drawPAMOn('plotPAM',phase); drawExtractOn('plotExtract',phase); }
+    if($('panel-lab') && $('panel-lab').classList.contains('active')) drawPAMOn('plotPAMLab',phase);
+    if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick);
+  }
+
+  // ---------- tutor gráfico ----------
+  var TUTOR=[];
+  function buildTutor(){
+    function st(o){ return Object.assign({tonus:0.78,DC:5,pressor:0,extracao:1}, o); }
+    var T=[];
+    T.push({kind:'pam', P:st({tonus:0.12,DC:7.5,extracao:0.25}), cap:'Plano DC×RVS: ponto na zona de choque (abaixo da iso-PAM65).',
+      q:'Com DC alto e PAM baixa, qual termo quebrou?',
+      o:['a RVS — PAM = DC × RVS, e a RVS despencou','o DC','a frequência','a Hb'], a:0,
+      fb:'DC alto e PAM baixa ⇒ a RVS caiu. O distributivo é a quebra da resistência.', hint:'O ponto está muito à esquerda (RVS baixa).'});
+    T.push({kind:'pam', P:st({tonus:0.12,DC:7.5,extracao:0.25}), cap:'As setas das alavancas a partir do ponto.',
+      q:'Para cruzar de volta a iso-PAM65, o que rende mais?',
+      o:['mover à direita (α1 → RVS): o termo quebrado','subir o DC indefinidamente','baixar a FC','nada resolve'], a:0,
+      fb:'O termo quebrado escolhe a alavanca: corrigir a RVS (α1) cruza a iso-PAM com pouco esforço; o DC mal levanta.', hint:'A hipérbole é plana na vertical, íngreme na horizontal.'});
+    T.push({kind:'pam', P:st({tonus:0.12,DC:10,extracao:0.25}), cap:'DC empurrado a 10 L/min, RVS ainda baixa.',
+      q:'Cranking do DC para 10 deixa a PAM:',
+      o:['ainda baixa — a hipérbole é plana em RVS baixa','normal','alta demais','igual à normal'], a:0,
+      fb:'Mesmo DC 10 não resgata: em RVS baixa precisa-se de um DC irreal. Por isso o DC alto compensa pouco.', hint:'O ponto subiu muito mas mal cruzou a curva.'});
+    T.push({kind:'pam', P:st({tonus:0.12,DC:7.5,pressor:0.8,extracao:0.25}), cap:'Com vasopressor (α1): RVS restaurada.',
+      q:'O vasopressor levou o ponto para a direita porque:',
+      o:['α1 sobe a RVS — corrige o termo quebrado','aumenta o DC','reduz a demanda','baixa a FC'], a:0,
+      fb:'α1 → RVS↑: o ponto cruza a iso-PAM e a pressão volta. É o eixo do distributivo.', hint:'Deslocou-se na horizontal (RVS) e cruzou a curva.'});
+    T.push({kind:'extract', P:st({tonus:0.12,DC:7.5,extracao:0.25}), cap:'Inversão da extração: DO₂ alta, mas pouco desce ao tecido.',
+      q:'A ScvO₂ alta aqui significa:',
+      o:['sangue que passou sem ser extraído (shunt)','entrega excessiva ao tecido','anemia','hiperóxia'], a:0,
+      fb:'A maior parte do O₂ volta no venoso (ScvO₂ alta) sem chegar à célula. Alta = alarme, não folga.', hint:'O retorno venoso está brilhante; o tecido, faminto.'});
+    T.push({kind:'extract', P:st({tonus:0.5,DC:8,extracao:1}), cap:'Estado hiperdinâmico: extração ÍNTEGRA, DC alto.',
+      q:'Aqui a ScvO₂ também está alta. É falência de extração?',
+      o:['não — o lactato está normal (hiperdinâmico benigno)','sim, idêntico ao séptico','sim','impossível dizer'], a:0,
+      fb:'A SAGACIDADE: ScvO₂ alta sozinha é ambígua. DC alto entrega muito > demanda → ScvO₂ alta com lactato NORMAL.', hint:'Veja o lactato e o tecido alimentado.'});
+    T.push({kind:'extract', P:st({tonus:0.12,DC:7.5,extracao:0.25}), cap:'De volta ao distributivo séptico.',
+      q:'O que distingue a ScvO₂ alta MALIGNA da benigna?',
+      o:['o lactato — alto na falência de extração','a frequência','a SaO₂','a Hb'], a:0,
+      fb:'ScvO₂ alta + lactato alto = extração falha; ScvO₂ alta + lactato normal = hiperdinâmico. O lactato discrimina.', hint:'A ScvO₂ é a mesma; o lactato muda.'});
+    T.push({kind:'extract', P:st({tonus:0.12,DC:7.5,pressor:0.8,extracao:0.25}), cap:'Após o vasopressor (macro restaurada).',
+      q:'O pressor restaurou a PAM. E a extração (a micro)?',
+      o:['segue falha — o lactato persiste','foi corrigida','melhorou totalmente','zerou'], a:0,
+      fb:'O α1 conserta a macro (RVS/PAM), não a micro: shunt/mitocôndria persistem. Por que, no módulo 21.', hint:'O lactato ainda alto apesar da PAM normal.'});
+    T.push({kind:'pam', P:st({tonus:0.78,DC:5,extracao:1}), cap:'Coração normal no plano DC×RVS.',
+      q:'O ponto normal fica:',
+      o:['sobre a iso-PAM90, RVS ~1300','na zona de choque','em RVS baixa','em DC baixo'], a:0,
+      fb:'Normal: RVS ~1300–1400, DC ~5, PAM ~90. A vasodilatação empurra o ponto para a esquerda (RVS baixa).', hint:'À direita e sobre a curva de PAM90.'});
+    T.push({kind:'pam', P:st({tonus:0.12,DC:7.5,extracao:0.25}), cap:'O quadrante do distributivo.',
+      q:'Vasodilatado, DC alto, quente — o espelho de qual choque?',
+      o:['do cardiogênico (frio, DC baixo, RVS alta)','do hipovolêmico','de nenhum','do obstrutivo'], a:0,
+      fb:'Quente/hiperdinâmico (RVS↓, DC↑) é o oposto do frio cardiogênico (RVS↑, DC↓). Mesma PAM por caminhos opostos.', hint:'Pense no radar quente × frio.'});
+    return T;
+  }
+  function tutorDraw(item,ctx,W,H){ if(!item.R) item.R=distState(item.P);
+    if(item.kind==='pam') return drawPAM(ctx,W,H,item.R,0.3);
+    return drawExtract(ctx,W,H,item.R,0.3); }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=820; cv.height=210; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return tutorDraw(item,ctx,W||820,H||210); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    try{ tutorDraw(item,ctx,cv.width||820,cv.height||210); }catch(e){} }); }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iTonus','tonus',1],['iDC','DC',0],['iPressor','pressor',1],['iExtr','extracao',1]].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=p[2]?parseFloat(el.value)/100:parseFloat(el.value); syncSliders(); recompute(); }); });
+    [['lTonus','tonus',1],['lDC','DC',0],['lPressor','pressor',1],['lExtr','extracao',1]].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=p[2]?parseFloat(el.value)/100:parseFloat(el.value); syncSliders(); recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawPAM=drawPAM; window.drawExtract=drawExtract; window.activateTab=activate; window.setLabState=setState;
+    window.distFn=distState; window.classeFn=classeDist; window.inversaoFn=inversaoExtracao; window.ambiguaFn=scvO2Ambigua; window.rvsEffFn=rvsEff; window.pamFn=pam; window.ganhoRVSFn=ganhoPAM_porRVS; window.ganhoDCFn=ganhoPAM_porDC;
+    window.TUTOR=TUTOR; window.__state=state;
+    if(!reduce && typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(tick); else { drawPAMOn('plotPAM',0.2); drawPAMOn('plotPAMLab',0.2); drawExtractOn('plotExtract',0.2); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
