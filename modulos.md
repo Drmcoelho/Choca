@@ -1,287 +1,482 @@
-# modulos.md — Blueprint dos 30 módulos · **PERFUNDE · CHOCA**
+# modulos.md — Blueprint canônico dos 30 módulos · **PERFUNDE · CHOCA**
 
-> Detalhamento construtivo de cada módulo do braço 2, na malha das **cinco frentes** consagrada no Respira·Ventila, com as camadas transversais de **farmacologia** e **procedimentos** que o CHOCA exige.
-> Governança → `PERFUNDA.md` · fisiologia/âncoras → `CHOQUE.md` · execução/build → `AGENTS.md`.
-> **Este arquivo é a numeração canônica (30 módulos):** promove os procedimentos a um módulo-bandeira (`11 · POCUS & acessos`), refinando o resumo de 29 dos outros docs.
+> Detalhamento construtivo dos módulos do braço 2.
+> Constituição → `PERFUNDA.md`. Fisiologia/âncoras → `CHOQUE.md`. Contrato formal → `MODULE_CONTRACT.md`. Operação → `AGENTS.md`.
+
+Este arquivo usa a numeração operacional publicada em `perfunde.html`.
+
+```text
+publicados: M0…M21
+próximo: M22 · anafilático × neurogênico
+planejados: M23…M29
+```
 
 ---
 
-## As cinco frentes (estrutura de cada módulo)
+## 1. Estrutura obrigatória de cada módulo
 
-1. **Caso clínico dinâmico** — 5 atos; sempre com uma *variável escondida* que o aluno só enxerga ao decompor (a recrutabilidade do Ventila 14, aqui o termo quebrado da equação).
-2. **Trilha socrática** — perguntas encadeadas (→) que conduzem o raciocínio dedutivo, não a memorização.
-3. **Instrumento · biofísica viva** — engine animado, computado **ao vivo** pelo motor validado (nunca animação pré-cozida); a equação é o objeto.
-4. **Lab** — sliders → **veredito que vira** + banners contextuais; o aluno quebra e conserta a fisiologia com as próprias mãos.
-5. **Avaliação** — quiz 5×5 (campos **Mecanismo · Por quê · Armadilha · Beira do leito · Ponte**) e/ou **tutor gráfico dinâmico** (molde Ventila 15: ler a curva, ≥10 questões computadas ao vivo).
+Cada módulo deve obedecer às cinco frentes da série:
 
-**Camadas transversais (quando aplicável):**
-→ **Farmacologia** — receptor → efeito → termo da equação corrigido. **Firewall SaMD: mecanismo sim, dose/alvo de paciente NUNCA.**
-→ **Procedimento** — CVC e correlatos: *rationale* físico/anatômico, o que o procedimento mede ou alivia e por quê, complicações como física. Técnica geral como educação; **nunca decisão para um paciente específico.**
-→ **Pontes** — backlinks de série (braço 1 + vizinhos do braço 2).
+1. **Caso clínico dinâmico** — geralmente em 5 atos, com uma variável escondida.
+2. **Trilha socrática** — sequência causal, não FAQ.
+3. **Instrumento · biofísica viva** — gráfico/lab computado pelo engine.
+4. **Lab** — sliders, presets, veredito e banners.
+5. **Avaliação** — tutor, MCQ, gráfico interpretativo ou banco 5×5.
+
+Camadas transversais:
+
+```text
+farmacologia → receptor/efeito/termo da equação, sem dose
+procedimento → anatomia/mecanismo/risco físico, sem indicação individual
+pontes → módulos anteriores, braço 1 e próximos módulos
+```
 
 ---
 
 # BLOCO 0 · Fundamentos do transporte
 
-### 0 · Caderno · Matemática do transporte
-*(formato caderno, como "Matemática do Ventilador" — células de aritmética auditável, não 5 atos)*
-**Células:** CaO₂ · DO₂ = DC×CaO₂ · Fick (VO₂) · O₂ER · PAM = DC×RVS · RVS derivada. Cada célula: a conta exata, a convenção de unidade, a letra-miúda (a fração dissolvida que quase some, mas existe).
-**Instrumento:** calculadora viva de cada identidade, com o termo isolado destacado.
-**Avaliação:** aritmética fechada (conferência exata).
-**Farmacologia/Procedimento:** — **Pontes:** linka-se de todos os módulos que usam a aritmética (1, 8, 9, 26).
+## 0 · Matemática do transporte
 
-### 1 · Conteúdo de O₂ (CaO₂)
-**Caso:** anêmica "saturando 96%" com sinais de hipóxia tecidual → desdobramento do caso-semente (Hct 32 ≈ Hb 10,7).
-**Trilha:** → SpO₂ boa = tudo bem? → e o *conteúdo*? → anemia + hipoxemia **somam** ou se multiplicam na entrega?
-**Instrumento:** barra empilhada de CaO₂ (Hb-ligado vs dissolvido), animada por Hb/SaO₂/PaO₂; a fração dissolvida minúscula mesmo em hiperóxia.
-**Lab:** Hb, SaO₂, PaO₂ (DC fixo) → CaO₂ e DO₂; veredito *entrega adequada / limítrofe / crítica*.
-**Avaliação:** 5×5 + tutor gráfico (ler a barra de conteúdo).
-**Farmacologia:** — **Procedimento:** transfusão como **conteúdo** (conceito físico, sem gatilho). **Pontes:** mvp2, 8, 15.
+**Status:** publicado.
 
-### 2 · A curva como entrega (Severinghaus, lado tecidual)
-**Caso:** sepse com SvO₂ alta apesar de lactato alto (extração falha) × hemorragia com SvO₂ baixa (extração máxima).
-**Trilha:** → mesma SaO₂ entrega igual ao tecido? → P50 → efeito Bohr (acidose/CO₂/temp/2,3-DPG facilitam offloading).
-**Instrumento:** curva de dissociação animada; ponto arterial e venoso; o deslocamento e a *descarga* tecidual. **Reusa Severinghaus do mvp2.**
-**Lab:** pH, CO₂, temp, 2,3-DPG → P50 desloca → offloading muda; veredito.
-**Avaliação:** 5×5 + tutor gráfico (ler deslocamentos).
-**Farmacologia:** — (Bohr é fisiológico). **Procedimento:** — **Pontes:** mvp2, 1, 12.
+**Tese:** antes de discutir choque, o aluno precisa dominar a régua quantitativa.
+
+**Células:** CaO₂, DO₂, Fick, O₂ER, SvO₂ aproximada, PAM e RVS derivada.
+
+**Erro cognitivo:** fazer medicina de número sem unidade.
+
+**Engine:** identidades fechadas e conversões explícitas.
+
+**Pontes:** todos os módulos que usam conta.
 
 ---
 
-# BLOCO I · Os determinantes (engines-jóia)
+## 1 · Conteúdo de O₂ (CaO₂)
 
-### 3 · Débito cardíaco
-**Caso:** FC 130 que **não** sustenta DC (enchimento diastólico curto) — taquicardia que engana.
-**Trilha:** → DC = FC×VS → mais FC sempre mais DC? → o teto: diástole encurta, VS cai.
-**Instrumento:** DC=FC×VS animado; curva DC×FC com queda em FC extrema.
-**Lab:** FC, VS → DC; veredito.
-**Avaliação:** 5×5.
-**Farmacologia:** cronotropismo (mecanismo do efeito da FC). **Procedimento:** — **Pontes:** 4, 6, 16.
+**Status:** publicado.
 
-### 4 · Pré-carga I · a interseção de Guyton  ⟵ *engine-jóia, o mais difícil; construir cedo*
-**Caso:** PVC "normal" que não prediz nada sobre responsividade a volume.
-**Trilha:** → o que traz o sangue de volta? → gradiente **Pmsf − PVC** → por que PVC alta pode ser boa *ou* péssima.
-**Instrumento:** **o gráfico de Guyton** — curva de retorno venoso (decrescente, zera em PVC=Pmsf) × curva de função cardíaca (Starling); **interseção = ponto de operação**; deslocamentos animados.
-**Lab:** Pmsf (volume), Rvr, contratilidade → move as curvas → nova interseção (DC, PVC); veredito.
-**Avaliação:** 5×5 + tutor gráfico (ler interseções).
-**Farmacologia:** — **Procedimento:** **CVC** — *rationale*: ponta na VCS, o que a PVC mede (e não mede), complicações físicas (pneumotórax pela anatomia). **Pontes:** 6, 5, 11.
+**Tese:** saturar bem não significa transportar bem.
 
-### 5 · Pré-carga II · Guyton aplicado — responsivo ≠ tolerante
-**Caso:** paciente que **responde** a volume mas **afoga** (fluid responsive, not fluid tolerant).
-**Trilha:** → responsividade prediz subir o VS; tolerância pergunta se pulmão/VD aguentam → **não são a mesma coisa**.
-**Instrumento:** variação respiratória da pressão de pulso (PPV/VVS) animada com a ventilação; colapsabilidade de IVC; elevação de pernas como auto-bolus reversível.
-**Lab:** posição na curva de Starling + complacência pulmonar → *responsivo?* e *tolerante?* (veredito de dois eixos).
-**Avaliação:** 5×5 + tutor gráfico (ler PPV/IVC).
-**Farmacologia:** — **Procedimento:** linha arterial (PPV), POCUS de IVC. **Pontes:** 4, 24, 25.
+**Caso:** anemia com SpO₂ preservada e hipóxia tecidual.
 
-### 6 · Frank-Starling
-**Caso:** dois corações (normal × falência) na mesma pré-carga, respostas opostas.
-**Trilha:** → mais enchimento → mais ejeção, **até o platô** → a curva achatada da falência.
-**Instrumento:** famílias de curvas de Starling (por contratilidade); ponto operante animado.
-**Lab:** pré-carga, contratilidade → VS; veredito ascendente/platô.
-**Avaliação:** 5×5.
-**Farmacologia:** inotrópicos **deslocam a curva para cima** (mecanismo). **Procedimento:** — **Pontes:** 4, 7, 16.
+**Instrumento:** barra Hb-ligado × dissolvido.
 
-### 7 · Pós-carga & a alça PV (Ea/Ees)
-**Caso:** hipertenso agudo cujo DC **melhora ao baixar a pós-carga** (contraintuitivo para quem só lê PA).
-**Trilha:** → o que é pós-carga? (não é PA) → a alça pressão-volume → acoplamento Ea/Ees como eficiência.
-**Instrumento:** alça PV animada; ESPVR/EDPVR; deslocamento por pré-carga, pós-carga, contratilidade.
-**Lab:** Ees, Ea, pré-carga → alça, VS, trabalho; veredito de acoplamento (Ea/Ees).
-**Avaliação:** 5×5 + tutor gráfico (ler alças).
-**Farmacologia:** vasodilatador (↓Ea) · inotrópico (↑Ees) — mecanismo. **Procedimento:** — **Pontes:** 6, 16, 17.
+**Erro cognitivo:** confundir PaO₂/SpO₂ com conteúdo.
 
-### 8 · DO₂/VO₂ & supply-dependence (DO₂crítico)
-**Caso:** lactato que sobe quando a DO₂ cruza o limiar crítico.
-**Trilha:** → VO₂ independe de DO₂ **até um joelho** → abaixo dele, anaerobiose → lactato.
-**Instrumento:** curva bifásica VO₂×DO₂ animada; O₂ER; SvO₂; o joelho do DO₂crítico.
-**Lab:** DC, Hb, SaO₂ → DO₂; demanda de VO₂ (febre/agitação↑, sedação↓) → acima/abaixo do crítico; veredito.
-**Avaliação:** 5×5 + tutor gráfico (ler a bifásica).
-**Farmacologia:** o que move a **demanda** (sedação/analgesia ↓VO₂ — liga ao caso da paciente ansiosa). **Procedimento:** — **Pontes:** 1, 2, 13.
+**Pontes:** M0, M2, M8, M21.
 
 ---
 
-# BLOCO II · A inversão, a leitura e a beira do leito
+## 2 · A curva como entrega
 
-### 9 · PAM = DC × RVS · a inversão causal  ⟵ *núcleo do braço*
-**Caso:** dois pacientes, **mesma PAM 65**, mecânicas opostas (quente/vasodilatado × frio/vasoconstrito).
-**Trilha:** → PAM normal = paciente bem? → **decompor** → DC↑/RVS↓ vs DC↓/RVS↑ → o número-resultante é sombra.
-**Instrumento:** decomposição da PAM em DC×RVS animada; a mesma PAM por caminhos opostos (o leque de soluções).
-**Lab:** DC, RVS → PAM; ou fixa PAM e revela o leque de (DC,RVS) compatíveis; veredito.
-**Avaliação:** 5×5 + tutor gráfico (ler a inversão).
-**Farmacologia:** preview — qual alavanca move qual termo (→ módulo 28). **Procedimento:** linha arterial (a PAM "real"). **Pontes:** 27, 28, 26.
+**Status:** publicado.
 
-### 10 · Monitorização hemodinâmica (de onde vêm os números)
-**Caso:** número do monitor que **mente** (PAM por transdutor mal zerado; DC por termodiluição com erro técnico).
-**Trilha:** → de onde vem cada número? → o que ele *de fato* mede? → fontes de erro físicas.
-**Instrumento:** o traçado de pressão arterial (componentes), a curva de termodiluição, a derivação conceitual de DC/ScvO₂.
-**Lab:** zerar/posicionar transdutor, introduzir erro → número exibido muda; veredito *confiável / artefato*.
-**Avaliação:** 5×5.
-**Farmacologia:** — **Procedimento:** linha arterial; cateter de termodiluição/PiCCO/Swan (conceitual, *rationale*, não manual de aparelho). **Pontes:** 9, 11, 5.
+**Tese:** a curva de oxi-hemoglobina não é só captação pulmonar; é entrega tecidual.
 
-### 11 · POCUS hemodinâmico & acessos vasculares  ⟵ *módulo-bandeira de procedimentos*
-**Caso:** beira do leito sem laboratório — o ultrassom responde (IVC, função VE/VD, B-lines, derrame pericárdico).
-**Trilha:** → o que cada janela responde? → IVC e volume-responsividade → **VD dilatado = obstrutivo/TEP** → B-lines = congestão → derrame = tamponamento.
-**Instrumento:** ilustração animada das janelas (subxifoide, paraesternal, IVC com variação respiratória, pulmão) e o que cada uma revela.
-**Lab:** cenário → escolher janela → o que se vê → veredito do achado.
-**Avaliação:** 5×5 (reconhecer padrões) + tutor gráfico.
-**Farmacologia:** — **Procedimento:** **CVC** (anatomia, ponta, o que mede, pneumotórax como complicação física), **linha arterial**, **acesso intraósseo/calibroso** — *rationale* físico-anatômico e técnica geral como educação; **sem decisão de paciente.** **Pontes:** 10, 14, 18/19, 24.
+**Instrumento:** Severinghaus/Bohr, P50, deslocamento e offloading.
 
-### 12 · A microcirculação
-**Caso:** séptico com **macro "ok"** (PAM 70, DC alto) e **tecido faminto** (lactato alto, livedo, enchimento capilar lento).
-**Trilha:** → a macro está boa, por que o tecido sofre? → desacoplamento macro-micro → glicocálice, shunt capilar, heterogeneidade.
-**Instrumento:** rede capilar animada; shunt; o glicocálice; a extração que cai apesar da entrega global.
-**Lab:** integridade do glicocálice, fração de shunt → extração/lactato; veredito.
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** por que **pressor não conserta a micro** (mecanismo). **Procedimento:** — **Pontes:** 8, 21, 25.
+**Erro cognitivo:** achar que a mesma SaO₂ sempre entrega o mesmo O₂ ao tecido.
 
-### 13 · Lactato & depuração
-**Caso:** o **lactato 3,9 do caso-semente** — anaerobiose ou β2? (tipo A × tipo B).
-**Trilha:** → lactato = hipoperfusão? → nem sempre → tipo A (anaeróbio) × tipo B (β2-agonista, adrenalina, metformina) → e a **depuração** hepática.
-**Instrumento:** produção × depuração animadas; o β2 gerando lactato; o fígado depurando; a *tendência* seriada.
-**Lab:** DO₂, dose-equivalente de β2, função hepática → lactato e clearance; veredito.
-**Avaliação:** 5×5.
-**Farmacologia:** **β2-agonista → lactato tipo B (o caso!), adrenalina idem, metformina** — mecanismo. **Procedimento:** — **Pontes:** 8, 12, 21, braço 1 (o β2 da DPOC).
+**Pontes:** braço 1/mvp2, M1, M8, M21.
 
 ---
 
-# BLOCO III · Os choques (categoria + capstones de subtipo)
+# BLOCO I · Os determinantes
 
-### 14 · Choque hipovolêmico (categoria)
-**Caso:** sangramento — taquicárdico, vasoconstrito, **PA mantida até desabar**.
-**Trilha:** → Guyton: Pmsf↓ → RV↓ → interseção desce → compensação por RVS↑ e FC↑ até falir.
-**Instrumento:** Guyton com Pmsf caindo; Starling deslocado; a compensação animada.
-**Lab:** perda volêmica % → DC, PA, FC, lactato; veredito de classe.
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** vasopressor como "ganhar tempo" × corrigir volume (mecanismo, sem dose). **Procedimento:** **acesso calibroso / intraósseo**, controle de fonte (conceito). **Pontes:** 4, 15, 25.
+## 3 · Débito cardíaco
 
-### 15 · ↳ hemorrágico × não-hemorrágico
-**Caso:** dois hipovolêmicos — hemorragia (perde **volume + conteúdo**) × desidratação/terceiro espaço (perde volume, conteúdo mantido).
-**Trilha:** → hemorragia derruba CaO₂ também (perde Hb) → repor **conteúdo** vs repor **volume** são coisas diferentes.
-**Instrumento:** comparação CaO₂/DO₂ nos dois; classes de hemorragia; índice de choque.
-**Lab:** tipo de perda → DO₂; veredito do que falta (conteúdo × volume, conceito).
-**Avaliação:** 5×5.
-**Farmacologia:** hemoderivado como **conteúdo** (conceito, sem gatilho). **Procedimento:** acesso, controle de dano (conceito). **Pontes:** 1, 14.
+**Status:** publicado.
 
-### 16 · Choque cardiogênico (categoria)
-**Caso:** IAM com bomba falida — PA baixa, congestão, extremidades frias.
-**Trilha:** → **a espiral**: DC↓ → isquemia coronária → DC↓ → alça PV em falência → congestão retrógrada.
-**Instrumento:** alça PV deslocada (Ees↓); a espiral animada; pressões de enchimento subindo.
-**Lab:** contratilidade, pós-carga, pré-carga → DC, congestão; veredito.
-**Avaliação:** 5×5 + tutor gráfico (ler alças em falência).
-**Farmacologia:** **inotrópico (dobutamina → β1 → Ees↑); vasodilatador (↓pós-carga); o risco do vasopressor ↑pós-carga piorar o DC** — mecanismo. **Procedimento:** suporte mecânico (BIA/Impella) como **descarga** (conceito físico). **Pontes:** 7, 6, 24.
+**Tese:** DC é fluxo, não frequência isolada.
 
-### 17 · ↳ o ventrículo direito (o VD esquecido)
-**Caso:** VD que falha (IAM de VD, TEP) — **pré-carga-dependente, intolerante a pós-carga**.
-**Trilha:** → o VD é outro animal → **interdependência ventricular**, septo em D, espiral de VD (dilata → desvia septo → comprime VE).
-**Instrumento:** as duas câmaras; o septo desviando; pós-carga de VD (RVP); a espiral.
-**Lab:** RVP, volume → função de VE via interdependência; veredito (por que volume demais **piora**).
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** o que reduz RVP (mecanismo); por que vasopressor sistêmico pode salvar a perfusão coronária do VD (mecanismo). **Procedimento:** — **Pontes:** 16, 19, 24.
+**Engine:** `DC = FC × VS` com teto da taquicardia por encurtamento diastólico.
 
-### 18 · Choque obstrutivo (categoria)
-**Caso:** choque com enchimento/ejeção **mecanicamente impedidos** — PVC alta, DC baixo.
-**Trilha:** → a obstrução é mecânica → pressão intratorácica/pericárdica ↑ → RV↓ (Guyton de novo).
-**Instrumento:** pressão externa → curva de RV deslocada; **ponte direta ao auto-PEEP do mvp1**.
-**Lab:** pressão pericárdica/intratorácica → RV, DC; veredito.
-**Avaliação:** 5×5.
-**Farmacologia:** — **Procedimento:** preview dos alívios (→ 19). **Pontes:** mvp1, 4, 19.
+**Erro cognitivo:** “FC alta = coração forte”.
 
-### 19 · ↳ tamponamento · TEP maciço · pneumotórax hipertensivo  ⟵ *capstone procedimental*
-**Caso:** três obstrutivos, três fisiologias, três alívios distintos.
-**Trilha:** → tamponamento (enchimento restrito, **pulso paradoxal**) · TEP (pós-carga de VD súbita) · pneumotórax (pressão intratorácica + kink de cavas).
-**Instrumento:** os três mecanismos/curvas animados lado a lado.
-**Lab:** qual obstrutivo → assinatura distinta; veredito.
-**Avaliação:** 5×5 + tutor gráfico (distinguir os três pela curva).
-**Farmacologia:** trombólise no TEP (mecanismo). **Procedimento:** **pericardiocentese** (tamponamento) e **descompressão por agulha/dreno** (pneumotórax) — *rationale* físico, anatomia, **por que alivia**. **Pontes:** 17, 18, 11 (POCUS).
-
-### 20 · Choque distributivo (categoria)
-**Caso:** vasodilatado, quente, DC alto, **PA baixa por RVS↓**.
-**Trilha:** → a quebra é a **RVS** → DC normal/alto **não resgata** se distribuição/extração falham.
-**Instrumento:** PAM=DC×RVS com a RVS despencando; a extração invertida (SvO₂ alta).
-**Lab:** RVS, DC, extração → PAM, lactato; veredito.
-**Avaliação:** 5×5.
-**Farmacologia:** **vasopressor (α1 → RVS) — por que aqui o pressor é o eixo** (mecanismo). **Procedimento:** CVC para pressor/ScvO₂ (*rationale*). **Pontes:** 9, 12, 21.
-
-### 21 · ↳ séptico
-**Caso:** sepse — **macro restaurada, micro falida**; o paradoxo da extração.
-**Trilha:** → micro + **falência citopática mitocondrial** → SvO₂ alta com tecido faminto → por que normalizar a macro não basta.
-**Instrumento:** macro × micro; a mitocôndria que não extrai; o lactato.
-**Lab:** pressor (macro) com micro intacta vs lesada → lactato/extração; veredito.
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** **noradrenalina (α1), vasopressina (V1), adrenalina (α+β), o lactato do β-agonista, corticoide** — receptor→termo, **sem dose**. **Procedimento:** CVC, linha arterial. **Pontes:** 12, 20, 13.
-
-### 22 · ↳ anafilático × neurogênico
-**Caso:** dois distributivos não-sépticos — anafilaxia (mastócito, *capillary leak*) × neurogênico (perda de tônus simpático).
-**Trilha:** → RVS↓ por mecanismos distintos → **o neurogênico é o único choque SEM taquicardia (bradicardia)** porque perde o simpático.
-**Instrumento:** os dois caminhos para RVS↓; a assinatura de FC (taqui × bradi).
-**Lab:** mecanismo → padrão de FC/RVS; veredito.
-**Avaliação:** 5×5.
-**Farmacologia:** **adrenalina na anafilaxia (α+β — por que é o agente; α reverte leak/vasodilatação, β broncodilata e estabiliza mastócito); o tônus no neurogênico** — mecanismo. **Procedimento:** — **Pontes:** 20, 3 (FC), 9.
+**Pontes:** M4, M6, M9, M16.
 
 ---
 
-# BLOCO IV · Integração & resgate
+## 4 · Interseção de Guyton
 
-### 23 · Choque misto (duas quebras simultâneas)
-**Caso:** séptico que **também** enfartou — o fenótipo-misto (eco do τ-misto do Ventila).
-**Trilha:** → dois termos quebrados ao mesmo tempo → o número composto **engana** → é preciso ler os termos separados.
-**Instrumento:** PAM=DC×RVS com duas quebras simultâneas; decompor para ver ambas.
-**Lab:** combinar quebras → padrão composto; veredito (um só agente não resolve duas quebras).
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** por que a terapia precisa ser **vetorial** (cada alavanca para cada termo) — mecanismo. **Procedimento:** — **Pontes:** 9, 16, 21.
+**Status:** publicado.
 
-### 24 · O coração-pulmão
-**Caso:** VNI/PEEP que **melhora** o cardiogênico e **piora** o hipovolêmico — a mesma pressão, efeitos opostos (a conduta do caso de hoje, no edema).
-**Trilha:** → pressão intratorácica positiva → ↓pré e ↓pós-carga do VE (bom no congesto) mas ↓RV (ruim no seco) → depende de **onde** o paciente está na curva.
-**Instrumento:** pressão intratorácica → Guyton (RV) **e** alça PV (pós-carga VE) simultâneos; os dois efeitos no mesmo gráfico.
-**Lab:** PEEP/pressão intratorácica + estado volêmico → DC; veredito (ajuda × atrapalha).
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** — **Procedimento:** — (a VNI é do braço 1). **Pontes:** **Ventila, mvp1**, 5, 16, 18.
+**Tese:** o ponto hemodinâmico real emerge da interseção entre retorno venoso e função cardíaca.
 
-### 25 · Ressuscitação volêmica como fisiologia
-**Caso:** o *fluid creep* — volume que vira edema; o glicocálice rompido que não segura mais.
-**Trilha:** → volume ↑Pmsf (Guyton) → mas o **custo**: glicocálice, edema intersticial, congestão venosa → **responsivo ≠ tolerante** revisitado.
-**Instrumento:** Pmsf subindo na curva de Guyton; o glicocálice; a curva de **custo × benefício** do bolus.
-**Lab:** bolus → Δ DC (benefício) vs Δ congestão (custo); veredito (até onde ainda rende).
-**Avaliação:** 5×5.
-**Farmacologia:** cristaloide × colóide (conceito físico-osmótico) — **sem protocolo de volume**. **Procedimento:** acesso; monitorizar a resposta (não um alvo). **Pontes:** 4, 5, 12.
+**Engine:** curva de retorno venoso × curva de função cardíaca.
 
-### 26 · Choque críptico/compensado  ⟵ *o caso-semente, literalmente*
-**Caso:** **a paciente de hoje** — normotensa 12×8, FC 120, lactato 3,9, Hct 32; perfusão tecidual falhando sob PA "tranquilizadora".
-**Trilha:** → PA normal exclui choque? → **não** → RVS↑ compensando DC↓ → o lactato denuncia **antes** de a PA cair.
-**Instrumento:** PAM=DC×RVS com RVS↑ mascarando DC↓; o lactato como detector precoce; o precipício da descompensação.
-**Lab:** grau de compensação → quando a PA finalmente cai; veredito.
-**Avaliação:** 5×5 + tutor gráfico.
-**Farmacologia:** — **Procedimento:** lactato/ScvO₂ seriados como **vigilância** (não alvo). **Pontes:** 9, 13, 8, braço 1 (a gasometria do caso).
+**Erro cognitivo:** PVC = pré-carga = volume.
 
-### 27 · Os 4 perfis · o radar
-**Caso:** quatro pacientes, quatro quadrantes (frio-seco · frio-úmido · quente-seco · quente-úmido).
-**Trilha:** → perfusão (frio/quente ← DC) × congestão (seco/úmido ← pressões de enchimento) → cada quadrante = uma quebra de termo.
-**Instrumento:** o radar 2×2 animado; mapeamento perfil → fisiologia → termo quebrado.
-**Lab:** achados de beira → quadrante → termo; veredito.
-**Avaliação:** 5×5 + tutor gráfico (classificar perfis pela curva/achados).
-**Farmacologia:** qual **eixo** terapêutico por quadrante (volume / pressor / inotrópico / vasodilatador) — mecanismo, sem dose. **Procedimento:** — **Pontes:** todos os choques, 9.
-
-### 28 · Vasopressores & inotrópicos (mecanismo, não dose)  ⟵ *módulo-bandeira de farmacologia · teste de fogo SaMD*
-**Caso:** o **termo quebrado escolhe a alavanca** — nora no distributivo, dobuta no cardiogênico; a droga errada piora (nora no cardiogênico ↑pós-carga).
-**Trilha:** → receptor → efeito → **qual termo da equação corrige** → por que combinar agentes em quebras múltiplas.
-**Instrumento:** mapa receptor (α1 · β1 · β2 · V1 · D) → DC/RVS/FC, projetado **sobre PAM=DC×RVS**.
-**Lab:** escolher agente → qual termo move → efeito em PAM/DC; veredito (corrige a quebra certa?). **Zero miligrama, zero alvo de paciente.**
-**Avaliação:** 5×5 + tutor gráfico (mapear agente → termo).
-**Farmacologia:** **o módulo inteiro** — noradrenalina, adrenalina, dobutamina, vasopressina, dopamina, milrinona, levosimendan: receptor→termo. **Firewall:** mecanismo sim; dose, titulação e alvo NUNCA. **Procedimento:** CVC para pressor (por que central — *rationale*). **Pontes:** 9, 16, 20, 21.
-
-### 29 · Capstone · caso integrado + tutor gráfico
-**Caso:** caso longo integrando transporte → determinantes → inversão → choque → resgate; provável desdobramento completo da **paciente-semente**.
-**Trilha:** a cadeia inteira, ato a ato, decompondo cada termo.
-**Instrumento:** dashboard integrando os engines do braço (Guyton + alça PV + supply-dependence + PAM).
-**Lab:** caso vivo multivariável — o aluno conduz o raciocínio (não a conduta).
-**Avaliação:** **mega-revisão** (estilo Ventila 13/14, ~25–50 questões cobrindo o braço) **+ tutor gráfico dinâmico ≥12** (molde Ventila 15).
-**Farmacologia/Procedimento:** integrados (mecanismo/*rationale*). **Pontes:** todo o braço 2 + braço 1.
+**Pontes:** M5, M6, M14.
 
 ---
 
-## Sequência de build recomendada
+## 5 · Guyton aplicado · responsivo ≠ tolerante
 
-`0–2` (fundamentos, reusam mvp2 — baratos, validam o pipeline do braço) → **`4` (Guyton, o engine mais difícil, cedo, para desentortar a arquitetura)** → `3,5,6,7,8` (resto dos determinantes) → `9` (núcleo) → `10–13` (leitura/beira) → `14–22` (os choques; categoria antes do capstone, que herda o engine do pai) → `23–27` (integração) → `28` (fronteira SaMD, o teste de fogo) → `29` (capstone).
+**Status:** publicado.
 
-→ **Economia de esforço:** os capstones de subtipo (15, 17, 19, 21, 22) herdam o engine da categoria-mãe e trocam cenário/parametrização — são "teto" *em conjunto* com o pai, não 9 monstros independentes.
+**Tese:** responsividade a volume e tolerância a volume são perguntas diferentes.
+
+**Instrumento:** PPV/VVS, VCI, auto-bolus, deslocamentos de interseção.
+
+**Erro cognitivo:** se responde, pode receber volume.
+
+**Pontes:** M4, M14, M25.
+
+---
+
+## 6 · Frank-Starling
+
+**Status:** publicado.
+
+**Tese:** volume aumenta ejeção até o platô; depois vira custo.
+
+**Engine:** curva saturante VS × pré-carga.
+
+**Erro cognitivo:** “mais pré-carga sempre melhora”.
+
+**Pontes:** M4, M5, M16.
+
+---
+
+## 7 · Pós-carga & alça PV
+
+**Status:** publicado.
+
+**Tese:** pós-carga não é sinônimo de PA; é carga contra ejeção.
+
+**Engine:** alça PV, ESPVR, EDPVR, Ea/Ees.
+
+**Erro cognitivo:** PA alta sempre significa ejeção eficaz.
+
+**Pontes:** M16, M17, M24.
+
+---
+
+## 8 · DO₂/VO₂ & supply-dependence
+
+**Status:** publicado.
+
+**Tese:** VO₂ independe de DO₂ até o joelho; abaixo dele, o tecido depende da entrega.
+
+**Engine:** curva bifásica VO₂ × DO₂, O₂ER, SvO₂, lactato.
+
+**Erro cognitivo:** lactato só aparece quando SpO₂ cai.
+
+**Pontes:** M1, M2, M13, M21.
+
+---
+
+# BLOCO II · A inversão e a leitura
+
+## 9 · PAM = DC × RVS · a inversão
+
+**Status:** publicado.
+
+**Tese:** a mesma PAM pode esconder pacientes opostos.
+
+**Engine:** decomposição DC/RVS, leque de combinações iso-PAM.
+
+**Erro cognitivo:** PAM normal = perfusão normal.
+
+**Pontes:** M20, M26, M28.
+
+---
+
+## 10 · Monitorização hemodinâmica
+
+**Status:** publicado.
+
+**Tese:** o número do monitor é uma medida física com erro, não verdade revelada.
+
+**Foco:** transdutor, curva arterial, DC estimado, ScvO₂, fontes de artefato.
+
+**Erro cognitivo:** aceitar número sem perguntar de onde veio.
+
+**Pontes:** M9, M11, M27.
+
+---
+
+## 11 · POCUS & acessos vasculares
+
+**Status:** publicado.
+
+**Tese:** POCUS não “dá diagnóstico”; ele responde perguntas mecânicas específicas.
+
+**Foco:** IVC, VE/VD, B-lines, derrame, acessos, CVC, linha arterial, complicações como física.
+
+**Erro cognitivo:** transformar achado isolado em conduta.
+
+**Pontes:** M10, M18, M19, M24.
+
+---
+
+## 12 · A microcirculação
+
+**Status:** publicado.
+
+**Tese:** macro normal pode coexistir com tecido faminto.
+
+**Engine:** rede capilar, shunt, glicocálice, heterogeneidade, extração efetiva.
+
+**Erro cognitivo:** PAM corrigida = choque resolvido.
+
+**Pontes:** M8, M13, M20, M21.
+
+---
+
+## 13 · Lactato & depuração
+
+**Status:** publicado.
+
+**Tese:** lactato é balanço entre produção, uso e depuração; não é sinônimo simples de hipóxia.
+
+**Engine:** produção tipo A/B, clearance, demanda, fígado/perfusão.
+
+**Erro cognitivo:** lactato alto = sempre baixa SpO₂; lactato baixo = tudo bem.
+
+**Pontes:** M8, M12, M21, M26.
+
+---
+
+# BLOCO III · Os choques
+
+## 14 · Hipovolêmico
+
+**Status:** publicado.
+
+**Tese:** a quebra primária é retorno venoso/pré-carga.
+
+**Engine:** Starling/Guyton deslocado por volume efetivo baixo.
+
+**Assinatura:** DC↓, RVS↑, extração↑.
+
+**Erro cognitivo:** reduzir hipovolemia a pressão baixa.
+
+**Pontes:** M4, M5, M15, M25.
+
+---
+
+## 15 · Hemorrágico × não-hemorrágico
+
+**Status:** publicado.
+
+**Tese:** sangue perdido não é apenas volume perdido; é conteúdo e capacidade de entrega.
+
+**Engine:** volume circulante + Hb/CaO₂ + classes de perda.
+
+**Erro cognitivo:** cristalóide substitui sangue do ponto de vista de DO₂.
+
+**Pontes:** M1, M14, M25.
+
+---
+
+## 16 · Cardiogênico
+
+**Status:** publicado.
+
+**Tese:** a bomba falha e a montante congestiona.
+
+**Engine:** alça PV, Ees↓, DC↓, pressões de enchimento↑.
+
+**Erro cognitivo:** tratar pressão como substituto de trabalho cardíaco.
+
+**Pontes:** M6, M7, M17, M24.
+
+---
+
+## 17 · O ventrículo direito
+
+**Status:** publicado.
+
+**Tese:** o VD falha por regras próprias: pós-carga pulmonar, interdependência e geometria.
+
+**Engine:** D-shape, septo, pós-carga de VD, acoplamento VD-AP.
+
+**Erro cognitivo:** pensar no coração como VE isolado.
+
+**Pontes:** M11, M16, M18, M19.
+
+---
+
+## 18 · Obstrutivo
+
+**Status:** publicado.
+
+**Tese:** o choque obstrutivo é categoria; o mecanismo depende do obstáculo.
+
+**Engine:** obstrução externa reduzindo fluxo por enchimento, ejeção ou retorno.
+
+**Erro cognitivo:** tratar tamponamento, TEP e pneumotórax como equivalentes.
+
+**Pontes:** M17, M19, braço 1/mvp1.
+
+---
+
+## 19 · Tamponamento · TEP · pneumotórax
+
+**Status:** publicado.
+
+**Tese:** três obstrutivos, três fisiologias.
+
+**Engine:**
+
+```text
+tamponamento → enchimento diastólico
+TEP maciço → ejeção do VD
+pneumotórax hipertensivo → retorno venoso
+```
+
+**Erro cognitivo:** um rótulo, uma conduta. O módulo deve ensinar alívio como mecanismo, não indicação para paciente real.
+
+**Pontes:** M11, M17, M18.
+
+---
+
+## 20 · Distributivo
+
+**Status:** publicado.
+
+**Tese:** o termo quebrado da macro é RVS.
+
+**Engine:** RVS↓, DC normal/↑, PAM resultante, extração ambígua.
+
+**Erro cognitivo:** distributivo = séptico.
+
+**Pontes:** M9, M12, M21, M22.
+
+---
+
+## 21 · Séptico
+
+**Status:** publicado.
+
+**Tese:** no séptico, corrigir macro não garante que o tecido receba e use O₂.
+
+**Engine:** cascata convectivo → difusivo → utilização.
+
+**Assinatura:** DO₂ macro pode estar alto; SvO₂ pode estar alta; lactato pode subir; tecido segue faminto.
+
+**Erro cognitivo:** PAM restaurada = ressuscitação concluída.
+
+**Pontes:** M12, M13, M20, M22.
+
+---
+
+## 22 · Anafilático × neurogênico
+
+**Status:** próximo.
+
+**Tese:** ambos são distributivos, mas a quebra causal é diferente.
+
+**Engine planejado:**
+
+```text
+anafilático → RVS↓ + leak↑ + broncoespasmo/edema + FC compensatória usual
+neurogênico → tônus simpático↓ + capacitância venosa↑ + FC inapropriadamente baixa/normal
+```
+
+**Erro cognitivo:** todo distributivo é séptico; todo choque faz taquicardia.
+
+**Pontes:** M9, M20, M21.
+
+**Firewall SaMD:** sem dose de adrenalina, sem algoritmo de anafilaxia, sem decisão de via aérea.
+
+---
+
+# BLOCO IV · Integração e resgate
+
+## 23 · Choque misto
+
+**Status:** planejado.
+
+**Tese:** paciente real frequentemente quebra mais de um termo.
+
+**Engine:** composição de falhas simultâneas.
+
+**Exemplos didáticos:** séptico+cardiogênico, hipovolêmico+obstrutivo, cardiogênico+hipoxemia.
+
+---
+
+## 24 · O coração-pulmão
+
+**Status:** planejado.
+
+**Tese:** ventilação altera pré-carga, pós-carga, retorno venoso e VD.
+
+**Pontes:** braço 1, M17, M18, M19.
+
+---
+
+## 25 · Ressuscitação volêmica
+
+**Status:** planejado.
+
+**Tese:** volume é intervenção física com benefício e custo.
+
+**Foco:** Pmsf, retorno venoso, glicocálice, congestão, fluid creep.
+
+**Firewall SaMD:** mecanismo, sem protocolo de bolus.
+
+---
+
+## 26 · Choque críptico/compensado
+
+**Status:** planejado.
+
+**Tese:** PAM normal pode mascarar falência de entrega.
+
+**Foco:** lactato, perfusão periférica, RVS compensatória, reserva acabando.
+
+---
+
+## 27 · Os 4 perfis · radar
+
+**Status:** planejado.
+
+**Tese:** frio/quente × seco/úmido é mapa de hipóteses fisiológicas, não diagnóstico fechado.
+
+**Foco:** integração visual dos termos quebrados.
+
+---
+
+## 28 · Vasopressores & inotrópicos
+
+**Status:** planejado.
+
+**Tese:** droga deve ser ensinada como receptor → termo da equação.
+
+**Exemplos mecanísticos:** α1→RVS; β1→contratilidade/FC; β2→vasodilatação/metabolismo; V1→RVS.
+
+**Firewall SaMD:** sem dose, sem titulação, sem alvo individualizado.
+
+---
+
+## 29 · Capstone · caso integrado
+
+**Status:** planejado.
+
+**Tese:** o aluno precisa ler múltiplas variáveis, reconhecer compensações e identificar termos quebrados simultâneos.
+
+**Formato ideal:** caso progressivo + tutor gráfico dinâmico + mapa causal final.
+
+---
+
+## 2. Próximo build obrigatório
+
+O próximo build deve ser:
+
+```text
+M22 · anafilático × neurogênico
+```
+
+Antes de escrever HTML:
+
+```text
+1. especificar engine em build/m22/model22.js
+2. escrever invariantes em build/m22/test22.node.js
+3. aplicar SAFETY.md explicitamente
+4. só então construir perfunde22.html
+```
+
+M22 deve ser o primeiro módulo construído integralmente sob `MODULE_CONTRACT.md`.
