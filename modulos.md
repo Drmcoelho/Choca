@@ -6,9 +6,9 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M22
+publicados: M0…M22 · M24 (coração-pulmão, adiantado)
 próximo: M23 · choque misto
-planejados: M23…M30
+planejados: M23 · M25…M30
 ```
 
 ---
@@ -408,11 +408,17 @@ neurogênico → tônus simpático↓ → RVS↓ + capacitância venosa↑ (pré
 
 ## 24 · O coração-pulmão
 
-**Status:** planejado.
+**Status:** publicado (`perfunde24.html` · `build/m24/*`).
 
-**Tese:** ventilação altera pré-carga, pós-carga, retorno venoso e VD.
+**Tese:** a ventilação é hemodinâmica — a pressão intratorácica reescreve de uma vez o retorno venoso (pré-carga do VD), a pós-carga do VD (PVR em U no volume pulmonar) e a pós-carga do VE (transmural).
 
-**Pontes:** braço 1, M17, M18, M19, M30.
+**Variável escondida:** a pressão intratorácica e o ventrículo que ela toca.
+
+**Erro cognitivo:** "pressão positiva oxigena, logo ajuda todo mundo" — ignora que a mecânica do retorno venoso pode dominar.
+
+**Engine:** `corPulmao(p)` (Guyton com cachoeira venosa, PVR em U, pós-carga transmural do VE, Frank–Starling saturante; reusa `pam` do m9). Discriminador computado: a **curva DC × PEEP** (`peepOtima`) — cai (pré-carga-dependente), tem ótimo interior (atelectásico recrutável) ou sobe (VE congesto). Painel dos **quatro termos** movidos pela pressão positiva (`pressaoTermos`) e a pérola **a CVP engana** (`cvpEngana`).
+
+**Pontes:** M5 (Guyton/retorno venoso), M7 (pós-carga/alça PV), M9 (PAM macro), M17 (VD), M25 (volume).
 
 ---
 
