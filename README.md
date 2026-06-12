@@ -20,9 +20,8 @@ Estado curricular atual:
 
 - **M0–M2** — fundamentos do transporte, CaO₂ e curva de oxi-hemoglobina.
 - **M3–M8** — determinantes: débito cardíaco, pré-carga/Guyton, Frank-Starling, pós-carga/alça PV, DO₂/VO₂.
-- **M9–M12** — inversão causal, monitorização, microcirculação e lactato.
-- **M13–M18** — choques hipovolêmico, cardiogênico, VD e obstrutivo.
-- **M19–M21** — capstone obstrutivo, distributivo e séptico.
+- **M9–M13** — inversão causal, monitorização, POCUS/acessos, microcirculação e lactato.
+- **M14–M21** — choques: hipovolêmico, hemorrágico/não-hemorrágico, cardiogênico, VD, obstrutivo, capstone obstrutivo, distributivo e séptico.
 - **Próximo módulo real:** `M22 · anafilático × neurogênico`.
 
 ---
@@ -47,15 +46,16 @@ A regra é binária: **0 falhas ou não entra**.
 
 ## Documentação essencial
 
-- `PERFUNDA.md` — constituição do braço: identidade, tese, invariantes, fronteira SaMD.
-- `CHOQUE.md` — domínio clínico-fisiológico: taxonomia, engines e âncoras.
-- `modulos.md` — blueprint curricular e pedagógico.
+- `PERFUNDA.md` — constituição do braço: identidade, tese, invariantes, escada canônica e fronteira SaMD.
+- `CHOQUE.md` — domínio clínico-fisiológico: taxonomia, engines, assinaturas e âncoras.
+- `modulos.md` — blueprint curricular e pedagógico, alinhado ao índice publicado.
 - `AGENTS.md` — rito operacional para agentes/codex: como construir, validar e entregar.
 - `ARCHITECTURE.md` — arquitetura técnica e alvo de excelência.
 - `MODULE_CONTRACT.md` — contrato formal de qualquer novo módulo.
 - `SAFETY.md` — fronteira clínica, SaMD e proibições absolutas.
-- `ROADMAP.md` — plano de evolução para sair de coleção de HTMLs e virar plataforma fisiológica verificável.
-- `DOCUMENTATION_STATUS.md` — estado documental atual e dívida explícita de reconciliação.
+- `ROADMAP.md` — plano de evolução para plataforma fisiológica verificável.
+- `DOCUMENTATION_STATUS.md` — estado documental reconciliado.
+- `curriculum.json` — manifesto curricular legível por máquina.
 
 ---
 
@@ -107,15 +107,19 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A próxima etapa não é apenas adicionar `perfunde22.html`. É elevar a maturidade estrutural:
+A documentação estrutural foi consolidada e reconciliada. A próxima etapa concreta é construir `M22 · anafilático × neurogênico` sob o novo padrão documental:
 
-1. consolidar documentação;
-2. reconciliar a numeração histórica dos documentos centrais;
-3. extrair um core fisiológico compartilhado;
-4. criar contrato formal de módulo;
-5. refatorar M9, M20 e M21 como prova de arquitetura;
-6. construir M22 já no padrão novo;
-7. criar manifesto curricular legível por máquina;
-8. endurecer testes, links, acessibilidade e consistência visual.
+```text
+1. especificar variáveis de estado
+2. escrever build/m22/model22.js
+3. escrever build/m22/test22.node.js
+4. construir perfunde22.html
+5. escrever build/m22/validate22.js
+6. atualizar package.json e perfunde.html
+7. atualizar curriculum.json para status published
+8. rodar npm run check
+```
+
+Em paralelo, a próxima melhoria estrutural é extrair gradualmente um core fisiológico compartilhado para oxigênio, hemodinâmica e microcirculação, preservando o HTML final single-file.
 
 O alvo final é um sistema em que cada botão obedeça à fisiologia, cada fórmula seja testável, cada erro do aluno revele uma falha conceitual e cada módulo pertença a um mapa causal maior.
