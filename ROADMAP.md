@@ -2,7 +2,7 @@
 
 Este roadmap organiza a transição de módulos excelentes porém ainda artesanais para uma plataforma fisiológica educacional verificável.
 
-O critério de maturidade não é quantidade de páginas. É coerência entre fisiologia, engine, UI, avaliação, documentação e segurança.
+O critério de maturidade não é quantidade de páginas. É coerência entre fisiologia, engine, UI, avaliação, documentação, segurança e prova global de domínio.
 
 ---
 
@@ -18,12 +18,19 @@ O repositório contém:
 - `package.json` com `npm run check`;
 - GitHub Actions para o portão de validação;
 - documentação estrutural reconciliada;
-- `curriculum.json` como manifesto curricular inicial.
+- `curriculum.json` como manifesto curricular inicial;
+- `M30_ASSESSMENT_SPEC.md` como especificação do exame global.
 
 Próximo módulo operacional:
 
 ```text
 M22 · anafilático × neurogênico
+```
+
+Fechamento avaliativo planejado:
+
+```text
+M30 · revisão global · exame de domínio · 100 questões
 ```
 
 ---
@@ -72,6 +79,23 @@ Divergência resolvida:
 M21 = séptico
 M22 = anafilático × neurogênico
 M23–M29 = integração e resgate
+M30 = revisão global / exame de domínio
+```
+
+### Fase 1.5 — Especificação do M30
+
+**Status:** concluída.
+
+Entregue:
+
+```text
+M30_ASSESSMENT_SPEC.md
+```
+
+Critério cumprido:
+
+```text
+M30 definido como prova global de 100 questões, em quatro quartos, com módulos embaralhados, dificuldade crescente, distribuição A/B/C/D controlada e gabarito ultra-robusto
 ```
 
 ---
@@ -234,12 +258,13 @@ checador de ausência de doses proibidas
 checador de IDs mínimos
 checador de tutor
 checador de acessibilidade básica
+checador M30: 100 questões, 4 quartos, letras 15–35, gabarito robusto
 ```
 
 Critério de pronto:
 
 ```text
-um módulo não pode quebrar cromo, segurança, índice ou numeração sem o CI acusar
+um módulo não pode quebrar cromo, segurança, índice, numeração ou avaliação sem o CI acusar
 ```
 
 ---
@@ -264,7 +289,35 @@ Regra: integração só deve avançar quando os módulos determinantes estiverem
 
 ---
 
-## 8. Critério de projeto supremo
+## 8. Fase 7 — M30 · exame global
+
+**Status:** planejada, especificada.
+
+Construção em quatro entregas:
+
+```text
+Parte 1 → questões 1–25
+Parte 2 → questões 26–50
+Parte 3 → questões 51–75
+Parte 4 → questões 76–100
+```
+
+Regras centrais:
+
+```text
+módulos em ordem aleatória
+dificuldade crescente por quarto
+cada letra correta entre 15 e 35 no total
+sem padrão explorável
+sem alternativa correta por tamanho, número maior ou posição
+gabarito explica correta e distratores
+```
+
+M30 só deve ser publicado depois que M22–M29 estiverem estáveis o suficiente para serem avaliados.
+
+---
+
+## 9. Critério de projeto supremo
 
 O projeto atinge estado excelente quando cada módulo responde, sem ambiguidade:
 
@@ -281,4 +334,4 @@ qual módulo anterior é necessário?
 qual módulo posterior fica preparado?
 ```
 
-Enquanto essas dez perguntas não forem respondidas para todos os módulos, ainda há trabalho estrutural.
+E quando M30 prova, em 100 questões, que o aluno sustenta esse mapa causal fora da ordem curricular e sem pistas artificiais.
