@@ -2,9 +2,9 @@
 // DOIS DISTRIBUTIVOS NÃO-SÉPTICOS, MESMA RVS↓, FC OPOSTA. Capstone do m20 (distributivo).
 // Reusa pam(DC,RVS,PVC) do m9. A quebra compartilhada é a RVS; o DISCRIMINADOR é a FC:
 //   ANAFILÁTICO  → simpático INTACTO → TAQUICARDIA (+ leak capilar + broncoespasmo).
-//   NEUROGÊNICO  → simpático PERDIDO  → o ÚNICO choque SEM taquicardia (BRADICARDIA).
+//   NEUROGÊNICO  → simpático PERDIDO  → classicamente SEM taquicardia compensatória (BRADICARDIA).
 // E a sagacidade farmacológica: a ADRENALINA é o agente da anafilaxia porque move QUATRO
-// termos de uma vez (α→RVS e sela o leak; β1→FC/inotropia; β2→broncodilata) — um α-puro
+// termos de uma vez (α→RVS e mitiga o leak; β1→FC/inotropia; β2→broncodilata) — um α-puro
 // corrige só a RVS e deixa o broncho/leak. Funções PURAS. Âncoras: CHOQUE.md §3 · modulos.md §22.
 
 // ---- macro: PAM = PVC + DC·RVS/80 (RVS dyn·s·cm⁻⁵; idêntico ao m9) ----
@@ -25,11 +25,12 @@ function caO2(sat){ return 1.34*BASE.Hb*sat + 0.003*90; }   // conteúdo arteria
 // Estado dado os mecanismos.
 // p = { tonus(0..1→RVS), simpatico(0..1→FC), vazamento(0..1 leak/venodilatação), epi(0..1), broncho(0..1) }
 function distAN(p){
-  var B=BASE, tonus=p.tonus, simp=p.simpatico, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
+  // guarda: p ausente vira {} e cada mecanismo default 0 — entrada nula/incompleta degrada para basal, nunca NaN nem TypeError.
+  p=p||{}; var B=BASE, tonus=p.tonus||0, simp=p.simpatico||0, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
   var RVSdyn = clampv(B.RVS_floor + B.kTone*tonus + B.kEpiAlpha*epi, 200, 2400);
   var HR = clampv(B.HR_brady + B.HR_span*simp + B.kEpiChrono*epi, 35, 175);
   var fillBonus = clampv((78-HR)/78, 0, 0.5)*B.kFill;          // bradicardia → mais enchimento por batida
-  var leakEff = vaz*(1 - B.kEpiSeal*epi);                       // a adrenalina (α) SELA o vazamento
+  var leakEff = vaz*(1 - B.kEpiSeal*epi);                       // a adrenalina (α) MITIGA o impacto do vazamento
   var preloadF = clampv(1 - B.kLeak*leakEff, 0.25, 1);
   var SV = B.SVmax*preloadF*(1+fillBonus)*(1+B.kInoEpi*epi);
   var DC = HR*SV/1000;
@@ -53,7 +54,7 @@ function classeAN(R){
   if(!(vaso&&hypo)) return (hypo||vaso)?'limitrofe':'normal';
   return R.HR>=100 ? 'anafilatico' : (R.HR<=65 ? 'neurogenico' : 'distributivo');
 }
-// A PÉROLA: o único choque SEM taquicardia (distributivo com FC baixa).
+// A PÉROLA (no modelo didático): distributivo SEM taquicardia compensatória (FC baixa).
 function neurogenicoSignature(R){ return R.RVSdyn<900 && R.PAM<70 && R.HR<=65; }
 
 // Os QUATRO termos que a adrenalina move — antes (epi=0) vs com a epi pedida.

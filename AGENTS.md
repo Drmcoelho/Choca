@@ -46,7 +46,7 @@ npm test          # motores fisiológicos
 npm run validate  # HTML, DOM, tutor, gráficos, cromo e disclaimers
 ```
 
-A cadeia atual cobre módulos `0…21`. Ao criar `M22`, atualizar `package.json` com `test:22`, `validate:22` e a cadeia agregada.
+A cadeia atual cobre módulos `0…22`. Ao criar `M23`, atualizar `package.json` com `test:23`, `validate:23` e a cadeia agregada.
 
 ---
 

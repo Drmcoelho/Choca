@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 22 · Anafilático × neurogênico</title>
+<meta name="description" content="Dois distributivos não-sépticos, mesma RVS↓, FC oposta: anafilático (simpático intacto → taquicardia, leak, broncoespasmo) × neurogênico (simpático perdido → tipicamente sem taquicardia compensatória). A FC é o discriminador; a adrenalina é o agente que move quatro termos. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:260px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono)}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:190px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 22 · ↳ anafilático × neurogênico</div>
+    <h1>A mesma RVS que cai — e a frequência que trai</h1>
+    <p class="sub">Anafilático e neurogênico são <em>ambos</em> distributivos: a RVS despenca nos dois. Mas o reflexo simpático os separa. No anafilático ele está intacto e a frequência <b>sobe</b>; no neurogênico ele se perde e a frequência <b>não sobe</b> — tipicamente sem taquicardia compensatória. A FC é o discriminador.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="40" y="20" width="120" height="14" rx="3" fill="var(--art)" opacity=".55"/>
+      <text x="40" y="48" fill="var(--ink-faint)" font-size="10" font-family="monospace">RVS↓ (ambos)</text>
+      <polyline fill="none" stroke="var(--art)" stroke-width="2" points="330,30 350,30 360,8 372,44 384,22 396,30 470,30"/>
+      <text x="330" y="48" fill="var(--art)" font-size="10" font-family="monospace">anafilático: FC↑</text>
+      <polyline fill="none" stroke="var(--ven)" stroke-width="2" points="600,27 640,27 700,27 760,27 820,27"/>
+      <text x="600" y="48" fill="var(--ven)" font-size="10" font-family="monospace">neurogênico: FC plana/baixa</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Duas portas, a mesma pressão baixa</h2>
+    <p class="lead">Cinco atos, dois pacientes. A variável escondida é a frequência cardíaca — e o que ela diz sobre o reflexo. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · as duas portas</span><p>Dois choques distributivos chegam quase juntos. Em ambos: PAM baixa, extremidades quentes, RVS estimada baixa. À primeira vista, "o mesmo choque".</p>
+      <div class="vitais"><span>PAM <b>baixa</b> (ambos)</span><span>RVS <b>↓</b> (ambos)</span><span>pele <b>quente</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Distributivo de RVS baixa — deve ser séptico, e todo choque faz taquicardia." Duas suposições, ambas frágeis.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Paciente A está <b>taquicárdico</b>, com urticária, sibilos e edema labial após um antibiótico. Paciente B, após trauma raquimedular alto, está com FC <b>normal-baixa</b> e pele seca e quente. Mesma RVS↓, <b>FC oposta</b>.</p>
+      <div class="vitais"><span>A · FC <b>128</b></span><span>A · sibilos/urticária</span><span>B · FC <b>56</b></span><span>B · sem broncho</span></div></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>No <b>anafilático</b> o simpático está intacto: a vasoplegia imuno-mediada derruba a RVS, o extravasamento capilar (leak) esvazia a pré-carga e o broncoespasmo ataca a oxigenação — e o coração responde com <b>taquicardia</b>. No <b>neurogênico</b> a lesão simpática <em>é</em> a causa: sem tônus, a RVS cai, a capacitância venosa aumenta, a pré-carga cai — e a FC fica <b>inapropriadamente baixa</b>. É tipicamente sem taquicardia compensatória.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O discriminador FC × RVS e o painel da adrenalina mostram por que a frequência separa os dois e por que um agente que move <em>quatro</em> termos é o agente da anafilaxia. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">assinatura autonômica</b>. A RVS↓ é comum; o que discrimina é a <b>frequência cardíaca</b>: simpático intacto → taquicardia (anafilático); simpático perdido → bradicardia relativa (neurogênico). E há um terceiro distributivo — o <b>séptico</b> (módulo 21) — em que a quebra é de <em>extração</em> (micro/mito), não de tônus. Pontes aos módulos 20 (categoria) e 21 (séptico).</div></details>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Da RVS comum à frequência que separa.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">O que anafilático e neurogênico têm em comum?</div><div class="aa">São <b>distributivos</b>: a <b>RVS cai</b> nos dois e a PAM desaba apesar de volemia e bomba inicialmente preservadas. A RVS↓ sozinha <em>não</em> distingue.</div></div>
+      <div class="step"><div class="qq">Então o que os separa?</div><div class="aa">O <b>reflexo simpático</b>. No anafilático ele está <b>intacto</b> → o coração acelera (taquicardia). No neurogênico ele está <b>perdido</b> → a frequência não sobe. A <b>FC é o discriminador</b>.</div></div>
+      <div class="step"><div class="qq">Por que o neurogênico não taquicardiza?</div><div class="aa">Porque a lesão simpática <em>é</em> o mecanismo: sem tônus α e sem cronotropismo β, a RVS cai, a <b>capacitância venosa</b> aumenta (pré-carga cai) e a FC fica baixa/normal. É a <b>assinatura discriminadora</b> — a pérola: no modelo, o distributivo em que a FC não acompanha a queda da RVS.</div></div>
+      <div class="step"><div class="qq">E o que mais o anafilático quebra além da RVS?</div><div class="aa">O <b>extravasamento capilar</b> (leak) esvazia a pré-carga e o <b>broncoespasmo/edema de via aérea</b> ataca a oxigenação. Três frentes: vasoplegia, leak e eixo respiratório — não só RVS.</div></div>
+      <div class="step"><div class="qq">Por que a adrenalina é o agente da anafilaxia?</div><div class="aa">Porque move <b>quatro termos de uma vez</b>: α1 sobe a RVS e <b>mitiga o leak</b>; β1 sobe FC e inotropismo; β2 <b>broncodilata</b>. Um α-puro corrige só a RVS e <em>deixa</em> o broncho e o leak. Aqui é mecanismo, não dose.</div></div>
+      <div class="step"><div class="qq">E o terceiro distributivo, o séptico?</div><div class="aa">No séptico a RVS também cai, mas a quebra nuclear é de <b>extração</b> (microcirculação e mitocôndria), com o paradoxo da SvO₂ alta — outro mecanismo, outro módulo (21). Distributivo não é sinônimo de séptico.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o discriminador FC × RVS</h2>
+    <p class="lead">Os dois fenótipos caem na <span style="color:var(--art)">faixa distributiva</span> (RVS↓), mas em <b>alturas opostas de FC</b>. Mova as alavancas e veja o ponto migrar entre <span style="color:var(--art)">anafilático</span> (em cima) e <span style="color:var(--ven)">neurogênico</span> (embaixo).</p>
+    <div class="plotwrap">
+      <canvas id="signature" class="casc" width="820" height="260" aria-label="discriminador FC versus RVS"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>anafilático (taqui)</span><span><i style="background:var(--ven)"></i>neurogênico (bradi)</span>
+        <span><i style="background:var(--warn)"></i>distributivo indeterminado</span><span><i style="background:var(--ok)"></i>fora da faixa distributiva</span>
+      </div>
+      <div class="opbox" id="opbox-sig"></div>
+    </div>
+    <h3>A adrenalina move quatro termos (por que é o agente)</h3>
+    <div class="plotwrap">
+      <canvas id="epiPanel" class="plot" width="820" height="200" aria-label="quatro termos movidos pela adrenalina"></canvas>
+      <div class="opbox" id="opbox-epi"></div>
+      <div class="pharm">
+        <b>Farmacologia (receptor → termo · mecanismo, sem dose):</b><br>
+        adrenalina → <b>α1</b> RVS↑ e mitiga o leak · <b>β1</b> FC/inotropismo↑ · <b>β2</b> broncodilata — quatro termos de uma vez. Vasopressor α-puro (ex.: fenilefrina) → só α1 → RVS↑ · vasopressina → V1 → RVS↑ não-adrenérgica.
+        <span class="fw">Um α-puro corrige a RVS e deixa o broncho e o leak abertos. Mecanismo, não conduta.</span>
+      </div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Tônus α (→RVS) <span class="v"><span id="vTonus">15</span> %</span></label><input id="iTonus" type="range" min="0" max="100" step="1" value="15"></div>
+        <div class="ctrl"><label>Tônus simpático (→FC) <span class="v"><span id="vSimp">95</span> %</span></label><input id="iSimp" type="range" min="0" max="100" step="1" value="95"></div>
+        <div class="ctrl"><label>Extravasamento (leak) <span class="v"><span id="vLeak">70</span> %</span></label><input id="iLeak" type="range" min="0" max="100" step="5" value="70"></div>
+        <div class="ctrl"><label>Broncoespasmo <span class="v"><span id="vBroncho">80</span> %</span></label><input id="iBroncho" type="range" min="0" max="100" step="5" value="80"></div>
+        <div class="ctrl"><label>Adrenalina (α+β) <span class="v"><span id="vEpi">0</span> %</span></label><input id="iEpi" type="range" min="0" max="100" step="5" value="0"></div>
+      </div>
+      <div class="hint">Tônus simpático alto = anafilático (taqui). Tônus simpático baixo + sem broncho = neurogênico (bradi). A adrenalina move RVS, DC, pré-carga e SaO₂ juntos.</div>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · separe os distributivos pela frequência</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito</b> classifica pela assinatura FC × RVS; os banners explicam o discriminador, o leak, o broncho e o que a adrenalina (vs. um α-puro) corrige.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="anafilatico">Anafilático</button>
+      <button class="preset" type="button" data-preset="ana_epi">Anafilático + adrenalina</button>
+      <button class="preset" type="button" data-preset="ana_alpha">Anafilático + α-puro (contraste)</button>
+      <button class="preset" type="button" data-preset="neurogenico">Neurogênico (a pérola)</button>
+      <button class="preset" type="button" data-preset="indeterminado">Distributivo indeterminado</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="signatureLab" class="casc" width="820" height="260" aria-label="discriminador no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Assinatura distributiva</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-discriminador"><b>RVS↓ é comum — a FC discrimina.</b> Os dois fenótipos compartilham a vasoplegia; quem separa é a frequência: simpático intacto (taqui) × simpático perdido (bradi).</div>
+      <div class="banner art" id="ban-anafilatico"><b>Anafilático.</b> Simpático intacto → taquicardia. Some-se vasoplegia, extravasamento capilar (leak → pré-carga↓) e broncoespasmo/edema (SaO₂↓). Vasoplegia <em>imuno-extravasativa-broncospástica</em>.</div>
+      <div class="banner ven" id="ban-neurogenico"><b>Neurogênico · a pérola.</b> Perda simpática → RVS↓ + capacitância venosa↑ (pré-carga↓) e a FC <em>não sobe</em>. Classicamente sem taquicardia compensatória; broncho e leak explosivo não são o eixo.</div>
+      <div class="banner art" id="ban-leak"><b>Extravasamento capilar.</b> O leak esvazia a pré-carga: mesmo com a RVS tratada, o enchimento permanece baixo se a fenda capilar não se sela.</div>
+      <div class="banner art" id="ban-broncho"><b>Broncoespasmo / via aérea.</b> O eixo respiratório derruba a SaO₂. Corrigir só a pressão não corrige a oxigenação.</div>
+      <div class="banner ven" id="ban-epi"><b>A adrenalina move quatro termos.</b> α1 (RVS↑ e mitiga o leak) · β1 (FC/inotropismo↑) · β2 (broncodilata). É por isso que ela — não um α-puro — é o agente da anafilaxia. Mecanismo, sem dose.</div>
+      <div class="banner ven" id="ban-alpha"><b>α-puro é incompleto aqui.</b> Ele restaura a PAM (RVS↑), mas deixa o broncho e o leak abertos: a SaO₂ segue baixa e a pré-carga, esvaziada.</div>
+      <div class="banner ven" id="ban-septico"><b>FC intermediária = indeterminado.</b> A frequência ainda não discriminou. Lembre do terceiro distributivo, o séptico (módulo 21), cuja quebra é de <em>extração</em>, não de tônus.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha o discriminador (ou o painel da adrenalina) ao vivo. Leia a frequência e a assinatura — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a assinatura distributiva (FC × RVS) e o mapa receptor→termo — <b>nunca</b> dose, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ As frequências são <b>tendências didáticas</b>: a taquicardia anafilática pode faltar em colapso extremo, uso de β-bloqueador ou contexto, e a bradicardia neurogênica admite exceções (mecanismo, não regra). → "Leak", "tônus" e "broncho" são <b>fatores normalizados</b>, não medidas. → A SaO₂ aqui depende só do broncho idealizado; a oxigenação real é multifatorial. → O lactato é um <b>proxy</b> de perfusão, não a via séptica de extração (módulo 21). → A adrenalina é mostrada como mecanismo que move quatro termos, jamais como dose ou protocolo de anafilaxia. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde20.html">Módulo 20 · Distributivo (categoria)</a> — a RVS↓ como termo quebrado e a inversão da extração.</div>
+    <div class="ponte">→ <a href="perfunde21.html">Módulo 21 · ↳ séptico</a> — o terceiro distributivo: quebra de extração (micro/mito), não de tônus.</div>
+    <div class="ponte">→ <a href="perfunde9.html">Módulo 9 · PAM = DC × RVS</a> — a equação macro reusada no motor (RVS dyn·s·cm⁻⁵).</div>
+    <div class="ponte"><span class="pend">Adiante → Módulo 28 · Vasopressores &amp; inotrópicos — o mapa receptor→termo completo.</span></div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 22
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model22.js inlined) ===================== -->
+<script>
+var BASE={
+  RVS_floor:350, kTone:1100, kEpiAlpha:560,
+  HR_brady:40, HR_span:80, kEpiChrono:22,
+  SVmax:70, kLeak:0.50, kEpiSeal:0.70,
+  kFill:0.55, kInoEpi:0.15,
+  PVC:4, Hb:14, SaO2_norm:0.98, kBroncho:0.18, kEpiBroncho:0.85,
+  demand:250, kLac:0.020, LAC_MAX:12
+};
+function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function pam(dc,rvsDyn,pvc){ if(pvc===undefined)pvc=4; return pvc + dc*rvsDyn/80; }   // PAM = PVC + DC·RVS/80 (idêntico ao m9)
+function caO2(sat){ return 1.34*BASE.Hb*sat + 0.003*90; }                              // conteúdo arterial (mL/dL)
+function distAN(p){
+  p=p||{}; var B=BASE, tonus=p.tonus||0, simp=p.simpatico||0, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
+  var RVSdyn=clampv(B.RVS_floor + B.kTone*tonus + B.kEpiAlpha*epi, 200, 2400);
+  var HR=clampv(B.HR_brady + B.HR_span*simp + B.kEpiChrono*epi, 35, 175);
+  var fillBonus=clampv((78-HR)/78,0,0.5)*B.kFill;
+  var leakEff=vaz*(1 - B.kEpiSeal*epi);
+  var preloadF=clampv(1 - B.kLeak*leakEff, 0.25, 1);
+  var SV=B.SVmax*preloadF*(1+fillBonus)*(1+B.kInoEpi*epi);
+  var DC=HR*SV/1000;
+  var PAM=pam(DC,RVSdyn,B.PVC);
+  var bronchoEff=broncho*(1 - B.kEpiBroncho*epi);
+  var SaO2=clampv(B.SaO2_norm - B.kBroncho*bronchoEff, 0.68, 0.99);
+  var CaO2=caO2(SaO2), DO2=DC*CaO2*10;
+  var perfDef=Math.max(0,70-PAM)/70 + Math.max(0,3.5-DC)/3.5;
+  var lactate=clampv(1.0 + B.kLac*perfDef*90, 1.0, B.LAC_MAX);
+  return { tonus:tonus, simpatico:simp, vazamento:vaz, epi:epi, broncho:broncho,
+    RVSdyn:RVSdyn, HR:HR, SV:SV, DC:DC, PAM:PAM, PVC:B.PVC,
+    preloadF:preloadF, leakEff:leakEff, bronchoEff:bronchoEff, SaO2:SaO2, CaO2:CaO2, DO2:DO2, lactate:lactate };
+}
+function padraoFC(R){ if(R.HR>=100) return 'taqui'; if(R.HR<=65) return 'bradi'; return 'normal'; }
+function classeAN(R){
+  var vaso=R.RVSdyn<900, hypo=R.PAM<65;
+  if(!(vaso&&hypo)) return (hypo||vaso)?'limitrofe':'normal';
+  return R.HR>=100 ? 'anafilatico' : (R.HR<=65 ? 'neurogenico' : 'distributivo');
+}
+function neurogenicoSignature(R){ return R.RVSdyn<900 && R.PAM<70 && R.HR<=65; }
+function epiTermos(p){
+  var sem=distAN(Object.assign({},p,{epi:0})), com=distAN(p);
+  return {
+    rvs:{ sem:sem.RVSdyn, com:com.RVSdyn },
+    dc:{ sem:sem.DC, com:com.DC },
+    preload:{ sem:sem.preloadF, com:com.preloadF },
+    sao2:{ sem:sem.SaO2, com:com.SaO2 },
+    nTermos:( (com.RVSdyn>sem.RVSdyn+30?1:0) + (com.DC>sem.DC+0.3?1:0) + (com.preloadF>sem.preloadF+0.03?1:0) + (com.SaO2>sem.SaO2+0.01?1:0) )
+  };
+}
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var state={ tonus:0.15, simpatico:0.95, vazamento:0.7, epi:0, broncho:0.8 };
+  function rotulo(c){ return c==='anafilatico'?'anafilático':c==='neurogenico'?'neurogênico':c==='distributivo'?'distributivo indeterminado':c==='limitrofe'?'limítrofe':'normal'; }
+
+  // ---- discriminador: ponto em FC × RVS ----
+  function drawSignature(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var R=distAN(p);
+      var padL=48,padR=16,padT=16,padB=28, pw=W-padL-padR, ph=H-padT-padB;
+      var RVSmin=200,RVSmax=2400, HRmin=35,HRmax=175;
+      var X=function(v){ return padL+((clampv(v,RVSmin,RVSmax)-RVSmin)/(RVSmax-RVSmin))*pw; };
+      var Y=function(v){ return padT+ph-((clampv(v,HRmin,HRmax)-HRmin)/(HRmax-HRmin))*ph; };
+      // faixa distributiva (RVS<900)
+      ctx.fillStyle='rgba(229,57,78,.06)'; ctx.fillRect(padL,padT,X(900)-padL,ph);
+      // limiares
+      ctx.strokeStyle='#26314a'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.moveTo(X(900),padT); ctx.lineTo(X(900),padT+ph); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,Y(100)); ctx.lineTo(padL+pw,Y(100)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,Y(65)); ctx.lineTo(padL+pw,Y(65)); ctx.stroke();
+      ctx.setLineDash([]);
+      // eixos
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace';
+      ctx.fillText('RVS (dyn·s·cm⁻⁵) →', padL, padT+ph+18);
+      ctx.fillText('900', X(900)-9, padT+ph+18);
+      ctx.save(); ctx.translate(13,padT+ph/2+30); ctx.rotate(-Math.PI/2); ctx.fillText('FC (bpm)',0,0); ctx.restore();
+      ctx.fillStyle='#97a3ba'; ctx.fillText('taqui ≥100', padL+4, Y(100)-4); ctx.fillText('bradi ≤65', padL+4, Y(65)+12);
+      // zonas
+      ctx.fillStyle='rgba(229,57,78,.45)'; ctx.fillText('ANAFILÁTICO', X(450)-6, Y(140));
+      ctx.fillStyle='rgba(63,130,230,.55)'; ctx.fillText('NEUROGÊNICO', X(450)-6, Y(48));
+      // ponto
+      var cls=classeAN(R);
+      var col= cls==='anafilatico'?'#e5394e': cls==='neurogenico'?'#3f82e6': cls==='normal'?'#3ec78d':'#ffb454';
+      var px=X(R.RVSdyn), py=Y(R.HR);
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(px,py,7,0,2*Math.PI); ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='#e9eef7'; ctx.font='11px monospace';
+      ctx.fillText('RVS '+Math.round(R.RVSdyn)+' · FC '+Math.round(R.HR)+' · PAM '+Math.round(R.PAM)+' · '+rotulo(cls), padL+4, padT+12);
+      return R;
+    }catch(e){ return {}; }
+  }
+  // ---- adrenalina: 4 termos, sem vs com epi ----
+  function drawEpi(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var et=epiTermos(p);
+      var terms=[
+        {label:'RVS (α1)', sem:et.rvs.sem, com:et.rvs.com, max:2400, unit:''},
+        {label:'DC (β1)', sem:et.dc.sem, com:et.dc.com, max:12, unit:''},
+        {label:'pré-carga (mitiga leak)', sem:et.preload.sem*100, com:et.preload.com*100, max:100, unit:'%'},
+        {label:'SaO₂ (β2)', sem:et.sao2.sem*100, com:et.sao2.com*100, max:100, unit:'%'}
+      ];
+      var padL=132,padR=16,padT=12,padB=18, pw=W-padL-padR;
+      var n=terms.length, gap=10, rh=(H-padT-padB-gap*(n-1))/n;
+      terms.forEach(function(t,i){
+        var y=padT+i*(rh+gap);
+        var xs=function(v){ return (clampv(v,0,t.max)/t.max)*pw; };
+        ctx.fillStyle='#46506b'; ctx.fillRect(padL,y,xs(t.sem),rh*0.42);
+        ctx.fillStyle='#3ec78d'; ctx.fillRect(padL,y+rh*0.5,xs(t.com),rh*0.42);
+        ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.textAlign='right';
+        ctx.fillText(t.label, padL-8, y+rh/2+3); ctx.textAlign='left';
+        ctx.fillStyle='#7c879e'; ctx.fillText('sem', padL+xs(t.sem)+4, y+rh*0.34);
+        ctx.fillStyle='#bdf0d8'; ctx.fillText('epi', padL+xs(t.com)+4, y+rh*0.5+rh*0.34);
+      });
+      ctx.fillStyle='#ffcf5c'; ctx.font='11px monospace';
+      ctx.fillText(et.nTermos+' / 4 termos movidos pela adrenalina', padL, H-4);
+      return et;
+    }catch(e){ return {}; }
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||260,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vTonus').textContent=Math.round(state.tonus*100);
+    $('vSimp').textContent=Math.round(state.simpatico*100);
+    $('vLeak').textContent=Math.round(state.vazamento*100);
+    $('vBroncho').textContent=Math.round(state.broncho*100);
+    $('vEpi').textContent=Math.round(state.epi*100);
+    var R=drawOn('signature', drawSignature, state); if(!R.RVSdyn) R=distAN(state);
+    $('opbox-sig').innerHTML='RVS <b>'+Math.round(R.RVSdyn)+'</b> dyn · FC <b>'+Math.round(R.HR)+'</b> ('+padraoFC(R)+') · PAM <b>'+Math.round(R.PAM)+'</b> · SaO₂ '+br(R.SaO2*100,0)+'% · classe <b>'+rotulo(classeAN(R))+'</b>';
+    var et=drawOn('epiPanel', drawEpi, state); if(!et.rvs) et=epiTermos(state);
+    $('opbox-epi').innerHTML='a adrenalina move <b>'+et.nTermos+' de 4</b> termos · RVS '+Math.round(et.rvs.sem)+'→'+Math.round(et.rvs.com)+' · SaO₂ '+br(et.sao2.sem*100,0)+'→'+br(et.sao2.com*100,0)+'% · pré-carga '+br(et.preload.sem*100,0)+'→'+br(et.preload.com*100,0)+'%';
+    renderLab();
+  }
+  function renderLab(){
+    var R=drawOn('signatureLab', drawSignature, state); if(!R.RVSdyn) R=distAN(state);
+    var cls=classeAN(R), pad=padraoFC(R);
+    $('opbox-lab').innerHTML='RVS '+Math.round(R.RVSdyn)+' · FC '+Math.round(R.HR)+' ('+pad+') · PAM '+Math.round(R.PAM)+' · SaO₂ '+br(R.SaO2*100,0)+'% · pré-carga '+br(R.preloadF*100,0)+'%';
+    var vEl=$('lab-veredito'), klass,label,sub;
+    var distributivo=(R.RVSdyn<900 && R.PAM<65);
+    if(cls==='anafilatico'){ klass='crit'; label='ANAFILÁTICO'; sub='RVS↓ + TAQUICARDIA + leak/broncho — simpático intacto'; }
+    else if(cls==='neurogenico'){ klass='crit'; label='NEUROGÊNICO'; sub='RVS↓ + BRADICARDIA — tipicamente sem taquicardia compensatória'; }
+    else if(cls==='distributivo'){ klass='lim'; label='DISTRIBUTIVO INDETERMINADO'; sub='RVS↓ + FC intermediária — a frequência ainda não discriminou'; }
+    else if(cls==='limitrofe'){ klass='lim'; label='LIMÍTROFE'; sub='um eixo alterado, sem quadro distributivo pleno'; }
+    else { klass='ok'; label='RESTAURADO / NORMAL'; sub='RVS e PAM fora da faixa distributiva'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent=sub+' · FC '+Math.round(R.HR)+' · PAM '+Math.round(R.PAM)+' · SaO₂ '+br(R.SaO2*100,0)+'%';
+    show($('ban-discriminador'), distributivo);
+    show($('ban-anafilatico'), cls==='anafilatico');
+    show($('ban-neurogenico'), cls==='neurogenico');
+    show($('ban-leak'), R.leakEff>0.15);
+    show($('ban-broncho'), R.SaO2<0.92);
+    show($('ban-epi'), state.epi>0.3);
+    show($('ban-alpha'), R.PAM>=65 && R.SaO2<0.90 && state.epi<0.05);
+    show($('ban-septico'), cls==='distributivo');
+  }
+  function syncSliders(){ $('iTonus').value=state.tonus*100; $('iSimp').value=state.simpatico*100; $('iLeak').value=state.vazamento*100; $('iBroncho').value=state.broncho*100; $('iEpi').value=state.epi*100; }
+  function setState(p){ for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    var ANA=function(o){return Object.assign({tonus:0.15,simpatico:0.95,vazamento:0.7,epi:0,broncho:0.8},o);};
+    var NEU=function(o){return Object.assign({tonus:0.22,simpatico:0.12,vazamento:0.35,epi:0,broncho:0},o);};
+    T.push({kind:'sig',P:ANA({}), cap:'Distributivo com taquicardia.',
+      q:'RVS baixa + PAM baixa + TAQUICARDIA + sibilos. O fenótipo é:',
+      o:['neurogênico','anafilático','cardiogênico','obstrutivo'], a:1,
+      fb:'Simpático intacto (taquicardia) + vasoplegia + eixo respiratório = anafilático.', hint:'A FC subiu.'});
+    T.push({kind:'sig',P:NEU({}), cap:'Distributivo sem taquicardia.',
+      q:'RVS baixa + PAM baixa + FC baixa/normal, após lesão raquimedular alta. É:',
+      o:['anafilático','séptico hiperdinâmico','neurogênico (tipicamente sem taquicardia)','hipovolêmico'], a:2,
+      fb:'Perda simpática → RVS↓ e a FC não sobe. É a pérola: tipicamente sem taquicardia compensatória.', hint:'A frequência não acompanhou.'});
+    T.push({kind:'sig',P:ANA({}), cap:'O que os dois compartilham.',
+      q:'Entre anafilático e neurogênico, o que NÃO discrimina os dois?',
+      o:['a frequência cardíaca','a RVS baixa (é comum aos dois)','o tônus simpático','a presença de broncoespasmo'], a:1,
+      fb:'A RVS↓ é comum aos dois distributivos — por isso não discrimina. O discriminador é a FC.', hint:'Ambos são vasoplégicos.'});
+    T.push({kind:'sig',P:NEU({}), cap:'A pérola fisiológica.',
+      q:'Por que o neurogênico é tipicamente sem taquicardia compensatória?',
+      o:['porque a volemia está normal','porque a própria perda do tônus simpático tira o cronotropismo','porque há broncoespasmo','porque a RVS está alta'], a:1,
+      fb:'A lesão simpática é o mecanismo: sem α e sem β, RVS↓ e a FC fica baixa/normal.', hint:'A causa e o sinal são o mesmo eixo.'});
+    T.push({kind:'epi',P:ANA({epi:0.85}), cap:'Os quatro termos da adrenalina.',
+      q:'Por que a adrenalina é o agente da anafilaxia, e não um vasopressor α-puro?',
+      o:['porque sobe só a RVS','porque move quatro termos: RVS, DC, pré-carga (mitiga o leak) e SaO₂','porque reduz a demanda','porque baixa a FC'], a:1,
+      fb:'α1 (RVS↑ e mitiga o leak), β1 (FC/inotropismo↑) e β2 (broncodilata): quatro termos de uma vez.', hint:'Conte as barras que sobem.'});
+    T.push({kind:'epi',P:Object.assign(ANA({}),{tonus:0.55}), cap:'α-puro: só a RVS.',
+      q:'Um vasopressor α-puro, na anafilaxia, deixa de corrigir:',
+      o:['a RVS','o broncoespasmo e o extravasamento (β2 e o selo do leak)','a PAM','nada — corrige tudo'], a:1,
+      fb:'O α-puro sobe a RVS e a PAM, mas não broncodilata nem mitiga o leak: SaO₂ baixa e pré-carga esvaziada persistem.', hint:'Falta o β.'});
+    T.push({kind:'sig',P:ANA({}), cap:'O erro cognitivo.',
+      q:'"Todo choque distributivo é séptico e todo choque faz taquicardia." Esse raciocínio falha porque:',
+      o:['está correto','há distributivos não-sépticos e um deles (neurogênico) não taquicardiza','o séptico não é distributivo','a RVS sempre sobe no choque'], a:1,
+      fb:'Anafilático e neurogênico são distributivos não-sépticos; o neurogênico quebra a regra da taquicardia.', hint:'Duas suposições, ambas frágeis.'});
+    T.push({kind:'sig',P:NEU({}), cap:'O eixo venoso.',
+      q:'No neurogênico, além da RVS, o que cai a pré-carga?',
+      o:['o broncoespasmo','o aumento da capacitância venosa (sangue represado no venoso)','o extravasamento capilar explosivo','a hemorragia'], a:1,
+      fb:'A perda do tônus simpático dilata o leito venoso: a capacitância aumenta e o retorno/pré-carga cai.', hint:'Onde o sangue se acumula sem tônus.'});
+    T.push({kind:'epi',P:ANA({epi:0.85}), cap:'Selar o leak.',
+      q:'No painel, a barra "pré-carga" sobe com a adrenalina porque ela:',
+      o:['aumenta a demanda','sela o extravasamento capilar (efeito α) e melhora o enchimento','reduz a FC','desidrata o paciente'], a:1,
+      fb:'O efeito α reduz o leak efetivo → menos extravasamento → pré-carga recupera.', hint:'Menos fenda capilar, mais enchimento.'});
+    T.push({kind:'sig',P:ANA({}), cap:'O terceiro distributivo.',
+      q:'O séptico (módulo 21) difere destes dois porque sua quebra nuclear é:',
+      o:['de tônus simpático','de extração (microcirculação e mitocôndria), com SvO₂ alta paradoxal','de frequência cardíaca','de volemia'], a:1,
+      fb:'No séptico a RVS também cai, mas o nó é a extração — outro mecanismo, com o paradoxo da SvO₂ alta.', hint:'Distributivo ≠ séptico.'});
+    var __tg=[1,3,0,2,1,3,0,2,1,3];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=190; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.kind==='epi'?drawEpi(ctx,W||760,H||190,item.P):drawSignature(ctx,W||760,H||190,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||190); }catch(e){} }); }
+
+  var PRESETS={
+    normal:{tonus:0.78,simpatico:0.45,vazamento:0,epi:0,broncho:0},
+    anafilatico:{tonus:0.15,simpatico:0.95,vazamento:0.7,epi:0,broncho:0.8},
+    ana_epi:{tonus:0.15,simpatico:0.95,vazamento:0.7,epi:0.85,broncho:0.8},
+    ana_alpha:{tonus:0.55,simpatico:0.95,vazamento:0.7,epi:0,broncho:0.8},
+    neurogenico:{tonus:0.22,simpatico:0.12,vazamento:0.35,epi:0,broncho:0},
+    indeterminado:{tonus:0.25,simpatico:0.55,vazamento:0.2,epi:0,broncho:0}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iTonus','tonus'],['iSimp','simpatico'],['iLeak','vazamento'],['iBroncho','broncho'],['iEpi','epi']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    window.recompute=recompute; window.drawSignature=drawSignature; window.drawEpi=drawEpi; window.activateTab=activate; window.setLabState=setState;
+    window.distANFn=distAN; window.classeFn=classeAN; window.padraoFn=padraoFC; window.neuroSigFn=neurogenicoSignature; window.epiTermosFn=epiTermos; window.pamFn=pam; window.caO2Fn=caO2;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>

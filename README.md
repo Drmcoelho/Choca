@@ -22,7 +22,7 @@ Estado curricular atual:
 - **M3–M8** — determinantes: débito cardíaco, pré-carga/Guyton, Frank-Starling, pós-carga/alça PV, DO₂/VO₂.
 - **M9–M13** — inversão causal, monitorização, POCUS/acessos, microcirculação e lactato.
 - **M14–M21** — choques: hipovolêmico, hemorrágico/não-hemorrágico, cardiogênico, VD, obstrutivo, capstone obstrutivo, distributivo e séptico.
-- **M22** — próximo módulo de conteúdo: anafilático × neurogênico.
+- **M22** — publicado: anafilático × neurogênico — discrimina os três distributivos (séptico, anafilático, neurogênico) pela assinatura FC × RVS. Próximo módulo de conteúdo: **M23 · choque misto**.
 - **M23–M29** — integração e resgate.
 - **M30** — revisão global / exame de domínio com 100 questões.
 
@@ -113,14 +113,14 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A documentação estrutural foi consolidada e reconciliada. A próxima etapa concreta é construir `M22 · anafilático × neurogênico` sob o novo padrão documental:
+A documentação estrutural foi consolidada e reconciliada, e `M22 · anafilático × neurogênico` está publicado sob o novo padrão documental. A próxima etapa concreta é construir `M23 · choque misto` no mesmo rito:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m22/model22.js
-3. escrever build/m22/test22.node.js
-4. construir perfunde22.html
-5. escrever build/m22/validate22.js
+2. escrever build/m23/model23.js
+3. escrever build/m23/test23.node.js
+4. construir perfunde23.html
+5. escrever build/m23/validate23.js
 6. atualizar package.json e perfunde.html
 7. atualizar curriculum.json para status published
 8. rodar npm run check

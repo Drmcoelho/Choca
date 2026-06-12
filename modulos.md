@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M21
-próximo: M22 · anafilático × neurogênico
+publicados: M0…M22
+próximo: M23 · choque misto
 planejados: M23…M30
 ```
 
@@ -367,22 +367,26 @@ pneumotórax hipertensivo → retorno venoso
 
 ## 22 · Anafilático × neurogênico
 
-**Status:** próximo.
+**Status:** publicado · `perfunde22.html` + `build/m22/`.
 
-**Tese:** ambos são distributivos, mas a quebra causal é diferente.
+**Tese:** ambos são distributivos (RVS↓ comum), mas a quebra causal difere — e a **FC é o discriminador**.
 
-**Engine planejado:**
+**Engine (`model22.js`):** mecanismos puros `{tonus, simpatico, vazamento, epi, broncho}` → deriva `{RVSdyn, HR, SV, DC, PAM, preloadF, SaO2, lactate}`. Reusa `pam(dc,rvs,pvc)` do M9.
 
 ```text
-anafilático → RVS↓ + leak↑ + broncoespasmo/edema + FC compensatória usual
-neurogênico → tônus simpático↓ + capacitância venosa↑ + FC inapropriadamente baixa/normal
+anafilático → RVS↓ + simpático intacto (taquicardia) + leak↑ (pré-carga↓) + broncoespasmo (SaO₂↓)
+neurogênico → tônus simpático↓ → RVS↓ + capacitância venosa↑ (pré-carga↓) + FC inapropriadamente baixa/normal
 ```
+
+**Joia pedagógica:** `epiTermos()` prova que a adrenalina move **quatro termos** (α1→RVS e mitiga o leak; β1→FC/inotropismo; β2→broncodilata); um α-puro corrige só a RVS.
 
 **Erro cognitivo:** todo distributivo é séptico; todo choque faz taquicardia.
 
-**Pontes:** M9, M20, M21, M30.
+**Cuidado de linguagem:** a ausência de taquicardia no neurogênico é a assinatura discriminadora **clássica/no modelo**, não um absoluto clínico (β-bloqueio, contexto e colapso extremo abrem exceções).
 
-**Firewall SaMD:** sem dose de adrenalina, sem algoritmo de anafilaxia, sem decisão de via aérea.
+**Pontes:** M9 (equação macro), M20 (categoria), M21 (séptico, o terceiro distributivo), M30 (exame global).
+
+**Firewall SaMD:** sem dose de adrenalina, sem algoritmo de anafilaxia, sem decisão de via aérea — guarda automatizada no validador rejeita padrões de posologia.
 
 ---
 

@@ -11,8 +11,8 @@ O critério de maturidade não é quantidade de páginas. É coerência entre fi
 O repositório contém:
 
 - índice `perfunde.html`;
-- módulos publicados `perfunde0.html` até `perfunde21.html`;
-- engines `build/m0` até `build/m21`;
+- módulos publicados `perfunde0.html` até `perfunde22.html`;
+- engines `build/m0` até `build/m22`;
 - testes Node por módulo;
 - validadores jsdom por módulo;
 - `package.json` com `npm run check`;
@@ -24,8 +24,10 @@ O repositório contém:
 Próximo módulo operacional:
 
 ```text
-M22 · anafilático × neurogênico
+M23 · choque misto
 ```
+
+(M22 · anafilático × neurogênico já está publicado e validado — ver Fase 2.)
 
 Fechamento avaliativo planejado:
 
@@ -102,7 +104,7 @@ M30 definido como prova global de 100 questões, em quatro quartos, com módulos
 
 ## 3. Fase 2 — M22 como módulo exemplar
 
-**Status:** próxima.
+**Status:** concluída — publicado e validado. `perfunde22.html` + `build/m22/{model,test,validate}22.js`, ligados ao `package.json`/`perfunde.html`/`curriculum.json`, `npm run check` verde. A FC é o discriminador; o painel da adrenalina prova os quatro termos; guarda SaMD no validador rejeita dose. A ausência de taquicardia no neurogênico é tratada como assinatura clássica/no modelo, não absoluto clínico.
 
 Tema:
 
