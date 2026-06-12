@@ -1,142 +1,263 @@
 # PERFUNDA.md — Constituição do Braço 2 · **PERFUNDE · CHOCA**
 
 > Documento-mãe do segundo braço do hexápode de medicina crítica.
-> É o análogo do `CLAUDE.md` do braço 1 (Respira·Ventila): governa **o que este braço é, como é construído e o que ele nunca faz**.
-> Conteúdo clínico-fisiológico detalhado → `CHOQUE.md`. Mecânica de build e regras de agente → `AGENTS.md`.
+> Governa identidade, invariantes, fronteira clínica e arquitetura filosófica do braço.
+> Domínio fisiológico detalhado → `CHOQUE.md`. Blueprint modular → `modulos.md`. Operação → `AGENTS.md`. Arquitetura → `ARCHITECTURE.md`. Segurança → `SAFETY.md`.
 
 ---
 
-## 1. Identidade e tese
+## 1. Identidade
 
-PERFUNDE·CHOCA ensina a **segunda metade do transporte de oxigênio**: depois que o gás entra e troca (Respira·Ventila), como o O₂ chega à célula, vira ATP — e o que acontece quando a entrega falha.
+PERFUNDE · CHOCA ensina a segunda metade do transporte de oxigênio: depois que o gás entra, difunde e satura a hemoglobina, como o O₂ chega ao tecido, é extraído, é utilizado pela mitocôndria — e o que acontece quando essa cadeia falha.
 
-**Tese-espinha (o análogo da "inversão causal" do Ventila 15):**
+A tese constitucional é:
 
-> **Choque não é pressão arterial baixa. É falência da entrega de oxigênio (DO₂).**
-> A PA é apenas *um termo*, e tardio. A inversão que salva é ler **PAM = DC × RVS** de trás para frente: a mesma PAM emerge de mecânicas opostas (DC alto / RVS baixa no distributivo; DC baixo / RVS alta no cardiogênico). Tratar o número sem decompor o que o gerou mata.
+> **Choque não é pressão arterial baixa. Choque é falência da entrega efetiva de oxigênio ao tecido.**
 
-Define-se cada tipo de choque pela **física do que quebrou** — não pela aparência. Mesmo método do braço 1: o modo/estado é o que se *fixa* × o que *resulta*.
+A pressão arterial é número resultante. A fisiologia está nos termos que produziram esse número.
 
 ---
 
-## 2. Lugar no hexápode
+## 2. A inversão causal
 
-Seis braços, ordenados por **acuidade na porta da UTI e complexidade crescente**:
+O eixo equivalente ao “modo ventilatório” do braço 1 é a decomposição hemodinâmica:
+
+```text
+PAM = DC × RVS
+```
+
+A mesma PAM pode nascer de mecânicas opostas:
+
+```text
+DC alto + RVS baixa    → distributivo
+DC baixo + RVS alta    → cardiogênico/hipovolêmico/obstrutivo compensado
+PAM normal + lactato↑  → choque críptico/compensado
+```
+
+Portanto, a regra pedagógica é:
+
+> **Decompor antes de interpretar.**
+
+PAM, SpO₂, pH, lactato e SvO₂ são sombras. O módulo deve ensinar qual termo da equação gerou a sombra.
+
+---
+
+## 3. Lugar no hexápode
 
 | # | Braço | Eixo | Estado |
 |---|-------|------|--------|
-| 1 | **RESPIRA · VENTILA** | troca gasosa + bomba mecânica de ar | ✅ concluído (10 + 15 módulos) |
-| 2 | **PERFUNDE · CHOCA** | transporte de O₂ + falência circulatória | ◀ **este documento** |
-| 3 | FILTRA · DIALISA | renal · LRA como *downstream* do choque | planejado |
-| 4 | ALIMENTA · DESNUTRE | nutricional · subagudo, autocontido | planejado |
-| 5 | METABOLIZA · INTOXICA | hepático + metabolismo + toxicologia · **capstone integrador** | planejado |
-| 6 | CONSCIÊNCIA · COMA | neuro (PPC = PAM − PIC, Monro-Kellie, autorregulação) · o mais complexo | planejado, por último |
+| 1 | **RESPIRA · VENTILA** | troca gasosa + bomba mecânica de ar | concluído |
+| 2 | **PERFUNDE · CHOCA** | transporte de O₂ + falência circulatória | este braço |
+| 3 | FILTRA · DIALISA | rim, LRA, diálise e consequência da perfusão | planejado |
+| 4 | ALIMENTA · DESNUTRE | nutrição, catabolismo e reabilitação metabólica | planejado |
+| 5 | METABOLIZA · INTOXICA | fígado, metabolismo e toxicologia | planejado |
+| 6 | CONSCIÊNCIA · COMA | neurocrítico, PPC, PIC, autorregulação | planejado |
 
-PERFUNDE é o **núcleo da ressuscitação** ao lado do braço 1 — o B e o C do ABC. Filtra·Dialisa é quase seu epílogo (o rim é o termômetro da perfusão). Metaboliza é o finale porque exige renal + perfusão + ácido-base já na mão.
-
----
-
-## 3. Invariantes arquiteturais inegociáveis
-
-Herdados do braço 1, sem exceção:
-
-- **Single-file HTML/CSS/JS** · offline · **zero dependências externas**.
-- **Sem armazenamento de navegador** (nada de `localStorage`).
-- **Todo motor fisiológico é numericamente validado antes de virar UI** (Node → presets → jsdom).
-- **Links de navegação relativos** em todo o material.
-- **Pipeline de build explicitamente rejeitado** — antifragilidade é valor de projeto.
-- Saída em **português do Brasil**; raciocínio em prosa com **setas (→)**, não bullets; código auditável e comentado; **sem floreio**.
-- **"Teto, não piso":** cada módulo excede o que o livro-texto entrega, fisiológica e pedagogicamente.
-- **Honestidade no próprio artefato:** limitações do modelo moram no arquivo (disclaimer/nota), não só na conversa.
-- Rodapé de toda peça: **CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira**.
+PERFUNDE é o braço do C do ABC. Ele é par do Respira/Ventila: um explica entrada/troca/mecânica do ar; o outro explica entrega, circulação, perfusão e falência tecidual.
 
 ---
 
-## 4. A espinha quantitativa (a régua que percorre todos os módulos)
+## 4. Estado operacional atual
 
-```
-DO₂  = DC × CaO₂                          entrega de oxigênio
-CaO₂ = 1,34 · Hb · SaO₂ + 0,003 · PaO₂    conteúdo arterial (a fração dissolvida quase nunca importa, mas existe)
-DC   = FC × VS                            débito = ritmo × ejeção
-VO₂  = DC × (CaO₂ − CvO₂)                 consumo (Fick)
-O₂ER = VO₂ / DO₂                          taxa de extração
-PAM  = DC × RVS                           a inversão causal macrocirculatória
+O estado publicado do repositório é a fonte operacional de verdade.
+
+```text
+índice: perfunde.html
+publicados: perfunde0.html … perfunde21.html
+engines: build/m0 … build/m21
+portão: npm run check
+próximo módulo: M22 · anafilático × neurogênico
 ```
 
-→ **lactato sobe quando DO₂ < DO₂crítico** (a curva bifásica de dependência de suprimento).
-→ Cada **tipo de choque = uma quebra localizada num termo** desta cadeia. O módulo correspondente isola e quantifica essa quebra.
+A numeração canônica atual é a do índice publicado:
 
-O detalhamento fisiológico de cada termo e de cada engine está em `CHOQUE.md`.
+```text
+M0–M2   Fundamentos do transporte
+M3–M8   Determinantes
+M9–M13  Inversão, leitura, POCUS, microcirculação, lactato
+M14–M22 Choques: categorias e capstones
+M23–M29 Integração e resgate
+```
 
----
-
-## 5. A inversão causal como princípio organizador
-
-No Ventila 15, o modo se definia por *o que você fixa × o que resulta*. Aqui o equivalente:
-
-> **A mesma PAM não significa o mesmo paciente.** PAM = DC × RVS é um produto; dois fatores em sentidos opostos dão o mesmo número. O choque críptico (normotenso, lactato alto) é a prova: a PA "normal" é o saldo de compensações, não equilíbrio — exatamente como o pH 7,37 que esconde distúrbio misto no braço 1.
-
-Toda a pedagogia decorre disto: **decompor antes de tratar.** O número-resultante (PA, pH, SpO₂) é a sombra; o que importa é qual termo da equação o gerou.
+Houve expansão curricular durante o desenvolvimento; documentos antigos podiam posicionar anafilático/neurogênico como M21. A constituição atual corrige isso: **M21 = séptico; M22 = anafilático × neurogênico**.
 
 ---
 
-## 6. Escada de módulos (referência)
+## 5. Espinha quantitativa
 
-**~29 peças** (Caderno 0 + 28), em quatro blocos. **Sem teto artificial** — a granularidade segue a fisiologia: cada engine-jóia é módulo pleno, e cada categoria de choque ganha capstones de subtipo (tamponamento, TEP e pneumotórax são *três* fisiologias sob "obstrutivo"; séptico/anafilático/neurogênico são *três* caminhos para RVS↓). É, por desenho, o braço mais extenso até aqui. Tabela completa com engines e âncoras em `CHOQUE.md §4`.
+A régua comum do braço é:
 
-**Bloco 0 · Fundamentos do transporte** — `0` Matemática do transporte (Caderno) · `1` CaO₂ · `2` curva como entrega *(1–2 reusam mvp2)*
+```text
+CaO₂ = 1,34 · Hb · SaO₂ + 0,003 · PaO₂
+DO₂  = DC × CaO₂ × 10
+DC   = FC × VS
+VO₂  = DC × (CaO₂ − CvO₂) × 10
+O₂ER = VO₂ / DO₂
+SvO₂ ≈ SaO₂ · (1 − O₂ER)
+PAM  = PVC + DC · RVS
+```
 
-**Bloco I · Os determinantes — engines-jóia, módulos plenos** — `3` débito cardíaco · `4` pré-carga I: **interseção de Guyton** · `5` pré-carga II: Guyton aplicado (responsivo ≠ tolerante) · `6` Frank-Starling · `7` pós-carga & alça PV (Ea/Ees) · `8` DO₂/VO₂ & supply-dependence (DO₂crítico)
+A intenção não é decorar fórmulas. É enxergar onde a cadeia quebrou:
 
-**Bloco II · A inversão e a leitura** — `9` **PAM = DC × RVS (núcleo)** · `10` monitorização hemodinâmica · `11` a microcirculação · `12` lactato & depuração
-
-**Bloco III · Os choques — categoria + capstones de subtipo** — `13` hipovolêmico → `14` ↳ hemorrágico × não-hemorrágico · `15` cardiogênico → `16` ↳ o ventrículo direito · `17` obstrutivo → `18` ↳ tamponamento · TEP · pneumotórax hipertensivo · `19` distributivo → `20` ↳ séptico → `21` ↳ anafilático × neurogênico
-
-**Bloco IV · Integração & resgate** — `22` choque misto (duas quebras simultâneas) · `23` o coração-pulmão · `24` ressuscitação volêmica como fisiologia · `25` **choque críptico** (o caso-semente) · `26` os 4 perfis (radar) · `27` vasopressores/inotrópicos (**mecanismo, não dose**) · `28` capstone + tutor gráfico dinâmico
-
----
-
-## 7. Identidade visual
-
-Terceiro tema próprio — **"monitor hemodinâmico"**: vermelho arterial profundo, azul venoso, a estética do traçado de pressão arterial e da curva de PVC. Distinto do pergaminho (Respira) e do monitor teal-âmbar (Ventila 15). Tokens definidos no primeiro módulo e reusados via `head.html` do braço.
-
----
-
-## 8. Pontes para o braço 1 (o braço não nasce órfão)
-
-- **mvp2** (Hb / Severinghaus) → CaO₂ e a curva pelo lado tecidual. **Reaproveitamento direto do engine já validado.**
-- **mvp4** (ácido-base / Winter) → lactato e a acidose metabólica do choque.
-- **mvp1** (mecânica / auto-PEEP) → choque obstrutivo: pressão intratorácica → retorno venoso.
-- **Ventila** (PEEP/VNI reduzindo pré e pós-carga) → o cardiogênico; a interação coração-pulmão.
-
-Cada módulo carrega backlinks e pontes cruzadas como cromo de série (ver checklist em `AGENTS.md`).
+```text
+conteúdo ↓          → anemia/hipoxemia
+DC ↓                → bomba, ritmo, pré-carga, pós-carga
+RVS ↓               → distributivo
+retorno venoso ↓    → hipovolêmico/obstrutivo
+extração ↓          → microcirculação/mitocôndria
+utilização ↓        → falência citopática
+```
 
 ---
 
-## 9. Fronteira SaMD — no DNA, desde o módulo zero
+## 6. Escada canônica de módulos
 
-Este é o braço onde a tentação de **prescrever número** é máxima, e onde cruzar para *suporte à decisão clínica automatizado* muda tudo (regulatório, responsabilidade, escopo).
+### Bloco 0 · Fundamentos do transporte
 
-**Regra inviolável, com o rigor dos disclaimers do Ventila:**
+```text
+0  Matemática do transporte
+1  Conteúdo de O₂ (CaO₂)
+2  A curva como entrega
+```
 
-> Ensina-se **o mecanismo de por que a alavanca corrige o termo quebrado** — nunca a dose, nunca "inicie noradrenalina a X µg/kg/min", nunca um alvo terapêutico acionável para um paciente específico.
+### Bloco I · Determinantes
 
-- Triagem SaMD **explícita antes de cada engine**, não como remendo posterior.
-- O **módulo 14** (vasopressores/inotrópicos) é o teste de fogo: mapeia receptor → termo da equação (noradrenalina → RVS; dobutamina → contratilidade) e **para exatamente antes do miligrama**.
-- Se um engine começa a rotear "este paciente → esta conduta", ele cruzou a linha → **parar e redesenhar** como explicação de mecanismo.
+```text
+3  Débito cardíaco
+4  Interseção de Guyton
+5  Guyton aplicado · responsivo ≠ tolerante
+6  Frank-Starling
+7  Pós-carga & alça pressão-volume
+8  DO₂/VO₂ & supply-dependence
+```
+
+### Bloco II · Inversão e leitura
+
+```text
+9   PAM = DC × RVS · a inversão
+10  Monitorização hemodinâmica
+11  POCUS & acessos vasculares
+12  A microcirculação
+13  Lactato & depuração
+```
+
+### Bloco III · Os choques
+
+```text
+14  Hipovolêmico
+15  ↳ hemorrágico × não-hemorrágico
+16  Cardiogênico
+17  ↳ o ventrículo direito
+18  Obstrutivo
+19  ↳ tamponamento · TEP · pneumotórax
+20  Distributivo
+21  ↳ séptico
+22  ↳ anafilático × neurogênico
+```
+
+### Bloco IV · Integração e resgate
+
+```text
+23  Choque misto
+24  O coração-pulmão
+25  Ressuscitação volêmica
+26  Choque críptico/compensado
+27  Os 4 perfis · radar
+28  Vasopressores & inotrópicos
+29  Capstone · caso integrado
+```
 
 ---
 
-## 10. Princípios de qualidade
+## 7. Invariantes arquiteturais
 
-→ **Teto não piso** — superar o livro.
-→ **Engine determinístico e auditável** — número validado contra referência fisiológica antes de qualquer pixel.
-→ **Física viva, não animação pré-cozida** — toda curva e questão gráfica computada ao vivo pelo motor.
-→ **Honestidade no artefato** — toda simplificação monocompartimental/idealizada declarada no próprio arquivo.
-→ **Antifragilidade** — sem build, sem dependência; o arquivo sobrevive sozinho.
+### 7.1 Publicação
+
+- Cada módulo publicado é `perfundeN.html` single-file.
+- O módulo funciona offline.
+- O módulo não depende de CDN, fonte externa, imagem remota ou rede.
+- Links são relativos.
+- O rodapé de série é obrigatório: `CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira`.
+
+### 7.2 Engine
+
+- Todo motor fisiológico deve ser puro, determinístico e testável.
+- O engine vem antes da UI.
+- Fórmula sem teste não entra.
+- UI que contradiz engine é bug crítico.
+
+### 7.3 Validação
+
+- `npm run check` é portão.
+- 0 falhas é obrigatório.
+- Teste Node valida fisiologia.
+- Validador jsdom valida HTML, UI, tutor, gráficos, cromo e segurança.
+
+### 7.4 Antifragilidade
+
+O artefato publicado continua single-file. Uma fonte modular futura é permitida, desde que gere HTML autossuficiente. O valor constitucional não é “não organizar”; é não depender de runtime externo para ensinar.
 
 ---
 
-## 11. Rito de build
+## 8. SaMD e fronteira clínica
 
-Inalterado em relação ao braço 1: **engine isolado → validação em Node contra âncoras → porta para HTML reusando tokens → validação jsdom (0 falhas obrigatório) → entrega em `/mnt/user-data/outputs/` → `present_files`.** Mecânica completa, armadilhas de ambiente e convenções de nomenclatura em `AGENTS.md`. Subida ao GitHub é responsabilidade do autor; verificação por `web_fetch` ofertada na confirmação da URL.
+PERFUNDE · CHOCA é educação fisiológica. Não é protocolo, calculadora de dose, triador, prescritor ou suporte automatizado à decisão clínica.
+
+Permitido:
+
+```text
+mecanismo
+termo quebrado
+receptor → termo da equação
+por que uma alavanca fisiológica muda uma variável
+por que dois fenótipos parecidos têm causas diferentes
+```
+
+Proibido:
+
+```text
+dose
+ordem terapêutica
+alvo individualizado
+conduta para paciente real
+classificação automatizada de caso real para ação
+```
+
+A regra operacional está em `SAFETY.md` e tem precedência sobre utilidade, estética e completude.
+
+---
+
+## 9. Princípios de qualidade
+
+→ **Teto, não piso.** O módulo deve exceder a tabela do livro, não reproduzi-la.
+
+→ **Física viva.** Gráfico é computado pelo motor, não desenhado como enfeite.
+
+→ **Erro cognitivo explícito.** Cada módulo deve saber qual confusão pretende corrigir.
+
+→ **Caso → variável escondida → engine → lab → tutor.** Essa é a cadeia pedagógica.
+
+→ **Honestidade no artefato.** Simplificações e limitações devem aparecer dentro do próprio módulo.
+
+→ **Prosa causal.** O aluno deve sair com mecanismo, não com lista.
+
+---
+
+## 10. Estado de perfeição
+
+O estado supremo do braço é atingido quando cada módulo responde, sem ambiguidade:
+
+```text
+qual termo quebrou?
+qual variável engana?
+qual erro cognitivo o aluno cometeria?
+qual engine prova a relação?
+qual gráfico torna a relação visível?
+qual preset demonstra o contraste?
+qual questão detecta compreensão?
+qual disclaimer impede extrapolação clínica?
+qual módulo anterior é necessário?
+qual módulo posterior fica preparado?
+```
+
+Enquanto uma dessas perguntas falhar, ainda há trabalho estrutural a fazer.
