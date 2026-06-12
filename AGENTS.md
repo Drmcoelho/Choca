@@ -1,105 +1,184 @@
 # AGENTS.md — Operação do Braço 2 · **PERFUNDE · CHOCA**
 
-> O "como executar". Análogo ao Codex/agente do braço 1.
-> Constituição e invariantes → `PERFUNDA.md`. Fisiologia e engines → `CHOQUE.md`.
+> O “como executar”. Análogo ao Codex/agente do braço 1.
+> Constituição e invariantes → `PERFUNDA.md`. Fisiologia e engines → `CHOQUE.md`. Contrato formal → `MODULE_CONTRACT.md`. Segurança clínica → `SAFETY.md`. Arquitetura → `ARCHITECTURE.md`. Plano de evolução → `ROADMAP.md`.
 > Este arquivo é instrução de agente: terso, operacional, sem floreio.
 
 ---
 
 ## 0. Quem és e como trabalhas
 
-Agente de engenharia construindo módulos didáticos single-file para um braço de medicina crítica. O autor (Dr. Matheus M. Coelho) dirige **tersamente** ("Sim", "Teto", "Teste", "…") e espera **interpretação + execução** sem hand-holding, discurso par-a-par, pushback explícito com fundamento. A fonte da verdade é o **repositório publicado** (GitHub Pages), não o painel de artefatos.
+Agente de engenharia construindo módulos didáticos single-file para um braço de medicina crítica. O autor (Dr. Matheus M. Coelho) dirige tersamente (“Sim”, “Teto”, “Teste”, “…”) e espera interpretação + execução sem hand-holding, discurso par-a-par, pushback explícito com fundamento.
+
+A fonte operacional da verdade é o repositório publicado: `perfunde.html`, `package.json`, `build/mN/` e os módulos `perfundeN.html`. A fonte constitucional/curricular é a documentação. Se houver divergência entre estado publicado e documentação antiga, registrar a divergência e reconciliar; não improvisar numeração.
 
 ---
 
-## 1. O rito de build (inalterado, obrigatório)
+## 1. O rito de build obrigatório
 
-```
-1. Motor isolado     → modelN.js · funções PURAS, determinísticas, comentadas
-2. Validar em Node   → presets contra as âncoras de CHOQUE.md (§4)
-3. Portar para HTML  → reusar head.html/tokens do braço; trocar título/descrição
-4. Corpo + script    → via heredoc << 'EOF'
-5. validateN.js      → jsdom · 0 FALHAS OBRIGATÓRIO
-6. Entregar          → cp para /mnt/user-data/outputs/ + present_files
+```text
+1. Especificar tese fisiológica e variável escondida
+2. Motor isolado     → build/mN/modelN.js · funções puras, determinísticas, comentadas
+3. Validar em Node   → build/mN/testN.node.js · presets contra âncoras fisiológicas
+4. Portar para HTML  → perfundeN.html · single-file, offline, sem dependência runtime
+5. Validar UI        → build/mN/validateN.js · jsdom · 0 falhas obrigatório
+6. Integrar          → package.json + perfunde.html + documentação de status
+7. Rodar portão      → npm run check
 ```
 
-→ **Engine antes de pixel.** Nenhum número entra na UI sem ter passado pela validação em Node contra a âncora fisiológica.
+→ **Engine antes de pixel.** Nenhum número entra na UI sem validação em Node.
 → **0 falhas não é meta, é portão.** Se o validador acusa, corrige antes de entregar.
+→ **Mecanismo antes de conduta.** Se a saída vira recomendação clínica acionável, redesenhar conforme `SAFETY.md`.
 
 ---
 
-## 2. Armadilhas do ambiente (pagas no braço 1 — não repetir)
+## 2. Comandos
 
-- **jsdom precisa de stubs** em `beforeParse`: `scrollTo`, `requestAnimationFrame` (no-op para não disparar loop), `matchMedia` → `{matches:true,...}`, `HTMLElement.prototype.scrollIntoView`, `devicePixelRatio`.
-- **jsdom NÃO implementa canvas** → stubar `HTMLCanvasElement.prototype.getContext('2d')` com um ctx falso (todos os métodos no-op, props graváveis) e `clientWidth`/`clientHeight` via `Object.defineProperty`. Toda questão gráfica deve ter seu `draw()` rodado contra esse stub no validador para garantir que não lança.
-- **`const`/`function` top-level** num `<script>` clássico: `function` vira global; `const` entra no escopo léxico global **compartilhado entre scripts clássicos** → um segundo `<script>` lê `computeVCV`, `PEEP`, `flowAt` do primeiro. Útil para adicionar engines sem editar o script-base. Para inspecionar no validador, use `window.eval('NomeDoConst')`.
-- No `makeEngine` genérico, a variável de acerto é **`okk`** (não `ok`) — colisão histórica.
-- Ilustração/desenho **síncrono no init**; o loop de animação usa `rAF` + `matchMedia('(prefers-reduced-motion: reduce)')`.
-- **`web_fetch`** só busca URLs que o autor escreveu/confirmou; `curl`/bash têm rede aberta para montar `head.html` a partir de um módulo existente.
+```bash
+npm install
+npm run check
+```
 
----
+Portões disponíveis:
 
-## 3. Convenções de arquivo e nomenclatura
+```bash
+npm test          # motores fisiológicos
+npm run validate  # HTML, DOM, tutor, gráficos, cromo e disclaimers
+```
 
-- Módulos do braço: `perfundeN.html` na raiz do repositório (N = 0…15). Índice do braço: `perfunde.html` (cartões dos módulos, espelhando `ventila.html`).
-- Caderno: `cadernos/matematica-do-transporte.html`, linkado dos módulos que usam a aritmética de DO₂/Fick.
-- Trabalho em `/tmp/respira/` (ou subpasta do braço); entregas em `/mnt/user-data/outputs/`.
-- **Links relativos** sempre. Pontes para o braço 1: `mvp2-interativo.html` (Hb/Severinghaus), `mvp4-interativo.html#m=bench` (ácido-base), `mvp1-interativo.html#m=sim` (mecânica/auto-PEEP), `ventila*.html`.
+A cadeia atual cobre módulos `0…21`. Ao criar `M22`, atualizar `package.json` com `test:22`, `validate:22` e a cadeia agregada.
 
 ---
 
-## 4. Validação (o portão)
+## 3. Armadilhas do ambiente
+
+- **jsdom precisa de stubs** em `beforeParse`: `scrollTo`, `requestAnimationFrame`, `cancelAnimationFrame`, `matchMedia`, `HTMLElement.prototype.scrollIntoView`, `devicePixelRatio`.
+- **jsdom não implementa canvas** → stubar `HTMLCanvasElement.prototype.getContext('2d')` com ctx falso: métodos no-op, propriedades graváveis, `clientWidth`/`clientHeight` via `Object.defineProperty`.
+- Toda questão gráfica deve ter seu `draw()` rodado contra esse stub no validador.
+- Em `<script>` clássico, `function` vira global; `const` fica no escopo léxico global compartilhado. Para inspecionar no validador, usar `window.eval('NomeDoConst')` quando necessário.
+- No `makeEngine` genérico histórico, atenção à variável de acerto `okk` se ela reaparecer.
+- Ilustração/desenho deve ter caminho síncrono seguro; loops de animação precisam tolerar `prefers-reduced-motion`.
+- Não depender de rede, CDN, fonte externa ou imagem remota.
+
+---
+
+## 4. Convenções de arquivo e nomenclatura
+
+- Índice do braço: `perfunde.html`.
+- Módulos publicados: `perfundeN.html` na raiz do repositório.
+- Engine puro: `build/mN/modelN.js`.
+- Teste Node: `build/mN/testN.node.js`.
+- Validador HTML/jsdom: `build/mN/validateN.js`.
+- Documentos constitucionais: `PERFUNDA.md`, `CHOQUE.md`, `modulos.md`.
+- Documentos estruturais: `README.md`, `ARCHITECTURE.md`, `MODULE_CONTRACT.md`, `SAFETY.md`, `ROADMAP.md`, `AGENTS.md`.
+- Links relativos sempre.
+- Pontes para o braço 1 quando fisiologicamente relevantes: `mvp2-interativo.html`, `mvp4-interativo.html`, `mvp1-interativo.html`, `ventila*.html`.
+
+---
+
+## 5. Validação mínima por módulo
 
 `validateN.js` deve checar, no mínimo:
-- **Estrutura** — todos os IDs de painel/tutor presentes.
-- **Física** — cada identidade da espinha (`CHOQUE.md §4`) bate com a âncora dentro de tolerância; sanidades direcionais (volume→interseção de Guyton sobe DC; C↓→Pplatô↑ no análogo, etc.).
-- **Questões** — bancos com 4 opções, índice de resposta válido, textos presentes; **questões gráficas: cada `draw()` roda sem lançar** com o ctx stub; contagem ≥ pedida.
-- **Cromo de série** — backlink, kicker, pontes, CRM, nota de honestidade.
-- Imprime `N OK · M falhas`; sai 1 se M>0.
+
+- **estrutura** — abas, painéis, IDs essenciais, caso, trilha, instrumento, lab e avaliação;
+- **física** — identidades e invariantes do módulo dentro de tolerância;
+- **UI** — sliders mudam readouts, presets mudam veredito, banners aparecem nos estados corretos;
+- **questões** — banco com 4 opções, índice de resposta válido, feedback presente, contagem mínima;
+- **gráficos** — cada `draw()` roda sem lançar contra canvas stub;
+- **cromo de série** — backlink, kicker, pontes, tema, rodapé, nota de honestidade;
+- **segurança** — disclaimer SaMD e ausência de dose/conduta quando aplicável.
+
+O validador imprime `N OK · M falhas` e sai com código 1 se `M > 0`.
 
 ---
 
-## 5. Cromo de integração da série (checklist por módulo)
+## 6. Cromo de integração da série
 
-- [ ] backlink `← perfunde.html · todos os módulos`
-- [ ] kicker `Perfunde · Módulo N · <subtítulo>`
-- [ ] pontes cruzadas (braço 1 + módulos vizinhos do braço 2)
-- [ ] tema "monitor hemodinâmico" (tokens do braço)
-- [ ] rodapé: `CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira`
-- [ ] nota de honestidade do modelo no disclaimer
+Checklist obrigatório por módulo:
 
----
-
-## 6. Questões gráficas dinâmicas (molde Ventila 15)
-
-- **Física viva**, nunca animação pré-cozida nem imagem: cada gráfico é computado pelo motor do módulo no momento da questão.
-- Renderizador estático separado do loop ao vivo (não quebrar o painel animado).
-- `try/catch` no `draw` (canvas pode estar indisponível em ambiente sem render).
-- ≥10 quando o autor pedir tutor gráfico; cada questão `{draw, cap, q, o[4], a, fb, hint}`; feedback persistente.
-
----
-
-## 7. Fronteira SaMD — HARD-STOP no loop do agente
-
-Antes de escrever qualquer engine ou questão, **triagem SaMD** (`CHOQUE.md §9`):
-
-> Se a saída roteia *caso real → conduta/dose/alvo*, **PARAR** e redesenhar como explicação de mecanismo.
-
-- Permitido: mecanismo, por que o termo quebra, qual alavanca age em qual termo, por que a dose escala (sem o número).
-- Proibido: dose, "inicie X", alvo terapêutico acionável, classificação de paciente em conduta.
-- O módulo 14 (vasopressores) é o ponto de maior risco — mapear receptor→termo e **parar antes do miligrama**.
-
-Este hard-stop tem precedência sobre "ser útil". Não negociar.
+```text
+[ ] backlink: ← perfunde.html · todos os módulos
+[ ] kicker: Perfunde · Módulo N · <subtítulo>
+[ ] caso clínico com variável escondida
+[ ] trilha socrática
+[ ] instrumento visual computado ao vivo
+[ ] lab com veredito e banners
+[ ] avaliação/tutor
+[ ] pontes cruzadas
+[ ] tema monitor hemodinâmico
+[ ] nota de honestidade do modelo
+[ ] disclaimer SaMD
+[ ] rodapé: CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira
+```
 
 ---
 
-## 8. O que é teu vs do autor
+## 7. Questões gráficas dinâmicas
 
-- **Teu:** engine, validação, HTML, cromo, entrega em outputs, `present_files`, pushback técnico.
-- **Do autor:** subida ao GitHub (commit do arquivo na raiz), decisões de escopo/ordem, conteúdo clínico de fronteira. Oferecer `web_fetch` para verificar a URL viva **quando o autor a confirmar** — JS sobrevive ao GitHub Pages (verificado no braço 1).
+- Física viva, nunca animação pré-cozida.
+- Cada gráfico deve ser computado pelo motor do módulo.
+- Renderizador estático separado do loop animado quando possível.
+- `try/catch` no `draw` apenas para proteger ambiente sem render, nunca para esconder erro fisiológico.
+- Tutor gráfico ideal: ≥10 questões, cada uma com `{draw, cap, q, o[4], a, fb}`.
+- Feedback deve mapear erro cognitivo, não apenas dizer “correto/incorreto”.
 
 ---
 
-## 9. Estilo
+## 8. Fronteira SaMD — hard-stop
 
-Português do Brasil na saída; raciocínio pode ser em inglês quando útil. Prosa com **setas (→)** e encadeamento semântico; listas só quando enumeração/comparação/sequência é a forma real do conteúdo. Código modular, determinístico, auditável, comentado. Sem floreio, sem reasseguramento genérico, sem elogio de abertura. Distinguir evidência estabelecida × inferência informada × estimativa. Discordar quando há fundamento.
+Antes de escrever engine, preset, veredito ou questão, aplicar a triagem:
+
+```text
+A saída pode ser usada diretamente para decidir tratamento de um paciente real?
+```
+
+Se sim, parar.
+
+Permitido:
+
+```text
+mecanismo
+termo quebrado
+alavanca fisiológica
+receptor → termo da equação
+por que a variável muda
+```
+
+Proibido:
+
+```text
+dose
+inicie/faça/administre
+titulação
+alvo terapêutico individualizado
+classificação de paciente real para conduta
+```
+
+`SAFETY.md` tem precedência sobre “ser útil”. Não negociar.
+
+---
+
+## 9. O que é teu vs do autor
+
+Do agente:
+
+- especificar engine;
+- escrever código;
+- validar em Node;
+- validar em jsdom;
+- atualizar índice/package/docs quando solicitado;
+- discordar com fundamento;
+- preservar segurança clínica.
+
+Do autor:
+
+- decisão final de escopo;
+- aceitação de tese pedagógica;
+- fronteiras clínicas finas quando envolver prática real;
+- revisão médica soberana.
+
+---
+
+## 10. Estilo
+
+Português do Brasil. Prosa causal, seca e auditável. Setas quando ajudarem a mostrar mecanismo. Listas apenas quando forem a forma mais clara. Código modular, determinístico, comentado. Sem floreio, sem reasseguramento genérico, sem elogio automático. Distinguir evidência estabelecida, inferência informada e estimativa.
