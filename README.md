@@ -14,17 +14,17 @@ A pressão arterial é um número resultante. A fisiologia mora nos termos que p
 
 ## Estado atual
 
-O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde22.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
+O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde21.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
 
 Estado curricular atual:
 
 - **M0–M2** — fundamentos do transporte, CaO₂ e curva de oxi-hemoglobina.
 - **M3–M8** — determinantes: débito cardíaco, pré-carga/Guyton, Frank-Starling, pós-carga/alça PV, DO₂/VO₂.
-- **M9–M12** — inversão causal, monitorização, microcirculação e lactato.
-- **M13–M18** — choques hipovolêmico, cardiogênico, VD e obstrutivo.
-- **M19–M21** — capstone obstrutivo, distributivo e séptico.
-- **M22** — anafilático × neurogênico: fecha o bloco distributivo com os três fenótipos (séptico, anafilático, neurogênico) discriminados pela assinatura FC × RVS.
-- **Próximo módulo real:** `M23 · choque misto`.
+- **M9–M13** — inversão causal, monitorização, POCUS/acessos, microcirculação e lactato.
+- **M14–M21** — choques: hipovolêmico, hemorrágico/não-hemorrágico, cardiogênico, VD, obstrutivo, capstone obstrutivo, distributivo e séptico.
+- **M22** — publicado: anafilático × neurogênico — discrimina os três distributivos (séptico, anafilático, neurogênico) pela assinatura FC × RVS. Próximo módulo de conteúdo: **M23 · choque misto**.
+- **M23–M29** — integração e resgate.
+- **M30** — revisão global / exame de domínio com 100 questões.
 
 ---
 
@@ -48,21 +48,23 @@ A regra é binária: **0 falhas ou não entra**.
 
 ## Documentação essencial
 
-- `PERFUNDA.md` — constituição do braço: identidade, tese, invariantes, fronteira SaMD.
-- `CHOQUE.md` — domínio clínico-fisiológico: taxonomia, engines e âncoras.
-- `modulos.md` — blueprint curricular e pedagógico.
+- `PERFUNDA.md` — constituição do braço: identidade, tese, invariantes, escada canônica e fronteira SaMD.
+- `CHOQUE.md` — domínio clínico-fisiológico: taxonomia, engines, assinaturas e âncoras.
+- `modulos.md` — blueprint curricular e pedagógico, alinhado ao índice publicado.
 - `AGENTS.md` — rito operacional para agentes/codex: como construir, validar e entregar.
 - `ARCHITECTURE.md` — arquitetura técnica e alvo de excelência.
 - `MODULE_CONTRACT.md` — contrato formal de qualquer novo módulo.
 - `SAFETY.md` — fronteira clínica, SaMD e proibições absolutas.
-- `ROADMAP.md` — plano de evolução para sair de coleção de HTMLs e virar plataforma fisiológica verificável.
-- `DOCUMENTATION_STATUS.md` — estado documental atual e dívida explícita de reconciliação.
+- `ROADMAP.md` — plano de evolução para plataforma fisiológica verificável.
+- `DOCUMENTATION_STATUS.md` — estado documental reconciliado.
+- `curriculum.json` — manifesto curricular legível por máquina.
+- `M30_ASSESSMENT_SPEC.md` — especificação do exame global de 100 questões.
 
 ---
 
 ## Filosofia de construção
 
-Cada módulo deve obedecer à mesma ordem:
+Cada módulo de conteúdo deve obedecer à mesma ordem:
 
 ```text
 fisiologia → engine puro → teste Node → HTML single-file → validação jsdom → índice → CI
@@ -83,6 +85,8 @@ O padrão mínimo de um módulo é:
 9. engine determinístico;
 10. teste e validador com 0 falhas.
 
+M30 é exceção: ele é avaliação global, não conteúdo novo. Seu padrão é psicométrico: 100 questões, quatro quartos, dificuldade crescente, módulos embaralhados, distribuição A/B/C/D controlada e gabarito ultra-robusto.
+
 ---
 
 ## Invariantes do produto
@@ -95,6 +99,7 @@ O padrão mínimo de um módulo é:
 - **Física viva.** Gráficos e questões são computados, não imagens pré-cozidas.
 - **Português do Brasil.** Prosa causal, seca, com setas quando útil.
 - **SaMD hard-stop.** Mecanismo sim; dose, alvo terapêutico acionável e prescrição automatizada, não.
+- **Avaliação sem pista formal.** No M30, a resposta correta não pode ser inferida por letra, tamanho, maior número ou padrão.
 
 ---
 
@@ -108,15 +113,19 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-Já concluídos: documentação consolidada, numeração histórica reconciliada, contrato formal de módulo e **M22 construído integralmente sob `MODULE_CONTRACT.md`**. As próximas etapas elevam a maturidade estrutural:
+A documentação estrutural foi consolidada e reconciliada, e `M22 · anafilático × neurogênico` está publicado sob o novo padrão documental. A próxima etapa concreta é construir `M23 · choque misto` no mesmo rito:
 
-1. ~~consolidar documentação~~ — feito;
-2. ~~reconciliar a numeração histórica dos documentos centrais~~ — feito;
-3. extrair um core fisiológico compartilhado (atrás de um passo de inline, mantendo o single-file);
-4. ~~criar contrato formal de módulo~~ — feito;
-5. refatorar M9, M20 e M21 como prova de arquitetura;
-6. ~~construir M22 já no padrão novo~~ — feito (anafilático × neurogênico);
-7. criar manifesto curricular legível por máquina;
-8. endurecer testes, links, acessibilidade e consistência visual.
+```text
+1. especificar variáveis de estado
+2. escrever build/m23/model23.js
+3. escrever build/m23/test23.node.js
+4. construir perfunde23.html
+5. escrever build/m23/validate23.js
+6. atualizar package.json e perfunde.html
+7. atualizar curriculum.json para status published
+8. rodar npm run check
+```
+
+Em paralelo, M30 já está especificado como fechamento avaliativo do braço. Ele será construído em quatro partes de 25 questões após estabilização de M22–M29.
 
 O alvo final é um sistema em que cada botão obedeça à fisiologia, cada fórmula seja testável, cada erro do aluno revele uma falha conceitual e cada módulo pertença a um mapa causal maior.

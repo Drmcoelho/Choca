@@ -1,7 +1,7 @@
 # CHOQUE.md — Domínio clínico-fisiológico · **PERFUNDE · CHOCA**
 
 > O “quê” do braço 2: fisiologia, taxonomia, motores, âncoras de validação e honestidades de modelo.
-> Constituição → `PERFUNDA.md`. Blueprint modular → `modulos.md`. Execução → `AGENTS.md`. Fronteira clínica → `SAFETY.md`.
+> Constituição → `PERFUNDA.md`. Blueprint modular → `modulos.md`. Execução → `AGENTS.md`. Fronteira clínica → `SAFETY.md`. Exame global → `M30_ASSESSMENT_SPEC.md`.
 
 ---
 
@@ -86,7 +86,7 @@ Erro que o módulo corrige: interpretar SvO₂ alta como perfusão necessariamen
 
 ### 2.7 Lactato
 
-Lactato é marcador de desequilíbrio entre produção e depuração, não um sinônimo automático de hipóxia pura.
+Lactato é marcador de desequilíbrio entre produção e depuração, não sinônimo automático de hipóxia pura.
 
 Erros que o módulo corrige:
 
@@ -177,6 +177,12 @@ Esta é a numeração publicada e operacional. Ela prevalece sobre versões hist
 | 28 | Vasopressores & inotrópicos | receptor → termo da equação | mecanismo, sem dose |
 | 29 | Capstone · caso integrado | tutor gráfico dinâmico | múltiplos termos, múltiplas armadilhas |
 
+### Bloco V · Avaliação global
+
+| # | Módulo | Engine/foco | Âncora mínima |
+|---|---|---|---|
+| 30 | Revisão global · exame de domínio | 100 questões em 4 quartos, módulos embaralhados e dificuldade crescente | distribuição A/B/C/D 15–35 por letra, gabarito robusto, sem pistas formais |
+
 ---
 
 ## 5. Engines-jóia
@@ -242,6 +248,22 @@ shunt/glicocálice reduzem chegada tecidual
 mitocôndria reduz utilização
 SvO₂ pode subir porque o tecido não extrai/usa
 pressor sobe PAM, mas não corrige micro/mito por si só
+```
+
+### 5.6 Exame global M30
+
+M30 não tem engine fisiológico único. Tem engine avaliativo: distribuição de questões, progressão de dificuldade, cobertura curricular, ausência de padrões formais e gabarito explicativo.
+
+Invariantes:
+
+```text
+100 questões exatas
+4 quartos de 25
+módulos em ordem embaralhada
+dificuldade crescente por quarto
+cada letra correta entre 15 e 35 ocorrências
+nenhuma pista formal de alternativa correta
+gabarito explica correta e distratores
 ```
 
 ---
@@ -314,7 +336,7 @@ armadilha: esperar taquicardia compensatória em todo choque
 
 ## 7. Honestidades de modelo
 
-Os módulos usam modelos reduzidos. Isso é uma escolha pedagógica, não uma afirmação de que o corpo real é simples.
+Os módulos usam modelos reduzidos. Isso é escolha pedagógica, não afirmação de que o corpo real é simples.
 
 Todo módulo deve declarar sua simplificação dominante:
 
@@ -324,6 +346,7 @@ Todo módulo deve declarar sua simplificação dominante:
 - Mitocôndria é reduzida a capacidade de utilização.
 - Choques reais podem ser mistos.
 - Drogas e procedimentos aparecem como mecanismo, não prescrição.
+- M30 mede domínio pelo desempenho em questões; não substitui julgamento clínico real.
 
 ---
 
@@ -338,6 +361,7 @@ Módulos de maior risco:
 25  ressuscitação volêmica
 28  vasopressores/inotrópicos
 29  capstone
+30  exame global, por conter cenários integrados
 ```
 
 Nesses módulos, é obrigatório:
@@ -347,7 +371,7 @@ sem dose
 sem comando terapêutico
 sem alvo individualizado
 sem decisão para paciente real
-veredito apenas fisiológico
+veredito apenas fisiológico/educacional
 ```
 
 O texto normativo completo está em `SAFETY.md`.
@@ -369,4 +393,4 @@ Um módulo está fisiologicamente maduro quando prova:
 8. a limitação do modelo
 ```
 
-Se o módulo não diferencia “número” de “mecanismo”, ele ainda não pertence ao estado excelente.
+M30 acrescenta uma nona exigência: o aluno precisa sustentar esse raciocínio em 100 questões embaralhadas, sem apoio da ordem dos módulos e sem pistas formais de gabarito.

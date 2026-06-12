@@ -2,7 +2,7 @@
 
 > Documento-mãe do segundo braço do hexápode de medicina crítica.
 > Governa identidade, invariantes, fronteira clínica e arquitetura filosófica do braço.
-> Domínio fisiológico detalhado → `CHOQUE.md`. Blueprint modular → `modulos.md`. Operação → `AGENTS.md`. Arquitetura → `ARCHITECTURE.md`. Segurança → `SAFETY.md`.
+> Domínio fisiológico detalhado → `CHOQUE.md`. Blueprint modular → `modulos.md`. Operação → `AGENTS.md`. Arquitetura → `ARCHITECTURE.md`. Segurança → `SAFETY.md`. Exame global → `M30_ASSESSMENT_SPEC.md`.
 
 ---
 
@@ -34,7 +34,7 @@ DC baixo + RVS alta    → cardiogênico/hipovolêmico/obstrutivo compensado
 PAM normal + lactato↑  → choque críptico/compensado
 ```
 
-Portanto, a regra pedagógica é:
+Regra pedagógica:
 
 > **Decompor antes de interpretar.**
 
@@ -67,9 +67,10 @@ publicados: perfunde0.html … perfunde22.html
 engines: build/m0 … build/m22
 portão: npm run check
 próximo módulo: M23 · choque misto
+fechamento avaliativo planejado: M30 · revisão global / exame de domínio
 ```
 
-A numeração canônica atual é a do índice publicado:
+A numeração canônica atual é a do índice publicado e da documentação reconciliada:
 
 ```text
 M0–M2   Fundamentos do transporte
@@ -77,9 +78,10 @@ M3–M8   Determinantes
 M9–M13  Inversão, leitura, POCUS, microcirculação, lactato
 M14–M22 Choques: categorias e capstones
 M23–M29 Integração e resgate
+M30     Revisão global · exame de domínio
 ```
 
-Houve expansão curricular durante o desenvolvimento; documentos antigos podiam posicionar anafilático/neurogênico como M21. A constituição atual corrige isso: **M21 = séptico; M22 = anafilático × neurogênico**.
+Houve expansão curricular durante o desenvolvimento. A constituição atual fixa: **M21 = séptico; M22 = anafilático × neurogênico; M30 = exame global de domínio.**
 
 ---
 
@@ -167,6 +169,14 @@ utilização ↓        → falência citopática
 29  Capstone · caso integrado
 ```
 
+### Bloco V · Avaliação global
+
+```text
+30  Revisão global · exame de domínio · 100 questões
+```
+
+M30 não é módulo de conteúdo novo. É avaliação global, holística, randomizada por módulo e crescente em dificuldade. Sua especificação está em `M30_ASSESSMENT_SPEC.md`.
+
 ---
 
 ## 7. Invariantes arquiteturais
@@ -192,6 +202,7 @@ utilização ↓        → falência citopática
 - 0 falhas é obrigatório.
 - Teste Node valida fisiologia.
 - Validador jsdom valida HTML, UI, tutor, gráficos, cromo e segurança.
+- M30 exige validador psicométrico adicional: 100 questões, quatro quartos, distribuição de alternativas, progressão de dificuldade, cobertura e gabaritos robustos.
 
 ### 7.4 Antifragilidade
 
@@ -241,6 +252,8 @@ A regra operacional está em `SAFETY.md` e tem precedência sobre utilidade, est
 
 → **Prosa causal.** O aluno deve sair com mecanismo, não com lista.
 
+→ **Avaliação sem pista formal.** No M30, a alternativa correta deve ser correta por fisiologia, não por tamanho, posição, letra, número maior ou padrão estatístico.
+
 ---
 
 ## 10. Estado de perfeição
@@ -260,4 +273,4 @@ qual módulo anterior é necessário?
 qual módulo posterior fica preparado?
 ```
 
-Enquanto uma dessas perguntas falhar, ainda há trabalho estrutural a fazer.
+E quando M30 prova o domínio global com 100 questões sem padrão explorável, dificuldade crescente e gabarito explicativo completo.
