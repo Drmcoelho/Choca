@@ -55,6 +55,7 @@ A regra é binária: **0 falhas ou não entra**.
 - `MODULE_CONTRACT.md` — contrato formal de qualquer novo módulo.
 - `SAFETY.md` — fronteira clínica, SaMD e proibições absolutas.
 - `ROADMAP.md` — plano de evolução para sair de coleção de HTMLs e virar plataforma fisiológica verificável.
+- `DOCUMENTATION_STATUS.md` — estado documental atual e dívida explícita de reconciliação.
 
 ---
 
@@ -109,11 +110,12 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 A próxima etapa não é apenas adicionar `perfunde22.html`. É elevar a maturidade estrutural:
 
 1. consolidar documentação;
-2. extrair um core fisiológico compartilhado;
-3. criar contrato formal de módulo;
-4. refatorar M9, M20 e M21 como prova de arquitetura;
-5. construir M22 já no padrão novo;
-6. criar manifesto curricular legível por máquina;
-7. endurecer testes, links, acessibilidade e consistência visual.
+2. reconciliar a numeração histórica dos documentos centrais;
+3. extrair um core fisiológico compartilhado;
+4. criar contrato formal de módulo;
+5. refatorar M9, M20 e M21 como prova de arquitetura;
+6. construir M22 já no padrão novo;
+7. criar manifesto curricular legível por máquina;
+8. endurecer testes, links, acessibilidade e consistência visual.
 
 O alvo final é um sistema em que cada botão obedeça à fisiologia, cada fórmula seja testável, cada erro do aluno revele uma falha conceitual e cada módulo pertença a um mapa causal maior.
