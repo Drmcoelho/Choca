@@ -1,14 +1,14 @@
 # ROADMAP.md — Plano de evolução · PERFUNDE · CHOCA
 
-Este roadmap organiza a saída do estado atual — módulos excelentes porém ainda artesanais — para uma plataforma fisiológica educacional verificável.
+Este roadmap organiza a transição de módulos excelentes porém ainda artesanais para uma plataforma fisiológica educacional verificável.
 
-O critério de maturidade não é quantidade de módulos. É coerência entre fisiologia, engine, UI, avaliação, documentação e segurança.
+O critério de maturidade não é quantidade de páginas. É coerência entre fisiologia, engine, UI, avaliação, documentação e segurança.
 
 ---
 
 ## 1. Estado operacional atual
 
-O repositório já contém:
+O repositório contém:
 
 - índice `perfunde.html`;
 - módulos publicados `perfunde0.html` até `perfunde21.html`;
@@ -16,9 +16,11 @@ O repositório já contém:
 - testes Node por módulo;
 - validadores jsdom por módulo;
 - `package.json` com `npm run check`;
-- GitHub Actions rodando o portão de validação.
+- GitHub Actions para o portão de validação;
+- documentação estrutural reconciliada;
+- `curriculum.json` como manifesto curricular inicial.
 
-O próximo módulo operacional é:
+Próximo módulo operacional:
 
 ```text
 M22 · anafilático × neurogênico
@@ -26,71 +28,57 @@ M22 · anafilático × neurogênico
 
 ---
 
-## 2. Tese da próxima fase
+## 2. Fases concluídas
 
-A próxima fase não deve ser “criar mais HTML”.
+### Fase 0 — Consolidação documental
 
-A próxima fase deve converter o projeto em um sistema com contratos explícitos:
+**Status:** concluída.
+
+Entregues:
 
 ```text
-cada módulo → conceito isolado → engine puro → invariantes → UI equivalente → tutor causal → validação
+README.md
+ARCHITECTURE.md
+MODULE_CONTRACT.md
+SAFETY.md
+ROADMAP.md
+DOCUMENTATION_STATUS.md
 ```
 
-M22 será o primeiro módulo construído sob a documentação nova.
-
----
-
-## 3. Fase 0 — Consolidação documental
-
-Objetivo: transformar documentação em infraestrutura de projeto.
-
-Arquivos-alvo:
-
-- `README.md` — porta de entrada;
-- `ARCHITECTURE.md` — arquitetura técnica;
-- `MODULE_CONTRACT.md` — contrato de módulo;
-- `SAFETY.md` — fronteira clínica;
-- `ROADMAP.md` — execução;
-- futura reconciliação de `PERFUNDA.md`, `CHOQUE.md` e `modulos.md`.
-
-Critério de pronto:
+Critério cumprido:
 
 ```text
-um agente novo consegue entender o projeto, construir M22 e não violar SaMD sem depender da conversa anterior
+um agente novo consegue entender o produto, seus limites e seu rito de construção sem depender da conversa anterior
 ```
 
-Status: iniciado.
+### Fase 1 — Reconciliação documental
 
----
+**Status:** concluída.
 
-## 4. Fase 1 — Reconciliação documental
-
-Há documentos antigos com numeração histórica e documentos operacionais com numeração real publicada.
-
-Regra:
+Entregues:
 
 ```text
-perfunde.html + package.json + build/mN/ = verdade operacional
-PERFUNDA.md + CHOQUE.md + modulos.md = verdade constitucional/curricular
+PERFUNDA.md reconciliado
+CHOQUE.md reconciliado
+modulos.md reconciliado
+curriculum.json criado
+DOCUMENTATION_STATUS.md atualizado para reconciliado
+README.md atualizado pós-reconciliação
 ```
 
-A fase 1 deve:
-
-1. atualizar `PERFUNDA.md` para refletir o estado M0–M21 e próximo M22;
-2. atualizar `CHOQUE.md` sem apagar a fisiologia já boa;
-3. atualizar `modulos.md` para alinhar blueprint e publicação;
-4. registrar claramente se o projeto terá 29, 30 ou mais módulos;
-5. manter histórico de decisões, sem fingir que a numeração nunca mudou.
-
-Critério de pronto:
+Divergência resolvida:
 
 ```text
-nenhum documento central afirma que M21 é outra coisa enquanto o índice publicado mostra M21 como séptico
+M21 = séptico
+M22 = anafilático × neurogênico
+M23–M29 = integração e resgate
 ```
 
 ---
 
-## 5. Fase 2 — M22 como módulo exemplar
+## 3. Fase 2 — M22 como módulo exemplar
+
+**Status:** próxima.
 
 Tema:
 
@@ -104,20 +92,24 @@ Tese:
 Ambos são distributivos, mas não quebram a fisiologia pelo mesmo caminho.
 Anafilático = vasoplegia + extravasamento + eixo respiratório/imunológico.
 Neurogênico = perda simpática + capacitância venosa + bradicardia relativa/absoluta.
+Séptico = distributivo com microcirculação/mitocôndria/extração quebradas.
 ```
 
 Dependências:
 
-- M9 — PAM = DC × RVS;
-- M20 — distributivo;
-- M21 — séptico;
-- M12/M13 se micro/lactato forem usados como contraste.
+```text
+M9  · PAM = DC × RVS
+M20 · distributivo
+M21 · séptico
+M12 · microcirculação, se contraste micro for usado
+M13 · lactato, se contraste metabólico for usado
+```
 
 Variáveis candidatas do engine:
 
 ```js
 {
-  rvs,
+  systemicVascularResistance,
   sympatheticTone,
   venousCapacitance,
   capillaryLeak,
@@ -125,6 +117,7 @@ Variáveis candidatas do engine:
   bronchospasm,
   airwayEdema,
   heartRate,
+  strokeVolume,
   cardiacOutput,
   map,
   lactate,
@@ -142,11 +135,13 @@ séptico: RVS↓ + micro/mito/extração quebradas + lactato por desacoplamento
 
 Proibições específicas:
 
-- sem dose de adrenalina;
-- sem algoritmo de anafilaxia;
-- sem indicação de via aérea;
-- sem comando terapêutico;
-- apenas mecanismo.
+```text
+sem dose de adrenalina
+sem algoritmo de anafilaxia
+sem indicação de via aérea
+sem comando terapêutico
+sem alvo individualizado
+```
 
 Critério de pronto:
 
@@ -154,28 +149,34 @@ Critério de pronto:
 M22 diferencia três distributivos sem virar protocolo: séptico, anafilático e neurogênico
 ```
 
----
-
-## 6. Fase 3 — Refatoração sentinela: M9, M20, M21
-
-Antes de extrair o core inteiro, refatorar mentalmente e documentalmente três módulos sentinela:
-
-- **M9** — macro: `PAM = DC × RVS`;
-- **M20** — distributivo: RVS como termo quebrado;
-- **M21** — séptico: macro × micro × mitocôndria.
-
-Esses três módulos formam uma cadeia causal suficiente para testar a arquitetura futura:
+Ordem de build:
 
 ```text
-macro-hemodinâmica → categoria distributiva → subtipo séptico
+1. build/m22/model22.js
+2. build/m22/test22.node.js
+3. perfunde22.html
+4. build/m22/validate22.js
+5. package.json
+6. perfunde.html
+7. curriculum.json
+8. npm run check
 ```
 
-Objetivo:
+---
 
-- padronizar nomenclatura;
-- identificar funções repetidas;
-- preparar extração para `core/hemodynamics.js`, `core/oxygen.js` e `core/microcirculation.js`;
-- reforçar validadores com invariantes transversais.
+## 4. Fase 3 — Refatoração sentinela: M9, M20, M21
+
+**Status:** planejada.
+
+Objetivo: preparar extração futura de core sem quebrar single-file.
+
+Módulos sentinela:
+
+```text
+M9  · macro-hemodinâmica: PAM = DC × RVS
+M20 · categoria distributiva: RVS como termo quebrado
+M21 · subtipo séptico: macro × micro × mitocôndria
+```
 
 Critério de pronto:
 
@@ -185,15 +186,22 @@ as mesmas fórmulas não aparecem com semântica divergente entre M9, M20 e M21
 
 ---
 
-## 7. Fase 4 — Core fisiológico compartilhado
+## 5. Fase 4 — Core fisiológico compartilhado
 
-Criar gradualmente um core de fonte, sem quebrar o requisito de HTML final single-file.
+**Status:** planejada.
 
-Proposta:
+Criar fonte modular sem abandonar HTML final autossuficiente.
+
+Primeiro núcleo recomendado:
 
 ```text
 source/core/oxygen.js
 source/core/hemodynamics.js
+```
+
+Depois:
+
+```text
 source/core/guyton.js
 source/core/ventricle.js
 source/core/microcirculation.js
@@ -202,68 +210,24 @@ source/core/units.js
 source/core/guards.js
 ```
 
-Regra de compatibilidade:
+Regra:
 
 ```text
 fonte modular pode existir; saída publicada continua single-file
 ```
 
-O core deve nascer pequeno. Não criar arquitetura abstrata antes de necessidade real.
-
-Primeiro core recomendado:
-
-```text
-oxygen.js + hemodynamics.js
-```
-
-porque CaO₂, DO₂, O₂ER, SvO₂, PAM, DC e RVS já reaparecem em múltiplos módulos.
-
 ---
 
-## 8. Fase 5 — Curriculum manifest
+## 6. Fase 5 — QA transversal
 
-Criar um manifesto curricular legível por máquina:
+**Status:** planejada.
 
-```text
-curriculum.json ou curriculum.yaml
-```
-
-Campos mínimos:
-
-```json
-{
-  "id": 21,
-  "slug": "septic-shock",
-  "title": "Choque séptico",
-  "status": "published",
-  "depends_on": [9, 12, 20],
-  "concepts": [],
-  "misconceptions": [],
-  "invariants": [],
-  "safety_level": "high"
-}
-```
-
-Esse manifesto permitirá:
-
-- gerar índice;
-- auditar módulos órfãos;
-- detectar dependência quebrada;
-- mapear questões por conceito;
-- planejar revisão espaçada sem armazenar dados no navegador.
-
-Observação: enquanto `PERFUNDA.md` proibir armazenamento de navegador, qualquer progresso do aluno deve ser in-memory, exportável manualmente ou deixado para ambiente externo. Nada de `localStorage` sem decisão constitucional explícita.
-
----
-
-## 9. Fase 6 — QA de plataforma
-
-Adicionar checagens transversais:
+Adicionar checadores de plataforma:
 
 ```text
-link-checker relativo
+checador de links relativos
 checador de módulos órfãos
-checador de numeração
+checador de numeração contra curriculum.json
 checador de disclaimers
 checador de rodapé
 checador de ausência de doses proibidas
@@ -272,59 +236,37 @@ checador de tutor
 checador de acessibilidade básica
 ```
 
-O objetivo é impedir regressão estrutural.
-
 Critério de pronto:
 
 ```text
-um módulo não pode quebrar cromo, segurança ou índice sem o CI acusar
+um módulo não pode quebrar cromo, segurança, índice ou numeração sem o CI acusar
 ```
 
 ---
 
-## 10. Fase 7 — Bloco IV e integração
+## 7. Fase 6 — Bloco IV
 
-Após M22, o bloco seguinte deve integrar múltiplas quebras.
+**Status:** planejada.
 
-Sequência candidata, sujeita à reconciliação de numeração:
+Depois de M22:
 
 ```text
 M23 · choque misto
 M24 · coração-pulmão
-M25 · ressuscitação volêmica como fisiologia
+M25 · ressuscitação volêmica
 M26 · choque críptico/compensado
-M27 · radar dos perfis
-M28 · vasopressores/inotrópicos como receptor → termo
+M27 · os 4 perfis · radar
+M28 · vasopressores & inotrópicos
 M29 · capstone integrado
 ```
 
-Regra: módulos de integração só devem ser feitos depois que os módulos determinantes estiverem testados e semanticamente estáveis.
+Regra: integração só deve avançar quando os módulos determinantes estiverem testados e semanticamente estáveis.
 
 ---
 
-## 11. Ordem recomendada agora
+## 8. Critério de projeto supremo
 
-A sequência mais limpa a partir deste ponto:
-
-```text
-1. concluir documentação estrutural
-2. reconciliar numeração dos documentos antigos
-3. especificar M22 em MODULE_CONTRACT style
-4. escrever build/m22/model22.js
-5. escrever build/m22/test22.node.js
-6. escrever perfunde22.html
-7. escrever build/m22/validate22.js
-8. atualizar package.json
-9. atualizar perfunde.html
-10. rodar npm run check
-11. atualizar ROADMAP.md status
-```
-
----
-
-## 12. Critério de projeto supremo
-
-O projeto atinge o estado excelente quando cada módulo responde, sem ambiguidade:
+O projeto atinge estado excelente quando cada módulo responde, sem ambiguidade:
 
 ```text
 qual termo quebrou?
@@ -333,10 +275,10 @@ qual erro cognitivo o aluno cometeria?
 qual engine prova a relação?
 qual gráfico torna a relação visível?
 qual preset demonstra o contraste?
-qual questão detecta a compreensão?
+qual questão detecta compreensão?
 qual disclaimer impede extrapolação clínica?
 qual módulo anterior é necessário?
 qual módulo posterior fica preparado?
 ```
 
-Enquanto essas dez perguntas não forem respondidas para todos os módulos, ainda há trabalho estrutural a fazer.
+Enquanto essas dez perguntas não forem respondidas para todos os módulos, ainda há trabalho estrutural.
