@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M22
-próximo: M23 · choque misto
+publicados: M0…M23
+próximo: M24 · coração-pulmão
 planejados: M23…M30
 ```
 
@@ -394,15 +394,28 @@ neurogênico → tônus simpático↓ → RVS↓ + capacitância venosa↑ (pré
 
 ## 23 · Choque misto
 
-**Status:** planejado.
+**Status:** publicado · `perfunde23.html` + `build/m23/`.
 
-**Tese:** paciente real frequentemente quebra mais de um termo.
+**Tese:** o paciente real quebra mais de um termo ao mesmo tempo — e a leitura precisa decompor a mistura.
 
-**Engine:** composição de falhas simultâneas.
+**Engine (`model23.js`):** compõe os termos quebrados numa única cadeia `SV=SVmax·pré-carga·contratilidade · DC=FC·SV · PAM=PVC+DC·RVS/80 · DO₂=DC·CaO₂ · disponível=DO₂·extração`. Severidades puras `{hypo, cardio, obstr, distr, septic, hypox, comp}`.
+
+```text
+COMPOSIÇÃO   → dois choques que sozinhos compensariam, somados descompensam (déficit > singles).
+MASCARAMENTO → compensação/pressor seguram a PAM (≥65) enquanto a DO₂/extração já falhou.
+```
+
+**Joias pedagógicas:** `attribution()` quantifica quanto cada mecanismo deve do déficit (termo dominante = a alavanca certa); `masking()` acende quando a macro engana; as alavancas `applyVolume/applyInotrope/applyPressor` provam que tratar o termo errado não fecha a conta (pressor mascara; volume na bomba fraca sobe congestão).
 
 **Exemplos didáticos:** séptico+cardiogênico, hipovolêmico+obstrutivo, cardiogênico+hipoxemia.
 
-**Pontes:** M14, M16, M20, M21, M22, M30.
+**Erro cognitivo:** tratar a PAM (número) em vez do termo dominante; achar que um rótulo único explica o paciente.
+
+**Invariantes provadas:** composição (mix > singles), mascaramento (PAM≥65 + déficit), atribuição marginal, pressor sobe PAM mas não o déficit, inótropo/volume tratam o termo certo, reserva esgotada descompensa cedo, clamps seguros.
+
+**Pontes:** M14 (hipovolêmico), M16 (cardiogênico), M20 (distributivo), M21 (séptico/extração), M22 (reserva compensatória), M30 (exame global).
+
+**Firewall SaMD:** alavancas como mecanismo (receptor→termo), sem dose, alvo ou protocolo — guarda automatizada no validador rejeita posologia.
 
 ---
 

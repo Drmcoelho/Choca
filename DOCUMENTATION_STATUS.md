@@ -13,8 +13,8 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 A documentação estrutural foi criada, os documentos centrais foram alinhados à numeração publicada em `perfunde.html`, e o fechamento avaliativo M30 foi especificado.
 
 ```text
-módulos publicados: 0…22
-próximo módulo: M23 · choque misto
+módulos publicados: 0…23
+próximo módulo: M24 · coração-pulmão
 planejados: M23…M30
 portão global: npm run check
 manifesto curricular: curriculum.json
@@ -110,17 +110,17 @@ A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narr
 
 ## 5. Próxima ação recomendada
 
-**M22 · anafilático × neurogênico** está publicado e validado (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`). A próxima ação de conteúdo é construir **M23 · choque misto** sob o mesmo padrão:
+**M22 · anafilático × neurogênico** e **M23 · choque misto** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`). A próxima ação de conteúdo é construir **M24 · coração-pulmão** sob o mesmo padrão:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m23/model23.js
-3. escrever build/m23/test23.node.js
-4. escrever perfunde23.html
-5. escrever build/m23/validate23.js
+2. escrever build/m24/model24.js
+3. escrever build/m24/test24.node.js
+4. escrever perfunde24.html
+5. escrever build/m24/validate24.js
 6. atualizar package.json
 7. atualizar perfunde.html
-8. atualizar curriculum.json (M23 → published; M24 → next)
+8. atualizar curriculum.json (M24 → published; M25 → next)
 9. rodar npm run check
 ```
 
