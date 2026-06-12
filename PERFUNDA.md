@@ -63,10 +63,10 @@ O estado publicado do repositório é a fonte operacional de verdade.
 
 ```text
 índice: perfunde.html
-publicados: perfunde0.html … perfunde21.html
-engines: build/m0 … build/m21
+publicados: perfunde0.html … perfunde22.html
+engines: build/m0 … build/m22
 portão: npm run check
-próximo módulo: M22 · anafilático × neurogênico
+próximo módulo: M23 · choque misto
 ```
 
 A numeração canônica atual é a do índice publicado:

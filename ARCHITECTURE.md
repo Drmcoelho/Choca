@@ -134,7 +134,7 @@ published/
 
 Enquanto o projeto não tiver gerador formal, a convenção vigente continua: HTML single-file na raiz + engine/test/validate em `build/mN/`.
 
-A extração para `source/core` é alvo de maturidade, não pré-condição para continuar M22.
+A extração para `source/core` é alvo de maturidade, não pré-condição para continuar a partir de M22 (já publicado) rumo a M23.
 
 ---
 
@@ -326,7 +326,7 @@ Alvo futuro:
 
 ## 8. Governança de numeração
 
-O estado publicado é a fonte operacional de verdade. Se `perfunde.html` aponta M22 como próximo, então M22 é o próximo módulo real, mesmo que documentos antigos tenham uma numeração histórica diferente.
+O estado publicado é a fonte operacional de verdade. Se `perfunde.html` aponta M23 como próximo, então M23 é o próximo módulo real, mesmo que documentos antigos tenham uma numeração histórica diferente.
 
 Regra de ouro:
 

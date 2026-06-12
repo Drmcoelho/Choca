@@ -25,7 +25,8 @@ function caO2(sat){ return 1.34*BASE.Hb*sat + 0.003*90; }   // conteúdo arteria
 // Estado dado os mecanismos.
 // p = { tonus(0..1→RVS), simpatico(0..1→FC), vazamento(0..1 leak/venodilatação), epi(0..1), broncho(0..1) }
 function distAN(p){
-  var B=BASE, tonus=p.tonus, simp=p.simpatico, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
+  // guarda: todos os mecanismos default 0 — entrada incompleta degrada para estado basal, nunca NaN.
+  var B=BASE, tonus=p.tonus||0, simp=p.simpatico||0, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
   var RVSdyn = clampv(B.RVS_floor + B.kTone*tonus + B.kEpiAlpha*epi, 200, 2400);
   var HR = clampv(B.HR_brady + B.HR_span*simp + B.kEpiChrono*epi, 35, 175);
   var fillBonus = clampv((78-HR)/78, 0, 0.5)*B.kFill;          // bradicardia → mais enchimento por batida

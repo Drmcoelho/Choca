@@ -14,7 +14,7 @@ A pressão arterial é um número resultante. A fisiologia mora nos termos que p
 
 ## Estado atual
 
-O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde21.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
+O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde22.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
 
 Estado curricular atual:
 
@@ -23,7 +23,8 @@ Estado curricular atual:
 - **M9–M12** — inversão causal, monitorização, microcirculação e lactato.
 - **M13–M18** — choques hipovolêmico, cardiogênico, VD e obstrutivo.
 - **M19–M21** — capstone obstrutivo, distributivo e séptico.
-- **Próximo módulo real:** `M22 · anafilático × neurogênico`.
+- **M22** — anafilático × neurogênico: fecha o bloco distributivo com os três fenótipos (séptico, anafilático, neurogênico) discriminados pela assinatura FC × RVS.
+- **Próximo módulo real:** `M23 · choque misto`.
 
 ---
 
@@ -107,14 +108,14 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A próxima etapa não é apenas adicionar `perfunde22.html`. É elevar a maturidade estrutural:
+Já concluídos: documentação consolidada, numeração histórica reconciliada, contrato formal de módulo e **M22 construído integralmente sob `MODULE_CONTRACT.md`**. As próximas etapas elevam a maturidade estrutural:
 
-1. consolidar documentação;
-2. reconciliar a numeração histórica dos documentos centrais;
-3. extrair um core fisiológico compartilhado;
-4. criar contrato formal de módulo;
+1. ~~consolidar documentação~~ — feito;
+2. ~~reconciliar a numeração histórica dos documentos centrais~~ — feito;
+3. extrair um core fisiológico compartilhado (atrás de um passo de inline, mantendo o single-file);
+4. ~~criar contrato formal de módulo~~ — feito;
 5. refatorar M9, M20 e M21 como prova de arquitetura;
-6. construir M22 já no padrão novo;
+6. ~~construir M22 já no padrão novo~~ — feito (anafilático × neurogênico);
 7. criar manifesto curricular legível por máquina;
 8. endurecer testes, links, acessibilidade e consistência visual.
 

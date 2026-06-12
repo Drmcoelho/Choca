@@ -33,8 +33,8 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 A camada operacional reconhece:
 
 ```text
-módulos publicados: 0…21
-próximo módulo: M22 · anafilático × neurogênico
+módulos publicados: 0…22
+próximo módulo: M23 · choque misto
 portão global: npm run check
 ```
 
@@ -51,18 +51,17 @@ build/mN/validateN.js
 
 ---
 
-## 3. Divergência documental conhecida
+## 3. Divergência documental — RECONCILIADA
 
-`PERFUNDA.md`, `CHOQUE.md` e `modulos.md` foram escritos em momentos diferentes da evolução do braço. Eles preservam conteúdo fisiológico útil, mas podem carregar divergência de numeração e escopo em relação ao estado publicado atual.
-
-A divergência mais importante:
+`PERFUNDA.md`, `CHOQUE.md` e `modulos.md` foram escritos em momentos diferentes da evolução do braço. A divergência de numeração foi **reconciliada** (commits de reconciliação na `main` + publicação do M22):
 
 ```text
-estado publicado atual: M21 = séptico; M22 = anafilático × neurogênico
-alguns documentos antigos: anafilático × neurogênico aparece como M21
+estado publicado atual: M21 = séptico; M22 = anafilático × neurogênico (publicado)
+próximo: M23 = choque misto
+documentos antigos posicionavam anafilático/neurogênico como M21 — corrigido em todos os documentos centrais.
 ```
 
-Isso não é erro fisiológico. É dívida de sincronização documental.
+Não foi erro fisiológico; foi dívida de sincronização documental, agora quitada. A regra abaixo permanece como guarda contra reincidência.
 
 ---
 
@@ -82,16 +81,15 @@ Ao reconciliar:
 
 ## 5. Próxima ação documental recomendada
 
-Ordem recomendada:
+Reconciliação concluída (PERFUNDA, CHOQUE, modulos alinhados a M0…M22). Ordem recomendada a partir daqui:
 
 ```text
-1. revisar PERFUNDA.md
-2. revisar CHOQUE.md §4, especialmente escada de módulos
-3. revisar modulos.md para alinhar M19–M22
-4. criar curriculum.json/yaml depois da reconciliação, não antes
+1. extrair core mínimo (oxygen + hemodynamics) atrás de um passo de inline
+2. provar o core nos sentinelas M9, M20, M21
+3. criar curriculum.json/yaml — agora seguro, pois a numeração está estável
 ```
 
-Criar `curriculum.json` antes de reconciliar a numeração congelaria a inconsistência.
+A inconsistência de numeração que tornaria perigoso criar `curriculum.json` foi resolvida.
 
 ---
 

@@ -11,8 +11,8 @@ O critério de maturidade não é quantidade de módulos. É coerência entre fi
 O repositório já contém:
 
 - índice `perfunde.html`;
-- módulos publicados `perfunde0.html` até `perfunde21.html`;
-- engines `build/m0` até `build/m21`;
+- módulos publicados `perfunde0.html` até `perfunde22.html`;
+- engines `build/m0` até `build/m22`;
 - testes Node por módulo;
 - validadores jsdom por módulo;
 - `package.json` com `npm run check`;
@@ -21,8 +21,10 @@ O repositório já contém:
 O próximo módulo operacional é:
 
 ```text
-M22 · anafilático × neurogênico
+M23 · choque misto
 ```
+
+(M22 · anafilático × neurogênico já está publicado e validado — ver Fase 2.)
 
 ---
 
@@ -90,7 +92,9 @@ nenhum documento central afirma que M21 é outra coisa enquanto o índice public
 
 ---
 
-## 5. Fase 2 — M22 como módulo exemplar
+## 5. Fase 2 — M22 como módulo exemplar · CONCLUÍDA
+
+Status: **concluída**. `perfunde22.html` + `build/m22/{model,test,validate}22.js` publicados, ligados ao `package.json`/`perfunde.html`, `npm run check` verde (motor 43 OK · validador 78 OK). O motor recebe mecanismos puros (`tonus, simpatico, vazamento, epi, broncho`) e deriva `RVS, FC, PAM, SaO₂, pré-carga`; a FC é o discriminador e o painel da adrenalina prova os quatro termos movidos. Guarda SaMD no validador rejeita qualquer padrão de dose.
 
 Tema:
 
@@ -304,20 +308,19 @@ Regra: módulos de integração só devem ser feitos depois que os módulos dete
 
 ## 11. Ordem recomendada agora
 
+Concluído (M22): documentação estrutural, reconciliação de numeração, engine + teste + HTML + validador, wiring de `package.json`/`perfunde.html`, `npm run check` verde e este status atualizado.
+
 A sequência mais limpa a partir deste ponto:
 
 ```text
-1. concluir documentação estrutural
-2. reconciliar numeração dos documentos antigos
-3. especificar M22 em MODULE_CONTRACT style
-4. escrever build/m22/model22.js
-5. escrever build/m22/test22.node.js
-6. escrever perfunde22.html
-7. escrever build/m22/validate22.js
-8. atualizar package.json
-9. atualizar perfunde.html
-10. rodar npm run check
-11. atualizar ROADMAP.md status
+1. extrair core mínimo (oxygen + hemodynamics) atrás de um passo de inline, mantendo single-file
+2. provar o core nos sentinelas M9, M20, M21 (mesma fórmula, uma fonte)
+3. especificar M23 (choque misto) em MODULE_CONTRACT style
+4. escrever build/m23/model23.js + test23.node.js
+5. escrever perfunde23.html + build/m23/validate23.js
+6. atualizar package.json e perfunde.html
+7. rodar npm run check
+8. criar curriculum.json após a estabilização dos sentinelas
 ```
 
 ---

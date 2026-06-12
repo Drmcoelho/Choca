@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M21
-próximo: M22 · anafilático × neurogênico
+publicados: M0…M22
+próximo: M23 · choque misto
 planejados: M23…M29
 ```
 
@@ -365,22 +365,26 @@ pneumotórax hipertensivo → retorno venoso
 
 ## 22 · Anafilático × neurogênico
 
-**Status:** próximo.
+**Status:** publicado · `perfunde22.html` + `build/m22/`.
 
-**Tese:** ambos são distributivos, mas a quebra causal é diferente.
+**Tese:** ambos são distributivos (RVS↓ comum), mas a quebra causal é diferente — e a **FC é o discriminador**.
 
-**Engine planejado:**
+**Engine (`model22.js`):** mecanismos puros `{tonus, simpatico, vazamento, epi, broncho}` → deriva `{RVSdyn, HR, SV, DC, PAM, preloadF, SaO2, lactate}`. Reusa `pam(dc,rvs,pvc)` do M9.
 
 ```text
-anafilático → RVS↓ + leak↑ + broncoespasmo/edema + FC compensatória usual
-neurogênico → tônus simpático↓ + capacitância venosa↑ + FC inapropriadamente baixa/normal
+anafilático → RVS↓ + simpático intacto (taquicardia) + leak↑ (pré-carga↓) + broncoespasmo (SaO₂↓)
+neurogênico → tônus simpático↓ → RVS↓ + capacitância venosa↑ (pré-carga↓) + FC inapropriadamente baixa (o único choque sem taquicardia)
 ```
+
+**Joia pedagógica:** `epiTermos()` prova que a adrenalina move **quatro termos** (α1→RVS e sela leak; β1→FC/inotropismo; β2→broncodilata), enquanto um α-puro corrige só a RVS.
 
 **Erro cognitivo:** todo distributivo é séptico; todo choque faz taquicardia.
 
-**Pontes:** M9, M20, M21.
+**Invariantes provadas:** mesma RVS↓ com FC oposta (Δ≥50 bpm); neurogênico = única assinatura sem taquicardia; epi move os 4 termos; α-puro restaura a PAM mas deixa a SaO₂ baixa; clamps seguros em entradas absurdas.
 
-**Firewall SaMD:** sem dose de adrenalina, sem algoritmo de anafilaxia, sem decisão de via aérea.
+**Pontes:** M9 (equação macro), M20 (categoria), M21 (séptico, o terceiro distributivo).
+
+**Firewall SaMD:** sem dose de adrenalina, sem algoritmo de anafilaxia, sem decisão de via aérea — guarda automatizada no validador rejeita padrões de posologia.
 
 ---
 
@@ -464,19 +468,18 @@ neurogênico → tônus simpático↓ + capacitância venosa↑ + FC inapropriad
 
 ## 2. Próximo build obrigatório
 
-O próximo build deve ser:
+M22 foi o primeiro módulo construído integralmente sob `MODULE_CONTRACT.md` — **publicado**. O próximo build deve ser:
 
 ```text
-M22 · anafilático × neurogênico
+M23 · choque misto
 ```
 
-Antes de escrever HTML:
+Antes de escrever HTML, e seguindo o padrão validado em M22:
 
 ```text
-1. especificar engine em build/m22/model22.js
-2. escrever invariantes em build/m22/test22.node.js
+1. especificar engine em build/m23/model23.js (funções puras)
+2. escrever invariantes em build/m23/test23.node.js
 3. aplicar SAFETY.md explicitamente
-4. só então construir perfunde22.html
+4. só então construir perfunde23.html
+5. escrever build/m23/validate23.js e ligar no package.json/perfunde.html
 ```
-
-M22 deve ser o primeiro módulo construído integralmente sob `MODULE_CONTRACT.md`.
