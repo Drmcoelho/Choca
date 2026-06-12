@@ -22,7 +22,9 @@ Estado curricular atual:
 - **M3–M8** — determinantes: débito cardíaco, pré-carga/Guyton, Frank-Starling, pós-carga/alça PV, DO₂/VO₂.
 - **M9–M13** — inversão causal, monitorização, POCUS/acessos, microcirculação e lactato.
 - **M14–M21** — choques: hipovolêmico, hemorrágico/não-hemorrágico, cardiogênico, VD, obstrutivo, capstone obstrutivo, distributivo e séptico.
-- **Próximo módulo real:** `M22 · anafilático × neurogênico`.
+- **M22** — próximo módulo de conteúdo: anafilático × neurogênico.
+- **M23–M29** — integração e resgate.
+- **M30** — revisão global / exame de domínio com 100 questões.
 
 ---
 
@@ -56,12 +58,13 @@ A regra é binária: **0 falhas ou não entra**.
 - `ROADMAP.md` — plano de evolução para plataforma fisiológica verificável.
 - `DOCUMENTATION_STATUS.md` — estado documental reconciliado.
 - `curriculum.json` — manifesto curricular legível por máquina.
+- `M30_ASSESSMENT_SPEC.md` — especificação do exame global de 100 questões.
 
 ---
 
 ## Filosofia de construção
 
-Cada módulo deve obedecer à mesma ordem:
+Cada módulo de conteúdo deve obedecer à mesma ordem:
 
 ```text
 fisiologia → engine puro → teste Node → HTML single-file → validação jsdom → índice → CI
@@ -82,6 +85,8 @@ O padrão mínimo de um módulo é:
 9. engine determinístico;
 10. teste e validador com 0 falhas.
 
+M30 é exceção: ele é avaliação global, não conteúdo novo. Seu padrão é psicométrico: 100 questões, quatro quartos, dificuldade crescente, módulos embaralhados, distribuição A/B/C/D controlada e gabarito ultra-robusto.
+
 ---
 
 ## Invariantes do produto
@@ -94,6 +99,7 @@ O padrão mínimo de um módulo é:
 - **Física viva.** Gráficos e questões são computados, não imagens pré-cozidas.
 - **Português do Brasil.** Prosa causal, seca, com setas quando útil.
 - **SaMD hard-stop.** Mecanismo sim; dose, alvo terapêutico acionável e prescrição automatizada, não.
+- **Avaliação sem pista formal.** No M30, a resposta correta não pode ser inferida por letra, tamanho, maior número ou padrão.
 
 ---
 
@@ -120,6 +126,6 @@ A documentação estrutural foi consolidada e reconciliada. A próxima etapa con
 8. rodar npm run check
 ```
 
-Em paralelo, a próxima melhoria estrutural é extrair gradualmente um core fisiológico compartilhado para oxigênio, hemodinâmica e microcirculação, preservando o HTML final single-file.
+Em paralelo, M30 já está especificado como fechamento avaliativo do braço. Ele será construído em quatro partes de 25 questões após estabilização de M22–M29.
 
 O alvo final é um sistema em que cada botão obedeça à fisiologia, cada fórmula seja testável, cada erro do aluno revele uma falha conceitual e cada módulo pertença a um mapa causal maior.
