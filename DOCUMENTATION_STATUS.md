@@ -1,6 +1,6 @@
 # DOCUMENTATION_STATUS.md — Estado documental · PERFUNDE · CHOCA
 
-Este arquivo registra o estado da documentação após a rodada de consolidação e reconciliação.
+Este arquivo registra o estado da documentação após a rodada de consolidação, reconciliação e incorporação do M30.
 
 Ele existe para impedir um erro comum em projetos longos: a documentação parecer coerente porque cada arquivo isolado é bom, mas o conjunto carregar divergências históricas.
 
@@ -8,16 +8,17 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 
 ## 1. Estado atual
 
-**Status:** reconciliado.
+**Status:** reconciliado e expandido para M30.
 
-A documentação estrutural foi criada e os documentos centrais foram alinhados à numeração publicada em `perfunde.html`.
+A documentação estrutural foi criada, os documentos centrais foram alinhados à numeração publicada em `perfunde.html`, e o fechamento avaliativo M30 foi especificado.
 
 ```text
 módulos publicados: 0…21
 próximo módulo: M22 · anafilático × neurogênico
-planejados: M23…M29
+planejados: M23…M30
 portão global: npm run check
 manifesto curricular: curriculum.json
+exame global: M30_ASSESSMENT_SPEC.md
 ```
 
 ---
@@ -30,9 +31,9 @@ manifesto curricular: curriculum.json
 
 ### Constituição e domínio
 
-- `PERFUNDA.md` — identidade, tese-mãe, invariantes, escada canônica e fronteira SaMD.
-- `CHOQUE.md` — fisiologia, taxonomia, escada canônica, assinaturas e âncoras.
-- `modulos.md` — blueprint pedagógico de cada módulo, agora alinhado ao índice publicado.
+- `PERFUNDA.md` — identidade, tese-mãe, invariantes, escada canônica, M30 e fronteira SaMD.
+- `CHOQUE.md` — fisiologia, taxonomia, escada canônica, assinaturas, âncoras e M30.
+- `modulos.md` — blueprint pedagógico de cada módulo, agora alinhado ao índice publicado e expandido até M30.
 
 ### Operação e maturidade
 
@@ -41,7 +42,8 @@ manifesto curricular: curriculum.json
 - `MODULE_CONTRACT.md` — contrato formal para novos módulos.
 - `SAFETY.md` — fronteira clínica, SaMD e proibições.
 - `ROADMAP.md` — fases de evolução para plataforma verificável.
-- `curriculum.json` — manifesto curricular legível por máquina.
+- `curriculum.json` — manifesto curricular legível por máquina, agora com M30.
+- `M30_ASSESSMENT_SPEC.md` — especificação do exame global de domínio.
 
 ---
 
@@ -71,6 +73,7 @@ MODULE_CONTRACT.md
 SAFETY.md
 ROADMAP.md
 curriculum.json
+M30_ASSESSMENT_SPEC.md
 ```
 
 Quando houver divergência futura, prevalece a verdade operacional para saber o que existe publicado; em seguida, a documentação deve ser reconciliada, não reinterpretada informalmente.
@@ -86,7 +89,7 @@ estado publicado atual: M21 = séptico; M22 = anafilático × neurogênico
 alguns documentos antigos: anafilático × neurogênico aparecia como M21
 ```
 
-Resolução:
+Resolução atual:
 
 ```text
 M21 = séptico
@@ -98,17 +101,16 @@ M26 = choque críptico/compensado
 M27 = os 4 perfis · radar
 M28 = vasopressores & inotrópicos
 M29 = capstone integrado
+M30 = revisão global · exame de domínio · 100 questões
 ```
 
-A divergência era efeito de expansão curricular, não erro fisiológico.
+A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narrativa integrada; M30 testa o domínio global.
 
 ---
 
 ## 5. Próxima ação recomendada
 
-A próxima ação não é mais reconciliar documentação. Isso foi feito.
-
-A próxima ação é construir **M22 · anafilático × neurogênico** sob o novo padrão:
+A próxima ação de conteúdo é construir **M22 · anafilático × neurogênico** sob o novo padrão:
 
 ```text
 1. especificar variáveis de estado
@@ -122,7 +124,14 @@ A próxima ação é construir **M22 · anafilático × neurogênico** sob o nov
 9. rodar npm run check
 ```
 
-M22 será o primeiro módulo criado integralmente depois da consolidação documental.
+A ação avaliativa futura é construir M30 em quatro partes:
+
+```text
+Parte 1 → questões 1–25
+Parte 2 → questões 26–50
+Parte 3 → questões 51–75
+Parte 4 → questões 76–100
+```
 
 ---
 
@@ -141,8 +150,9 @@ MODULE_CONTRACT.md define módulos
 SAFETY.md define fronteiras clínicas
 ROADMAP.md define sequência
 curriculum.json permite leitura por máquina
+M30_ASSESSMENT_SPEC.md define o exame global
 ```
 
 Esse critério agora está cumprido em primeira versão.
 
-O próximo ganho de maturidade será automatizar checagens transversais contra `curriculum.json`.
+O próximo ganho de maturidade será automatizar checagens transversais contra `curriculum.json` e contra as regras psicométricas do M30.
