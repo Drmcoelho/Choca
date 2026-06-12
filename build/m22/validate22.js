@@ -1,6 +1,6 @@
 const fs=require('fs'), path=require('path');
 const { JSDOM }=require('jsdom');
-const file=process.argv[2]||path.join(__dirname,'perfunde22.html');
+const file=process.argv[2]||path.join(__dirname,'../../perfunde22.html');
 const html=fs.readFileSync(file,'utf8');
 let oks=0,falhas=0;
 const ok=(n,c,got='')=>{ if(c){oks++;console.log('  OK  · '+n+(got!==''?'  ['+got+']':''));} else {falhas++;console.log('FALHA · '+n+(got!==''?'  ['+got+']':''));} };

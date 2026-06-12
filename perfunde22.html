@@ -255,7 +255,7 @@ function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
 function pam(dc,rvsDyn,pvc){ if(pvc===undefined)pvc=4; return pvc + dc*rvsDyn/80; }   // PAM = PVC + DC·RVS/80 (idêntico ao m9)
 function caO2(sat){ return 1.34*BASE.Hb*sat + 0.003*90; }                              // conteúdo arterial (mL/dL)
 function distAN(p){
-  var B=BASE, tonus=p.tonus||0, simp=p.simpatico||0, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
+  p=p||{}; var B=BASE, tonus=p.tonus||0, simp=p.simpatico||0, vaz=p.vazamento||0, epi=p.epi||0, broncho=p.broncho||0;
   var RVSdyn=clampv(B.RVS_floor + B.kTone*tonus + B.kEpiAlpha*epi, 200, 2400);
   var HR=clampv(B.HR_brady + B.HR_span*simp + B.kEpiChrono*epi, 35, 175);
   var fillBonus=clampv((78-HR)/78,0,0.5)*B.kFill;

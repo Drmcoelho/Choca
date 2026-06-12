@@ -70,6 +70,7 @@ ok('FC clampada em [35,175]', ABS.HR>=35&&ABS.HR<=175, r(ABS.HR,0));
 ok('SaO₂ clampada em [0,68 ; 0,99]', ABS.SaO2>=0.68&&ABS.SaO2<=0.99, r(ABS.SaO2,3));
 ok('pré-carga clampada em [0,25 ; 1]', ABS.preloadF>=0.25&&ABS.preloadF<=1, r(ABS.preloadF,2));
 ok('vazio {} não lança e dá número', (function(){try{var z=M.distAN({});return !isNaN(z.PAM);}catch(e){return false;}})());
+ok('sem argumento / null não lançam (guarda p||{})', (function(){try{return !isNaN(M.distAN().PAM) && !isNaN(M.distAN(null).PAM);}catch(e){return false;}})());
 ok('leak↑ ⇒ pré-carga↓ (monotonia, sem epi)', M.distAN({tonus:0.5,simpatico:0.5,vazamento:0.8,epi:0}).preloadF < M.distAN({tonus:0.5,simpatico:0.5,vazamento:0.2,epi:0}).preloadF);
 ok('epi sela o leak: pré-carga sobe com epi a mesmo vazamento', M.distAN({tonus:0.5,simpatico:0.5,vazamento:0.8,epi:0.8}).preloadF > M.distAN({tonus:0.5,simpatico:0.5,vazamento:0.8,epi:0}).preloadF);
 ok('PAM = m9: pam(5,800,4) = 4 + 5·800/80 = 54', near(M.pam(5,800,4), 54, 1e-9), r(M.pam(5,800,4),0));
