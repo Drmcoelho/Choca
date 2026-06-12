@@ -1,172 +1,372 @@
-# CHOQUE.md — Domínio Clínico-Fisiológico · **PERFUNDE · CHOCA**
+# CHOQUE.md — Domínio clínico-fisiológico · **PERFUNDE · CHOCA**
 
-> O "quê" do braço 2: a fisiologia, a taxonomia, os engines e suas âncoras de validação, a triagem SaMD por módulo e as honestidades de modelo.
-> Governança e invariantes → `PERFUNDA.md`. Execução e build → `AGENTS.md`.
+> O “quê” do braço 2: fisiologia, taxonomia, motores, âncoras de validação e honestidades de modelo.
+> Constituição → `PERFUNDA.md`. Blueprint modular → `modulos.md`. Execução → `AGENTS.md`. Fronteira clínica → `SAFETY.md`.
 
 ---
 
 ## 1. Propósito
 
-Transformar o choque de "lista de tipos a decorar" em **um único eixo causal quantitativo**: a entrega de oxigênio (DO₂) e sua falência. Cada tipo de choque deixa de ser uma entrada de tabela e vira **a quebra de um termo específico** da cadeia de transporte — visível, computável, validável.
+Transformar choque de lista decorada em eixo causal quantitativo.
+
+A cadeia é:
+
+```text
+CaO₂ → DO₂ → extração → VO₂ → ATP/lactato
+```
+
+A leitura hemodinâmica é:
+
+```text
+PAM = PVC + DC · RVS
+```
+
+Cada tipo de choque corresponde a uma quebra localizada — ou combinação de quebras — nessa cadeia.
 
 ---
 
-## 2. A fisiologia do transporte (cada termo, com o que o aluno erra)
+## 2. Fisiologia nuclear
 
-**CaO₂ — conteúdo arterial de O₂.** `CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂`.
-→ O erro clássico: confundir **PaO₂** (tensão, o que a gasometria mostra) com **conteúdo** (o que a célula recebe). Anemia derruba o conteúdo com PaO₂ e SaO₂ perfeitas. A fração dissolvida (0,003·PaO₂) é quase sempre desprezível — mas existe, e é por isso que hiperóxia move pouco o conteúdo num anêmico.
-→ Ponte direta com o caso-semente (Hct 32 ≈ Hb 10,7): conteúdo ~30% reduzido com SpO₂ "ok". Saturação engana.
+### 2.1 Conteúdo arterial de oxigênio
 
-**A curva de oxi-hemoglobina pelo lado tecidual.** Severinghaus (já validado no mvp2).
-→ No braço 1 a curva explicava captação pulmonar; aqui explica **offloading**: P50, efeito Bohr (acidose/CO₂/temperatura/2,3-DPG deslocam para a direita → entrega facilitada ao tecido). O *ombro* da curva (onde o caso de hoje vivia, PaO₂ 64 ↔ Sat ~91%) é o precipício.
+```text
+CaO₂ = 1,34 · Hb · SaO₂ + 0,003 · PaO₂
+```
 
-**DC — débito cardíaco.** `DC = FC × VS`.
-→ Determinantes do VS: pré-carga, contratilidade, pós-carga. A taquicardia compensatória tem teto (enchimento diastólico encurta) — FC 120 não é "coração forte", é bandeira.
+Erro que o módulo corrige: confundir PaO₂/SpO₂ com conteúdo. Anemia pode produzir hipóxia tecidual com saturação aparentemente ótima.
 
-**Pré-carga e a interseção de Guyton.** *(o engine-jóia — §5)*
-→ O erro: tratar pré-carga como PVC. PVC é **ponto de operação**, não pré-carga; e responsividade a volume ≠ tolerância a volume. *Fluid responsive* (vai subir o VS na curva de Starling) é diferente de *fluid tolerant* (o pulmão/VD aguentam o volume).
+### 2.2 Entrega de oxigênio
 
-**Pós-carga e a alça pressão-volume.** ESPVR/EDPVR, acoplamento Ea/Ees.
-→ Pós-carga não é "a PA"; é a carga contra a ejeção. No cardiogênico, baixar pós-carga pode subir o DC — contraintuitivo para quem só olha PA.
+```text
+DO₂ = DC · CaO₂ · 10
+```
 
-**DO₂/VO₂ e extração.** `VO₂ = DC × (CaO₂−CvO₂)`, `O₂ER = VO₂/DO₂`.
-→ A curva bifásica: VO₂ é independente de DO₂ até o **DO₂crítico**; abaixo dele, VO₂ passa a depender da entrega → metabolismo anaeróbio → lactato. ScvO₂/SvO₂ lê a extração: baixa = extraindo demais (entrega insuficiente); alta = não extraindo (shunt microcirculatório/falência citopática do séptico).
+Erro que o módulo corrige: achar que oxigenação pulmonar normal garante entrega. Sem fluxo ou sem conteúdo, o tecido não recebe O₂ suficiente.
 
-**PAM = DC × RVS — a inversão causal.**
-→ O coração do braço. Mesma PAM, mecânicas opostas. A PA normal no choque críptico é o saldo de RVS↑ compensando DC↓ — falsa segurança.
+### 2.3 Débito cardíaco
+
+```text
+DC = FC · VS
+```
+
+Erro que o módulo corrige: interpretar taquicardia como força. Frequência alta pode reduzir enchimento e derrubar volume sistólico.
+
+### 2.4 Pré-carga como ponto de operação
+
+Pré-carga não é PVC isolada. O ponto real emerge da interseção entre retorno venoso e função cardíaca.
+
+```text
+retorno venoso ≈ (Pmsf − PVC) / Rvr
+```
+
+Erro que o módulo corrige: tratar PVC como sinônimo de volume ou responsividade.
+
+### 2.5 Pós-carga e alça PV
+
+Pós-carga não é simplesmente “a pressão”. É a carga contra a ejeção. No cardiogênico, reduzir pós-carga pode aumentar DC apesar de reduzir pressão.
+
+Erro que o módulo corrige: pensar que PA maior sempre significa ejeção melhor.
+
+### 2.6 Extração e consumo
+
+```text
+VO₂  = DC · (CaO₂ − CvO₂) · 10
+O₂ER = VO₂ / DO₂
+SvO₂ ≈ SaO₂ · (1 − O₂ER)
+```
+
+Interpretação:
+
+```text
+SvO₂ baixa → extração alta → entrega insuficiente ou demanda alta
+SvO₂ alta + lactato↑ → extração/utilização falha → paradoxo séptico/distributivo
+```
+
+Erro que o módulo corrige: interpretar SvO₂ alta como perfusão necessariamente boa.
+
+### 2.7 Lactato
+
+Lactato é marcador de desequilíbrio entre produção e depuração, não um sinônimo automático de hipóxia pura.
+
+Erros que o módulo corrige:
+
+- lactato alto = sempre hipoxemia;
+- lactato normal = sempre perfusão adequada;
+- lactato isolado substitui decomposição fisiológica.
+
+### 2.8 Macrocirculação e microcirculação
+
+Macro restaurada não garante tecido perfundido.
+
+```text
+PAM/DC adequados ≠ capilar homogêneo ≠ mitocôndria usando O₂
+```
+
+Erro que o módulo corrige: encerrar o raciocínio quando a PAM melhora.
 
 ---
 
-## 3. Taxonomia: cada choque = uma quebra localizada
+## 3. Taxonomia mecanística
 
-| Choque | Termo quebrado | Assinatura | Compensação típica |
-|--------|----------------|-----------|--------------------|
-| **Hipovolêmico** | pré-carga (Guyton: retorno venoso ↓) | DC↓, RVS↑, extração↑ | taquicardia, vasoconstrição |
-| **Cardiogênico** | bomba (contratilidade / Ees↓) | DC↓, RVS↑, congestão | a espiral: DC↓→isquemia→DC↓ |
-| **Obstrutivo** | enchimento mecânico (pré-carga por causa externa) | DC↓, RVS↑ | depende da causa (tamponamento/TEP/pneumotórax) |
-| **Distributivo/séptico** | RVS (e microcirculação/mitocôndria) | DC normal/↑, RVS↓, extração **paradoxalmente baixa** | DC alto não resgata se a extração falha |
-
-→ Os quatro não são categorias a decorar: são **quatro lugares onde a mesma equação se rompe**. Combinações reais (séptico + cardiogênico) = duas quebras simultâneas, como o fenótipo misto do Ventila.
-
-→ **Granularidade (decisão de projeto):** cada categoria acima é um módulo; cada subtipo *fisiologicamente distinto* ganha um capstone próprio (ver §4). Tamponamento, TEP e pneumotórax são três fisiologias sob "obstrutivo"; séptico, anafilático e neurogênico são três caminhos para RVS↓ — e o neurogênico é o único choque que cursa *sem* taquicardia. Achatar isso numa linha de tabela apagaria justamente o que o braço existe para ensinar.
+| Categoria | Termo quebrado dominante | Assinatura causal | Erro clássico |
+|---|---|---|---|
+| Hipovolêmico | retorno venoso / pré-carga | DC↓, RVS↑, extração↑ | achar que todo responsivo tolera volume |
+| Cardiogênico | bomba / contratilidade / alça PV | DC↓, pressões de enchimento↑, congestão | tratar PA como pós-carga simples |
+| Obstrutivo | impedimento mecânico externo | DC↓ por enchimento/ejeção/retorno bloqueado | juntar tamponamento, TEP e pneumotórax como se fossem iguais |
+| Distributivo | RVS↓ ± extração/utilização falha | DC normal/↑, RVS↓, ScvO₂/SvO₂ às vezes alta | achar que distributivo = séptico |
+| Misto | mais de um termo quebrado | sinais sobrepostos | forçar rótulo único |
 
 ---
 
-## 4. Escada de módulos — engines e âncoras de validação
+## 4. Escada canônica de módulos e engines
 
-**~29 peças, sem teto artificial.** Todo engine é validado em Node contra a âncora antes de virar UI (ver `AGENTS.md`).
+Esta é a numeração publicada e operacional. Ela prevalece sobre versões históricas.
 
 ### Bloco 0 · Fundamentos do transporte
-| # | Módulo | Engine central | Âncora |
-|---|--------|----------------|--------|
-| 0 | **Caderno · Matemática do transporte** | DO₂/VO₂/CaO₂/Fick · aritmética exata | conferência algébrica fechada |
-| 1 | **Conteúdo de O₂ (CaO₂)** | equação do conteúdo | Hb 15/SaO₂ 100 → ~20,1 mL/dL · **reusa mvp2** |
-| 2 | **A curva como entrega** | Severinghaus (lado tecidual) | P50 ~26,8 · Bohr · **reusa mvp2** |
 
-### Bloco I · Os determinantes (engines-jóia, módulos plenos)
-| # | Módulo | Engine central | Âncora |
-|---|--------|----------------|--------|
-| 3 | **Débito cardíaco** | DC = FC × VS · determinantes do VS | VS ~70 mL · DC ~5 L/min repouso |
-| 4 | **Pré-carga I · interseção de Guyton** | retorno venoso × função cardíaca | Pmsf · zeros e inclinações · ponto de operação (§5) |
-| 5 | **Pré-carga II · Guyton aplicado** | responsivo ≠ tolerante · PPV/VVS · VCI · perna | deslocamento de interseção sob volume |
-| 6 | **Frank-Starling** | curva saturante VS × pré-carga | platô · porção ascendente vs congestão |
-| 7 | **Pós-carga & a alça PV** | alça pressão-volume · ESPVR/EDPVR · Ea/Ees | acoplamento Ea/Ees ~1 · deslocamentos |
-| 8 | **DO₂/VO₂ & supply-dependence** | curva bifásica de dependência de suprimento | platô VO₂ → DO₂crítico · O₂ER ~25% · joelho do lactato |
+| # | Módulo | Engine/foco | Âncora mínima |
+|---|---|---|---|
+| 0 | Matemática do transporte | identidades CaO₂/DO₂/Fick/O₂ER/PAM | aritmética fechada, unidades explícitas |
+| 1 | Conteúdo de O₂ (CaO₂) | conteúdo Hb-ligado + dissolvido | Hb 15/SaO₂ 1/PaO₂ 100 ≈ 20 mL/dL |
+| 2 | A curva como entrega | Severinghaus/Bohr pelo lado tecidual | P50, deslocamento e offloading |
 
-### Bloco II · A inversão e a leitura
-| # | Módulo | Engine central | Âncora |
-|---|--------|----------------|--------|
-| 9 | **PAM = DC × RVS (núcleo)** | decomposição macrocirculatória · a inversão causal | mesma PAM por DC↑/RVS↓ vs DC↓/RVS↑ |
-| 10 | **Monitorização hemodinâmica** | de onde vêm DC/ScvO₂/termodiluição (conceitual) | identidades; não é manual de aparelho |
-| 11 | **A microcirculação** | compartimento próprio · glicocálice · heterogeneidade | extração baixa com tecido faminto (séptico) |
-| 12 | **Lactato & depuração** | produção anaeróbia × tipo B × clearance | tipo A vs B · o β2 do caso-semente |
+### Bloco I · Determinantes
 
-### Bloco III · Os choques (categoria + capstones de subtipo)
-| # | Módulo | Engine / foco | Âncora |
-|---|--------|---------------|--------|
-| 13 | **Hipovolêmico** (categoria) | Starling deslocado por RV↓ | índice de choque (FC/PAS) |
-| 14 | ↳ **hemorrágico × não-hemorrágico** | classes de hemorragia · terceiro espaço | tabela de classes; conteúdo vs volume |
-| 15 | **Cardiogênico** (categoria) | alça PV em falência · a espiral | EDPVR/ESPVR deslocados · congestão a montante |
-| 16 | ↳ **o ventrículo direito** (o VD esquecido) | interdependência · D-shape · pós-carga de VD | a bomba que o livro ignora |
-| 17 | **Obstrutivo** (categoria) | pressão intratorácica → retorno venoso | **ponte mvp1** (auto-PEEP) |
-| 18 | ↳ **tamponamento · TEP · pneumotórax** | três fisiologias sob um rótulo | curvas distintas de cada um |
-| 19 | **Distributivo** (categoria) | RVS↓ + a inversão da extração | DC normal/↑ com extração baixa |
-| 20 | ↳ **séptico** | microcirculação + falência citopática mitocondrial | o paradoxo DO₂-normal/extração-falha |
-| 21 | ↳ **anafilático × neurogênico** | RVS↓ por mecanismos distintos | neurogênico sem taquicardia (bradi) |
+| # | Módulo | Engine/foco | Âncora mínima |
+|---|---|---|---|
+| 3 | Débito cardíaco | DC = FC × VS, teto da taquicardia | FC↑ extremo não aumenta DC indefinidamente |
+| 4 | Interseção de Guyton | retorno venoso × função cardíaca | ponto de operação por interseção |
+| 5 | Guyton aplicado | responsivo ≠ tolerante | volume desloca Pmsf; tolerância é outro eixo |
+| 6 | Frank-Starling | curva saturante VS × pré-carga | porção ascendente vs platô |
+| 7 | Pós-carga & alça PV | ESPVR/EDPVR/Ea/Ees | pós-carga muda VS e trabalho |
+| 8 | DO₂/VO₂ & supply-dependence | curva bifásica VO₂×DO₂ | DO₂crítico e O₂ER |
 
-### Bloco IV · Integração & resgate
-| # | Módulo | Engine / foco | Âncora |
-|---|--------|---------------|--------|
-| 22 | **Choque misto** (duas quebras) | sobreposição · o fenótipo-misto do braço | séptico+cardiogênico; termos somados |
-| 23 | **O coração-pulmão** | PEEP/VNI → pré e pós-carga | **ponte forte ao braço 1** (Ventila/mvp1) |
-| 24 | **Ressuscitação volêmica como fisiologia** | custo do volume · glicocálice · fluid creep | mecanismo, não protocolo de bolus |
-| 25 | **Choque críptico/compensado** | PAM normal mascarando DC↓ | **o caso-semente, literalmente** |
-| 26 | **Os 4 perfis · o radar** | discriminador integrador (frio/quente × úmido/seco) | perfil → quebra de termo |
-| 27 | **Vasopressores & inotrópicos** | receptor → termo da equação | mecanística (§8) · **sem dose** |
-| 28 | **Capstone** | caso integrado + tutor gráfico dinâmico | molde Ventila 15; provável caso = paciente-semente |
+### Bloco II · Inversão e leitura
 
----
+| # | Módulo | Engine/foco | Âncora mínima |
+|---|---|---|---|
+| 9 | PAM = DC × RVS | decomposição macro | mesma PAM por mecânicas opostas |
+| 10 | Monitorização hemodinâmica | origem e erro dos números | número medido ≠ verdade fisiológica |
+| 11 | POCUS & acessos vasculares | janelas, linhas, CVC, artefatos | achado responde pergunta específica |
+| 12 | A microcirculação | shunt, glicocálice, heterogeneidade | macro ok com tecido faminto |
+| 13 | Lactato & depuração | produção × clearance × tipo A/B | lactato não é só hipóxia |
 
-## 5. Os engines-jóia (especificação física)
+### Bloco III · Choques
 
-**Interseção de Guyton (módulos 4–5) — o mais difícil, logo cedo no build, para desentortar a arquitetura.**
-→ Duas curvas no plano (PVC no eixo x, fluxo no eixo y): a **curva de retorno venoso** (decrescente: RV = (Pmsf − PVC)/Rvr, zera quando PVC = Pmsf) e a **curva de função cardíaca** (Starling, crescente). O **ponto de operação é a interseção** — é onde DC e PVC efetivamente caem. Volume sobe Pmsf → desloca RV para a direita → nova interseção com DC maior (se ainda na porção ascendente de Starling). Falência de bomba achata Starling → interseção desce. **É o engine que unifica pré-carga, responsividade a volume e congestão num só gráfico.** Validar: zeros, inclinações, deslocamento de interseção sob volume e sob inotropismo.
+| # | Módulo | Engine/foco | Âncora mínima |
+|---|---|---|---|
+| 14 | Hipovolêmico | retorno venoso/preload ↓ | DC↓, RVS↑, O₂ER↑ |
+| 15 | Hemorrágico × não-hemorrágico | conteúdo + volume + terceiro espaço | sangue perdido não é só volume perdido |
+| 16 | Cardiogênico | alça PV em falência | Ees↓, congestão, DC↓ |
+| 17 | O ventrículo direito | interdependência e pós-carga de VD | D-shape, VD como bomba vulnerável |
+| 18 | Obstrutivo | categoria | impedimento mecânico com DC↓ |
+| 19 | Tamponamento · TEP · pneumotórax | três obstrutivos, três alívios | enchimento vs ejeção VD vs retorno venoso |
+| 20 | Distributivo | RVS↓ + extração ambígua | DC alto não resgata PAM se RVS caiu |
+| 21 | Séptico | macro × micro × mitocôndria | SvO₂ alta + lactato alto + déficit |
+| 22 | Anafilático × neurogênico | dois distributivos não sépticos | leak/broncoespasmo vs simpaticólise/bradi |
 
-**Frank-Starling (módulo 6, presente também em 3-4 e no hipovolêmico 13).** Curva saturante VS × pré-carga; o platô explica por que volume além de um ponto não rende (e começa a congestionar).
+### Bloco IV · Integração e resgate
 
-**Alça pressão-volume (módulo 7, reaparece no cardiogênico 15-16).** Ea (elastância arterial, pós-carga) e Ees (elastância sistólica, contratilidade); acoplamento Ea/Ees como eficiência. Deslocamentos da alça em hipovolemia, falência sistólica, aumento de pós-carga.
-
-**Curva de dependência de suprimento (módulo 8).** Bifásica: platô independente + rampa dependente abaixo do DO₂crítico; o joelho é onde o lactato nasce.
+| # | Módulo | Engine/foco | Âncora mínima |
+|---|---|---|---|
+| 23 | Choque misto | duas quebras simultâneas | séptico + cardiogênico etc. |
+| 24 | O coração-pulmão | PEEP/VNI/pré/pós-carga | ponte forte com Ventila |
+| 25 | Ressuscitação volêmica | custo do volume/glicocálice/fluid creep | mecanismo sem bolus prescritivo |
+| 26 | Choque críptico/compensado | PAM normal mascarando falência | lactato/perfusão > PA isolada |
+| 27 | Os 4 perfis · radar | frio/quente × seco/úmido | perfil como hipótese de termo quebrado |
+| 28 | Vasopressores & inotrópicos | receptor → termo da equação | mecanismo, sem dose |
+| 29 | Capstone · caso integrado | tutor gráfico dinâmico | múltiplos termos, múltiplas armadilhas |
 
 ---
 
-## 6. Os quatro perfis hemodinâmicos (módulo 13, o radar)
+## 5. Engines-jóia
 
-Frio/quente (perfusão periférica ← DC e RVS) × seco/úmido (congestão ← pressões de enchimento). Cada quadrante mapeia para uma quebra de termo e para um vetor de raciocínio mecânico (não conduta automatizada). O radar integra os engines anteriores num discriminador de beira de leito.
+### 5.1 Guyton
+
+O engine de Guyton ensina que o ponto hemodinâmico não é uma variável isolada. Ele emerge da interseção entre retorno venoso e função cardíaca.
+
+Invariantes:
+
+```text
+PVC → Pmsf reduz retorno venoso
+volume ↑ desloca Pmsf
+falência de bomba achata função cardíaca
+interseção = DC e PVC reais
+```
+
+### 5.2 Frank-Starling
+
+Ensina que volume tem rendimento decrescente.
+
+Invariantes:
+
+```text
+pré-carga ↑ aumenta VS na porção ascendente
+no platô, volume rende pouco
+em falência, a curva é achatada
+```
+
+### 5.3 Alça pressão-volume
+
+Ensina acoplamento entre contratilidade, pós-carga, pré-carga e trabalho.
+
+Invariantes:
+
+```text
+Ees↑ aumenta capacidade de ejeção
+Ea↑ aumenta carga contra ejeção
+Ea/Ees informa acoplamento mecânico
+```
+
+### 5.4 Supply-dependence
+
+Ensina o joelho entre VO₂ independente de DO₂ e VO₂ dependente de DO₂.
+
+Invariantes:
+
+```text
+acima do DO₂crítico, VO₂ fica em platô
+abaixo do DO₂crítico, VO₂ cai com DO₂
+lactato sobe quando déficit cresce
+```
+
+### 5.5 Macro × micro × mitocôndria
+
+Ensina o paradoxo séptico.
+
+Invariantes:
+
+```text
+DO₂ macro pode estar alto
+shunt/glicocálice reduzem chegada tecidual
+mitocôndria reduz utilização
+SvO₂ pode subir porque o tecido não extrai/usa
+pressor sobe PAM, mas não corrige micro/mito por si só
+```
 
 ---
 
-## 7. Choque críptico (módulo 12) — o que mais mata por ser ignorado
+## 6. Assinaturas dos choques
 
-PA normal **não** exclui choque. Lactato↑ com PAM preservada = RVS compensando DC↓; a descompensação é súbita quando a vasoconstrição esgota. **O caso-semente é o módulo:** paciente normotensa (12×8), FC 120, lactato 3,9, conteúdo baixo (Hct 32) — perfusão tecidual já falhando sob PA "tranquilizadora". Ensina a ler o lactato e a extração como detectores precoces, antes da PA cair.
+### Hipovolêmico
+
+```text
+quebra dominante: retorno venoso/pré-carga
+macro: DC↓, RVS↑
+extração: O₂ER↑, SvO₂↓
+armadilha: responsivo a volume ≠ tolerante a volume
+```
+
+### Cardiogênico
+
+```text
+quebra dominante: bomba
+macro: DC↓, pressões de enchimento↑
+compensação: RVS↑
+armadilha: aumentar pressão pode piorar ejeção se pós-carga sobe
+```
+
+### Obstrutivo
+
+```text
+quebra dominante: obstáculo mecânico
+subtipos:
+  tamponamento → enchimento diastólico
+  TEP maciço → ejeção do VD
+  pneumotórax hipertensivo → retorno venoso
+armadilha: tratar os três como uma entidade única
+```
+
+### Distributivo
+
+```text
+quebra dominante: RVS↓
+macro: DC normal/↑, RVS↓
+extração: pode estar normal, ambígua ou falha
+armadilha: distributivo ≠ automaticamente séptico
+```
+
+### Séptico
+
+```text
+quebra dominante: RVS↓ + microcirculação + mitocôndria
+assinatura: SvO₂ alta pode coexistir com lactato alto
+armadilha: PAM restaurada ≠ tecido ressuscitado
+```
+
+### Anafilático
+
+```text
+quebra dominante: vasoplegia + extravasamento capilar + eixo respiratório
+assinatura: leak/edema/broncoespasmo em cenário didático
+armadilha: reduzir a anafilaxia a “RVS baixa” apaga o eixo respiratório/imune
+```
+
+### Neurogênico
+
+```text
+quebra dominante: perda simpática
+assinatura: RVS↓ + capacitância venosa↑ + FC inapropriadamente baixa/normal
+armadilha: esperar taquicardia compensatória em todo choque
+```
 
 ---
 
-## 8. Vasopressores e inotrópicos (módulo 14) — receptor → termo, **nunca dose**
+## 7. Honestidades de modelo
 
-Mapeamento **mecanístico**, parando antes do miligrama:
+Os módulos usam modelos reduzidos. Isso é uma escolha pedagógica, não uma afirmação de que o corpo real é simples.
 
-→ **Noradrenalina** → α1 → RVS↑ (corrige o termo RVS no distributivo).
-→ **Dobutamina** → β1 → contratilidade↑ / Ees↑ (corrige o termo bomba no cardiogênico).
-→ **Vasopressina** → V1 → RVS↑ por via não-adrenérgica.
-→ **Adrenalina** → β1+α → DC↑ e RVS↑.
-→ A lógica: **identifique o termo quebrado na equação, escolha a alavanca que age sobre aquele termo.** O artefato mostra *qual termo cada droga move e por quê* — e explicitamente **não** diz quanto, em quem, ou quando iniciar.
+Todo módulo deve declarar sua simplificação dominante:
 
----
-
-## 9. Triagem SaMD por módulo (firewall)
-
-| Permitido (educacional) | Proibido (cruzaria para SaMD) |
-|-------------------------|-------------------------------|
-| "DO₂ cai porque o termo X quebrou" | "este paciente precisa de volume agora" |
-| "noradrenalina age na RVS" | "inicie noradrenalina a X µg/kg/min" |
-| "por que a dose escala com o paciente" (mecanismo) | tabela de dose, alvo terapêutico, peso predito acionável |
-| simular curvas com parâmetros que o aluno escolhe | classificar/rotear um caso real em conduta |
-| o caso-semente como **caso trabalhado didático** | recomendação de conduta para um paciente específico |
-
-→ Antes de cada engine: **triagem explícita.** Se o engine começa a rotear caso → conduta, parou de ensinar mecanismo e virou suporte à decisão → redesenhar.
+- CaO₂ assume aproximação padrão da ligação Hb-O₂.
+- PAM = DC × RVS é leitura macroscópica, não substitui vascularização regional.
+- Microcirculação é reduzida a shunt/glicocálice/heterogeneidade.
+- Mitocôndria é reduzida a capacidade de utilização.
+- Choques reais podem ser mistos.
+- Drogas e procedimentos aparecem como mecanismo, não prescrição.
 
 ---
 
-## 10. Honestidades de modelo (no próprio artefato)
+## 8. Fronteira SaMD por domínio
 
-→ **Monocompartimental/idealizado:** Guyton e Starling são modelos lineares-por-trechos; a circulação real tem complacência venosa não-linear, interdependência ventricular, zonas de West afetando o RV. Declarar.
-→ **SvO₂/extração** no séptico: o paradoxo (extração baixa com tecido faminto) é microcirculatório/mitocondrial — o modelo macro não captura a heterogeneidade; dizer que é simplificação.
-→ **Lactato** não é só anaerobiose: tipo B (β2-agonista, como discutido no caso-semente), depuração hepática, etc. Não reduzir lactato a "hipoperfusão".
-→ **Severinghaus reaproveitado** assume curva normal; co-oximetria real (carboxi/metaHb) foge do modelo.
+Módulos de maior risco:
+
+```text
+19  obstrutivos procedimentais
+21  séptico
+22  anafilático × neurogênico
+25  ressuscitação volêmica
+28  vasopressores/inotrópicos
+29  capstone
+```
+
+Nesses módulos, é obrigatório:
+
+```text
+sem dose
+sem comando terapêutico
+sem alvo individualizado
+sem decisão para paciente real
+veredito apenas fisiológico
+```
+
+O texto normativo completo está em `SAFETY.md`.
 
 ---
 
-## 11. Referências fisiológicas (âncoras)
+## 9. Critério de excelência fisiológica
 
-Equação do conteúdo de O₂ · equação de Fick · curva de Severinghaus (P50, Bohr) · curvas de Frank-Starling · **modelo de retorno venoso de Guyton** (Pmsf, resistência ao retorno venoso) · análise de alça pressão-volume (Ea/Ees, Sunagawa) · curva de dependência VO₂/DO₂ e DO₂crítico · índice de choque · os quatro perfis hemodinâmicos clássicos.
+Um módulo está fisiologicamente maduro quando prova:
+
+```text
+1. o estado normal
+2. o fenótipo patológico
+3. a variável enganosa
+4. o termo quebrado
+5. a compensação
+6. o contraste com outro choque
+7. a armadilha cognitiva
+8. a limitação do modelo
+```
+
+Se o módulo não diferencia “número” de “mecanismo”, ele ainda não pertence ao estado excelente.
