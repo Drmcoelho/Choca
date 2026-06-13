@@ -63,10 +63,10 @@ O estado publicado do repositório é a fonte operacional de verdade.
 
 ```text
 índice: perfunde.html
-publicados: perfunde0.html … perfunde23.html
-engines: build/m0 … build/m23
+publicados: perfunde0.html … perfunde24.html
+engines: build/m0 … build/m24
 portão: npm run check
-próximo módulo: M24 · coração-pulmão
+próximo módulo: M25 · ressuscitação volêmica
 fechamento avaliativo planejado: M30 · revisão global / exame de domínio
 ```
 
