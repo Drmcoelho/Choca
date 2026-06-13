@@ -11,8 +11,8 @@ O critério de maturidade não é quantidade de páginas. É coerência entre fi
 O repositório contém:
 
 - índice `perfunde.html`;
-- módulos publicados `perfunde0.html` até `perfunde22.html`;
-- engines `build/m0` até `build/m22`;
+- módulos publicados `perfunde0.html` até `perfunde23.html`;
+- engines `build/m0` até `build/m23`;
 - testes Node por módulo;
 - validadores jsdom por módulo;
 - `package.json` com `npm run check`;
@@ -24,10 +24,10 @@ O repositório contém:
 Próximo módulo operacional:
 
 ```text
-M23 · choque misto
+M24 · coração-pulmão
 ```
 
-(M22 · anafilático × neurogênico já está publicado e validado — ver Fase 2.)
+(M22 · anafilático × neurogênico e M23 · choque misto já estão publicados e validados — abrem o Bloco IV de integração.)
 
 Fechamento avaliativo planejado:
 
