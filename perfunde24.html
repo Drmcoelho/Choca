@@ -297,13 +297,18 @@ function corPulmao(p){
     HR:HR,CO:CO,PAM:PAM,SaO2:SaO2,CaO2:CaO2,DO2:DO2,lactate:lactate };
 }
 function curvaPEEP(p,n){ p=p||{}; n=n||21; var pts=[]; for(var i=0;i<n;i++){ var peep=20*i/(n-1); var R=corPulmao(Object.assign({},p,{peep:peep})); pts.push({peep:peep,CO:R.CO,SaO2:R.SaO2,VR:R.VR,PVRrel:R.PVRrel,PAM:R.PAM}); } return pts; }
-function peepOtima(p){
-  var c=curvaPEEP(p,21), best=0,bestCO=-1;
+function tipoCurva(c){
+  c=c||[]; if(c.length<2) return 'plana';
+  var best=0, bestCO=-Infinity;
   for(var i=0;i<c.length;i++){ if(c[i].CO>bestCO){ bestCO=c[i].CO; best=c[i].peep; } }
   var monotonaCai=true, monotonaSobe=true;
   for(var j=1;j<c.length;j++){ if(c[j].CO>c[j-1].CO+1e-9) monotonaCai=false; if(c[j].CO<c[j-1].CO-1e-9) monotonaSobe=false; }
-  var tipo=(monotonaCai&&!monotonaSobe)?'cai':((monotonaSobe&&!monotonaCai)?'sobe':(best>0&&best<20?'otimo':'plana'));
-  return { peepOtima:best, COotima:bestCO, CO_peep0:c[0].CO, CO_peep20:c[c.length-1].CO, tipo:tipo };
+  return (monotonaCai&&!monotonaSobe)?'cai':((monotonaSobe&&!monotonaCai)?'sobe':(best>0&&best<20?'otimo':'plana'));
+}
+function peepOtima(p){
+  var c=curvaPEEP(p,21), best=0,bestCO=-1;
+  for(var i=0;i<c.length;i++){ if(c[i].CO>bestCO){ bestCO=c[i].CO; best=c[i].peep; } }
+  return { peepOtima:best, COotima:bestCO, CO_peep0:c[0].CO, CO_peep20:c[c.length-1].CO, tipo:tipoCurva(c) };
 }
 function pressaoTermos(p){
   p=p||{}; var sp=(p.peep>0)?p.peep:10;
@@ -526,7 +531,7 @@ function cvpEngana(p){ p=p||{}; var lo=corPulmao(Object.assign({},p,{peep:0})), 
       document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
     TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
     window.recompute=recompute; window.drawCurve=drawCurve; window.drawPress=drawPress; window.activateTab=activate; window.setLabState=setState;
-    window.corPulmaoFn=corPulmao; window.classeFn=classeCP; window.curvaFn=curvaPEEP; window.peepOtimaFn=peepOtima; window.pressaoTermosFn=pressaoTermos; window.cvpFn=cvpEngana; window.pvrFn=pvrRel; window.pamFn=pam; window.caO2Fn=caO2;
+    window.corPulmaoFn=corPulmao; window.classeFn=classeCP; window.curvaFn=curvaPEEP; window.tipoCurvaFn=tipoCurva; window.peepOtimaFn=peepOtima; window.pressaoTermosFn=pressaoTermos; window.cvpFn=cvpEngana; window.pvrFn=pvrRel; window.pamFn=pam; window.caO2Fn=caO2;
     window.TUTOR=TUTOR; window.__state=state;
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }

@@ -99,6 +99,8 @@ ok('firewall SaMD',/nunca/i.test(txt('disclaimer'))&&/(dose|conduta|PEEP)/i.test
 // guarda de dose: o material é mecânica, nunca posologia
 ok('SEM padrão de dose (mg/mcg/µg/mL·h⁻¹)', !/\b\d+(?:[.,]\d+)?\s*(mg|mcg|µg|ug)\b/i.test(html) && !/\b\d+(?:[.,]\d+)?\s*ml\s*\/\s*h\b/i.test(html));
 ok('SEM comando posológico (iniciar/prescrever/titular X)', !/\b(inicie|iniciar|prescrev|titule|titular|administre|administrar)\s+\w*(noradrenalin|dobutamin|seda|propofol)/i.test(html));
+// guarda ventilatória: mecânica é permitida ("PEEP recruta", "curva DC × PEEP"); COMANDO terapêutico, não.
+ok('SEM comando ventilatório prescritivo (iniciar/titular/ajustar PEEP/CPAP; intubar)', !/\b(inicie|iniciar|titule|titular|prescreva|prescrever|ajuste|ajustar|intube|intubar)\s+(a\s+|o\s+|um\s+|uma\s+|para\s+|com\s+)?(peep|cpap|press[ãa]o\s+positiva|ventila[çc]|vni|alvo\s+de\s+peep)\b/i.test(html));
 
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);

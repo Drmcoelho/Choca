@@ -81,13 +81,12 @@ ok('vazio {} não lança e dá número', (function(){try{var z=M.corPulmao({});r
 ok('sem argumento / null não lançam (guarda p||{})', (function(){try{return !isNaN(M.corPulmao().CO)&&!isNaN(M.corPulmao(null).CO);}catch(e){return false;}})());
 ok('curvaPEEP / peepOtima / pressaoTermos não lançam sem argumento', (function(){try{M.curvaPEEP();M.peepOtima();M.pressaoTermos();M.cvpEngana();return true;}catch(e){return false;}})());
 ok('VRdrive ≥ 0 (cachoeira venosa, sem retorno negativo)', M.corPulmao({volemia:0,peep:20,effort:0}).VRdrive>=0, r(M.corPulmao({volemia:0,peep:20,effort:0}).VRdrive,2));
-ok('classeCP(null)/sem argumento não lança (guarda R||{})', (function(){try{return typeof M.classeCP()==='string' && typeof M.classeCP(null)==='string';}catch(e){return false;}})());
-ok('curva PERFEITAMENTE plana NÃO é rotulada "cai" (é "plana")', (function(){
-  // emula uma curva constante: peepOtima classifica via monotonias; com VR estrangulado a zero em toda a faixa o DC é plano
-  var flat=M.peepOtima({volemia:0, effort:0, peep:0});   // Pmsf mínimo; cachoeira venosa pode achatar o DC
-  // garantia da LÓGICA: se cai e sobe forem ambos verdadeiros (plana), o rótulo não pode ser 'cai'
-  return flat.tipo!=='cai' || flat.CO_peep0 > flat.CO_peep20+1e-9;
-})());
+ok('classeCP()/classeCP(null) não lançam e retornam "limitrofe" (guarda R||{})', (function(){try{return M.classeCP()==='limitrofe' && M.classeCP(null)==='limitrofe';}catch(e){return false;}})());
+ok('tipoCurva: curva PERFEITAMENTE plana → "plana" (não "cai")', M.tipoCurva([{peep:0,CO:5},{peep:10,CO:5},{peep:20,CO:5}])==='plana', M.tipoCurva([{peep:0,CO:5},{peep:10,CO:5},{peep:20,CO:5}]));
+ok('tipoCurva: decrescente → "cai", crescente → "sobe", ótimo interior → "otimo"',
+  M.tipoCurva([{peep:0,CO:5},{peep:10,CO:4},{peep:20,CO:3}])==='cai' &&
+  M.tipoCurva([{peep:0,CO:3},{peep:10,CO:4},{peep:20,CO:5}])==='sobe' &&
+  M.tipoCurva([{peep:0,CO:3},{peep:10,CO:6},{peep:20,CO:4}])==='otimo');
 ok('classeCP cobre os 5 rótulos vivos', (function(){
   var c=function(p){return M.classeCP(M.corPulmao(p));};
   return c(NORMAL)==='normal' && c(HIPO_P)==='preload_dep' && c(CARDIOG)==='ve_congesto'

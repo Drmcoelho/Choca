@@ -116,13 +116,21 @@ function curvaPEEP(p, n){
   return pts;
 }
 // PEEP ótima (máximo DC) e o tipo de resposta da curva.
+// Classificador TOTAL da forma da curva. Função pura, testável isoladamente.
+// Curva plana (todos os DC iguais) → monotonaCai E monotonaSobe verdadeiros: exige exclusividade
+// para 'cai'/'sobe', de modo que o platô caia em 'plana' (não em 'cai' por precedência).
+function tipoCurva(c){
+  c=c||[]; if(c.length<2) return 'plana';
+  var best=0, bestCO=-Infinity;
+  for(var i=0;i<c.length;i++){ if(c[i].CO>bestCO){ bestCO=c[i].CO; best=c[i].peep; } }
+  var monotonaCai=true, monotonaSobe=true;
+  for(var j=1;j<c.length;j++){ if(c[j].CO>c[j-1].CO+1e-9) monotonaCai=false; if(c[j].CO<c[j-1].CO-1e-9) monotonaSobe=false; }
+  return (monotonaCai&&!monotonaSobe)?'cai':((monotonaSobe&&!monotonaCai)?'sobe':(best>0&&best<20?'otimo':'plana'));
+}
 function peepOtima(p){
   var c=curvaPEEP(p,21), best=0, bestCO=-1;
   for(var i=0;i<c.length;i++){ if(c[i].CO>bestCO){ bestCO=c[i].CO; best=c[i].peep; } }
-  var co0=c[0].CO, coMax=c[c.length-1].CO, monotonaCai=true, monotonaSobe=true;
-  for(var j=1;j<c.length;j++){ if(c[j].CO>c[j-1].CO+1e-9) monotonaCai=false; if(c[j].CO<c[j-1].CO-1e-9) monotonaSobe=false; }
-  var tipo = (monotonaCai&&!monotonaSobe)?'cai':((monotonaSobe&&!monotonaCai)?'sobe':(best>0&&best<20?'otimo':'plana'));
-  return { peepOtima:best, COotima:bestCO, CO_peep0:co0, CO_peep20:coMax, tipo:tipo };
+  return { peepOtima:best, COotima:bestCO, CO_peep0:c[0].CO, CO_peep20:c[c.length-1].CO, tipo:tipoCurva(c) };
 }
 
 // Os QUATRO termos movidos pela PRESSÃO POSITIVA (o ato clínico: espontâneo→suportado).
@@ -158,5 +166,5 @@ function cvpEngana(p){
 }
 
 if (typeof module!=='undefined' && module.exports){
-  module.exports = { BASE, clampv, pam, caO2, lungVolIndex, pvrRel, corPulmao, curvaPEEP, peepOtima, pressaoTermos, classeCP, cvpEngana };
+  module.exports = { BASE, clampv, pam, caO2, lungVolIndex, pvrRel, corPulmao, curvaPEEP, tipoCurva, peepOtima, pressaoTermos, classeCP, cvpEngana };
 }
