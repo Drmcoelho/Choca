@@ -23,8 +23,9 @@ Estado curricular atual:
 - **M9–M13** — inversão causal, monitorização, POCUS/acessos, microcirculação e lactato.
 - **M14–M21** — choques: hipovolêmico, hemorrágico/não-hemorrágico, cardiogênico, VD, obstrutivo, capstone obstrutivo, distributivo e séptico.
 - **M22** — publicado: anafilático × neurogênico — discrimina os três distributivos (séptico, anafilático, neurogênico) pela assinatura FC × RVS.
-- **M23** — publicado: choque misto — compõe os termos quebrados, atribui o déficit ao mecanismo dominante e expõe o mascaramento (PAM normal, tecido faminto). Próximo módulo de conteúdo: **M24 · coração-pulmão**.
-- **M24–M29** — integração e resgate.
+- **M23** — publicado: choque misto — compõe os termos quebrados, atribui o déficit ao mecanismo dominante e expõe o mascaramento (PAM normal, tecido faminto).
+- **M24** — publicado: o coração-pulmão — a ventilação como hemodinâmica: a pressão intratorácica reescreve retorno venoso (pré-carga do VD), pós-carga do VD (PVR em U) e pós-carga transmural do VE; o discriminador é a curva DC × PEEP. Próximo módulo de conteúdo: **M25 · ressuscitação volêmica**.
+- **M25–M29** — integração e resgate.
 - **M30** — revisão global / exame de domínio com 100 questões.
 
 ---
@@ -114,7 +115,7 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A documentação estrutural foi consolidada e reconciliada, e `M22 · anafilático × neurogênico` e `M23 · choque misto` estão publicados sob o novo padrão documental. A próxima etapa concreta é construir `M24 · coração-pulmão` no mesmo rito:
+A documentação estrutural foi consolidada e reconciliada, e `M23 · choque misto` e `M24 · o coração-pulmão` estão publicados sob o novo padrão documental. A próxima etapa concreta é construir `M25 · ressuscitação volêmica` no mesmo rito:
 
 ```text
 1. especificar variáveis de estado
