@@ -24,11 +24,13 @@ const ev=e=>window.eval(e);
 console.log('— ESTRUTURA / ABAS —');
 ['backlink','kicker','disclaimer','honestidade','pontes','tutor','score','curve','vent','curveLab',
  'panel-caso','panel-trilha','panel-instrumento','panel-lab','panel-avaliacao','iPeep','iEffort','iLv','iRv','iVol',
- 'presets','lab-veredito','opbox-curve','opbox-vent','opbox-lab','lab-vbig'].forEach(id=>ok('#'+id,!!$(id)));
+ 'presets','lab-veredito','opbox-curve','opbox-vent','opbox-lab','lab-vbig',
+ 'caso-interativo','caso-prog','prever','prever-opts','prever-fb'].forEach(id=>ok('#'+id,!!$(id)));
 ok('footer',!!doc.querySelector('footer'));
 ['tab-caso','tab-trilha','tab-instrumento','tab-lab','tab-avaliacao'].forEach(t=>ok('aba '+t,!!$(t)));
 ok('Caso 5 atos',doc.querySelectorAll('#panel-caso .ato').length===5);
-ok('Trilha ≥6',doc.querySelectorAll('#panel-trilha .step').length>=6);
+ok('Trilha expandida ≥9',doc.querySelectorAll('#panel-trilha .step').length>=9);
+ok('Trilha com pistas progressivas',doc.querySelectorAll('#panel-trilha .pista').length>=4);
 ok('nota de mecânica ventilatória (PEEP→termo)',!!doc.querySelector('.pharm')&&/PEEP/.test(doc.querySelector('.pharm').textContent)&&/pós-carga/.test(doc.querySelector('.pharm').textContent));
 window.activateTab('tab-lab'); ok('troca aba ativa Lab',$('panel-lab').classList.contains('active')); window.activateTab('tab-instrumento');
 
@@ -59,9 +61,30 @@ ok('VD+PEEP alta: banner PIT (retorno venoso↓)',$('ban-pit').classList.contain
 window.setLabState({volemia:0.3,peep:12}); ok('hipovolêmico+PEEP: banner série sempre presente',$('ban-serie').classList.contains('show'));
 window.setLabState({}); ok('normal: ACOPLAMENTO NORMAL',/NORMAL/.test(txt('lab-vbig')),txt('lab-vbig'));
 
+console.log('\n— INTERATIVO: caso com decisões —');
+const dec=doc.querySelectorAll('#caso-interativo .decision');
+ok('caso progressivo ≥3 decisões',dec.length>=3,dec.length);
+ok('apenas a 1ª decisão visível no início', dec.length>0 && dec[0].style.display!=='none' && dec[1] && dec[1].style.display==='none');
+const dec0btn=dec[0]?dec[0].querySelector('.dopts .opt'):null;
+ok('decisão tem botões de opção',!!dec0btn);
+if(dec0btn){ dec0btn.dispatchEvent(new window.Event('click',{bubbles:true}));
+  ok('responder revela feedback + consequência no motor', dec[0].querySelector('.dfb.show')!=null && /CO\s/.test(dec[0].querySelector('.dfb').textContent));
+  ok('responder revela a próxima decisão', dec[1].style.display!=='none');
+  ok('progresso atualiza', /1 \/ /.test(txt('caso-prog'))); }
+
+console.log('\n— INTERATIVO: prever-depois-revelar —');
+const pbtns=doc.querySelectorAll('#prever-opts .opt');
+ok('prever tem 3 opções (subir/cair/igual)',pbtns.length===3);
+ok('feedback de previsão começa oculto',!$('prever-fb').classList.contains('show'));
+window.setLabState({rvFail:0.8,peep:6});   // VD que falha: +PEEP deve CAIR
+pbtns[0].dispatchEvent(new window.Event('click',{bubbles:true}));
+ok('responder a previsão revela o resultado do motor', $('prever-fb').classList.contains('show') && /CO/.test(txt('prever-fb')) && /cair/.test(txt('prever-fb')));
+window.setLabState({}); ok('mudar o coração re-arma a previsão', !$('prever-fb').classList.contains('show'));
+
 console.log('\n— TUTOR —');
 const T=window.TUTOR;
-ok('tutor ≥10',Array.isArray(T)&&T.length>=10,T?T.length:'∅');
+ok('banco expandido ≥16',Array.isArray(T)&&T.length>=16,T?T.length:'∅');
+ok('chips de dificuldade (crescente)',doc.querySelectorAll('#tutor .dif').length===(T?T.length:0) && !!doc.querySelector('#tutor .dif-a'));
 let bankOk=true; (T||[]).forEach(q=>{ if(!(Array.isArray(q.o)&&q.o.length===4))bankOk=false; if(!(Number.isInteger(q.a)&&q.a>=0&&q.a<4))bankOk=false; if(!(q.q&&q.fb&&q.cap))bankOk=false; });
 ok('tutor: 4 opções/índice/q-fb-cap',bankOk);
 ok('canvases no DOM',doc.querySelectorAll('#tutor .qplot').length===(T?T.length:0));

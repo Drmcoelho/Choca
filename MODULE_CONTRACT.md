@@ -188,6 +188,27 @@ pergunta → conceito → distrator → erro cognitivo → feedback causal
 
 O feedback deve explicar por que a alternativa errada parece plausível.
 
+### 2.6 Camada interativa (padrão a partir do M24)
+
+Um módulo não pode ser passivo. Além do tutor de MCQ, deve engajar o aluno com atividades que forcem compromisso cognitivo e usem o próprio motor como fonte de verdade. São obrigatórias:
+
+```text
+caso progressivo com decisões → o aluno escolhe à beira do leito; cada decisão revela a
+                                consequência COMPUTADA pelo motor (não um texto fixo), e
+                                a próxima decisão só aparece após a anterior.
+prever-depois-revelar         → antes de mostrar o gráfico/resultado, o aluno PREVÊ (clica);
+                                só então o motor revela o número real e o veredito. Re-arma
+                                a cada mudança de estado.
+trilha socrática expandida    → ≥ 9 passos encadeados, com pistas progressivas (revelação
+                                opcional) que aprofundam sem entregar a resposta de imediato.
+banco de questões maior       → ≥ 16 questões, com dificuldade explicitamente crescente
+                                (básico → intermediário → avançado) e gabarito espalhado.
+```
+
+Regra de ouro da interatividade: **toda atividade dinâmica é alimentada pelo engine puro**, nunca por respostas hard-coded — a interface não pode afirmar o que o motor não calcula. O validador `validateN.js` deve clicar nessas atividades e provar que a consequência exibida vem do motor.
+
+`perfunde24.html` é o módulo de referência deste padrão.
+
 ---
 
 ## 3. Contrato visual

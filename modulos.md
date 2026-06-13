@@ -435,6 +435,8 @@ PVR em U: mínima perto do FRC → existe uma PEEP ótima
 
 **Joias pedagógicas:** `optimalPeep()` varre a PEEP e devolve a que maximiza o débito (alta no VE que falha, baixa no VD que falha); `ventResponse()` mostra a curva espontâneo/passivo/PEEP que **se inverte** entre os ventrículos; `dominantVentricle()` governa a leitura.
 
+**Camada interativa (módulo de referência do novo padrão):** caso progressivo com decisões (consequência computada pelo motor), prever-depois-revelar, trilha socrática expandida (≥9 passos + pistas progressivas) e banco de ≥16 questões com dificuldade crescente. Ver `MODULE_CONTRACT.md` §2.6.
+
 **Erro cognitivo:** achar que pressão positiva ajuda os dois ventrículos igualmente; girar o botão do ventilador sem saber qual ventrículo falha.
 
 **Invariantes provadas:** PEEP↑→PIT↑→retorno↓; PVR em U; +PEEP sobe o débito no VE que falha e derruba no VD que falha (a pérola); série = min(VD,VE); PEEP ótima alta (VE) vs baixa (VD); clamps seguros.

@@ -90,6 +90,21 @@ canvas.plot{display:block;width:100%;height:200px;border-radius:8px;background:#
 .pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.pista{margin-top:7px}
+.pista summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.pista[open] summary{color:var(--ink-faint)}
+.pista .pb{margin-top:5px;color:var(--ink-dim);font-size:.9rem}
+.casebox{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.casebox h3{margin:0 0 3px} .casebox .cprog{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:10px}
+.decision{border-left:3px solid var(--ven);background:#0e1320;border-radius:0 var(--r-sm) var(--r-sm) 0;padding:11px 14px;margin:10px 0}
+.decision .dq{margin-bottom:9px}
+.dopts{display:grid;gap:7px}
+.dfb{display:none;margin-top:9px;font-size:.88rem;color:var(--ink-dim)} .dfb.show{display:block}
+.dfb .cons{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.predict{background:#0e1320;border:1px solid rgba(63,130,230,.4);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.predict .pq{margin-bottom:9px}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
+.dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
 </style>
 </head>
 <body>
@@ -128,6 +143,13 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <div class="ato"><span class="at">Ato 4 · decompor</span><p>A PVR é uma <b>curva em U</b> no volume pulmonar: mínima perto do FRC, alta na atelectasia e na sobredistensão — existe uma <b>PEEP ótima</b>. E a circulação é em <b>série</b>: o débito é limitado pelo ventrículo mais fraco. A mesma manobra otimiza um e estrangula o outro.</p></div>
     <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A curva débito × PEEP (com a PEEP ótima marcada) e o comparador espontâneo/passivo/PEEP mostram por que a resposta se inverte entre VE e VD. É o Instrumento.</p></div>
     <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">pressão intratorácica</b> e <b>qual ventrículo falha</b>. PIT positiva: pré-carga↓ (ruim para VD/pré-carga-dependente), pós-carga de VE↓ (bom para VE que falha). A PVR mínima é a PEEP ótima; o débito em série segue o ventrículo mais fraco. Pontes aos módulos 7 (pós-carga/alça PV), 17 (VD) e 18/19 (obstrutivo).</div></details>
+
+    <div class="casebox">
+      <h3>À beira do leito · decida e veja a consequência</h3>
+      <div class="cprog" id="caso-prog">0 / 0 decisões</div>
+      <div id="caso-interativo"></div>
+      <p class="hint" style="margin-top:10px">Cada decisão é mecanismo, não conduta: o motor mostra o que acontece com o débito — não o que prescrever.</p>
+    </div>
   </section>
 
   <!-- 2 · TRILHA -->
@@ -135,12 +157,21 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <h2>Trilha socrática</h2>
     <p class="lead">Da pressão na pleura ao débito dos dois ventrículos.</p>
     <div class="trilha">
-      <div class="step"><div class="qq">Como a ventilação muda o retorno venoso?</div><div class="aa">A <b>pressão intratorácica</b> é transmitida ao átrio direito. Pressão positiva (PEEP) sobe a pressão de átrio direito → <b>reduz o gradiente</b> de retorno venoso → menos pré-carga de VD. Esforço espontâneo (PIT negativa) faz o oposto.</div></div>
-      <div class="step"><div class="qq">E a pós-carga do VE?</div><div class="aa">A pós-carga que importa é <b>transmural</b> (dentro − fora). PIT positiva empurra por fora a parede do VE → <b>reduz a pós-carga transmural</b> → ejeção mais fácil. Para um VE que falha (sensível à pós-carga), isso é alívio.</div></div>
-      <div class="step"><div class="qq">Por que o espontâneo piora o edema agudo?</div><div class="aa">A inspiração espontânea gera PIT muito <b>negativa</b> → sobe a pós-carga transmural do VE e o retorno venoso ao mesmo tempo → mais congestão. Pressão positiva quebra esse ciclo.</div></div>
-      <div class="step"><div class="qq">Então PEEP é boa para todos?</div><div class="aa"><b>Não.</b> No VD que falha (TEP, hipertensão pulmonar), a PEEP <b>derruba a pré-carga</b> e <b>sobe a PVR</b> (o VD é intolerante à pós-carga) → o débito despenca. A mesma manobra que salva o VE pode matar o VD.</div></div>
-      <div class="step"><div class="qq">A PVR depende do volume pulmonar como?</div><div class="aa">Em <b>U</b>: mínima perto do FRC. Volume baixo (atelectasia) colaba vasos extra-alveolares; volume alto (sobredistensão) comprime os alveolares. Há uma <b>PEEP ótima</b> que minimiza a PVR.</div></div>
+      <div class="step"><div class="qq">Como a ventilação muda o retorno venoso?</div><div class="aa">A <b>pressão intratorácica</b> é transmitida ao átrio direito. Pressão positiva (PEEP) sobe a pressão de átrio direito → <b>reduz o gradiente</b> de retorno venoso → menos pré-carga de VD. Esforço espontâneo (PIT negativa) faz o oposto.</div>
+        <details class="pista"><summary>▸ pista: o gradiente</summary><div class="pb">Retorno venoso ∝ (P<sub>msf</sub> − P<sub>AD</sub>). A PEEP sobe a P<sub>AD</sub> sem mudar a P<sub>msf</sub> → o gradiente cai. Por isso o efeito é maior em quem já tem pouca reserva de volume.</div></details></div>
+      <div class="step"><div class="qq">E a pós-carga do VE?</div><div class="aa">A pós-carga que importa é <b>transmural</b> (dentro − fora). PIT positiva empurra por fora a parede do VE → <b>reduz a pós-carga transmural</b> → ejeção mais fácil. Para um VE que falha (sensível à pós-carga), isso é alívio.</div>
+        <details class="pista"><summary>▸ pista: por que "transmural"</summary><div class="pb">O que o miocárdio "sente" é a pressão de parede = pressão da cavidade − pressão ao redor (PIT). Subir a PIT reduz a tensão de parede para a mesma pressão arterial.</div></details></div>
+      <div class="step"><div class="qq">Por que o espontâneo piora o edema agudo?</div><div class="aa">A inspiração espontânea gera PIT muito <b>negativa</b> → sobe a pós-carga transmural do VE e o retorno venoso ao mesmo tempo → mais congestão. Pressão positiva quebra esse ciclo.</div>
+        <details class="pista"><summary>▸ pista: o ciclo vicioso</summary><div class="pb">Mais esforço → PIT mais negativa → mais pós-carga e mais retorno → mais congestão → mais esforço. A pressão positiva (e a sedação) interrompem o laço.</div></details></div>
+      <div class="step"><div class="qq">Então PEEP é boa para todos?</div><div class="aa"><b>Não.</b> No VD que falha (TEP, hipertensão pulmonar), a PEEP <b>derruba a pré-carga</b> e <b>sobe a PVR</b> (o VD é intolerante à pós-carga) → o débito despenca. A mesma manobra que salva o VE pode matar o VD.</div>
+        <details class="pista"><summary>▸ pista: dois golpes no VD</summary><div class="pb">A PEEP alta bate no VD por <em>dois</em> lados ao mesmo tempo: menos enchimento (pré-carga↓) e mais carga de saída (PVR↑). O VD, de paredes finas, não tolera.</div></details></div>
+      <div class="step"><div class="qq">A PVR depende do volume pulmonar como?</div><div class="aa">Em <b>U</b>: mínima perto do FRC. Volume baixo (atelectasia) colaba vasos extra-alveolares; volume alto (sobredistensão) comprime os alveolares. Há uma <b>PEEP ótima</b> que minimiza a PVR.</div>
+        <details class="pista"><summary>▸ pista: dois leitos vasculares</summary><div class="pb">Vasos <em>alveolares</em> (esmagados pela insuflação) e <em>extra-alveolares</em> (abertos pela insuflação) somam-se numa curva em U. O fundo do vale é o volume ótimo.</div></details></div>
       <div class="step"><div class="qq">Quem manda no débito final?</div><div class="aa">A circulação é em <b>série</b>: o VD enche o VE. O débito é limitado pelo <b>ventrículo mais fraco</b>. Otimizar o pulmão é encontrar o ajuste que serve ao ventrículo que está falhando.</div></div>
+      <div class="step"><div class="qq">E quando os DOIS ventrículos falham?</div><div class="aa">O ajuste vira um <b>compromisso</b>: a pressão que descarrega o VE ainda castiga o VD. A PEEP ótima desliza para um meio-termo, e o débito final segue o que estiver mais limitante naquele ponto.</div>
+        <details class="pista"><summary>▸ pista: leia o limitante</summary><div class="pb">No Lab, o veredito mostra qual ventrículo "limita" (min VD,VE). Mexa a PEEP e veja o limitante <em>trocar</em> — é onde mora o compromisso.</div></details></div>
+      <div class="step"><div class="qq">E a volemia, onde entra?</div><div class="aa">A volemia é a <b>reserva de pré-carga</b>. Com volemia alta, o coração tolera mais PIT antes de o retorno cair; hipovolêmico, qualquer PEEP já derruba o débito. A mesma PEEP é segura ou perigosa conforme o tanque.</div></div>
+      <div class="step"><div class="qq">A regra final, então, é…</div><div class="aa">Não existe "PEEP boa" universal. <b>Saber qual ventrículo falha vem antes de girar o botão.</b> O ventilador é uma alavanca hemodinâmica — trate-o como tal.</div></div>
     </div>
   </section>
 
@@ -148,6 +179,15 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
   <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
     <h2>Instrumento · débito × PEEP</h2>
     <p class="lead">A curva do débito contra a PEEP para o coração atual. A <span style="color:var(--accent)">estrela</span> é a <b>PEEP ótima</b>; a <span style="color:var(--ven)">linha</span> é a PEEP atual. Para o <span style="color:var(--ok)">VE que falha</span> a curva sobe com a pressão; para o <span style="color:var(--crit)">VD que falha</span>, despenca.</p>
+    <div class="predict" id="prever">
+      <div class="pq"><b>Preveja antes de revelar.</b> Para o coração configurado nos sliders abaixo, se você <b>subir a PEEP</b>, o débito cardíaco vai…</div>
+      <div class="dopts" id="prever-opts">
+        <button class="opt" type="button" data-v="subir">subir</button>
+        <button class="opt" type="button" data-v="cair">cair</button>
+        <button class="opt" type="button" data-v="igual">ficar ~igual</button>
+      </div>
+      <div class="dfb" id="prever-fb"></div>
+    </div>
     <div class="plotwrap">
       <canvas id="curve" class="casc" width="820" height="260" aria-label="débito cardíaco versus PEEP"></canvas>
       <div class="legend">
@@ -343,6 +383,7 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
     drawOn('vent', drawVent, state);
     var vr=ventResponse(state);
     $('opbox-vent').innerHTML='espontâneo '+br(vr.espontaneo,1)+' · passivo '+br(vr.passivo,1)+' · +PEEP '+br(vr.peep,1)+' L/min';
+    resetPredict();
     renderLab();
   }
   function renderLab(){
@@ -369,6 +410,60 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
   function setState(p){ state={ peep:5, effort:0, lvFail:0, rvFail:0, volemia:0.6 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
   function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
     var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- caso progressivo com decisões (revela a consequência no motor) ----
+  var CASO=[
+    { txt:'Paciente B — TEP maciço, VD à beira do colapso, PAM em queda. A equipe quer subir a PEEP "para oxigenar melhor". O que a hemodinâmica do VD faz?',
+      P:{rvFail:0.85,peep:4,volemia:0.55},
+      opts:[ {t:'Subir bastante a PEEP — ajuda os dois ventrículos', ok:false},
+             {t:'Atenção: mais PEEP pode esmagar o VD (pré-carga↓, PVR↑)', ok:true} ],
+      fb:'No VD que falha a pressão positiva é cara: derruba a pré-carga e sobe a PVR.' },
+    { txt:'Paciente A — edema agudo por VE fraco, muito esforço inspiratório, dessaturando. Pressão positiva com PEEP, neste VE, tende a:',
+      P:{lvFail:0.85,effort:0.8,peep:0},
+      opts:[ {t:'Piorar — toda pressão atrapalha o coração', ok:false},
+             {t:'Ajudar — descarrega a pós-carga do VE e quebra o ciclo do esforço', ok:true} ],
+      fb:'A PIT positiva reduz a pós-carga transmural do VE sensível e tira o esforço que piorava a congestão.' },
+    { txt:'Mesmo paciente A (VE), agora estável. Sobe-se a PEEP a um valor muito alto. O débito:',
+      P:{lvFail:0.7,peep:8},
+      opts:[ {t:'Sobe sempre — quanto mais PEEP, melhor', ok:false},
+             {t:'Tem um ótimo — além dele, pré-carga↓ e PVR↑ derrubam o débito', ok:true} ],
+      fb:'Mesmo o VE que ama a descarga tem limite: a curva em U e a pré-carga impõem uma PEEP ótima.' },
+    { txt:'Síntese — antes de girar o botão do ventilador na instabilidade hemodinâmica, a pergunta é:',
+      P:{lvFail:0.5,rvFail:0.5,peep:6},
+      opts:[ {t:'Qual a SpO₂ alvo', ok:false},
+             {t:'Qual ventrículo está falhando — isso define se a pressão é remédio ou veneno', ok:true} ],
+      fb:'O mesmo ajuste é oposto entre VE e VD: o ventrículo que falha governa a decisão.' }
+  ];
+  function renderCaso(){
+    var box=$('caso-interativo'); if(!box) return; box.innerHTML=''; var nodes=[]; var done=0, total=CASO.length;
+    if($('caso-prog')) $('caso-prog').textContent='0 / '+total+' decisões';
+    CASO.forEach(function(nd,i){
+      var card=document.createElement('div'); card.className='decision'; if(i>0) card.style.display='none';
+      var q=document.createElement('div'); q.className='dq'; q.innerHTML='<b>Decisão '+(i+1)+'.</b> '+nd.txt; card.appendChild(q);
+      var opts=document.createElement('div'); opts.className='dopts'; var fb=document.createElement('div'); fb.className='dfb';
+      nd.opts.forEach(function(op,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=op.t;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          b.classList.add(op.ok?'right':'wrong'); if(!op.ok){ for(var k=0;k<nd.opts.length;k++){ if(nd.opts[k].ok) opts.children[k].classList.add('right'); } }
+          var base=cardiopulm(nd.P).CO, after=cardiopulm(applyPEEP(nd.P)).CO;
+          fb.className='dfb show'; fb.innerHTML=(op.ok?'✓ ':'✗ ')+nd.fb+'<br><span class="cons">no motor: CO '+br(base,1)+' → '+br(after,1)+' L/min ao subir a PEEP</span>';
+          if(nodes[i+1]) nodes[i+1].style.display='block';
+          if($('caso-prog')) $('caso-prog').textContent=done+' / '+total+' decisões'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card); nodes.push(card);
+    });
+  }
+  // ---- prever-depois-revelar (compromisso cognitivo antes do gráfico) ----
+  function resetPredict(){ var box=$('prever-opts'); if(!box) return; box.dataset.answered=''; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
+    box.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); }); }
+  function predictAnswer(choice){
+    var box=$('prever-opts'); if(!box||box.dataset.answered) return; box.dataset.answered='1';
+    var base=cardiopulm(state).CO, after=cardiopulm(applyPEEP(state)).CO, d=after-base;
+    var truth=(d>0.3)?'subir':(d<-0.3)?'cair':'igual', okc=(choice===truth);
+    box.querySelectorAll('.opt').forEach(function(b){ var v=b.getAttribute('data-v'); if(v===truth) b.classList.add('right'); if(v===choice&&!okc) b.classList.add('wrong'); });
+    var dom=dominantVentricle(state);
+    var msg=dom==='lv'?'o VE que falha agradece a descarga de pós-carga.':dom==='rv'?'o VD que falha sofre com pré-carga↓ e PVR↑.':'um coração que tolera: a mudança é modesta.';
+    var fb=$('prever-fb'); if(fb){ fb.className='dfb show'; fb.innerHTML=(okc?'✓ ':'✗ ')+'+PEEP leva o CO de '+br(base,1)+' a '+br(after,1)+' L/min → <b>'+truth+'</b>. '+msg; }
+  }
 
   // ---- tutor ----
   var TUTOR=[];
@@ -415,7 +510,31 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
       q:'O débito final da circulação em série é determinado:',
       o:['pelo ventrículo mais forte','pelo ventrículo mais fraco (o que limita)','pela PEEP apenas','pela volemia apenas'], a:1,
       fb:'Em série, o VD enche o VE: o débito segue o ventrículo mais fraco. Otimizar é servir a esse.', hint:'Min(VD, VE).'});
-    var __tg=[1,3,0,2,1,3,0,2,1,3];
+    T.push({kind:'curve',P:S({lvFail:0.6,rvFail:0.6,peep:4}), cap:'Os DOIS ventrículos falham.',
+      q:'Quando VE e VD falham juntos, a PEEP ótima tende a:',
+      o:['ser a mais alta possível (descarrega o VE)','ser um meio-termo (compromisso entre descarregar o VE e poupar o VD)','ser zero sempre','não existir'], a:1,
+      fb:'A pressão que alivia o VE ainda castiga o VD: o ótimo desliza para um compromisso, não para o extremo.', hint:'Nem o pico do VE, nem o vale do VD.'});
+    T.push({kind:'vent',P:S({rvFail:0.8}), cap:'Por que o espontâneo pode ajudar o VD.',
+      q:'No VD que falha, o modo espontâneo (vs pressão positiva) tende a dar mais débito porque:',
+      o:['reduz a PVR a zero','preserva/aumenta o retorno venoso e evita a PVR da sobredistensão','aumenta a contratilidade do VD','não muda nada'], a:1,
+      fb:'A PIT menos positiva poupa a pré-carga do VD e evita a PVR da insuflação — com cautela, claro.', hint:'Menos pressão, mais enchimento.'});
+    T.push({kind:'curve',P:S({volemia:0.3,lvFail:0.7,peep:2}), cap:'Hipovolêmico E VE que falha.',
+      q:'VE que falha (quer PEEP) + hipovolemia (odeia PEEP): subir a PEEP aqui é:',
+      o:['sempre ótimo','um trade-off — a descarga do VE compete com a queda de pré-carga; há um ponto ótimo intermediário','sempre catastrófico','irrelevante'], a:1,
+      fb:'Dois efeitos opostos coexistem: a curva mostra um ótimo intermediário, não um extremo. Repor volume desloca o ótimo.', hint:'Dois vetores brigando.'});
+    T.push({kind:'curve',P:S({peep:18}), cap:'Sobredistensão (PEEP muito alta).',
+      q:'Numa PEEP muito alta, mesmo num coração normal, o débito cai porque:',
+      o:['a contratilidade despenca','a PIT alta derruba o retorno venoso e a sobredistensão sobe a PVR','a Hb cai','a demanda some'], a:1,
+      fb:'Além do ótimo, dois mecanismos somam-se: pré-carga↓ (PIT) e PVR↑ (ramo direito da curva em U).', hint:'O ramo de subida da direita.'});
+    T.push({kind:'vent',P:S({lvFail:0.5,rvFail:0.5}), cap:'A regra final.',
+      q:'A pergunta que precede qualquer ajuste de ventilador na hemodinâmica é:',
+      o:['qual a SpO₂ alvo','qual ventrículo está falhando (e quanto)','qual a marca do ventilador','qual a idade'], a:1,
+      fb:'Saber qual ventrículo falha define se a pressão positiva é remédio (VE) ou veneno (VD). É o mecanismo antes do botão.', hint:'O motor inteiro depende disso.'});
+    T.push({kind:'curve',P:S({rvFail:0.7,volemia:0.85,peep:2}), cap:'VD que falha, mas tanque cheio.',
+      q:'Repor volume (volemia alta) antes de subir a PEEP num VD que falha tende a:',
+      o:['não mudar nada','dar alguma margem — mais reserva de pré-carga amortece a queda de retorno da PEEP','curar o VD','dispensar a PEEP ótima'], a:1,
+      fb:'A volemia é a reserva de pré-carga: com o tanque cheio, o coração tolera mais PIT antes de o retorno cair. Não cura, mas amplia a margem.', hint:'Reserva de pré-carga.'});
+    var __tg=[1,3,0,2,1,3,0,2,1,3,2,0,3,1,2,0,1];
     T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
     return T;
   }
@@ -423,7 +542,8 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
     var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
     TUTOR.forEach(function(item,qi){
       var card=document.createElement('div'); card.className='q';
-      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span>'+item.q; card.appendChild(t);
+      var dif=(qi<6)?['b','básico']:(qi<10)?['i','intermediário']:['a','avançado'];
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span><span class="dif dif-'+dif[0]+'">'+dif[1]+'</span>'+item.q; card.appendChild(t);
       var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=190; cv.id='qcanvas-'+qi; card.appendChild(cv);
       var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
       var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
@@ -454,10 +574,12 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
     [['iEffort','effort'],['iLv','lvFail'],['iRv','rvFail'],['iVol','volemia']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; recompute(); }); });
     document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
       document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
-    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor();
+    var pbox=$('prever-opts'); if(pbox){ pbox.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ predictAnswer(b.getAttribute('data-v')); }); }); }
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor(); renderCaso();
     window.recompute=recompute; window.drawCurve=drawCurve; window.drawVent=drawVent; window.activateTab=activate; window.setLabState=setState;
     window.cardiopulmFn=cardiopulm; window.dominantVentricleFn=dominantVentricle; window.optimalPeepFn=optimalPeep; window.ventResponseFn=ventResponse;
     window.applyPEEPFn=applyPEEP; window.applySpontaneousFn=applySpontaneous;
+    window.predictAnswerFn=predictAnswer; window.CASO=CASO;
     window.TUTOR=TUTOR; window.__state=state;
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
