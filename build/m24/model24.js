@@ -121,7 +121,7 @@ function peepOtima(p){
   for(var i=0;i<c.length;i++){ if(c[i].CO>bestCO){ bestCO=c[i].CO; best=c[i].peep; } }
   var co0=c[0].CO, coMax=c[c.length-1].CO, monotonaCai=true, monotonaSobe=true;
   for(var j=1;j<c.length;j++){ if(c[j].CO>c[j-1].CO+1e-9) monotonaCai=false; if(c[j].CO<c[j-1].CO-1e-9) monotonaSobe=false; }
-  var tipo = monotonaCai?'cai':(monotonaSobe?'sobe':(best>0&&best<20?'otimo':'plana'));
+  var tipo = (monotonaCai&&!monotonaSobe)?'cai':((monotonaSobe&&!monotonaCai)?'sobe':(best>0&&best<20?'otimo':'plana'));
   return { peepOtima:best, COotima:bestCO, CO_peep0:co0, CO_peep20:coMax, tipo:tipo };
 }
 
@@ -144,6 +144,7 @@ function pressaoTermos(p){
 
 // Assinatura estática do estado atual (rótulo único do fenótipo dominante).
 function classeCP(R){
+  R=R||{};
   if(R.VR < 2.6 && R.CO < 4.0) return 'preload_dep';          // pré-carga estrangulada (hipovolemia/PEEP)
   if(R.PVRrel > 2.2 && R.RVeff < 0.55) return 'rv_sobrecarga'; // pós-carga do VD (atelectasia/hiperdistensão)
   if(R.lvContr < 0.45 && R.LVafter > 1.10) return 've_congesto'; // VE falido sob pós-carga (edema cardiogênico)

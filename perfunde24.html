@@ -302,7 +302,7 @@ function peepOtima(p){
   for(var i=0;i<c.length;i++){ if(c[i].CO>bestCO){ bestCO=c[i].CO; best=c[i].peep; } }
   var monotonaCai=true, monotonaSobe=true;
   for(var j=1;j<c.length;j++){ if(c[j].CO>c[j-1].CO+1e-9) monotonaCai=false; if(c[j].CO<c[j-1].CO-1e-9) monotonaSobe=false; }
-  var tipo=monotonaCai?'cai':(monotonaSobe?'sobe':(best>0&&best<20?'otimo':'plana'));
+  var tipo=(monotonaCai&&!monotonaSobe)?'cai':((monotonaSobe&&!monotonaCai)?'sobe':(best>0&&best<20?'otimo':'plana'));
   return { peepOtima:best, COotima:bestCO, CO_peep0:c[0].CO, CO_peep20:c[c.length-1].CO, tipo:tipo };
 }
 function pressaoTermos(p){
@@ -312,6 +312,7 @@ function pressaoTermos(p){
     co:{sem:lo.CO,com:hi.CO}, deltaCO:hi.CO-lo.CO, pra:{sem:lo.Pra,com:hi.Pra} };
 }
 function classeCP(R){
+  R=R||{};
   if(R.VR<2.6 && R.CO<4.0) return 'preload_dep';
   if(R.PVRrel>2.2 && R.RVeff<0.55) return 'rv_sobrecarga';
   if(R.lvContr<0.45 && R.LVafter>1.10) return 've_congesto';
