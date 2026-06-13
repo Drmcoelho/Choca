@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M23
-próximo: M24 · coração-pulmão
+publicados: M0…M24
+próximo: M25 · ressuscitação volêmica
 planejados: M23…M30
 ```
 
@@ -421,11 +421,29 @@ MASCARAMENTO → compensação/pressor seguram a PAM (≥65) enquanto a DO₂/ex
 
 ## 24 · O coração-pulmão
 
-**Status:** planejado.
+**Status:** publicado · `perfunde24.html` + `build/m24/`.
 
-**Tese:** ventilação altera pré-carga, pós-carga, retorno venoso e VD.
+**Tese:** a pressão intratorácica (PIT) acopla o pulmão aos dois ventrículos de formas **opostas** — e o mesmo ajuste ventilatório ajuda um e esmaga o outro.
 
-**Pontes:** braço 1, M17, M18, M19, M30.
+**Engine (`model24.js`):** `cardiopulm()` deriva PIT média, retorno venoso (Pmsf − RAP), PVR em U no volume pulmonar, ejeção de VD (intolerante à pós-carga), pós-carga transmural de VE e o débito em **série** `min(VD, VE)`. Entradas `{peep, effort, lvFail, rvFail, volemia}`.
+
+```text
+pressão positiva (PEEP) → PIT↑ → retorno venoso↓ (VD↓) · pós-carga de VE↓ (VE↑)
+esforço espontâneo (PIT↓) → retorno venoso↑ · pós-carga de VE↑ (risco de edema)
+PVR em U: mínima perto do FRC → existe uma PEEP ótima
+```
+
+**Joias pedagógicas:** `optimalPeep()` varre a PEEP e devolve a que maximiza o débito (alta no VE que falha, baixa no VD que falha); `ventResponse()` mostra a curva espontâneo/passivo/PEEP que **se inverte** entre os ventrículos; `dominantVentricle()` governa a leitura.
+
+**Camada interativa (módulo de referência do novo padrão):** caso progressivo com decisões (consequência computada pelo motor), prever-depois-revelar, trilha socrática expandida (≥9 passos + pistas progressivas) e banco de ≥16 questões com dificuldade crescente. Ver `MODULE_CONTRACT.md` §2.6.
+
+**Erro cognitivo:** achar que pressão positiva ajuda os dois ventrículos igualmente; girar o botão do ventilador sem saber qual ventrículo falha.
+
+**Invariantes provadas:** PEEP↑→PIT↑→retorno↓; PVR em U; +PEEP sobe o débito no VE que falha e derruba no VD que falha (a pérola); série = min(VD,VE); PEEP ótima alta (VE) vs baixa (VD); clamps seguros.
+
+**Pontes:** M7 (pós-carga/alça PV), M17 (VD), M18 (obstrutivo), M19 (tamponamento/TEP/pneumotórax), M30 (exame global).
+
+**Firewall SaMD:** PEEP e modo como **mecanismo** (ajuste→termo), sem valor, modo ou conduta prescrita — guarda automatizada no validador rejeita ajuste posológico/prescritivo.
 
 ---
 
