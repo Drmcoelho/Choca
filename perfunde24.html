@@ -242,7 +242,7 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
 var BASE={ ITP0:-2, kPeepITP:0.7, kEffortITP:6, Pmsf0:12, kVol:8, RAP0:2, kITP_RAP:0.5, kVR:0.62,
   PVRmin:1.0, peepOpt:8, kU:0.018, kRvFail:4.2, ejectRV0:1.0, kPVRej:0.16,
   LVaff0:90, kAffITP:1.1, LVmax:6.5, kLvAff:0.92 };
-function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }
 function clamp01(v){ return clampv(v||0,0,1); }
 function cardiopulm(p){
   p=p||{}; var B=BASE;
@@ -278,7 +278,7 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
 (function(){
   "use strict";
   var $=function(id){return document.getElementById(id);};
-  var br=function(x,n){return x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n});};
+  var br=function(x,n){return (typeof x==='number'&&!isNaN(x))?x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';};
   var state={ peep:5, effort:0, lvFail:0, rvFail:0, volemia:0.6 };
 
   // ---- curva débito × PEEP (+ PVR em U) ----

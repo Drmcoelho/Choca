@@ -55,6 +55,7 @@ ok('applyPEEP ajuda o VE; no VD, o espontâneo bate a pressão positiva', f(M.ap
 
 console.log('\n— ROBUSTEZ / LIMITES —');
 ok('sem argumento / null não lançam', (function(){try{return !isNaN(f().CO)&&!isNaN(f(null).CO);}catch(e){return false;}})());
+ok('NaN/string nas entradas não propaga (clampv resiliente)', (function(){try{var z=f({peep:NaN,effort:'x',lvFail:undefined,rvFail:NaN,volemia:'abc'});return [z.CO,z.PVR,z.meanITP,z.VR,z.LVcap].every(v=>typeof v==='number'&&!isNaN(v));}catch(e){return false;}})());
 const ABS=f({peep:99,effort:9,lvFail:5,rvFail:-2,volemia:8});
 ok('entradas absurdas: sem NaN', [ABS.CO,ABS.PVR,ABS.VR,ABS.LVcap,ABS.RVout,ABS.meanITP].every(v=>typeof v==='number'&&!isNaN(v)));
 ok('PVR e débito clampados (finitos, não-negativos)', ABS.PVR>0 && ABS.CO>=0 && ABS.RVout>=0);

@@ -15,7 +15,7 @@ var BASE = {
   ejectRV0:1.0, kPVRej:0.16,                   // o VD é INTOLERANTE à pós-carga: ejeção cai com a PVR
   LVaff0:90, kAffITP:1.1, LVmax:6.5, kLvAff:0.92      // pós-carga de VE transmural = LVaff0 − 1.1·PIT; VE que falha é sensível a ela
 };
-function clampv(v,a,b){ return v<a?a:(v>b?b:v); }
+function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }   // não-número/NaN → piso (nunca propaga NaN)
 function clamp01(v){ return clampv(v||0,0,1); }
 
 // Estado cardiopulmonar dado o ajuste ventilatório e o coração.
