@@ -13,9 +13,9 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 A documentação estrutural foi criada, os documentos centrais foram alinhados à numeração publicada em `perfunde.html`, e o fechamento avaliativo M30 foi especificado.
 
 ```text
-módulos publicados: 0…23
-próximo módulo: M24 · coração-pulmão
-planejados: M23…M30
+módulos publicados: 0…24
+próximo módulo: M25 · ressuscitação volêmica
+planejados: M25…M30
 portão global: npm run check
 manifesto curricular: curriculum.json
 exame global: M30_ASSESSMENT_SPEC.md
@@ -110,7 +110,7 @@ A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narr
 
 ## 5. Próxima ação recomendada
 
-**M22 · anafilático × neurogênico** e **M23 · choque misto** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`). A próxima ação de conteúdo é construir **M24 · coração-pulmão** sob o mesmo padrão:
+**M23 · choque misto** e **M24 · o coração-pulmão** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`). A próxima ação de conteúdo é construir **M25 · ressuscitação volêmica** sob o mesmo padrão:
 
 ```text
 1. especificar variáveis de estado
