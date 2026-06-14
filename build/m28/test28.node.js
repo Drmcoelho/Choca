@@ -67,6 +67,7 @@ ok('vasopressina NÃO é peso-dependente', Ph.infusionRate('vasopressina',0.03,5
 
 console.log('\n— TITULAÇÃO (faixa, não ordem) —');
 ok('titulação monotônica crescente e dentro da faixa', (function(){ var t=Ph.titration('noradrenalina',70,5); var mono=true; for(var i=1;i<t.length;i++){ if(t[i].mLh<=t[i-1].mLh) mono=false; } return mono && near(t[0].dose,Ph.DRUGS.noradrenalina.doseMin,1e-9) && near(t[t.length-1].dose,Ph.DRUGS.noradrenalina.doseMax,1e-9); })());
+ok('titulação n=1 não gera NaN (guard de divisão por zero)', (function(){ var t=Ph.titration('noradrenalina',70,1); return t.length===1 && !isNaN(t[0].mLh) && !isNaN(t[0].dose); })());
 
 console.log('\n— CONHECIMENTO (interações/combos/usos/iatrogênicos) —');
 ok('combos incluem dobutamina + noradrenalina', Ph.COMBOS.some(function(c){ return (c.a==='dobutamina'&&c.b==='noradrenalina'); }));

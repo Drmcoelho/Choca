@@ -78,7 +78,7 @@ function dominantTerm(drug){ var t=terms(drug);
 // patient.broken = 'rvs' (distributivo) | 'pump' (cardiogênico)
 function appropriate(patient, drug){
   patient=patient||{}; var R=applyDrug(patient, drug);
-  var baseCO=applyDrug(Object.assign({},patient,{}), {}).CO;   // débito sem droga
+  var baseCO=applyDrug(patient, {}).CO;   // débito sem droga
   var ok=true, why=[];
   if(patient.broken==='rvs'){
     if(R.dRVS<=1){ ok=false; why.push('não sobe a RVS (o termo quebrado)'); }

@@ -57,8 +57,8 @@ function doseFromRate(key, mLh, weightKg){
   return d.weightBased ? perMin/w : perMin; }
 // Tabela de titulação: n pontos da faixa usual → mL/h (para um peso hipotético).
 function titration(key, weightKg, n){
-  var d=DRUGS[key]; if(!d) return []; n=n||5; var out=[];
-  for(var i=0;i<n;i++){ var dose=d.doseMin + (d.doseMax-d.doseMin)*(i/(n-1)); out.push({ dose:dose, mLh:infusionRate(key,dose,weightKg) }); }
+  var d=DRUGS[key]; if(!d) return []; n=n||5; var out=[], denom=(n>1)?(n-1):1;   // n=1 → ponto único (sem divisão por zero)
+  for(var i=0;i<n;i++){ var dose=d.doseMin + (d.doseMax-d.doseMin)*(i/denom); out.push({ dose:dose, mLh:infusionRate(key,dose,weightKg) }); }
   return out; }
 
 // Usos combinados (mecanismo) — por que se associam.

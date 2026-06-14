@@ -348,7 +348,7 @@ var AGENTS={ noradrenalina:{a1:0.9,b1:0.3,b2:0,v1:0,pde:0}, adrenalina:{a1:0.8,b
 var AGENT_NAME={ noradrenalina:'noradrenalina', adrenalina:'adrenalina', dobutamina:'dobutamina', vasopressina:'vasopressina', fenilefrina:'fenilefrina', milrinona:'milrinona' };
 function dominantTerm(drug){ var t=terms(drug); var vaso=Math.abs(t.dRVS)/9, ino=t.dInotropy/0.55;
   if(vaso>=0.5 && ino>=0.5) return 'misto'; if(vaso>=ino) return t.dRVS>=0?'rvs':'vasodilata'; return 'inotropy'; }
-function appropriate(patient, drug){ patient=patient||{}; var R=applyDrug(patient, drug); var baseCO=applyDrug(Object.assign({},patient,{}), {}).CO;
+function appropriate(patient, drug){ patient=patient||{}; var R=applyDrug(patient, drug); var baseCO=applyDrug(patient, {}).CO;
   var ok=true, why=[];
   if(patient.broken==='rvs'){ if(R.dRVS<=1){ ok=false; why.push('não sobe a RVS (o termo quebrado)'); } if(R.PAM<65){ ok=false; why.push('não alcança a PAM de perfusão'); } }
   if(patient.broken==='pump'){ if(R.dInotropy<=0.05){ ok=false; why.push('não sobe a contratilidade (o termo quebrado)'); } if(R.dRVS>5){ ok=false; why.push('sobe demais a pós-carga sobre uma bomba fraca'); } if(R.CO<=baseCO+0.1){ ok=false; why.push('não melhora o débito'); } }
@@ -370,7 +370,7 @@ var PH_DRUGS={
 function ph_conc(k){ var d=PH_DRUGS[k]; if(!d) return {value:0,unit:''}; if(d.weightBased||d.massaMcg!=null){ return {value:d.massaMcg/d.diluicao.volume,unit:'mcg/mL'}; } return {value:d.massaU_total/d.diluicao.volume,unit:'U/mL'}; }
 function ph_rate(k,dose,w){ var d=PH_DRUGS[k]; if(!d) return 0; var c=ph_conc(k).value; if(c<=0) return 0; dose=clampv(dose,0,1e6); var ww=clampv(w==null?70:w,1,400); var perMin=d.weightBased?dose*ww:dose; return (perMin*60)/c; }
 function ph_dose(k,mlh,w){ var d=PH_DRUGS[k]; if(!d) return 0; var c=ph_conc(k).value; if(c<=0) return 0; var ww=clampv(w==null?70:w,1,400); var perMin=(clampv(mlh,0,1e6)*c)/60; return d.weightBased?perMin/ww:perMin; }
-function ph_titration(k,w,n){ var d=PH_DRUGS[k]; if(!d) return []; n=n||5; var out=[]; for(var i=0;i<n;i++){ var dose=d.doseMin+(d.doseMax-d.doseMin)*(i/(n-1)); out.push({dose:dose,mLh:ph_rate(k,dose,w)}); } return out; }
+function ph_titration(k,w,n){ var d=PH_DRUGS[k]; if(!d) return []; n=n||5; var out=[], denom=(n>1)?(n-1):1; for(var i=0;i<n;i++){ var dose=d.doseMin+(d.doseMax-d.doseMin)*(i/denom); out.push({dose:dose,mLh:ph_rate(k,dose,w)}); } return out; }
 var PH_COMBOS=[
   {a:'dobutamina',b:'noradrenalina',mecanismo:'cardiogênico: a dobutamina (inodilatador) sobe o débito mas pode baixar a RVS/PA; a noradrenalina (α1) sustenta a RVS — somam fluxo + pressão.'},
   {a:'milrinona',b:'noradrenalina',mecanismo:'inodilatador + vasopressor: a milrinona melhora a bomba e baixa a RVP (útil no VD); a noradrenalina segura a PAM que a vasodilatação tira.'},
@@ -416,6 +416,7 @@ var PH_IATRO=[
   // ---- receptores → termos ----
   function drawReceptors(ctx,W,H,d){
     try{
+      d=d||{};
       ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
       var t=terms(d), padT=18;
       var recs=[ ['α1',d.a1,'#e5394e'], ['β1',d.b1,'#3f82e6'], ['β2',d.b2,'#3ec78d'], ['V1',d.v1,'#9b6cff'], ['PDE',d.pde,'#37c8d8'] ];
