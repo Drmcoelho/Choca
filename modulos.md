@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M25
-próximo: M26 · choque críptico/compensado
+publicados: M0…M26
+próximo: M27 · os 4 perfis · radar
 planejados: M23…M30
 ```
 
@@ -476,13 +476,28 @@ RESPONSIVIDADE (o débito sobe?) ≠ TOLERÂNCIA (o paciente aguenta a congestã
 
 ## 26 · Choque críptico/compensado
 
-**Status:** planejado.
+**Status:** publicado · `perfunde26.html` + `build/m26/`.
 
-**Tese:** PAM normal pode mascarar falência de entrega.
+**Tese:** a PAM normal **mente** — a compensação (vasoconstrição/RVS↑, taquicardia, extração↑) defende a *pressão* enquanto a *entrega* já caiu. A reserva é finita: o paciente fica "estável" até o **precipício** e despenca.
 
-**Foco:** lactato, perfusão periférica, RVS compensatória, reserva acabando.
+**Engine (`model26.js`):** `cryptic()` deriva PAM (flat enquanto a reserva cobre o insulto, despenca além dele), e os marcadores ocultos — lactato, SvO₂ (extração), enchimento capilar, pressão de pulso, FC (mascarada no β-bloqueio). `occult()`, `nearCliff()`, `stage()`, `cliffInsult()` e os estressores `applySedation()`/`applyHit()` (consomem a reserva).
 
-**Pontes:** M8, M9, M13, M14, M30.
+```text
+PAM normal = compensação, NÃO adequação · reserva finita → precipício no insulto ≈ reserva
+marcadores ocultos (lactato↑, SvO₂↓, enchimento lento, pressão de pulso estreita) denunciam antes da queda
+```
+
+**Joias pedagógicas:** a curva PAM × insulto (flat→precipício) com o lactato subindo por baixo, o painel de marcadores (PAM verde / periferia vermelha) e a armadilha do estressor (o "estável" coda na indução).
+
+**Camada interativa (padrão §2.6):** caso de decisões "estável é seguro?" (consequência pelo motor, incl. o colapso pós-sedação), prever-depois-revelar (o estressor derruba a PAM?), trilha de 9 passos com pistas e banco de 16 questões com dificuldade crescente.
+
+**Erro cognitivo:** tratar PAM normal como segurança; tranquilizar-se com a FC no β-bloqueado.
+
+**Invariantes provadas:** PAM flat sob compensação, precipício no insulto = reserva, marcadores ocultos presentes com PAM normal e monotônicos, β-bloqueio mascara a FC, estressor precipita o colapso, clamps seguros.
+
+**Firewall SaMD:** mecanismo (compensação→termo), sem meta de PAM, momento de intubar ou conduta — guarda automatizada no validador rejeita meta/dose prescrita.
+
+**Pontes:** M8 (DO₂/VO₂), M9 (PAM = DC × RVS), M13 (lactato), M14 (hipovolêmico), M30 (exame global).
 
 ---
 
