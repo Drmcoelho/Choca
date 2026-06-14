@@ -11,8 +11,8 @@ O critério de maturidade não é quantidade de páginas. É coerência entre fi
 O repositório contém:
 
 - índice `perfunde.html`;
-- módulos publicados `perfunde0.html` até `perfunde27.html`;
-- engines `build/m0` até `build/m27`;
+- módulos publicados `perfunde0.html` até `perfunde28.html`;
+- engines `build/m0` até `build/m28`;
 - testes Node por módulo;
 - validadores jsdom por módulo;
 - `package.json` com `npm run check`;
@@ -24,10 +24,10 @@ O repositório contém:
 Próximo módulo operacional:
 
 ```text
-M28 · vasopressores & inotrópicos
+M29 · capstone · caso integrado
 ```
 
-(M22…M27 já estão publicados e validados — o Bloco IV de integração está em curso, com M24…M27 no padrão interativo rico.)
+(M22…M28 publicados e validados; o M28 inaugurou a camada de referência farmacológica do SAFETY.md §11. Falta o M29 (capstone) e o M30 (exame).)
 
 Fechamento avaliativo planejado:
 

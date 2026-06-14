@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M27
-próximo: M28 · vasopressores & inotrópicos
+publicados: M0…M28
+próximo: M29 · capstone integrado
 planejados: M23…M30
 ```
 
@@ -530,15 +530,26 @@ a MESMA alavanca tem efeito OPOSTO: volume salva o frio-seco e AFOGA o frio-úmi
 
 ## 28 · Vasopressores & inotrópicos
 
-**Status:** planejado.
+**Status:** publicado · `perfunde28.html` + `build/m28/` (1ª metade; casos V/F dinâmicos virão na 2ª).
 
-**Tese:** droga deve ser ensinada como receptor → termo da equação.
+**Tese:** a droga vasoativa é um **perfil de receptores** que move **termos** da equação — prevê-se o efeito pelo receptor, não pelo nome; e o agente certo é o que move o **termo quebrado**.
 
-**Exemplos mecanísticos:** α1→RVS; β1→contratilidade/FC; β2→vasodilatação/metabolismo; V1→RVS.
+**Engine (`model28.js`):** `terms()` (α1→RVS, β1→contratilidade/FC, β2→vasodilata/demanda, V1→RVS, PDE→inodilatador), `applyDrug()` (hemodinâmica no paciente), `appropriate()` (move o termo quebrado, sem custo proibitivo).
 
-**Firewall SaMD:** sem dose, sem titulação, sem alvo individualizado.
+**Camada de referência farmacológica (`pharm28.js`, sob `SAFETY.md §11`):** apresentação, **diluições e faixas de dose usuais de referência**, **calculadora** dose↔mL/h (`concentration`/`infusionRate`/`doseFromRate`/`titration`), interações, usos combinados (dobuta+nora), inusitados/exclusivos e iatrogênicos.
 
-**Pontes:** M7, M9, M16, M20, M21, M22, M30.
+```text
+distributivo (RVS↓) → α1/V1 (vasopressor) · cardiogênico (bomba↓) → β1/PDE (inotrópico)
+a MESMA droga: certa num termo, errada no outro (fenilefrina afunda o cardiogênico)
+```
+
+**Camada interativa (§2.6):** caso de decisões receptor↔termo, prever-depois-revelar (apto/inapto/custo), trilha de 9 passos, **6ª aba "Farmácia"** com a calculadora, e **banco de 24 questões** — dificuldade crescente, **gabarito disproporcional** (A4 B7 C6 D7), correta **≠ a mais longa** (38%) e pegadinhas.
+
+**Erro cognitivo:** escolher a droga pelo nome; dar vasopressor na bomba fraca; tratar a referência como prescrição.
+
+**Firewall SaMD:** mecanismo + referência educacional (`§11`); **sem comando imperativo nem alvo individualizado** para paciente real; peso da calculadora hipotético; guarda automatizada no validador.
+
+**Pontes:** M7 (pós-carga), M9 (PAM = DC × RVS), M16 (cardiogênico), M20 (distributivo), M22 (adrenalina/4 termos), M30 (exame global).
 
 ---
 
