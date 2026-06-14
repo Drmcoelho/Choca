@@ -24,8 +24,9 @@ Estado curricular atual:
 - **M14–M21** — choques: hipovolêmico, hemorrágico/não-hemorrágico, cardiogênico, VD, obstrutivo, capstone obstrutivo, distributivo e séptico.
 - **M22** — publicado: anafilático × neurogênico — discrimina os três distributivos (séptico, anafilático, neurogênico) pela assinatura FC × RVS.
 - **M23** — publicado: choque misto — compõe os termos quebrados, atribui o déficit ao mecanismo dominante e expõe o mascaramento (PAM normal, tecido faminto).
-- **M24** — publicado: o coração-pulmão — a pressão intratorácica descarrega o VE que falha e esmaga o VD que falha; PVR em U e PEEP ótima. Próximo módulo de conteúdo: **M25 · ressuscitação volêmica**.
-- **M25–M29** — integração e resgate.
+- **M24** — publicado: o coração-pulmão — a pressão intratorácica descarrega o VE que falha e esmaga o VD que falha; PVR em U e PEEP ótima.
+- **M25** — publicado: ressuscitação volêmica — volume como droga com janela terapêutica (benefício decai, custo acumula); o 2×2 responsivo × tolerante. Próximo módulo de conteúdo: **M26 · choque críptico/compensado**.
+- **M26–M29** — integração e resgate.
 - **M30** — revisão global / exame de domínio com 100 questões.
 
 ---
@@ -115,14 +116,14 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A documentação estrutural foi consolidada e reconciliada, e os módulos do início do Bloco IV (`M23 · choque misto`, `M24 · coração-pulmão`) estão publicados sob o novo padrão. A próxima etapa concreta é construir `M25 · ressuscitação volêmica` no mesmo rito:
+A documentação estrutural foi consolidada e reconciliada, e o Bloco IV avança (`M23 · choque misto`, `M24 · coração-pulmão`, `M25 · ressuscitação volêmica`), com M24/M25 já no padrão interativo rico (`MODULE_CONTRACT.md §2.6`). A próxima etapa concreta é construir `M26 · choque críptico/compensado` no mesmo rito:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m25/model25.js
-3. escrever build/m25/test25.node.js
-4. construir perfunde25.html
-5. escrever build/m25/validate25.js
+2. escrever build/m26/model26.js
+3. escrever build/m26/test26.node.js
+4. construir perfunde26.html
+5. escrever build/m26/validate26.js
 6. atualizar package.json e perfunde.html
 7. atualizar curriculum.json para status published
 8. rodar npm run check

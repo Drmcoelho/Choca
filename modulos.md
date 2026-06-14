@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M24
-próximo: M25 · ressuscitação volêmica
+publicados: M0…M25
+próximo: M26 · choque críptico/compensado
 planejados: M23…M30
 ```
 
@@ -449,15 +449,28 @@ PVR em U: mínima perto do FRC → existe uma PEEP ótima
 
 ## 25 · Ressuscitação volêmica
 
-**Status:** planejado.
+**Status:** publicado · `perfunde25.html` + `build/m25/`.
 
-**Tese:** volume é intervenção física com benefício e custo.
+**Tese:** volume é intervenção física com **benefício** (Pmsf↑ → retorno venoso → pré-carga → VS na parte íngreme de Starling) **e custo** (congestão/edema, glicocálice lesado). O benefício **decai** e o custo **acumula**.
 
-**Foco:** Pmsf, retorno venoso, glicocálice, congestão, fluid creep.
+**Engine (`model25.js`):** `volemic()` deriva pré-carga, VS (Frank-Starling saturante), CO e congestão (joelho que desce com o leak). `marginal()` (ΔCO/Δcongestão do próximo bolus), `responsive()`, `tolerant()`, `quadrant()` (o 2×2) e `optimalVolume()` (ponto de parar).
 
-**Firewall SaMD:** mecanismo, sem protocolo de bolus.
+```text
+RESPONSIVIDADE (o débito sobe?) ≠ TOLERÂNCIA (o paciente aguenta a congestão?)
+2×2 → dar · troca arriscada · fútil (platô) · só custo (fluid creep)
+```
 
-**Pontes:** M4, M5, M12, M14, M15, M30.
+**Joias pedagógicas:** a curva benefício × custo com o ponto de parar (★), o mapa 2×2 responsivo × tolerante, e o glicocálice que rouba do intravascular (menos débito, mais edema).
+
+**Camada interativa (padrão §2.6):** caso progressivo com decisões "dar o próximo bolus?" (consequência ΔCO/Δcongestão pelo motor), prever-depois-revelar, trilha de 9 passos com pistas e banco de 16 questões com dificuldade crescente.
+
+**Erro cognitivo:** tratar responsividade como permissão; perseguir meta de pressão com volume (fluid creep).
+
+**Invariantes provadas:** benefício decai, custo acumula, os 4 quadrantes alcançáveis, responsividade ≠ tolerância, leak reduz intravascular e congestiona mais, coração fraco estreita a janela, ponto de parar finito, clamps seguros.
+
+**Firewall SaMD:** mecanismo (intervenção→termo), sem tipo de fluido, volume, velocidade ou protocolo de bolus — guarda automatizada no validador rejeita dose/volume prescrito.
+
+**Pontes:** M4 (Guyton/Pmsf), M5 (responsivo ≠ tolerante), M6 (Frank-Starling), M12 (glicocálice), M14 (hipovolêmico), M30 (exame global).
 
 ---
 
