@@ -318,10 +318,11 @@ function leverEffect(p,fn){ var a=radar(p), b=radar(fn(p)); return { dCO:b.CO-a.
   var PCOR={ A:'#3ec78d', B:'#ffb454', L:'#ffb454', C:'#ff5d6c' };
 
   // ---- radar 2×2: perfusão (↑ quente) × congestão (→ úmido) + setas das alavancas ----
-  function Xc(W,cong){ var padL=50,padR=16,pw=W-padL-padR; return padL+(clampv(cong,0,1.4)/1.4)*pw; }
+  function Xc(W,cong){ var padL=50,padR=16,pw=W-padL-padR; return padL+(clampv(cong,0,1.6)/1.6)*pw; }   // escala = clamp do motor (1.6), sem clipping
   function Yp(H,perf){ var padT=16,padB=28,ph=H-padT-padB; return padT+ph-(clampv(perf,0,1.3)/1.3)*ph; }
-  function arrow(ctx,x1,y1,x2,y2,col){ ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-    var a=Math.atan2(y2-y1,x2-x1); ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4)); ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4)); ctx.closePath(); ctx.fill(); }
+  function arrow(ctx,x1,y1,x2,y2,col){ var dx=x2-x1,dy=y2-y1; if(Math.sqrt(dx*dx+dy*dy)<2) return;   // alavanca quase não move → sem seta espúria
+    ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a=Math.atan2(dy,dx); ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4)); ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4)); ctx.closePath(); ctx.fill(); }
   function drawRadar(ctx,W,H,p){
     try{
       ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
@@ -334,9 +335,9 @@ function leverEffect(p,fn){ var a=radar(p), b=radar(fn(p)); return { dCO:b.CO-a.
       ctx.strokeStyle='#26314a'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(wt,padT); ctx.lineTo(wt,padT+ph); ctx.stroke(); ctx.beginPath(); ctx.moveTo(padL,pt); ctx.lineTo(padL+pw,pt); ctx.stroke(); ctx.setLineDash([]);
       ctx.font='11px monospace';
       ctx.fillStyle='rgba(62,199,141,.8)'; ctx.fillText('A quente-seco', Xc(W,0.05), Yp(H,1.2));
-      ctx.fillStyle='rgba(255,180,84,.85)'; ctx.fillText('B quente-úmido', Xc(W,0.78), Yp(H,1.2));
-      ctx.fillStyle='rgba(255,180,84,.7)'; ctx.fillText('L frio-seco', Xc(W,0.05), Yp(H,0.12));
-      ctx.fillStyle='rgba(255,93,108,.9)'; ctx.fillText('C frio-úmido', Xc(W,0.78), Yp(H,0.12));
+      ctx.fillStyle='rgba(255,180,84,.85)'; ctx.fillText('B quente-úmido', Xc(W,1.0), Yp(H,1.2));
+      ctx.fillStyle='rgba(255,180,84,.7)'; ctx.fillText('L frio-seco', Xc(W,0.04), Yp(H,0.12));
+      ctx.fillStyle='rgba(255,93,108,.9)'; ctx.fillText('C frio-úmido', Xc(W,1.0), Yp(H,0.12));
       ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('congestão (seco → úmido) →', padL, padT+ph+16);
       ctx.save(); ctx.translate(14,padT+ph/2+44); ctx.rotate(-Math.PI/2); ctx.fillText('perfusão (frio → quente) ↑',0,0); ctx.restore();
       // setas das alavancas
@@ -400,7 +401,7 @@ function leverEffect(p,fn){ var a=radar(p), b=radar(fn(p)); return { dCO:b.CO-a.
     $('volume-txt').textContent='Aqui o volume daria ΔDC '+br(vE.dCO,1)+' e Δcongestão '+br(vE.dCong,1)+' ('+vE.profFrom+'→'+vE.profTo+'): '+(vE.dCong>0.3?'afoga (mais congestão que fluxo)':'ajuda a perfusão')+'.';
   }
   function syncSliders(){ $('iVolume').value=state.volume*100; $('iPump').value=state.pump*100; $('iTone').value=state.tone*100; }
-  function setState(p){ state={ volume:0.7, pump:0.7, tone:0.5 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function setState(p){ p=p||{}; state={ volume:0.7, pump:0.7, tone:0.5 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
   function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
     var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
 
@@ -441,7 +442,7 @@ function leverEffect(p,fn){ var a=radar(p), b=radar(fn(p)); return { dCO:b.CO-a.
     });
   }
   // ---- prever-depois-revelar (o volume) ----
-  function resetPredict(){ var box=$('prever-opts'); if(!box) return; box.dataset.answered=''; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
+  function resetPredict(){ var box=$('prever-opts'); if(!box) return; delete box.dataset.answered; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
     box.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); }); }
   function predictAnswer(choice){
     var box=$('prever-opts'); if(!box||box.dataset.answered) return; box.dataset.answered='1';
