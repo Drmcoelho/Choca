@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 25 · Ressuscitação volêmica</title>
+<meta name="description" content="Volume é intervenção física com benefício e custo: sobe o débito na parte íngreme de Frank-Starling, mas congestiona quando satura. Responsividade (o débito sobe?) não é tolerância (o paciente aguenta?). O benefício decai, o custo acumula e há um ponto de parar. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c; --purp:#9b6cff;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:260px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:220px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono);margin-top:10px}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.banner.crit{border-color:rgba(255,93,108,.45)} .banner.crit b{color:var(--crit)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:190px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.pista{margin-top:7px}
+.pista summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.pista[open] summary{color:var(--ink-faint)}
+.pista .pb{margin-top:5px;color:var(--ink-dim);font-size:.9rem}
+.casebox{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.casebox h3{margin:0 0 3px} .casebox .cprog{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:10px}
+.decision{border-left:3px solid var(--ven);background:#0e1320;border-radius:0 var(--r-sm) var(--r-sm) 0;padding:11px 14px;margin:10px 0}
+.decision .dq{margin-bottom:9px}
+.dopts{display:grid;gap:7px}
+.dfb{display:none;margin-top:9px;font-size:.88rem;color:var(--ink-dim)} .dfb.show{display:block}
+.dfb .cons{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.predict{background:#0e1320;border:1px solid rgba(63,130,230,.4);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.predict .pq{margin-bottom:9px}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
+.dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 25 · ↳ ressuscitação volêmica</div>
+    <h1>Volume tem benefício — e tem conta</h1>
+    <p class="sub">Um bolus é física: sobe a pressão de enchimento sistêmica, o retorno venoso e a pré-carga — e o débito sobe, <em>se</em> o coração estiver na parte íngreme de Frank-Starling. Mas o benefício <b>satura</b> e o custo — congestão, edema, glicocálice lesado — <b>acumula</b>. "O débito sobe?" e "o paciente aguenta?" são perguntas diferentes.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M30,46 C120,46 160,14 320,12 C480,11 600,11 760,11" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+      <text x="30" y="52" fill="var(--ok)" font-size="10" font-family="monospace">débito (satura)</text>
+      <path d="M30,48 C200,48 360,46 520,36 C650,28 720,16 860,6" fill="none" stroke="var(--crit)" stroke-width="2.5"/>
+      <text x="690" y="50" fill="var(--crit)" font-size="10" font-family="monospace">congestão (acelera)</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>O terceiro bolus que não fez nada — e congestionou</h2>
+    <p class="lead">Cinco atos. A variável escondida é <em>onde</em> na curva de Starling o paciente está — e quanto ele tolera. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Choque, lactato alto, hipotenso. O primeiro bolus sobe a PA e o débito de forma clara: o paciente era <b>responsivo</b>. Ótimo começo.</p>
+      <div class="vitais"><span>1º bolus <b>PA↑ DC↑</b></span><span>responsivo</span><span>lactato <b>↑</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Respondeu ao volume — então mais volume é melhor." A inferência parece óbvia e está <em>parcialmente</em> certa: só vale enquanto a curva é íngreme.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>O segundo bolus ajuda menos; o terceiro, quase nada — a curva <b>saturou</b>. Mas a pressão de enchimento subiu, a SpO₂ cai e aparecem crepitações: o custo (congestão) <b>continuou subindo</b> mesmo quando o benefício parou.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>São <b>duas perguntas</b>: <em>responsividade</em> (o débito sobe com volume?) e <em>tolerância</em> (o paciente aguenta a congestão?). Elas não andam juntas — e o glicocálice lesado faz o volume <b>vazar</b>, dando menos débito e mais edema.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A curva benefício × custo (com o ponto de parar) e o mapa responsivo × tolerante mostram quando o próximo bolus é remédio, troca arriscada ou só custo. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">posição na curva de Frank-Starling × a tolerância à congestão</b>. Volume é mecânico: ajuda na parte íngreme, satura no platô e sempre cobra congestão. <b>Responsividade ≠ tolerância</b>; o "fluid creep" é repetir bolus além do benefício. Pontes aos módulos 4/5 (Guyton, responsivo ≠ tolerante), 6 (Frank-Starling), 12 (microcirculação/glicocálice) e 14 (hipovolêmico).</div></details>
+
+    <div class="casebox">
+      <h3>À beira do leito · dar o próximo bolus?</h3>
+      <div class="cprog" id="caso-prog">0 / 0 decisões</div>
+      <div id="caso-interativo"></div>
+      <p class="hint" style="margin-top:10px">Cada decisão é mecanismo, não conduta: o motor mostra o ganho de débito e o custo de congestão — não o que prescrever.</p>
+    </div>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Do bolus físico ao ponto de parar.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">O que um bolus faz, fisicamente?</div><div class="aa">Sobe a <b>pressão de enchimento sistêmica</b> (P<sub>msf</sub>) → aumenta o gradiente de <b>retorno venoso</b> → mais pré-carga. Não é "dar pressão"; é mover um volume contra a complacência venosa.</div>
+        <details class="pista"><summary>▸ pista: o reservatório venoso</summary><div class="pb">~70% do volume está no leito venoso. O bolus enche esse reservatório e sobe a P<sub>msf</sub>; o tônus venoso faz o mesmo sem dar volume.</div></details></div>
+      <div class="step"><div class="qq">Por que o débito sobe — às vezes?</div><div class="aa">Por <b>Frank-Starling</b>: mais pré-carga → mais volume sistólico, <em>na parte íngreme</em> da curva. Se o coração já está no <b>platô</b>, a mesma pré-carga rende quase nada.</div>
+        <details class="pista"><summary>▸ pista: onde está o coração</summary><div class="pb">Hipovolêmico = base da curva (responsivo). Euvolêmico/ressuscitado = platô (não-responsivo). O mesmo bolus tem efeitos opostos conforme a posição.</div></details></div>
+      <div class="step"><div class="qq">Responder ao volume garante que se deve dar?</div><div class="aa"><b>Não.</b> Responsividade diz que o débito <em>sobe</em>; não diz que o paciente <b>tolera</b> a congestão que vem junto. São duas perguntas separadas.</div>
+        <details class="pista"><summary>▸ pista: responsivo ≠ tolerante</summary><div class="pb">Um séptico de glicocálice lesado pode ser responsivo e, ao mesmo tempo, edemaciar com pouco volume. Responder não é permissão.</div></details></div>
+      <div class="step"><div class="qq">De onde vem o custo?</div><div class="aa">A pré-carga acima do <b>joelho</b> sobe as pressões de enchimento → congestão pulmonar e sistêmica. Coração <b>rígido</b> (fraco) congestiona mais cedo; o <b>glicocálice lesado</b> vaza volume ao interstício → edema.</div>
+        <details class="pista"><summary>▸ pista: o joelho desce</summary><div class="pb">No leak, o joelho da congestão desce: edemacia com pré-carga menor. Menos benefício intravascular, mais custo intersticial.</div></details></div>
+      <div class="step"><div class="qq">O benefício e o custo andam juntos?</div><div class="aa">Não. O <b>benefício decai</b> (a curva satura) enquanto o <b>custo acumula</b> (a congestão acelera). Em algum ponto, o próximo bolus é só custo.</div>
+        <details class="pista"><summary>▸ pista: as duas curvas</summary><div class="pb">Ganho marginal (ΔDC por bolus) cai; custo marginal (Δcongestão) sobe ou se mantém. Onde elas se cruzam é onde parar.</div></details></div>
+      <div class="step"><div class="qq">O que é "fluid creep"?</div><div class="aa">Repetir bolus <b>além</b> do benefício — por inércia, por meta de pressão, por reflexo. Colhe-se congestão sem débito. O acúmulo silencioso de volume é dano.</div></div>
+      <div class="step"><div class="qq">Como saber a hora de parar?</div><div class="aa">Reavaliando <b>responsividade</b> a cada bolus e vigiando a <b>tolerância</b>. Parar quando o débito não sobe mais <em>ou</em> quando a congestão passa do limiar — o que vier primeiro.</div>
+        <details class="pista"><summary>▸ pista: teste e reteste</summary><div class="pb">Responsividade é um estado, não um rótulo fixo: muda a cada bolus. O que era responsivo vira platô. Reteste antes de repetir.</div></details></div>
+      <div class="step"><div class="qq">E o glicocálice, por que importa tanto?</div><div class="aa">É a barreira que mantém o volume no vaso. Lesado (sepse, isquemia, sobrecarga), deixa o volume <b>vazar</b>: o bolus rende menos débito e mais edema. Ressuscitar demais o lesa ainda mais — um círculo.</div></div>
+      <div class="step"><div class="qq">A regra final, então, é…</div><div class="aa">Volume é uma <b>droga com janela terapêutica</b>: dose abaixo, perde-se débito; dose acima, ganha-se edema. <b>Reavaliar</b> é o que separa ressuscitar de afogar.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · benefício × custo</h2>
+    <p class="lead">O <span style="color:var(--ok)">débito</span> sobe e satura; a <span style="color:var(--crit)">congestão</span> sobe e acelera. A <span style="color:var(--accent)">estrela</span> é o volume que maximiza o ganho sem cruzar o edema; a <span style="color:var(--ven)">linha</span> é o volume já dado.</p>
+    <div class="predict" id="prever">
+      <div class="pq"><b>Preveja antes de revelar.</b> Para o paciente configurado nos sliders abaixo, dar <b>mais um bolus</b> vai elevar o débito:</div>
+      <div class="dopts" id="prever-opts">
+        <button class="opt" type="button" data-v="muito">muito (responsivo)</button>
+        <button class="opt" type="button" data-v="pouco">pouco</button>
+        <button class="opt" type="button" data-v="nada">quase nada (platô)</button>
+      </div>
+      <div class="dfb" id="prever-fb"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="curve" class="casc" width="820" height="260" aria-label="débito e congestão versus volume"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>débito (CO)</span><span><i style="background:var(--crit)"></i>congestão</span>
+        <span><i style="background:var(--accent)"></i>volume ótimo</span><span><i style="background:var(--ven)"></i>volume atual</span>
+      </div>
+      <div class="opbox" id="opbox-curve"></div>
+    </div>
+    <h3>Mapa responsivo × tolerante (o próximo bolus é o quê?)</h3>
+    <div class="plotwrap">
+      <canvas id="quad" class="plot" width="820" height="220" aria-label="mapa responsividade versus tolerância"></canvas>
+      <div class="opbox" id="opbox-quad"></div>
+      <div class="pharm">
+        <b>Volume/física (intervenção → termo · mecanismo, sem dose nem protocolo):</b><br>
+        bolus → P<sub>msf</sub>↑ → retorno venoso↑ → pré-carga↑ → VS↑ <b>na parte íngreme</b> · acima do joelho → pressões de enchimento↑ → congestão. Tônus venoso → P<sub>msf</sub>↑ sem volume. Glicocálice lesado → menos intravascular, mais edema.
+        <span class="fw">Responder ao volume não é permissão para dar — tolerância é outra pergunta.</span>
+      </div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Volume dado <span class="v"><span id="vVol">0</span> bolus</span></label><input id="iVol" type="range" min="0" max="5" step="1" value="0"></div>
+        <div class="ctrl"><label>Dependência de pré-carga <span class="v"><span id="vPreDep">80</span> %</span></label><input id="iPreDep" type="range" min="0" max="100" step="5" value="80"></div>
+        <div class="ctrl"><label>Contratilidade <span class="v"><span id="vContract">75</span> %</span></label><input id="iContract" type="range" min="10" max="100" step="5" value="75"></div>
+        <div class="ctrl"><label>Leak / glicocálice <span class="v"><span id="vLeak">10</span> %</span></label><input id="iLeak" type="range" min="0" max="100" step="5" value="10"></div>
+        <div class="ctrl"><label>Tônus venoso <span class="v"><span id="vVeno">50</span> %</span></label><input id="iVeno" type="range" min="0" max="100" step="5" value="50"></div>
+      </div>
+      <div class="hint">Dê bolus e veja o ganho decair e a congestão acelerar; suba o leak e veja o volume render menos e edemaciar mais.</div>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · ressuscitar sem afogar</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito</b> diz o quadrante do próximo bolus (dar, troca, fútil ou só custo); os banners explicam responsividade, platô, congestão, leak e o ponto de parar.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="hipovol">Hipovolêmico (responsivo)</button>
+      <button class="preset" type="button" data-preset="ressuscitado">Ressuscitado (platô)</button>
+      <button class="preset" type="button" data-preset="creep">Fluid creep (só custo)</button>
+      <button class="preset" type="button" data-preset="cardiogenico">Cardiogênico (intolerante)</button>
+      <button class="preset" type="button" data-preset="septico_leak">Séptico · glicocálice lesado</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="curveLab" class="casc" width="820" height="260" aria-label="benefício × custo no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">O próximo bolus</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner ven" id="ban-responsivo"><b>Responsivo.</b> O coração está na parte íngreme de Starling: o próximo bolus ainda sobe o débito de forma relevante. Mas confira a tolerância antes.</div>
+      <div class="banner art" id="ban-plato"><b>Platô.</b> A curva saturou: a pré-carga sobe, o volume sistólico quase não. O próximo bolus rende pouco débito — só enche.</div>
+      <div class="banner crit" id="ban-congestao"><b>Congestão / edema.</b> A pressão de enchimento passou do joelho: o custo virou clínico (congestão pulmonar/sistêmica). Tolerância esgotada.</div>
+      <div class="banner art" id="ban-leak"><b>Glicocálice lesado.</b> O volume vaza ao interstício: menos débito por bolus e mais edema. Ressuscitar demais lesa ainda mais a barreira.</div>
+      <div class="banner crit" id="ban-creep"><b>Fluid creep.</b> Volume além do benefício: não há ganho de débito e a congestão acumula. É dano silencioso — pare e reavalie.</div>
+      <div class="banner ven" id="ban-otimo"><b>Ponto de parar.</b> <span id="otimo-txt">—</span></div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a curva benefício × custo (ou o mapa responsivo × tolerante) ao vivo. Leia onde o paciente está e se o próximo bolus paga — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a física do volume (Starling, P<sub>msf</sub>, congestão, glicocálice) e o 2×2 responsivo × tolerante — <b>nunca</b> tipo de fluido, volume, velocidade ou protocolo de bolus para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ A curva de Starling e a congestão são <b>idealizadas</b>; "bolus" é uma unidade normalizada, não um volume em mL. → "Dependência de pré-carga", "contratilidade", "leak" e "tônus venoso" são <b>fatores normalizados</b>, não medidas. → A responsividade real se avalia dinamicamente (passive leg raise, VVS/PPV, eco) com erro. → O glicocálice é um proxy único de barreira. → O "ponto de parar" é um trade-off do modelo, jamais uma meta de volume. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde4.html">Módulo 4 · Interseção de Guyton</a> — P<sub>msf</sub>, retorno venoso e o ponto de operação.</div>
+    <div class="ponte">→ <a href="perfunde5.html">Módulo 5 · Responsivo ≠ tolerante</a> — as duas perguntas que o volume levanta.</div>
+    <div class="ponte">→ <a href="perfunde6.html">Módulo 6 · Frank-Starling</a> — a curva que sobe e satura.</div>
+    <div class="ponte">→ <a href="perfunde12.html">Módulo 12 · A microcirculação</a> — o glicocálice e o vazamento capilar.</div>
+    <div class="ponte">→ <a href="perfunde14.html">Módulo 14 · Hipovolêmico</a> — quando o volume é o termo quebrado.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 25
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model25.js inlined) ===================== -->
+<script>
+var BASE={ HR:82, SVmax0:95, kContrSV:0.55, Kp:0.62, preBase:1.05, kPreDep:0.78, kVeno:0.30,
+  kBolus:0.42, kLeakIntra:0.62, congKnee:0.72, kKneeLeak:0.30, kFill:0.62, kStiff:0.85, kLeakCong:0.68,
+  RESP_THRESH:0.12, TOL_THRESH:0.72 };
+function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }
+function clamp01(v){ return clampv(v,0,1); }
+function volemic(p){
+  p=p||{}; var B=BASE;
+  var vol=clampv(p.vol==null?0:p.vol,0,6), preDep=clamp01(p.preDep),
+      contract=(p.contract==null?0.7:clamp01(p.contract)), leak=clamp01(p.leak),
+      venoTone=(p.venoTone==null?0.5:clamp01(p.venoTone));
+  var intravasc=clampv(1 - B.kLeakIntra*leak, 0.30, 1);
+  var preload0=clampv(B.preBase - B.kPreDep*preDep + B.kVeno*(venoTone-0.5), 0.20, 1.5);
+  var preload=clampv(preload0 + B.kBolus*vol*intravasc, 0.20, 2.4);
+  var SVmax=B.SVmax0*(0.45 + B.kContrSV*contract);
+  var SV=SVmax*(preload*preload)/(preload*preload + B.Kp*B.Kp);
+  var CO=B.HR*SV/1000;
+  var stiff=1 + B.kStiff*(1-contract);
+  var congKneeEff=clampv(B.congKnee - B.kKneeLeak*leak, 0.40, B.congKnee);
+  var fillExcess=Math.max(0, preload - congKneeEff);
+  var congestion=clampv(B.kFill*fillExcess*stiff + B.kLeakCong*leak, 0, 1.8);
+  var edema=congestion > B.TOL_THRESH;
+  return { vol:vol,preDep:preDep,contract:contract,leak:leak,venoTone:venoTone,
+    intravasc:intravasc,preload0:preload0,preload:preload,SVmax:SVmax,SV:SV,CO:CO,
+    stiff:stiff,congestion:congestion,edema:edema }; }
+function applyBolus(p){ var s=Object.assign({},p); s.vol=Math.min(6,(p.vol==null?0:p.vol)+1); return s; }
+function marginal(p){ var a=volemic(p), b=volemic(applyBolus(p)); return { dCO:b.CO-a.CO, dCong:b.congestion-a.congestion, dCOfrac:(a.CO>0?(b.CO-a.CO)/a.CO:0) }; }
+function responsive(p){ return marginal(p).dCOfrac >= BASE.RESP_THRESH; }
+function tolerant(p){ return volemic(p).congestion < BASE.TOL_THRESH; }
+function quadrant(p){ var r=responsive(p), t=tolerant(p); if(r&&t) return 'give'; if(r&&!t) return 'tradeoff'; if(!r&&t) return 'futile'; return 'harm'; }
+function optimalVolume(p){ p=p||{}; var best=0,bu=-1e9; for(var v=0;v<=5;v+=1){ var s=volemic(Object.assign({},p,{vol:v})); var u=s.CO - 2.2*Math.max(0,s.congestion-BASE.TOL_THRESH); if(u>bu+1e-9){bu=u;best=v;} } return {vol:best,CO:volemic(Object.assign({},p,{vol:best})).CO}; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return (typeof x==='number'&&!isNaN(x))?x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';};
+  var state={ vol:0, preDep:0.8, contract:0.75, leak:0.1, venoTone:0.5 };
+  var QMETA={ give:{lab:'DAR VOLUME', cor:'#3ec78d', kl:'ok', sub:'responsivo + tolerante — o bolus sobe o débito e é aguentado'},
+    tradeoff:{lab:'TROCA ARRISCADA', cor:'#ffb454', kl:'lim', sub:'responsivo, MAS já congestionando — pesar ganho contra edema'},
+    futile:{lab:'FÚTIL', cor:'#ffb454', kl:'lim', sub:'platô de Starling — o bolus quase não sobe o débito, só enche'},
+    harm:{lab:'SÓ CUSTO', cor:'#ff5d6c', kl:'crit', sub:'não-responsivo e intolerante — fluid creep, dano sem ganho'} };
+
+  // ---- curva benefício × custo (CO e congestão vs volume) ----
+  function drawCurve(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var padL=44,padR=16,padT=16,padB=28, pw=W-padL-padR, ph=H-padT-padB;
+      var X=function(v){ return padL+(v/5)*pw; };
+      var COy=function(co){ return padT+ph-(clampv(co,0,8)/8)*ph; };
+      var CGy=function(c){ return padT+ph-(clampv(c,0,1.6)/1.6)*ph; };
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.font='10px monospace'; ctx.fillStyle='#5e6c87';
+      [0,1,2,3,4,5].forEach(function(v){ ctx.beginPath(); ctx.moveTo(X(v),padT); ctx.lineTo(X(v),padT+ph); ctx.stroke(); ctx.fillText(v,X(v)-3,padT+ph+16); });
+      ctx.fillText('volume (bolus) →', padL+pw-96, padT+ph+16);
+      // limiar de tolerância (congestão)
+      ctx.strokeStyle='rgba(255,93,108,.5)'; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(padL,CGy(0.72)); ctx.lineTo(padL+pw,CGy(0.72)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(255,93,108,.7)'; ctx.fillText('limiar de edema', padL+4, CGy(0.72)-4);
+      // CO (verde) e congestão (vermelho)
+      ctx.strokeStyle='#3ec78d'; ctx.lineWidth=2.5; ctx.beginPath();
+      for(var v1=0;v1<=5;v1+=0.25){ var co=volemic(Object.assign({},p,{vol:v1})).CO; var x=X(v1),y=COy(co); if(v1===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+      ctx.strokeStyle='#ff5d6c'; ctx.lineWidth=2; ctx.beginPath();
+      for(var v2=0;v2<=5;v2+=0.25){ var cg=volemic(Object.assign({},p,{vol:v2})).congestion; var x2=X(v2),y2=CGy(cg); if(v2===0)ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2); } ctx.stroke();
+      // ótimo (estrela) e volume atual (linha)
+      var opt=optimalVolume(p);
+      ctx.strokeStyle='#3f82e6'; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(X(p.vol),padT); ctx.lineTo(X(p.vol),padT+ph); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.font='16px monospace'; ctx.fillText('★', X(opt.vol)-5, COy(volemic(Object.assign({},p,{vol:opt.vol})).CO)-6);
+      var cur=volemic(p);
+      ctx.fillStyle='#3ec78d'; ctx.beginPath(); ctx.arc(X(p.vol),COy(cur.CO),4,0,2*Math.PI); ctx.fill();
+      ctx.fillStyle='#e9eef7'; ctx.font='11px monospace';
+      ctx.fillText('CO '+br(cur.CO,1)+' · congestão '+br(cur.congestion,2)+' · parar ≈ '+opt.vol+' bolus', padL+2, padT+12);
+      return cur;
+    }catch(e){ return {}; }
+  }
+  // ---- mapa responsivo × tolerante (2×2) ----
+  function drawQuad(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var padL=58,padR=16,padT=16,padB=26, pw=W-padL-padR, ph=H-padT-padB;
+      var rmax=0.5, cmax=1.4;
+      var X=function(rf){ return padL+(clampv(rf,0,rmax)/rmax)*pw; };          // responsividade →
+      var Y=function(cg){ return padT+(clampv(cg,0,cmax)/cmax)*ph; };          // congestão ↓ (topo = intolerante)
+      var rt=X(0.12), tt=Y(0.72);
+      // zonas
+      ctx.fillStyle='rgba(62,199,141,.08)'; ctx.fillRect(rt,tt,padL+pw-rt,padT+ph-tt);  // give (resp+tol) baixo-dir
+      ctx.fillStyle='rgba(255,180,84,.08)'; ctx.fillRect(rt,padT,padL+pw-rt,tt-padT);   // tradeoff (resp+intol) cima-dir
+      ctx.fillStyle='rgba(255,207,92,.05)'; ctx.fillRect(padL,tt,rt-padL,padT+ph-tt);   // futile (unresp+tol) baixo-esq
+      ctx.fillStyle='rgba(255,93,108,.08)'; ctx.fillRect(padL,padT,rt-padL,tt-padT);    // harm (unresp+intol) cima-esq
+      ctx.strokeStyle='#26314a'; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.moveTo(rt,padT); ctx.lineTo(rt,padT+ph); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,tt); ctx.lineTo(padL+pw,tt); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font='10px monospace';
+      ctx.fillStyle='rgba(62,199,141,.7)'; ctx.fillText('DAR', X(0.42), Y(1.15));
+      ctx.fillStyle='rgba(255,180,84,.8)'; ctx.fillText('TROCA', X(0.40), Y(0.25));
+      ctx.fillStyle='rgba(255,207,92,.6)'; ctx.fillText('FÚTIL', X(0.02), Y(1.15));
+      ctx.fillStyle='rgba(255,93,108,.8)'; ctx.fillText('SÓ CUSTO', X(0.01), Y(0.25));
+      ctx.fillStyle='#5e6c87'; ctx.fillText('responsividade (ΔDC) →', padL, padT+ph+16);
+      ctx.save(); ctx.translate(14,padT+ph/2+34); ctx.rotate(-Math.PI/2); ctx.fillText('congestão ↑', 0,0); ctx.restore();
+      // ponto atual
+      var m=marginal(p), cur=volemic(p), q=quadrant(p), col=QMETA[q].cor;
+      var px=X(Math.max(0,m.dCOfrac)), py=Y(cur.congestion);
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(px,py,7,0,2*Math.PI); ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='#e9eef7'; ctx.font='11px monospace';
+      ctx.fillText('próximo bolus: '+QMETA[q].lab+'  (ΔDC '+(m.dCOfrac*100).toFixed(0)+'% · congestão '+br(cur.congestion,2)+')', padL+2, padT+12);
+      return cur;
+    }catch(e){ return {}; }
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||260,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vVol').textContent=Math.round(state.vol); $('vPreDep').textContent=Math.round(state.preDep*100);
+    $('vContract').textContent=Math.round(state.contract*100); $('vLeak').textContent=Math.round(state.leak*100); $('vVeno').textContent=Math.round(state.venoTone*100);
+    var R=drawOn('curve', drawCurve, state); if(!R.CO) R=volemic(state);
+    var opt=optimalVolume(state), m=marginal(state);
+    $('opbox-curve').innerHTML='CO <b>'+br(R.CO,1)+'</b> · congestão <b>'+br(R.congestion,2)+'</b> · próximo bolus ΔDC '+(m.dCOfrac*100).toFixed(0)+'% · parar ≈ <b>'+opt.vol+'</b> bolus';
+    drawOn('quad', drawQuad, state);
+    $('opbox-quad').innerHTML='responsivo <b>'+(responsive(state)?'sim':'não')+'</b> · tolerante <b>'+(tolerant(state)?'sim':'não')+'</b> · quadrante <b>'+QMETA[quadrant(state)].lab+'</b>';
+    resetPredict();
+    renderLab();
+  }
+  function renderLab(){
+    var R=drawOn('curveLab', drawCurve, state); if(!R.CO) R=volemic(state);
+    var q=quadrant(state), opt=optimalVolume(state), m=marginal(state);
+    $('opbox-lab').innerHTML='volume '+Math.round(state.vol)+' · pré-carga '+br(R.preload,2)+' · VS '+Math.round(R.SV)+' · CO '+br(R.CO,1)+' · congestão '+br(R.congestion,2)+(R.edema?' (edema)':'');
+    var vEl=$('lab-veredito'); vEl.className='veredito '+QMETA[q].kl; $('lab-vbig').textContent=QMETA[q].lab;
+    $('lab-vnum').textContent=QMETA[q].sub+' · ΔDC '+(m.dCOfrac*100).toFixed(0)+'% · parar ≈ '+opt.vol+' bolus';
+    show($('ban-responsivo'), responsive(state));
+    show($('ban-plato'), !responsive(state));
+    show($('ban-congestao'), R.edema);
+    show($('ban-leak'), state.leak>=0.4);
+    show($('ban-creep'), q==='harm');
+    show($('ban-otimo'), true);
+    $('otimo-txt').textContent='no modelo, o ganho de débito sem cruzar o edema é máximo perto de '+opt.vol+' bolus (CO '+br(opt.CO,1)+'). Além disso, reavalie em vez de repetir — é mecanismo, não meta de volume.';
+  }
+  function syncSliders(){ $('iVol').value=state.vol; $('iPreDep').value=state.preDep*100; $('iContract').value=state.contract*100; $('iLeak').value=state.leak*100; $('iVeno').value=state.venoTone*100; }
+  function setState(p){ state={ vol:0, preDep:0.8, contract:0.75, leak:0.1, venoTone:0.5 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- caso progressivo com decisões (consequência computada pelo motor) ----
+  var CASO=[
+    { txt:'Choque hipotenso, claramente hipovolêmico. Dar o 1º bolus?', P:{preDep:0.85,contract:0.75,leak:0.1,vol:0},
+      opts:[ {t:'Sim — responsivo, o débito deve subir bem', ok:true}, {t:'Não — volume é sempre perigoso', ok:false} ],
+      fb:'Na parte íngreme de Starling o bolus paga: grande ganho de débito, custo mínimo.' },
+    { txt:'Após 2 bolus o paciente melhorou. A PA ainda não está na "meta". Dar o 3º bolus?', P:{preDep:0.85,contract:0.75,leak:0.1,vol:2},
+      opts:[ {t:'Sim — perseguir a meta de pressão', ok:false}, {t:'Reavaliar — pode já estar no platô (pouco ganho, mais congestão)', ok:true} ],
+      fb:'A curva saturou: o 3º bolus rende pouco débito e acumula congestão. Perseguir pressão aqui é fluid creep.' },
+    { txt:'Séptico com glicocálice lesado (leak alto), ainda responsivo, mas SpO₂ caindo. Mais um bolus?', P:{preDep:0.7,contract:0.5,leak:0.75,vol:1},
+      opts:[ {t:'Sim — é responsivo, então pode', ok:false}, {t:'Cuidado — responsivo não é tolerante; o leak edemacia', ok:true} ],
+      fb:'Responder ao volume não é permissão: com glicocálice lesado, o ganho é pequeno e o edema, grande.' },
+    { txt:'A regra que organiza tudo isso é:', P:{preDep:0.6,contract:0.6,leak:0.2,vol:2},
+      opts:[ {t:'Dar volume até a pressão normalizar', ok:false}, {t:'Reavaliar responsividade E tolerância a cada bolus, e parar quando qualquer uma falha', ok:true} ],
+      fb:'Volume tem janela: reavaliar as duas perguntas a cada bolus é o que separa ressuscitar de afogar.' }
+  ];
+  function renderCaso(){
+    var box=$('caso-interativo'); if(!box) return; box.innerHTML=''; var nodes=[]; var done=0, total=CASO.length;
+    if($('caso-prog')) $('caso-prog').textContent='0 / '+total+' decisões';
+    CASO.forEach(function(nd,i){
+      var card=document.createElement('div'); card.className='decision'; if(i>0) card.style.display='none';
+      var q=document.createElement('div'); q.className='dq'; q.innerHTML='<b>Decisão '+(i+1)+'.</b> '+nd.txt; card.appendChild(q);
+      var opts=document.createElement('div'); opts.className='dopts'; var fb=document.createElement('div'); fb.className='dfb';
+      nd.opts.forEach(function(op,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=op.t;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          b.classList.add(op.ok?'right':'wrong'); if(!op.ok){ for(var k=0;k<nd.opts.length;k++){ if(nd.opts[k].ok) opts.children[k].classList.add('right'); } }
+          var a=volemic(nd.P), bb=volemic(applyBolus(nd.P));
+          fb.className='dfb show'; fb.innerHTML=(op.ok?'✓ ':'✗ ')+nd.fb+'<br><span class="cons">no motor, +1 bolus: CO '+br(a.CO,1)+'→'+br(bb.CO,1)+' (ΔDC '+(((bb.CO-a.CO)/(a.CO||1))*100).toFixed(0)+'%) · congestão '+br(a.congestion,2)+'→'+br(bb.congestion,2)+'</span>';
+          if(nodes[i+1]) nodes[i+1].style.display='block';
+          if($('caso-prog')) $('caso-prog').textContent=done+' / '+total+' decisões'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card); nodes.push(card);
+    });
+  }
+  // ---- prever-depois-revelar ----
+  function resetPredict(){ var box=$('prever-opts'); if(!box) return; box.dataset.answered=''; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
+    box.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); }); }
+  function predictAnswer(choice){
+    var box=$('prever-opts'); if(!box||box.dataset.answered) return; box.dataset.answered='1';
+    var m=marginal(state), frac=m.dCOfrac;
+    var truth=(frac>=0.25)?'muito':(frac>=0.12)?'pouco':'nada', okc=(choice===truth);
+    box.querySelectorAll('.opt').forEach(function(b){ var v=b.getAttribute('data-v'); if(v===truth) b.classList.add('right'); if(v===choice&&!okc) b.classList.add('wrong'); });
+    var q=quadrant(state);
+    var fb=$('prever-fb'); if(fb){ fb.className='dfb show'; fb.innerHTML=(okc?'✓ ':'✗ ')+'+1 bolus → ΔDC <b>'+(frac*100).toFixed(0)+'%</b> ('+truth+') · congestão +'+br(m.dCong,2)+'. Quadrante: <b>'+QMETA[q].lab+'</b>.'; }
+  }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    var S=function(o){ return Object.assign({ vol:0,preDep:0.8,contract:0.75,leak:0.1,venoTone:0.5 }, o); };
+    T.push({kind:'curve',P:S({preDep:0.85,vol:0}), cap:'Hipovolêmico, sem volume ainda.',
+      q:'No hipovolêmico responsivo, o 1º bolus tende a:',
+      o:['não fazer nada','subir bastante o débito (parte íngreme de Starling)','causar edema imediato','baixar a pré-carga'], a:1,
+      fb:'Na base da curva, o bolus enche a pré-carga e o VS sobe muito, com custo de congestão mínimo.', hint:'A curva verde sobe forte.'});
+    T.push({kind:'curve',P:S({preDep:0.85,vol:3}), cap:'Mesmo paciente, 3 bolus depois.',
+      q:'Depois de ressuscitar, o próximo bolus tende a:',
+      o:['subir o débito como antes','render pouco débito (platô) e somar congestão','curar o choque','reduzir a congestão'], a:1,
+      fb:'A curva saturou: a pré-carga sobe, o VS quase não. O benefício decaiu; o custo, não.', hint:'A curva verde achatou.'});
+    T.push({kind:'quad',P:S({preDep:0.85,vol:0}), cap:'Mapa: responsivo × tolerante.',
+      q:'"Responder ao volume" significa que se deve continuar dando?',
+      o:['sim, sempre','não — responsividade não é tolerância (são perguntas diferentes)','só se a PA subir','só no cardiogênico'], a:1,
+      fb:'Responsividade diz que o débito sobe; tolerância diz se o paciente aguenta a congestão. Separe-as.', hint:'Dois eixos.'});
+    T.push({kind:'curve',P:S({preDep:0.7,contract:0.5,leak:0.75,vol:1}), cap:'Glicocálice lesado (leak alto).',
+      q:'Com o glicocálice lesado, o mesmo bolus tende a:',
+      o:['render mais débito','render menos débito e congestionar mais (vaza ao interstício)','não mudar nada','reduzir o edema'], a:1,
+      fb:'O leak rouba volume do intravascular: menos pré-carga efetiva (menos débito) e mais edema intersticial.', hint:'Menos benefício, mais custo.'});
+    T.push({kind:'quad',P:S({preDep:0.85,vol:4}), cap:'Quarto bolus no responsivo inicial.',
+      q:'"Fluid creep" é:',
+      o:['dar volume rápido','repetir bolus além do benefício, colhendo só congestão','restringir volume','dar pouco volume'], a:1,
+      fb:'É o acúmulo silencioso de volume sem ganho de débito — só custo. O quadrante vira "só custo".', hint:'O ponto no canto ruim.'});
+    T.push({kind:'curve',P:S({preDep:0.85,vol:0}), cap:'O ponto de parar.',
+      q:'A "★" na curva marca:',
+      o:['o volume máximo possível','o volume que maximiza o ganho de débito sem cruzar o edema','a PA alvo','o início da congestão'], a:1,
+      fb:'É o trade-off: ganhar débito enquanto o custo de congestão ainda é aceitável. Além dele, reavalie.', hint:'O equilíbrio das duas curvas.'});
+    T.push({kind:'curve',P:S({contract:0.3,preDep:0.5,vol:1}), cap:'Coração fraco (contratilidade baixa).',
+      q:'No coração fraco, comparado ao normal, a congestão para a mesma pré-carga é:',
+      o:['menor','maior (coração rígido/back-up) e o platô vem mais cedo','igual','ausente'], a:1,
+      fb:'O ventrículo rígido sobe as pressões de enchimento mais cedo; tolera menos volume e responde menos.', hint:'Joelho mais à esquerda, platô mais baixo.'});
+    T.push({kind:'quad',P:S({preDep:0.6,contract:0.5,leak:0.6,vol:1}), cap:'Responsivo, mas congestionando.',
+      q:'Um paciente responsivo E intolerante (já congestionado) cai em qual decisão?',
+      o:['dar volume tranquilo','troca arriscada — pesar o ganho de débito contra o edema','platô (fútil)','sem choque'], a:1,
+      fb:'Subiria o débito, mas a congestão já é cara: é o quadrante de trade-off, não de "dar livre".', hint:'Direita-em-cima do mapa.'});
+    T.push({kind:'curve',P:S({preDep:0.15,vol:0}), cap:'Pré-carga já adequada (platô).',
+      q:'Num paciente já no platô de Starling, dar volume:',
+      o:['sobe muito o débito','quase não sobe o débito e só adiciona congestão','é sempre seguro','baixa o lactato direto'], a:1,
+      fb:'Sem dependência de pré-carga, o bolus não converte em VS — só sobe pressões de enchimento.', hint:'Curva já plana.'});
+    T.push({kind:'quad',P:S({preDep:0.85,vol:0}), cap:'Síntese.',
+      q:'A pergunta que organiza a ressuscitação volêmica é:',
+      o:['qual a PA alvo','o débito sobe (responsivo) E o paciente aguenta (tolerante)?','qual o tipo de fluido','quantos mL no total'], a:1,
+      fb:'As duas perguntas juntas, reavaliadas a cada bolus, definem dar, trocar, parar (fútil) ou recuar (custo).', hint:'Os dois eixos do mapa.'});
+    T.push({kind:'quad',P:S({preDep:0.85,vol:2}), cap:'Reavaliar é um verbo.',
+      q:'A responsividade ao volume é:',
+      o:['um rótulo fixo do paciente','um estado que muda a cada bolus (o que era responsivo vira platô)','irrelevante','igual à tolerância'], a:1,
+      fb:'Responsividade é dinâmica: testar e retestar antes de repetir é o cerne da reavaliação.', hint:'Muda com o volume.'});
+    T.push({kind:'curve',P:S({venoTone:0.85,preDep:0.6,vol:0}), cap:'Tônus venoso alto.',
+      q:'Aumentar o tônus venoso (sem dar volume) faz o quê com a pré-carga?',
+      o:['reduz','aumenta a P_msf e o retorno venoso — pré-carga sobe sem bolus','não muda','causa hemorragia'], a:1,
+      fb:'O reservatório venoso pode ser "espremido": mais P_msf e retorno venoso, mecanismo alternativo ao bolus.', hint:'Volume estressado vs não-estressado.'});
+    T.push({kind:'curve',P:S({preDep:0.85,leak:0.1,vol:2}), cap:'Benefício marginal.',
+      q:'Por que reavaliar ANTES de cada novo bolus?',
+      o:['por burocracia','porque o ganho marginal decai — o próximo bolus pode já não pagar','para perder tempo','porque a PA mente'], a:1,
+      fb:'Cada bolus rende menos que o anterior; sem reavaliar, repete-se no platô (creep).', hint:'A inclinação cai.'});
+    T.push({kind:'quad',P:S({preDep:0.7,contract:0.35,leak:0.5,vol:1}), cap:'Cardiogênico + leak.',
+      q:'Coração fraco e glicocálice lesado tornam a janela do volume:',
+      o:['mais larga','mais estreita — pouco ganho, muito custo','infinita','irrelevante'], a:1,
+      fb:'Platô baixo (pouco ganho) + congestão precoce (muito custo) estreitam a janela terapêutica do volume.', hint:'Pouco espaço entre as curvas.'});
+    T.push({kind:'curve',P:S({preDep:0.85,vol:5}), cap:'Volume muito além do ótimo.',
+      q:'Continuar dando volume muito além do ótimo resulta em:',
+      o:['mais débito','débito estável e congestão/edema crescentes (dano)','menos congestão','cura'], a:1,
+      fb:'No platô, o débito não sobe mais, mas a pré-carga e a congestão continuam — é o dano do creep.', hint:'Verde plana, vermelha sobe.'});
+    T.push({kind:'quad',P:S({preDep:0.5,contract:0.6,leak:0.2,vol:2}), cap:'A regra final.',
+      q:'O volume, no fim, é melhor pensado como:',
+      o:['um sinal vital','uma droga com janela terapêutica (dose abaixo perde débito; acima, ganha edema)','algo inócuo','sempre benéfico'], a:1,
+      fb:'Dose-resposta com benefício e toxicidade: a reavaliação é o que mantém o paciente dentro da janela.', hint:'Janela terapêutica.'});
+    var __tg=[1,3,0,2,1,3,0,2,1,3,2,0,3,1,2,0];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var dif=(qi<6)?['b','básico']:(qi<10)?['i','intermediário']:['a','avançado'];
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span><span class="dif dif-'+dif[0]+'">'+dif[1]+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=190; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.kind==='quad'?drawQuad(ctx,W||760,H||190,item.P):drawCurve(ctx,W||760,H||190,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||190); }catch(e){} }); }
+
+  var PRESETS={
+    normal:{preDep:0.3,contract:0.75,leak:0.1,vol:0},
+    hipovol:{preDep:0.85,contract:0.75,leak:0.1,vol:0},
+    ressuscitado:{preDep:0.85,contract:0.75,leak:0.1,vol:3},
+    creep:{preDep:0.85,contract:0.75,leak:0.1,vol:5},
+    cardiogenico:{preDep:0.55,contract:0.3,leak:0.15,vol:1},
+    septico_leak:{preDep:0.7,contract:0.55,leak:0.8,vol:1}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iVol','vol']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value); recompute(); }); });
+    [['iPreDep','preDep'],['iContract','contract'],['iLeak','leak'],['iVeno','venoTone']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    var pbox=$('prever-opts'); if(pbox){ pbox.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ predictAnswer(b.getAttribute('data-v')); }); }); }
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor(); renderCaso();
+    window.recompute=recompute; window.drawCurve=drawCurve; window.drawQuad=drawQuad; window.activateTab=activate; window.setLabState=setState;
+    window.volemicFn=volemic; window.marginalFn=marginal; window.responsiveFn=responsive; window.tolerantFn=tolerant; window.quadrantFn=quadrant; window.optimalVolumeFn=optimalVolume; window.applyBolusFn=applyBolus;
+    window.predictAnswerFn=predictAnswer; window.CASO=CASO;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
