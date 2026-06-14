@@ -61,5 +61,17 @@ ok('entradas absurdas: sem NaN', [ABS.CO,ABS.PVR,ABS.VR,ABS.LVcap,ABS.RVout,ABS.
 ok('PVR e débito clampados (finitos, não-negativos)', ABS.PVR>0 && ABS.CO>=0 && ABS.RVout>=0);
 ok('PEEP clampada (≤22)', ABS.peep<=22, ABS.peep);
 
+console.log('\n— RECONCILIAÇÃO: enxertos (a CVP engana · os 4 termos · fenótipo) —');
+ok('A PÉROLA: a CVP engana sob PEEP (CVP medida↑ enquanto o retorno↓)', M.cvpEngana({})===true && M.cvpEngana({volemia:0.3,peep:12})===true);
+ok('cvpEngana sem argumento/null não lança', (function(){try{return typeof M.cvpEngana()==='boolean' && typeof M.cvpEngana(null)==='boolean';}catch(e){return false;}})());
+const ptLV=M.pressaoTermos({lvFail:0.8}), ptRV=M.pressaoTermos({rvFail:0.8});
+ok('4 termos: a pressão positiva corta a pré-carga (VR↓)', ptLV.vr.com<ptLV.vr.sem, r(ptLV.vr.sem,1)+'→'+r(ptLV.vr.com,1));
+ok('4 termos: a pressão positiva descarrega o VE (pós-carga transmural↓)', ptLV.lvafter.com<ptLV.lvafter.sem, r(ptLV.lvafter.sem,0)+'→'+r(ptLV.lvafter.com,0));
+ok('4 termos: a CVP medida (RAP) SOBE enquanto o retorno CAI — a armadilha', ptLV.rap.com>ptLV.rap.sem && ptLV.vr.com<ptLV.vr.sem, 'RAP '+r(ptLV.rap.sem,1)+'→'+r(ptLV.rap.com,1));
+ok('4 termos: ΔDC net OPOSTO por ventrículo (VE↑ × VD↓)', ptLV.deltaCO>0 && ptRV.deltaCO<0, 'VE '+r(ptLV.deltaCO,2)+' × VD '+r(ptRV.deltaCO,2));
+ok('pressaoTermos sem argumento/null não lança', (function(){try{return !isNaN(M.pressaoTermos().deltaCO) && !isNaN(M.pressaoTermos(null).deltaCO);}catch(e){return false;}})());
+ok('fenótipo: normal / VE congesto / VD sobrecarga / pré-carga-dep', M.fenotipo({})==='normal' && M.fenotipo({lvFail:0.8})==='ve_congesto' && M.fenotipo({rvFail:0.8,peep:14})==='vd_sobrecarga' && M.fenotipo({volemia:0.2,peep:12})==='preload_dep');
+ok('fenótipo sem argumento/null não lança e dá string', (function(){try{return typeof M.fenotipo()==='string' && typeof M.fenotipo(null)==='string';}catch(e){return false;}})());
+
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);

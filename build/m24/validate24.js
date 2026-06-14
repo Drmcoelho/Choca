@@ -106,6 +106,17 @@ ok('firewall SaMD',/nunca/i.test(txt('disclaimer'))&&/(PEEP|conduta|modo)/i.test
 ok('SEM padrão de dose (mg/mcg/µg/mL·h⁻¹)', !/\b\d+(?:[.,]\d+)?\s*(mg|mcg|µg|ug)\b/i.test(html) && !/\b\d+(?:[.,]\d+)?\s*ml\s*\/\s*h\b/i.test(html));
 ok('SEM comando de ajuste prescritivo', !/\b(ajuste|titule|coloque|programe|use)\s+(a\s+)?peep\s+(em|para|de)\s+\d/i.test(html));
 
+console.log('\n— RECONCILIAÇÃO: enxertos (a CVP engana · 4 termos · fenótipo) —');
+ok('#pressPanel / #opbox-press / #ban-cvp presentes', !!$('pressPanel') && !!$('opbox-press') && !!$('ban-cvp'));
+ok('engine: a CVP engana sob PEEP', ev('cvpEnganaFn({})')===true && ev('cvpEnganaFn({volemia:0.3,peep:12})')===true);
+ok('engine: 4 termos (VR↓, pós-carga VE↓, CVP medida↑)', ev('pressaoTermosFn({lvFail:0.8}).vr.com')<ev('pressaoTermosFn({lvFail:0.8}).vr.sem') && ev('pressaoTermosFn({lvFail:0.8}).lvafter.com')<ev('pressaoTermosFn({lvFail:0.8}).lvafter.sem') && ev('pressaoTermosFn({lvFail:0.8}).rap.com')>ev('pressaoTermosFn({lvFail:0.8}).rap.sem'));
+ok('engine: ΔDC oposto por ventrículo (VE↑ × VD↓)', ev('pressaoTermosFn({lvFail:0.8}).deltaCO')>0 && ev('pressaoTermosFn({rvFail:0.8}).deltaCO')<0);
+ok('engine: fenótipo cobre 4 rótulos', ev('fenotipoFn({})')==='normal' && ev('fenotipoFn({lvFail:0.8})')==='ve_congesto' && ev('fenotipoFn({rvFail:0.8,peep:14})')==='vd_sobrecarga' && ev('fenotipoFn({volemia:0.2,peep:12})')==='preload_dep');
+ok('readout 4 termos cita pré-carga/pós-carga/ΔDC/CVP', /pré-carga/.test($('opbox-press').innerHTML)&&/pós-carga/.test($('opbox-press').innerHTML)&&/ΔDC/.test($('opbox-press').innerHTML)&&/CVP/.test($('opbox-press').innerHTML));
+window.setLabState({rvFail:0.8,peep:14}); ok('VD+PEEP: banner "a CVP engana" visível', $('ban-cvp').classList.contains('show'));
+window.setLabState({lvFail:0.8,peep:0}); ok('veredito mostra o fenótipo (VE congesto)', /fen[óo]tipo/.test(txt('lab-vnum')) && /VE congesto/.test(txt('lab-vnum')), txt('lab-vnum'));
+window.setLabState({});
+
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);
 })();
