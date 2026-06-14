@@ -94,6 +94,8 @@ meta terapêutica individualizada por entrada do usuário
 
 O módulo pode dizer “α1 aumenta RVS”. Não pode dizer “inicie em X”.
 
+> **Exceção controlada (ver §11):** módulos designados como *referência farmacológica educacional* (a partir do M28) PODEM exibir faixas de dose **usuais de referência**, apresentações, diluições típicas e uma **calculadora genérica de conversão** (dose ↔ mL/h), desde que rotulados como referência educacional, sem comando imperativo nem alvo individualizado para paciente real. A proibição acima (“inicie em X neste paciente”) permanece integral.
+
 ### 3.2 Conduta acionável
 
 Proibido:
@@ -339,3 +341,53 @@ Checklist obrigatório:
 ```
 
 Se um item falhar, o módulo não está pronto.
+
+Para módulos de **referência farmacológica educacional** (§11), o checklist é adaptado: substituir “não há dose” por “as doses são faixas usuais de referência rotuladas, sem comando individualizado”.
+
+---
+
+## 11. Camada de referência farmacológica educacional (módulos designados)
+
+Alguns módulos — a partir do **M28 · vasopressores & inotrópicos** — têm valor pedagógico inseparável da farmacologia prática: apresentação, diluição, faixa de dose usual, titulação, infusão (mL/h) e interações. Proibir isso por completo empobreceria o ensino tanto quanto um livro-texto sem a tabela de drogas vasoativas.
+
+Esta seção abre uma **exceção controlada**, com fronteiras rígidas.
+
+### 11.1 Permitido nesta camada
+
+```text
+apresentação (ex.: ampola e concentração de referência)
+diluições USUAIS de referência (as mais empregadas, declaradas como referência)
+faixa de dose USUAL de referência (mín–máx típicos da literatura)
+titulação como FAIXA (não como ordem para um paciente)
+calculadora de CONVERSÃO de unidade (dose ↔ mL/h, dada uma diluição e um peso hipotético)
+interações farmacológicas e usos combinados (mecanismo)
+usos inusitados, exclusivos e efeitos iatrogênicos (mecanismo/educação)
+```
+
+### 11.2 Proibido mesmo nesta camada
+
+```text
+comando imperativo para paciente real ("inicie X em Y neste paciente")
+alvo individualizado a partir de dados de um paciente real ("para ESTE paciente, use Z")
+roteamento estado-de-paciente-real → conduta → dose
+afirmar que a calculadora substitui a prescrição, o protocolo institucional ou o julgamento clínico
+omitir que os valores são de referência e variam por fonte/instituição
+```
+
+### 11.3 Enquadramento obrigatório
+
+Toda exibição de dose/diluição/cálculo nesta camada deve:
+
+```text
+1. ser rotulada como REFERÊNCIA EDUCACIONAL;
+2. dizer explicitamente "confira o protocolo da sua instituição";
+3. dizer que NÃO é prescrição individualizada;
+4. tratar o peso como hipotético/demonstrativo, não como dado de um paciente real;
+5. apresentar a dose como FAIXA usual, não como "a dose" de alguém.
+```
+
+### 11.4 A calculadora
+
+A calculadora é uma **ferramenta de aritmética de unidades** (como a régua de um livro): converte uma dose (mcg/kg/min, mcg/min ou U/min) e uma diluição em mL/h, e vice-versa. Ela é determinística, pura e testável. Não recebe estado clínico para decidir conduta; recebe parâmetros numéricos para demonstrar a conversão.
+
+A fronteira do §1 permanece: o projeto explica e calcula a **física/aritmética** da infusão; não decide o tratamento de uma pessoa real.
