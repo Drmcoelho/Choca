@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 27 · Os 4 perfis · radar</title>
+<meta name="description" content="Quente/frio (perfusão = fluxo) × seco/úmido (congestão = pressões de enchimento): os quatro perfis A/B/L/C. Um mapa de hipóteses, não diagnóstico fechado — e a mesma alavanca tem efeito oposto por perfil: volume salva o frio-seco e afoga o frio-úmido. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c; --purp:#9b6cff; --cyan:#37c8d8;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:300px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono);margin-top:10px}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.banner.crit{border-color:rgba(255,93,108,.45)} .banner.crit b{color:var(--crit)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.pista{margin-top:7px}
+.pista summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.pista[open] summary{color:var(--ink-faint)}
+.pista .pb{margin-top:5px;color:var(--ink-dim);font-size:.9rem}
+.casebox{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.casebox h3{margin:0 0 3px} .casebox .cprog{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:10px}
+.decision{border-left:3px solid var(--ven);background:#0e1320;border-radius:0 var(--r-sm) var(--r-sm) 0;padding:11px 14px;margin:10px 0}
+.decision .dq{margin-bottom:9px}
+.dopts{display:grid;gap:7px}
+.dfb{display:none;margin-top:9px;font-size:.88rem;color:var(--ink-dim)} .dfb.show{display:block}
+.dfb .cons{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.predict{background:#0e1320;border:1px solid rgba(63,130,230,.4);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.predict .pq{margin-bottom:9px}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
+.dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 27 · ↳ os 4 perfis · radar</div>
+    <h1>Dois eixos, quatro cantos, um mapa</h1>
+    <p class="sub">Quase todo estado hemodinâmico cabe em dois eixos: <b>perfusão</b> (quente↔frio, que é <em>fluxo</em>, não pressão) e <b>congestão</b> (seco↔úmido, as pressões de enchimento). O 2×2 dá quatro perfis. É um <em>mapa de hipóteses</em>, não um diagnóstico fechado — e a mesma alavanca tem efeito oposto em cada canto.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="450" y1="4" x2="450" y2="50" stroke="var(--line)" stroke-width="1"/>
+      <line x1="120" y1="27" x2="820" y2="27" stroke="var(--line)" stroke-width="1"/>
+      <text x="250" y="16" fill="var(--ok)" font-size="10" font-family="monospace">A quente-seco</text>
+      <text x="560" y="16" fill="var(--warn)" font-size="10" font-family="monospace">B quente-úmido</text>
+      <text x="255" y="46" fill="var(--warn)" font-size="10" font-family="monospace">L frio-seco</text>
+      <text x="560" y="46" fill="var(--crit)" font-size="10" font-family="monospace">C frio-úmido</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Mesma PA, dois cantos opostos do mapa</h2>
+    <p class="lead">Cinco atos. A variável escondida é em qual canto do mapa o paciente está — e o que a mesma alavanca faria. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Dois pacientes hipotensos, PA semelhante. Um está com extremidades quentes e pulmões limpos; o outro, frio, mosqueado, com crepitações. A PA não os distingue.</p>
+      <div class="vitais"><span>ambos PA <b>baixa</b></span><span>A · quente/limpo</span><span>B · frio/úmido</span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Hipotensos — dar volume nos dois." Mas volume é a alavanca certa só em <em>um</em> dos cantos; no outro, afoga.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Os dois eixos os separam: <b>perfusão</b> (fluxo, lida pela periferia — pele, enchimento, lactato) e <b>congestão</b> (pressões de enchimento, lida por crepitações, turgência, B-lines). Um é <b>frio-seco</b> (L, falta volume); o outro, <b>frio-úmido</b> (C, bomba falida).</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>O perfil aponta a <b>alavanca</b>: volume no frio-<em>seco</em>; inotrópico (e descongestão) no frio-<em>úmido</em>. E é um <b>mapa de hipóteses</b>: o mesmo canto nasce de mecanismos diferentes — o radar dos termos quebrados refina, não fecha.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O radar 2×2 com o paciente plotado e as setas das alavancas mostra para onde cada gesto o move — e por que volume salva um e afoga o outro. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">par perfusão × congestão</b> (não a PA isolada). Perfusão é fluxo (frio = hipoperfusão, mesmo com PA normal); congestão é pressão de enchimento. Os quatro perfis A/B/L/C são um <b>mapa de hipóteses</b> que aponta alavancas — a mesma com efeito oposto por canto. Pontes aos módulos 9 (PAM = DC × RVS), 14 (hipovolêmico), 16 (cardiogênico) e 20 (distributivo).</div></details>
+
+    <div class="casebox">
+      <h3>À beira do leito · classifique e escolha a alavanca</h3>
+      <div class="cprog" id="caso-prog">0 / 0 decisões</div>
+      <div id="caso-interativo"></div>
+      <p class="hint" style="margin-top:10px">Cada decisão é mecanismo, não conduta: o motor mostra para onde a alavanca move o paciente no mapa — não o que prescrever.</p>
+    </div>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Dos dois eixos aos quatro cantos — e às alavancas.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">Quais são os dois eixos?</div><div class="aa"><b>Perfusão</b> (quente↔frio) e <b>congestão</b> (seco↔úmido). Dois eixos independentes geram quatro perfis — um mapa que organiza o raciocínio.</div>
+        <details class="pista"><summary>▸ pista: independentes</summary><div class="pb">Perfusão e congestão não andam juntas: dá para estar quente-úmido (perfundindo e congesto) ou frio-seco (hipoperfundido e sem congestão). São perguntas separadas.</div></details></div>
+      <div class="step"><div class="qq">Perfusão é a PA?</div><div class="aa"><b>Não.</b> Perfusão é <b>fluxo</b> (débito ao tecido). A vasoconstrição pode segurar a PA com fluxo baixo: <b>frio com PA normal</b>. Leia a perfusão na periferia (pele, enchimento, lactato), não na pressão.</div>
+        <details class="pista"><summary>▸ pista: o frio com PA boa</summary><div class="pb">É a ponte com o módulo 26 (críptico): a compensação segura a pressão enquanto o fluxo já caiu. O eixo perfusão é justamente esse fluxo.</div></details></div>
+      <div class="step"><div class="qq">E congestão, o que é?</div><div class="aa">As <b>pressões de enchimento</b> elevadas: o sangue represa atrás do ventrículo. Lê-se por crepitações, turgência jugular, B-lines, edema. Volume alto + bomba fraca = úmido.</div></div>
+      <div class="step"><div class="qq">Quais são os quatro perfis?</div><div class="aa"><b>A</b> quente-seco (compensado) · <b>B</b> quente-úmido (congesto, mas perfundindo) · <b>L</b> frio-seco (hipovolêmico) · <b>C</b> frio-úmido (cardiogênico, o pior canto).</div>
+        <details class="pista"><summary>▸ pista: o pior canto</summary><div class="pb">Frio-úmido (C) é hipoperfusão COM congestão: o coração não bombeia para frente nem alivia para trás. É onde o cardiogênico mora.</div></details></div>
+      <div class="step"><div class="qq">Por que o perfil importa?</div><div class="aa">Porque aponta a <b>alavanca</b>: volume no frio-<em>seco</em> (L); inotrópico/descongestão no frio-<em>úmido</em> (C); descongestão no quente-úmido (B); nada além de observar no quente-seco (A).</div></div>
+      <div class="step"><div class="qq">A mesma alavanca serve para todos?</div><div class="aa"><b>Jamais.</b> <b>Volume</b> tira o L do frio — e <b>afoga</b> o C (mais congestão, pouco fluxo). O efeito do gesto depende do canto. Por isso o mapa vem antes da alavanca.</div>
+        <details class="pista"><summary>▸ pista: a seta no radar</summary><div class="pb">No instrumento, a seta do volume aponta para cima-e-direita: sobe a perfusão (bom no L) mas empurra para úmido (ruim no C). Inotrópico aponta para cima-e-esquerda (o ideal no C).</div></details></div>
+      <div class="step"><div class="qq">É um diagnóstico fechado?</div><div class="aa"><b>Não — é um mapa de hipóteses.</b> O mesmo canto nasce de mecanismos diferentes (frio-úmido pode ser cardiogênico, mas também misto). O perfil <em>orienta</em>; o radar dos termos e o contexto <em>refinam</em>.</div></div>
+      <div class="step"><div class="qq">Como o radar refina?</div><div class="aa">Decompondo o canto nos <b>termos quebrados</b> (pré-carga, bomba, RVS) dos módulos anteriores. Dois pacientes no mesmo canto podem ter radares diferentes — e alavancas diferentes.</div></div>
+      <div class="step"><div class="qq">A regra final, então, é…</div><div class="aa"><b>Localize no mapa antes de agir.</b> Os dois eixos (perfusão de fluxo, congestão de pressão) apontam a alavanca; mas o perfil é hipótese, não veredito. O contexto sempre tem voz.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · o radar 2×2</h2>
+    <p class="lead">O paciente plotado no mapa <b>perfusão × congestão</b>. As <b>setas</b> mostram para onde cada alavanca o moveria: <span style="color:var(--ven)">volume</span>, <span style="color:var(--cyan)">diurético</span>, <span style="color:var(--crit)">inotrópico</span>. Note como o volume ajuda num canto e afoga em outro.</p>
+    <div class="predict" id="prever">
+      <div class="pq"><b>Preveja antes de revelar.</b> Para o paciente nos sliders abaixo, dar <b>volume</b> vai:</div>
+      <div class="dopts" id="prever-opts">
+        <button class="opt" type="button" data-v="muito">elevar muito a perfusão (frio-seco)</button>
+        <button class="opt" type="button" data-v="pouco">ajudar pouco</button>
+        <button class="opt" type="button" data-v="afoga">afogar (congestionar, frio-úmido)</button>
+      </div>
+      <div class="dfb" id="prever-fb"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="radar" class="casc" width="820" height="300" aria-label="mapa perfusão versus congestão com setas de alavancas"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>A quente-seco</span><span><i style="background:var(--warn)"></i>B/L</span><span><i style="background:var(--crit)"></i>C frio-úmido</span>
+        <span><i style="background:var(--ven)"></i>volume</span><span><i style="background:var(--cyan)"></i>diurético</span><span><i style="background:var(--crit)"></i>inotrópico</span>
+      </div>
+      <div class="opbox" id="opbox-radar"></div>
+    </div>
+    <h3>Alavancas (a certa depende do canto)</h3>
+    <div class="plotwrap">
+      <canvas id="levers" class="plot" width="820" height="200" aria-label="efeito de cada alavanca no débito e na congestão"></canvas>
+      <div class="opbox" id="opbox-levers"></div>
+      <div class="pharm">
+        <b>Alavancas/física (intervenção → termo · mecanismo, sem dose):</b><br>
+        volume → pré-carga↑ → débito↑ <b>se na parte íngreme</b> (frio-seco), mas congestão↑ se a bomba não comporta (frio-úmido) · inotrópico → contratilidade↑ → débito↑ e congestão↓ (tira o frio-úmido do canto) · diurético → volume↓ → congestão↓ (quente/frio-úmido).
+        <span class="fw">A PAM = DC × RVS: a RVS pode segurar a pressão num paciente frio — leia o fluxo, não só a pressão.</span>
+      </div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Volume / pré-carga <span class="v"><span id="vVolume">70</span> %</span></label><input id="iVolume" type="range" min="0" max="160" step="5" value="70"></div>
+        <div class="ctrl"><label>Contratilidade (bomba) <span class="v"><span id="vPump">70</span> %</span></label><input id="iPump" type="range" min="10" max="100" step="5" value="70"></div>
+        <div class="ctrl"><label>RVS / vasoconstrição (segura a PA) <span class="v"><span id="vTone">50</span> %</span></label><input id="iTone" type="range" min="0" max="100" step="5" value="50"></div>
+      </div>
+      <div class="hint">Baixe o volume → frio-seco (L). Baixe a bomba → frio-úmido (C). Suba a RVS → veja a PA subir sem esquentar a perfusão.</div>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · localize no mapa, depois aja</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito</b> nomeia o perfil e a hipótese; os banners explicam o frio (fluxo), o úmido (congestão), a PA que engana e a alavanca certa para o canto.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="A">A · quente-seco</button>
+      <button class="preset" type="button" data-preset="B">B · quente-úmido</button>
+      <button class="preset" type="button" data-preset="L">L · frio-seco</button>
+      <button class="preset" type="button" data-preset="C">C · frio-úmido</button>
+      <button class="preset" type="button" data-preset="frio_pa">Frio com PA normal</button>
+      <button class="preset" type="button" data-preset="misto">Misto (bomba fraca + sobrecarga)</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="radarLab" class="casc" width="820" height="300" aria-label="radar no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Perfil hemodinâmico</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-frio"><b>Frio (hipoperfusão).</b> O fluxo ao tecido está baixo — leia na periferia (pele fria, enchimento lento, lactato), não na PA. Perfusão é fluxo, não pressão.</div>
+      <div class="banner ven" id="ban-umido"><b>Úmido (congestão).</b> As pressões de enchimento estão altas: o sangue represa atrás do ventrículo (crepitações, turgência, B-lines). Volume aqui piora.</div>
+      <div class="banner crit" id="ban-pa-engana"><b>A PA engana.</b> Paciente frio com PA sustentada pela vasoconstrição (RVS↑): a pressão tranquiliza enquanto o fluxo já caiu. Não classifique pela PA.</div>
+      <div class="banner ven" id="ban-volume"><b>Volume: efeito oposto por canto.</b> <span id="volume-txt">—</span></div>
+      <div class="banner crit" id="ban-inotropo"><b>Frio-úmido (C).</b> O pior canto: hipoperfusão COM congestão. O inotrópico tende a tirar do canto (fluxo↑, congestão↓); volume afoga.</div>
+      <div class="banner art" id="ban-hipotese"><b>Mapa de hipóteses, não diagnóstico.</b> O perfil orienta a alavanca, mas o mesmo canto nasce de mecanismos diferentes — o radar dos termos e o contexto refinam.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão plota o paciente no radar (ou o efeito das alavancas) ao vivo. Leia o canto e a alavanca certa — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mapa de dois eixos (perfusão = fluxo, congestão = pressões de enchimento) e os quatro perfis como <b>hipóteses</b> — <b>nunca</b> diagnóstico fechado, tipo/volume de fluido, droga ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Perfusão e congestão são <b>fatores normalizados</b>, não medidas; "quente/frio" e "seco/úmido" são leituras clínicas com erros. → Os limiares dos quadrantes são <b>idealizados</b>; pacientes reais ficam em zonas-limite. → O perfil é um <b>mapa de hipóteses</b>: o mesmo canto admite mecanismos distintos (o radar dos termos refina). → As alavancas mostram a <em>direção</em> do efeito, não uma dose. → A PA depende de DC × RVS e pode enganar. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde9.html">Módulo 9 · PAM = DC × RVS</a> — por que a pressão não é a perfusão.</div>
+    <div class="ponte">→ <a href="perfunde14.html">Módulo 14 · Hipovolêmico</a> — o frio-seco (L) e a alavanca volume.</div>
+    <div class="ponte">→ <a href="perfunde16.html">Módulo 16 · Cardiogênico</a> — o frio-úmido (C) e o inotrópico.</div>
+    <div class="ponte">→ <a href="perfunde20.html">Módulo 20 · Distributivo</a> — o quente com RVS↓ e o radar dos termos.</div>
+    <div class="ponte">→ <a href="perfunde26.html">Módulo 26 · ↳ críptico</a> — o frio com PA normal sustentada pela compensação.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 27
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model27.js inlined) ===================== -->
+<script>
+var BASE={ HR:80, SVmax:95, kStarling:0.55, pumpFloor:0.25, kPumpSV:0.75, CO_warm:4.0,
+  congKnee:0.45, kCong:1.8, kPumpCong:0.6, WARM:0.5, WET:0.5 };
+function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }
+function clamp01(v){ return clampv(v,0,1); }
+function radar(p){
+  p=p||{}; var B=BASE;
+  var volume=clampv(p.volume==null?0.7:p.volume,0,1.6), pump=(p.pump==null?0.7:clamp01(p.pump)), tone=(p.tone==null?0.5:clamp01(p.tone));
+  var SV=B.SVmax*(volume*volume)/(volume*volume + B.kStarling*B.kStarling)*(B.pumpFloor + B.kPumpSV*pump);
+  var CO=B.HR*SV/1000;
+  var perfusion=clampv((CO-2.0)/(B.CO_warm-2.0), 0, 1.3);
+  var fillExcess=Math.max(0, volume - B.congKnee - B.kPumpCong*pump);
+  var congestion=clampv(B.kCong*fillExcess, 0, 1.6);
+  var warm=perfusion>=B.WARM, wet=congestion>=B.WET;
+  var map=clampv(55 + 40*CO/B.CO_warm + 35*tone, 40, 130);
+  return { volume:volume,pump:pump,tone:tone,SV:SV,CO:CO,perfusion:perfusion,congestion:congestion,warm:warm,wet:wet,map:map }; }
+function profile(p){ var R=radar(p); if(R.warm) return R.wet?'B':'A'; return R.wet?'C':'L'; }
+var PROFILE_NAME={ A:'quente-seco', B:'quente-úmido', L:'frio-seco', C:'frio-úmido' };
+function hypotheses(prof){ switch(prof){
+  case 'A': return ['compensado/normal','sem termo dominante quebrado'];
+  case 'B': return ['congestão com perfusão preservada','sobrecarga de volume / pós-carga (ex.: EAP hipertensivo)'];
+  case 'L': return ['pré-carga baixa (hipovolêmico)','débito baixo SEM congestão'];
+  case 'C': return ['bomba falida (cardiogênico)','débito baixo COM congestão — o pior canto'];
+  default:  return []; } }
+function applyVolume(p){ p=p||{}; var s=Object.assign({},p); var v=clampv(p.volume==null?0.7:p.volume,0,1.6); s.volume=Math.min(1.6,v+0.4); return s; }
+function applyDiuretic(p){ p=p||{}; var s=Object.assign({},p); var v=clampv(p.volume==null?0.7:p.volume,0,1.6); s.volume=Math.max(0,v-0.4); return s; }
+function applyInotrope(p){ p=p||{}; var s=Object.assign({},p); var u=(p.pump==null?0.7:clamp01(p.pump)); s.pump=Math.min(1,u+0.35); return s; }
+function leverEffect(p,fn){ var a=radar(p), b=radar(fn(p)); return { dCO:b.CO-a.CO, dCong:b.congestion-a.congestion, profFrom:profile(p), profTo:profile(fn(p)) }; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return (typeof x==='number'&&!isNaN(x))?x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';};
+  var state={ volume:0.7, pump:0.7, tone:0.5 };
+  var PMETA={ A:{lab:'A · QUENTE-SECO', kl:'ok'}, B:{lab:'B · QUENTE-ÚMIDO', kl:'lim'}, L:{lab:'L · FRIO-SECO', kl:'lim'}, C:{lab:'C · FRIO-ÚMIDO', kl:'crit'} };
+  var PCOR={ A:'#3ec78d', B:'#ffb454', L:'#ffb454', C:'#ff5d6c' };
+
+  // ---- radar 2×2: perfusão (↑ quente) × congestão (→ úmido) + setas das alavancas ----
+  function Xc(W,cong){ var padL=50,padR=16,pw=W-padL-padR; return padL+(clampv(cong,0,1.4)/1.4)*pw; }
+  function Yp(H,perf){ var padT=16,padB=28,ph=H-padT-padB; return padT+ph-(clampv(perf,0,1.3)/1.3)*ph; }
+  function arrow(ctx,x1,y1,x2,y2,col){ ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a=Math.atan2(y2-y1,x2-x1); ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4)); ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4)); ctx.closePath(); ctx.fill(); }
+  function drawRadar(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var padL=50,padR=16,padT=16,padB=28, pw=W-padL-padR, ph=H-padT-padB;
+      var wt=Xc(W,0.5), pt=Yp(H,0.5);
+      ctx.fillStyle='rgba(62,199,141,.07)'; ctx.fillRect(padL,padT,wt-padL,pt-padT);           // A top-left
+      ctx.fillStyle='rgba(255,180,84,.06)'; ctx.fillRect(wt,padT,padL+pw-wt,pt-padT);          // B top-right
+      ctx.fillStyle='rgba(255,180,84,.05)'; ctx.fillRect(padL,pt,wt-padL,padT+ph-pt);          // L bottom-left
+      ctx.fillStyle='rgba(255,93,108,.08)'; ctx.fillRect(wt,pt,padL+pw-wt,padT+ph-pt);         // C bottom-right
+      ctx.strokeStyle='#26314a'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(wt,padT); ctx.lineTo(wt,padT+ph); ctx.stroke(); ctx.beginPath(); ctx.moveTo(padL,pt); ctx.lineTo(padL+pw,pt); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font='11px monospace';
+      ctx.fillStyle='rgba(62,199,141,.8)'; ctx.fillText('A quente-seco', Xc(W,0.05), Yp(H,1.2));
+      ctx.fillStyle='rgba(255,180,84,.85)'; ctx.fillText('B quente-úmido', Xc(W,0.78), Yp(H,1.2));
+      ctx.fillStyle='rgba(255,180,84,.7)'; ctx.fillText('L frio-seco', Xc(W,0.05), Yp(H,0.12));
+      ctx.fillStyle='rgba(255,93,108,.9)'; ctx.fillText('C frio-úmido', Xc(W,0.78), Yp(H,0.12));
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('congestão (seco → úmido) →', padL, padT+ph+16);
+      ctx.save(); ctx.translate(14,padT+ph/2+44); ctx.rotate(-Math.PI/2); ctx.fillText('perfusão (frio → quente) ↑',0,0); ctx.restore();
+      // setas das alavancas
+      var R=radar(p), x0=Xc(W,R.congestion), y0=Yp(H,R.perfusion);
+      [['volume',applyVolume,'#3f82e6'],['diurético',applyDiuretic,'#37c8d8'],['inotrópico',applyInotrope,'#ff5d6c']].forEach(function(lv){
+        var Rn=radar(lv[1](p)); arrow(ctx,x0,y0,Xc(W,Rn.congestion),Yp(H,Rn.perfusion),lv[2]); });
+      // paciente
+      var prof=profile(p);
+      ctx.fillStyle=PCOR[prof]; ctx.beginPath(); ctx.arc(x0,y0,8,0,2*Math.PI); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='#e9eef7'; ctx.font='11px monospace';
+      ctx.fillText('perfil '+prof+' ('+PROFILE_NAME[prof]+') · CO '+br(R.CO,1)+' · PA '+br(R.map,0), padL+2, padT+12);
+      return R;
+    }catch(e){ return {}; }
+  }
+  // ---- alavancas: efeito (ΔCO, Δcong) e perfil resultante ----
+  function drawLevers(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var rows=[ {label:'+ volume', fn:applyVolume, color:'#3f82e6'}, {label:'+ inotrópico', fn:applyInotrope, color:'#ff5d6c'}, {label:'+ diurético', fn:applyDiuretic, color:'#37c8d8'} ];
+      var padL=110,padR=16,padT=12,padB=18, pw=W-padL-padR, mid=padL+pw*0.5;
+      var n=rows.length, gap=12, rh=(H-padT-padB-gap*(n-1))/n;
+      rows.forEach(function(rw,i){ var y=padT+i*(rh+gap); var e=leverEffect(p,rw.fn);
+        // ΔCO à direita (verde se +), Δcong: barra para a direita se piora
+        var coW=clampv(Math.abs(e.dCO)/2.5,0,1)*(pw*0.42);
+        ctx.fillStyle=e.dCO>=0?'#3ec78d':'#ff5d6c'; ctx.fillRect(mid, y, e.dCO>=0?coW:-coW, rh*0.4);
+        var cgW=clampv(Math.abs(e.dCong)/1.2,0,1)*(pw*0.42);
+        ctx.fillStyle=e.dCong>0?'#ff5d6c':'#37c8d8'; ctx.fillRect(mid, y+rh*0.5, e.dCong>0?cgW:-cgW, rh*0.4);
+        ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.textAlign='right'; ctx.fillText(rw.label, padL-8, y+rh/2+3); ctx.textAlign='left';
+        ctx.fillStyle='#e9eef7'; ctx.fillText('ΔDC '+br(e.dCO,1)+' · Δcong '+br(e.dCong,1)+' · '+e.profFrom+'→'+e.profTo, mid+6, y+rh*0.2); });
+      ctx.strokeStyle='#26314a'; ctx.beginPath(); ctx.moveTo(mid,padT); ctx.lineTo(mid,H-padB); ctx.stroke();
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('→ ganho de débito (verde) · → mais congestão (vermelho) · a alavanca certa depende do perfil', padL, H-3);
+      return true;
+    }catch(e){}
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||300,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vVolume').textContent=Math.round(state.volume*100); $('vPump').textContent=Math.round(state.pump*100); $('vTone').textContent=Math.round(state.tone*100);
+    var R=drawOn('radar', drawRadar, state); if(!R.CO) R=radar(state);
+    var prof=profile(state);
+    $('opbox-radar').innerHTML='perfil <b>'+prof+'</b> ('+PROFILE_NAME[prof]+') · perfusão '+(R.warm?'quente':'frio')+' · congestão '+(R.wet?'úmido':'seco')+' · CO <b>'+br(R.CO,1)+'</b> · PA '+br(R.map,0);
+    drawOn('levers', drawLevers, state);
+    var vE=leverEffect(state,applyVolume), iE=leverEffect(state,applyInotrope);
+    $('opbox-levers').innerHTML='volume: ΔDC '+br(vE.dCO,1)+' Δcong '+br(vE.dCong,1)+' ('+vE.profFrom+'→'+vE.profTo+') · inotrópico: ΔDC '+br(iE.dCO,1)+' Δcong '+br(iE.dCong,1);
+    resetPredict();
+    renderLab();
+  }
+  function renderLab(){
+    var R=drawOn('radarLab', drawRadar, state); if(!R.CO) R=radar(state);
+    var prof=profile(state), hyp=hypotheses(prof), vE=leverEffect(state,applyVolume);
+    $('opbox-lab').innerHTML='perfil '+prof+' · CO '+br(R.CO,1)+' · perfusão '+br(R.perfusion*100,0)+'% · congestão '+br(R.congestion,2)+' · PA '+br(R.map,0);
+    var vEl=$('lab-veredito'); vEl.className='veredito '+PMETA[prof].kl; $('lab-vbig').textContent=PMETA[prof].lab;
+    $('lab-vnum').textContent='hipóteses: '+hyp.join(' · ')+' (mapa, não diagnóstico)';
+    show($('ban-frio'), !R.warm);
+    show($('ban-umido'), R.wet);
+    show($('ban-pa-engana'), !R.warm && R.map>=88);
+    show($('ban-volume'), true);
+    show($('ban-inotropo'), prof==='C');
+    show($('ban-hipotese'), true);
+    $('volume-txt').textContent='Aqui o volume daria ΔDC '+br(vE.dCO,1)+' e Δcongestão '+br(vE.dCong,1)+' ('+vE.profFrom+'→'+vE.profTo+'): '+(vE.dCong>0.3?'afoga (mais congestão que fluxo)':'ajuda a perfusão')+'.';
+  }
+  function syncSliders(){ $('iVolume').value=state.volume*100; $('iPump').value=state.pump*100; $('iTone').value=state.tone*100; }
+  function setState(p){ state={ volume:0.7, pump:0.7, tone:0.5 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- caso progressivo com decisões ----
+  var CASO=[
+    { txt:'Hipotenso, extremidades frias, mosqueado, mas pulmões LIMPOS e jugulares planas. Qual canto do mapa?', P:{volume:0.2,pump:0.75,tone:0.7}, act:null,
+      opts:[ {t:'Frio-úmido (C)', ok:false}, {t:'Frio-seco (L) — hipoperfundido sem congestão', ok:true} ],
+      fb:'Frio (hipoperfusão) + seco (sem congestão) = L. A pré-carga baixa é o termo provável.' },
+    { txt:'Confirmado frio-seco (L). Qual alavanca o tira do frio?', P:{volume:0.2,pump:0.75,tone:0.7}, act:'volume',
+      opts:[ {t:'Diurético', ok:false}, {t:'Volume — sobe a pré-carga e o débito', ok:true} ],
+      fb:'No frio-seco, o volume está na parte íngreme de Starling: sobe o débito com pouca congestão.' },
+    { txt:'Outro paciente: frio, mosqueado, MAS com crepitações e jugulares túrgidas. Dar volume?', P:{volume:0.95,pump:0.25,tone:0.7}, act:'volume',
+      opts:[ {t:'Sim — está hipotenso', ok:false}, {t:'Não — é frio-úmido (C): volume afoga', ok:true} ],
+      fb:'Frio-úmido (C): a bomba não comporta o volume que já tem. Mais volume = mais congestão, pouco fluxo.' },
+    { txt:'Neste frio-úmido (C), qual alavanca tira do canto?', P:{volume:0.95,pump:0.25,tone:0.7}, act:'inotrope',
+      opts:[ {t:'Volume', ok:false}, {t:'Inotrópico — sobe o fluxo e alivia a congestão', ok:true} ],
+      fb:'O inotrópico melhora a bomba: mais débito anterógrado e menos represamento — tira o C do canto.' }
+  ];
+  function renderCaso(){
+    var box=$('caso-interativo'); if(!box) return; box.innerHTML=''; var nodes=[]; var done=0, total=CASO.length;
+    if($('caso-prog')) $('caso-prog').textContent='0 / '+total+' decisões';
+    CASO.forEach(function(nd,i){
+      var card=document.createElement('div'); card.className='decision'; if(i>0) card.style.display='none';
+      var q=document.createElement('div'); q.className='dq'; q.innerHTML='<b>Decisão '+(i+1)+'.</b> '+nd.txt; card.appendChild(q);
+      var opts=document.createElement('div'); opts.className='dopts'; var fb=document.createElement('div'); fb.className='dfb';
+      nd.opts.forEach(function(op,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=op.t;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          b.classList.add(op.ok?'right':'wrong'); if(!op.ok){ for(var k=0;k<nd.opts.length;k++){ if(nd.opts[k].ok) opts.children[k].classList.add('right'); } }
+          var cons;
+          if(nd.act==='volume'){ var e=leverEffect(nd.P,applyVolume); cons='no motor, +volume: ΔDC '+br(e.dCO,1)+' · Δcong '+br(e.dCong,1)+' ('+e.profFrom+'→'+e.profTo+')'; }
+          else if(nd.act==='inotrope'){ var e2=leverEffect(nd.P,applyInotrope); cons='no motor, +inotrópico: ΔDC '+br(e2.dCO,1)+' · Δcong '+br(e2.dCong,1)+' ('+e2.profFrom+'→'+e2.profTo+')'; }
+          else { var R=radar(nd.P); cons='no motor: perfil '+profile(nd.P)+' · CO '+br(R.CO,1)+' · congestão '+br(R.congestion,2); }
+          fb.className='dfb show'; fb.innerHTML=(op.ok?'✓ ':'✗ ')+nd.fb+'<br><span class="cons">'+cons+'</span>';
+          if(nodes[i+1]) nodes[i+1].style.display='block';
+          if($('caso-prog')) $('caso-prog').textContent=done+' / '+total+' decisões'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card); nodes.push(card);
+    });
+  }
+  // ---- prever-depois-revelar (o volume) ----
+  function resetPredict(){ var box=$('prever-opts'); if(!box) return; box.dataset.answered=''; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
+    box.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); }); }
+  function predictAnswer(choice){
+    var box=$('prever-opts'); if(!box||box.dataset.answered) return; box.dataset.answered='1';
+    var e=leverEffect(state,applyVolume);
+    var truth=(e.dCong>0.3)?'afoga':(e.dCO>1)?'muito':'pouco', okc=(choice===truth);
+    box.querySelectorAll('.opt').forEach(function(b){ var v=b.getAttribute('data-v'); if(v===truth) b.classList.add('right'); if(v===choice&&!okc) b.classList.add('wrong'); });
+    var fb=$('prever-fb'); if(fb){ fb.className='dfb show'; fb.innerHTML=(okc?'✓ ':'✗ ')+'+volume: ΔDC <b>'+br(e.dCO,1)+'</b> · Δcongestão <b>'+br(e.dCong,1)+'</b> ('+e.profFrom+'→'+e.profTo+'). '+(truth==='afoga'?'No frio-úmido o volume afoga.':truth==='muito'?'No frio-seco o volume tira do frio.':'efeito modesto.'); }
+  }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    var S=function(o){ return Object.assign({ volume:0.7,pump:0.7,tone:0.5 }, o); };
+    T.push({kind:'radar',P:S({volume:0.9,pump:0.25,tone:0.7}), cap:'Frio, mosqueado, crepitações, jugular túrgida.',
+      q:'Esse paciente cai em qual perfil?',
+      o:['A quente-seco','B quente-úmido','frio-úmido (C) — hipoperfusão COM congestão','L frio-seco'], a:2,
+      fb:'Frio (hipoperfusão) + úmido (congestão) = C, o canto do cardiogênico.', hint:'Frio E úmido.'});
+    T.push({kind:'radar',P:S({volume:0.2,pump:0.75,tone:0.7}), cap:'Frio, mas pulmões limpos, jugular plana.',
+      q:'Frio sem congestão é qual perfil — e qual a alavanca?',
+      o:['C, inotrópico','frio-seco (L), volume','B, diurético','A, observar'], a:1,
+      fb:'Frio-seco (L) = hipovolêmico: o volume está na parte íngreme e tira do frio.', hint:'Seco → falta volume.'});
+    T.push({kind:'radar',P:S({volume:0.25,pump:0.7,tone:0.95}), cap:'Frio, mas a PA está "normal".',
+      q:'Por que não classificar a perfusão pela PA?',
+      o:['porque a PA não importa','porque perfusão é FLUXO; a vasoconstrição segura a PA com fluxo baixo','porque a PA é sempre baixa no frio','porque o lactato mente'], a:1,
+      fb:'A RVS↑ sustenta a pressão enquanto o débito ao tecido já caiu: frio com PA normal. Leia o fluxo.', hint:'PAM = DC × RVS.'});
+    T.push({kind:'levers',P:S({volume:0.9,pump:0.25,tone:0.7}), cap:'Alavancas no frio-úmido (C).',
+      q:'No frio-úmido, dar volume tende a:',
+      o:['tirar do canto','afogar — mais congestão, pouco débito','curar a bomba','elevar muito o fluxo'], a:1,
+      fb:'A bomba não comporta o volume atual: mais pré-carga = mais congestão, com pouco ganho de fluxo.', hint:'A seta do volume aponta para úmido.'});
+    T.push({kind:'levers',P:S({volume:0.9,pump:0.25,tone:0.7}), cap:'A alavanca certa no C.',
+      q:'O que tira o frio-úmido (C) do canto?',
+      o:['volume','diurético sozinho','inotrópico — fluxo↑ e congestão↓','nada'], a:2,
+      fb:'O inotrópico melhora a bomba: mais débito anterógrado e menos represamento.', hint:'A seta vermelha sobe-e-esquerda.'});
+    T.push({kind:'radar',P:S({volume:1.3,pump:0.75,tone:0.5}), cap:'Quente, mas com crepitações.',
+      q:'Perfundindo bem porém congesto é qual perfil?',
+      o:['A quente-seco','quente-úmido (B)','C frio-úmido','L frio-seco'], a:1,
+      fb:'Quente (perfusão ok) + úmido (congestão) = B; a alavanca tende à descongestão (diurético), não volume.', hint:'Quente E úmido.'});
+    T.push({kind:'radar',P:S({volume:0.7,pump:0.8,tone:0.5}), cap:'Perfundindo, sem congestão.',
+      q:'Quente-seco (A) significa:',
+      o:['o pior canto','compensado/normal — sem termo dominante quebrado','hipovolêmico','cardiogênico'], a:1,
+      fb:'A é o canto compensado: a conduta de mecanismo é observar/reavaliar, não empilhar alavancas.', hint:'O canto bom.'});
+    T.push({kind:'levers',P:S({volume:0.2,pump:0.75,tone:0.6}), cap:'Mesma alavanca, outro canto.',
+      q:'O volume, comparado entre frio-seco (L) e frio-úmido (C):',
+      o:['ajuda igual nos dois','ajuda o L e afoga o C — efeito oposto','piora os dois','não muda nada'], a:1,
+      fb:'O efeito do gesto depende do canto: por isso o mapa vem ANTES da alavanca.', hint:'O cerne do módulo.'});
+    T.push({kind:'radar',P:S({volume:0.9,pump:0.25,tone:0.7}), cap:'Mapa vs diagnóstico.',
+      q:'O perfil A/B/L/C é:',
+      o:['um diagnóstico fechado','um mapa de hipóteses que aponta alavancas — refinado pelo radar dos termos e contexto','um exame laboratorial','irrelevante'], a:1,
+      fb:'O mesmo canto nasce de mecanismos diferentes; o perfil orienta, o radar e o contexto refinam.', hint:'Hipótese, não veredito.'});
+    T.push({kind:'radar',P:S({volume:0.7,pump:0.7,tone:0.5}), cap:'Os dois eixos.',
+      q:'Os dois eixos do mapa são:',
+      o:['PA e FC','perfusão (fluxo) e congestão (pressões de enchimento)','Hb e SpO₂','idade e peso'], a:1,
+      fb:'Perfusão (quente/frio) e congestão (seco/úmido) — independentes — geram os quatro perfis.', hint:'Fluxo × pressão de enchimento.'});
+    T.push({kind:'levers',P:S({volume:1.3,pump:0.75,tone:0.5}), cap:'Quente-úmido (B).',
+      q:'No quente-úmido (B), a alavanca de mecanismo tende a ser:',
+      o:['volume','descongestão (diurético) — perfunde, mas está congesto','inotrópico em dose alta','nenhuma'], a:1,
+      fb:'B perfunde bem mas está congesto: aliviar a congestão é o eixo, não dar volume.', hint:'Tirar água, não pôr.'});
+    T.push({kind:'radar',P:S({volume:0.2,pump:0.75,tone:0.7}), cap:'A periferia.',
+      q:'Como se lê o eixo "frio" (perfusão) à beira do leito?',
+      o:['pela PA sistólica','pela periferia: pele, enchimento capilar, mosqueamento, lactato','pela FC só','pela temperatura axilar'], a:1,
+      fb:'Perfusão é fluxo ao tecido — a periferia (e o lactato) a denunciam, não a pressão.', hint:'Olhe a ponta dos dedos.'});
+    T.push({kind:'radar',P:S({volume:1.3,pump:0.4,tone:0.5}), cap:'Zona-limite.',
+      q:'Um paciente entre cantos (bomba fraca + sobrecarga) ensina que:',
+      o:['o mapa é inútil','pacientes reais ficam em zonas-limite — o mapa orienta, o radar refina','sempre é cardiogênico','a PA decide'], a:1,
+      fb:'Os limiares são idealizados; o valor do mapa é organizar hipóteses, não rotular rigidamente.', hint:'Zonas, não caixas.'});
+    T.push({kind:'levers',P:S({volume:0.2,pump:0.75,tone:0.6}), cap:'Frio-seco (L).',
+      q:'No frio-seco, o inotrópico (vs volume) tende a:',
+      o:['ser a melhor escolha','ajudar menos — o termo quebrado é a pré-carga, não a bomba','afogar','não fazer nada'], a:1,
+      fb:'No L a bomba está ok e falta volume: o volume é a alavanca; inotrópico mira o termo errado.', hint:'Trate o termo certo.'});
+    T.push({kind:'radar',P:S({volume:0.9,pump:0.25,tone:0.95}), cap:'C com PA sustentada.',
+      q:'Frio-úmido com PA "normal" pela vasoconstrição é perigoso porque:',
+      o:['não é choque','a PA tranquiliza enquanto o fluxo e a congestão já são críticos','o lactato é normal','não há congestão'], a:1,
+      fb:'É a soma das armadilhas: a PA esconde o frio (módulo 26) e há congestão. Leia o mapa, não a pressão.', hint:'PA engana duas vezes.'});
+    T.push({kind:'levers',P:S({volume:0.7,pump:0.7,tone:0.5}), cap:'A regra final.',
+      q:'A sequência correta de raciocínio é:',
+      o:['agir e depois classificar','localizar no mapa (perfusão × congestão) → hipótese → alavanca → reavaliar','dar volume sempre','seguir só a PA'], a:1,
+      fb:'O mapa vem antes da alavanca: localizar os dois eixos orienta o gesto, que então se reavalia.', hint:'Mapa antes da mão.'});
+    var __tg=[1,3,0,2,1,3,0,2,1,3,2,0,3,1,2,0];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var dif=(qi<6)?['b','básico']:(qi<10)?['i','intermediário']:['a','avançado'];
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span><span class="dif dif-'+dif[0]+'">'+dif[1]+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=200; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.kind==='levers'?drawLevers(ctx,W||760,H||200,item.P):drawRadar(ctx,W||760,H||200,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||200); }catch(e){} }); }
+
+  var PRESETS={
+    A:{volume:0.7,pump:0.8,tone:0.5}, B:{volume:1.3,pump:0.75,tone:0.5},
+    L:{volume:0.2,pump:0.75,tone:0.6}, C:{volume:0.9,pump:0.25,tone:0.7},
+    frio_pa:{volume:0.25,pump:0.7,tone:0.95}, misto:{volume:1.1,pump:0.4,tone:0.5}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iVolume','volume'],['iPump','pump'],['iTone','tone']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    var pbox=$('prever-opts'); if(pbox){ pbox.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ predictAnswer(b.getAttribute('data-v')); }); }); }
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor(); renderCaso();
+    window.recompute=recompute; window.drawRadar=drawRadar; window.drawLevers=drawLevers; window.activateTab=activate; window.setLabState=setState;
+    window.radarFn=radar; window.profileFn=profile; window.hypothesesFn=hypotheses; window.leverEffectFn=leverEffect;
+    window.applyVolumeFn=applyVolume; window.applyDiureticFn=applyDiuretic; window.applyInotropeFn=applyInotrope; window.PROFILE_NAMEref=PROFILE_NAME;
+    window.predictAnswerFn=predictAnswer; window.CASO=CASO;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
