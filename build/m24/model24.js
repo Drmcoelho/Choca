@@ -71,6 +71,38 @@ function ventResponse(p){ p=p||{};
 function applyPEEP(p){ var s=Object.assign({},p); s.peep=Math.min(20,(p.peep==null?5:p.peep)+7); s.effort=0; return s; }   // pressão positiva
 function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.effort||0)+0.8); s.peep=0; return s; }       // esforço espontâneo
 
+// ---- Enriquecimentos puros (sobre cardiopulm) · M24 reconciliado ----
+
+// A PÉROLA da CVP: sob PEEP, a CVP MEDIDA (RAP, referida à atmosfera) SOBE — empurrada pela PIT —
+// enquanto o retorno venoso VERDADEIRO (gradiente Pmsf − RAP) CAI. A CVP alta sob PEEP engana.
+function cvpEngana(p){
+  p=p||{};
+  var lo=cardiopulm(Object.assign({},p,{peep:0}));
+  var hi=cardiopulm(Object.assign({},p,{peep:Math.max(10,(p.peep==null?10:p.peep))}));
+  return hi.RAP>lo.RAP+0.3 && hi.VR<lo.VR-0.1;
+}
+
+// Os QUATRO termos movidos pela PRESSÃO POSITIVA (espontâneo → suportado): retorno venoso (pré-carga),
+// pós-carga de VE (transmural), PVR (pós-carga de VD) e o DC net — mais a CVP medida (RAP) sem/com,
+// a armadilha que sobe enquanto o retorno cai.
+function pressaoTermos(p){
+  p=p||{}; var sp=(p.peep>0)?p.peep:12;
+  var lo=cardiopulm(Object.assign({},p,{peep:0,effort:0.8}));
+  var hi=cardiopulm(Object.assign({},p,{peep:sp,effort:0}));
+  return { vr:{sem:lo.VR,com:hi.VR}, lvafter:{sem:lo.LVafterload,com:hi.LVafterload},
+    pvr:{sem:lo.PVR,com:hi.PVR}, co:{sem:lo.CO,com:hi.CO}, deltaCO:hi.CO-lo.CO, rap:{sem:lo.RAP,com:hi.RAP} };
+}
+
+// Fenótipo coração-pulmão dominante (rótulo único), a partir de cardiopulm(p).
+function fenotipo(p){
+  p=p||{}; var R=cardiopulm(p);
+  if(R.lvFail>=0.45 && R.limiting==='VE') return 've_congesto';
+  if((R.rvFail>=0.45 || R.PVR>3.0) && R.limiting==='VD') return 'vd_sobrecarga';
+  if(R.VR<3.2 && R.CO<4.5) return 'preload_dep';
+  if(R.CO>=4.8) return 'normal';
+  return 'limitrofe';
+}
+
 if (typeof module!=='undefined' && module.exports){
-  module.exports = { BASE, clampv, clamp01, cardiopulm, dominantVentricle, optimalPeep, ventResponse, applyPEEP, applySpontaneous };
+  module.exports = { BASE, clampv, clamp01, cardiopulm, dominantVentricle, optimalPeep, ventResponse, applyPEEP, applySpontaneous, cvpEngana, pressaoTermos, fenotipo };
 }

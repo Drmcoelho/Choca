@@ -206,6 +206,14 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
         <span class="fw">A mesma PEEP descarrega o VE que falha e esmaga o VD que falha — o ajuste segue o ventrículo, não a regra.</span>
       </div>
     </div>
+    <h3>Os quatro termos movidos pela pressão positiva (espontâneo → suportado)</h3>
+    <div class="plotwrap">
+      <canvas id="pressPanel" class="plot" width="820" height="200" aria-label="quatro termos movidos pela pressão positiva"></canvas>
+      <div class="opbox" id="opbox-press"></div>
+      <div class="pharm">
+        <b>A armadilha da CVP:</b> a pressão positiva <b>corta</b> o retorno venoso (pré-carga) e <b>descarrega</b> a pós-carga transmural do VE — mas a <b>CVP medida sobe</b> (a PIT a empurra) enquanto o retorno <em>verdadeiro</em> cai. CVP alta sob PEEP não é sinônimo de "cheio".
+      </div>
+    </div>
     <div class="console">
       <div class="ctrls">
         <div class="ctrl"><label>PEEP <span class="v"><span id="vPeep">5</span> cmH₂O</span></label><input id="iPeep" type="range" min="0" max="20" step="1" value="5"></div>
@@ -246,6 +254,7 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
       <div class="banner art" id="ban-ucurve"><b>Curva em U da PVR.</b> O ajuste está longe do volume ótimo: atelectasia (PEEP baixa) ou sobredistensão (PEEP alta) elevam a resistência pulmonar.</div>
       <div class="banner ven" id="ban-otimo"><b>PEEP ótima.</b> <span id="otimo-txt">—</span></div>
       <div class="banner art" id="ban-serie"><b>Acoplamento em série.</b> <span id="serie-txt">—</span></div>
+      <div class="banner art" id="ban-cvp"><b>A CVP engana sob PEEP.</b> A pressão positiva eleva a CVP <em>medida</em> (referida à atmosfera) ao mesmo tempo em que estrangula o retorno venoso <em>verdadeiro</em> (Pmsf − pressão de átrio direito). CVP alta aqui não significa pré-carga cheia.</div>
     </div>
   </section>
 
@@ -311,6 +320,16 @@ function ventResponse(p){ p=p||{}; return { espontaneo:cardiopulm(Object.assign(
   passivo:cardiopulm(Object.assign({},p,{effort:0,peep:0})).CO, peep:cardiopulm(Object.assign({},p,{effort:0,peep:12})).CO }; }
 function applyPEEP(p){ var s=Object.assign({},p); s.peep=Math.min(20,(p.peep==null?5:p.peep)+7); s.effort=0; return s; }
 function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.effort||0)+0.8); s.peep=0; return s; }
+// ---- enriquecimentos (M24 reconciliado) ----
+function cvpEngana(p){ p=p||{}; var lo=cardiopulm(Object.assign({},p,{peep:0})), hi=cardiopulm(Object.assign({},p,{peep:Math.max(10,(p.peep==null?10:p.peep))})); return hi.RAP>lo.RAP+0.3 && hi.VR<lo.VR-0.1; }
+function pressaoTermos(p){ p=p||{}; var sp=(p.peep>0)?p.peep:12; var lo=cardiopulm(Object.assign({},p,{peep:0,effort:0.8})), hi=cardiopulm(Object.assign({},p,{peep:sp,effort:0}));
+  return { vr:{sem:lo.VR,com:hi.VR}, lvafter:{sem:lo.LVafterload,com:hi.LVafterload}, pvr:{sem:lo.PVR,com:hi.PVR}, co:{sem:lo.CO,com:hi.CO}, deltaCO:hi.CO-lo.CO, rap:{sem:lo.RAP,com:hi.RAP} }; }
+function fenotipo(p){ p=p||{}; var R=cardiopulm(p);
+  if(R.lvFail>=0.45 && R.limiting==='VE') return 've_congesto';
+  if((R.rvFail>=0.45 || R.PVR>3.0) && R.limiting==='VD') return 'vd_sobrecarga';
+  if(R.VR<3.2 && R.CO<4.5) return 'preload_dep';
+  if(R.CO>=4.8) return 'normal';
+  return 'limitrofe'; }
 </script>
 
 <!-- ===================== UI ===================== -->
@@ -370,6 +389,32 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
       return vr;
     }catch(e){ return {}; }
   }
+  // ---- quatro termos movidos pela pressão positiva (sem/com) ----
+  function drawPress(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var pt=pressaoTermos(p);
+      var terms=[
+        {label:'retorno venoso (pré-carga)', sem:pt.vr.sem, com:pt.vr.com, max:9},
+        {label:'pós-carga VE (transmural)', sem:pt.lvafter.sem, com:pt.lvafter.com, max:160},
+        {label:'PVR (pós-carga VD)', sem:pt.pvr.sem*20, com:pt.pvr.com*20, max:160},
+        {label:'DC net', sem:pt.co.sem, com:pt.co.com, max:8}
+      ];
+      var padL=150,padR=16,padT=12,padB=18, pw=W-padL-padR;
+      var n=terms.length, gap=10, rh=(H-padT-padB-gap*(n-1))/n;
+      terms.forEach(function(t,i){ var y=padT+i*(rh+gap);
+        var xs=function(v){ return (clampv(v,0,t.max)/t.max)*pw; };
+        ctx.fillStyle='#46506b'; ctx.fillRect(padL,y,xs(t.sem),rh*0.42);
+        ctx.fillStyle='#3ec78d'; ctx.fillRect(padL,y+rh*0.5,xs(t.com),rh*0.42);
+        ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.textAlign='right'; ctx.fillText(t.label, padL-8, y+rh/2+3); ctx.textAlign='left';
+        ctx.fillStyle='#7c879e'; ctx.fillText('espontâneo', padL+xs(t.sem)+4, y+rh*0.34);
+        ctx.fillStyle='#bdf0d8'; ctx.fillText('+ pressão', padL+xs(t.com)+4, y+rh*0.5+rh*0.34);
+      });
+      ctx.fillStyle= pt.deltaCO>=0?'#3ec78d':'#ff5d6c'; ctx.font='11px monospace';
+      ctx.fillText('ΔDC '+(pt.deltaCO>=0?'+':'')+br(pt.deltaCO,2)+' L/min · CVP medida '+br(pt.rap.sem,1)+'→'+br(pt.rap.com,1)+' (a armadilha: sobe enquanto o retorno cai)', padL, H-4);
+      return pt;
+    }catch(e){ return {}; }
+  }
   function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||260,P); }
   function show(el,on){ if(el) el.classList.toggle('show',!!on); }
   function rotVent(d){ return d==='lv'?'VE':d==='rv'?'VD':'nenhum'; }
@@ -383,6 +428,8 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
     drawOn('vent', drawVent, state);
     var vr=ventResponse(state);
     $('opbox-vent').innerHTML='espontâneo '+br(vr.espontaneo,1)+' · passivo '+br(vr.passivo,1)+' · +PEEP '+br(vr.peep,1)+' L/min';
+    var pt=drawOn('pressPanel', drawPress, state); if(!pt.vr) pt=pressaoTermos(state);
+    $('opbox-press').innerHTML='a pressão positiva move: pré-carga '+br(pt.vr.sem,1)+'→'+br(pt.vr.com,1)+' · pós-carga VE '+Math.round(pt.lvafter.sem)+'→'+Math.round(pt.lvafter.com)+' · <b>ΔDC '+(pt.deltaCO>=0?'+':'')+br(pt.deltaCO,2)+'</b> · CVP medida '+br(pt.rap.sem,1)+'→'+br(pt.rap.com,1);
     resetPredict();
     renderLab();
   }
@@ -405,6 +452,9 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
     if(subotimo) $('otimo-txt').textContent='o débito é maximizado perto de PEEP '+opt.peep+' cmH₂O (CO '+br(opt.CO,1)+'); o ajuste atual está abaixo disso. É o trade-off de mecanismo, não uma prescrição.';
     show($('ban-serie'), true);
     $('serie-txt').textContent='o débito ('+br(R.CO,1)+') é limitado pelo '+R.limiting+' (VD '+br(R.RVout,1)+' × VE '+br(R.LVcap,1)+'): o ventrículo mais fraco manda.';
+    show($('ban-cvp'), state.peep>=6 && cvpEngana(state));
+    var fenMap={preload_dep:'pré-carga-dependente',ve_congesto:'VE congesto',vd_sobrecarga:'VD sobrecarregado',normal:'normal',limitrofe:'limítrofe'};
+    $('lab-vnum').textContent += ' · fenótipo: '+(fenMap[fenotipo(state)]||fenotipo(state));
   }
   function syncSliders(){ $('iPeep').value=state.peep; $('iEffort').value=state.effort*100; $('iLv').value=state.lvFail*100; $('iRv').value=state.rvFail*100; $('iVol').value=state.volemia*100; }
   function setState(p){ state={ peep:5, effort:0, lvFail:0, rvFail:0, volemia:0.6 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
@@ -579,6 +629,7 @@ function applySpontaneous(p){ var s=Object.assign({},p); s.effort=Math.min(1,(p.
     window.recompute=recompute; window.drawCurve=drawCurve; window.drawVent=drawVent; window.activateTab=activate; window.setLabState=setState;
     window.cardiopulmFn=cardiopulm; window.dominantVentricleFn=dominantVentricle; window.optimalPeepFn=optimalPeep; window.ventResponseFn=ventResponse;
     window.applyPEEPFn=applyPEEP; window.applySpontaneousFn=applySpontaneous;
+    window.cvpEnganaFn=cvpEngana; window.pressaoTermosFn=pressaoTermos; window.fenotipoFn=fenotipo; window.drawPress=drawPress;
     window.predictAnswerFn=predictAnswer; window.CASO=CASO;
     window.TUTOR=TUTOR; window.__state=state;
   }
