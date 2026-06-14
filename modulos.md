@@ -6,8 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M26
-próximo: M27 · os 4 perfis · radar
+publicados: M0…M27
+próximo: M28 · vasopressores & inotrópicos
 planejados: M23…M30
 ```
 
@@ -503,13 +503,28 @@ marcadores ocultos (lactato↑, SvO₂↓, enchimento lento, pressão de pulso e
 
 ## 27 · Os 4 perfis · radar
 
-**Status:** planejado.
+**Status:** publicado · `perfunde27.html` + `build/m27/`.
 
-**Tese:** frio/quente × seco/úmido é mapa de hipóteses fisiológicas, não diagnóstico fechado.
+**Tese:** dois eixos — **perfusão** (quente↔frio, que é *fluxo*, não pressão) × **congestão** (seco↔úmido, pressões de enchimento) — resumem o estado em quatro perfis (A/B/L/C de Nohria). É um **mapa de hipóteses**, não diagnóstico fechado.
 
-**Foco:** integração visual dos termos quebrados.
+**Engine (`model27.js`):** `radar()` deriva débito (Frank-Starling × bomba), perfusão (fluxo), congestão (volume acima do que a bomba comporta) e a PA (que pode enganar). `profile()` (A/B/L/C), `hypotheses()`, e `leverEffect()` com `applyVolume`/`applyDiuretic`/`applyInotrope`.
 
-**Pontes:** M9, M14, M16, M20, M23, M30.
+```text
+A quente-seco · B quente-úmido · L frio-seco (hipovol) · C frio-úmido (cardiogênico, o pior)
+a MESMA alavanca tem efeito OPOSTO: volume salva o frio-seco e AFOGA o frio-úmido
+```
+
+**Joias pedagógicas:** o radar 2×2 com o paciente plotado e as **setas das alavancas** (volume/diurético/inotrópico) mostrando para onde cada gesto o move; a armadilha "frio com PA normal" (a RVS segura a pressão sem esquentar a perfusão); o perfil como **hipótese**, não veredito.
+
+**Camada interativa (padrão §2.6):** caso de decisões "classifique e escolha a alavanca" (efeito pelo motor), prever-depois-revelar (o volume ajuda ou afoga?), trilha de 9 passos com pistas e banco de 16 questões.
+
+**Erro cognitivo:** classificar a perfusão pela PA; usar a mesma alavanca em todos os cantos; tratar o perfil como diagnóstico fechado.
+
+**Invariantes provadas:** os 4 perfis alcançáveis, perfusão é fluxo (frio com PA normal), bomba fraca congestiona mais, volume com efeito oposto em L vs C, inotrópico tira o C do canto, hipóteses por perfil, clamps seguros.
+
+**Firewall SaMD:** mapa de hipóteses e alavancas como mecanismo (intervenção→termo), sem diagnóstico fechado, fluido, droga ou dose — guarda automatizada no validador.
+
+**Pontes:** M9 (PAM = DC × RVS), M14 (hipovolêmico/L), M16 (cardiogênico/C), M20 (distributivo), M26 (frio com PA normal), M30 (exame global).
 
 ---
 

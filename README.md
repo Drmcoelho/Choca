@@ -26,8 +26,9 @@ Estado curricular atual:
 - **M23** — publicado: choque misto — compõe os termos quebrados, atribui o déficit ao mecanismo dominante e expõe o mascaramento (PAM normal, tecido faminto).
 - **M24** — publicado: o coração-pulmão — a pressão intratorácica descarrega o VE que falha e esmaga o VD que falha; PVR em U e PEEP ótima.
 - **M25** — publicado: ressuscitação volêmica — volume como droga com janela terapêutica (benefício decai, custo acumula); o 2×2 responsivo × tolerante.
-- **M26** — publicado: choque críptico/compensado — a PAM normal mente; a compensação tem reserva finita e há um precipício; marcadores ocultos denunciam. Próximo módulo de conteúdo: **M27 · os 4 perfis · radar**.
-- **M27–M29** — integração e resgate.
+- **M26** — publicado: choque críptico/compensado — a PAM normal mente; a compensação tem reserva finita e há um precipício; marcadores ocultos denunciam.
+- **M27** — publicado: os 4 perfis · radar — perfusão (fluxo) × congestão num mapa 2×2 (A/B/L/C); a mesma alavanca tem efeito oposto por canto. Próximo módulo de conteúdo: **M28 · vasopressores & inotrópicos**.
+- **M28–M29** — integração e resgate.
 - **M30** — revisão global / exame de domínio com 100 questões.
 
 ---
@@ -117,14 +118,14 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A documentação estrutural foi consolidada e reconciliada, e o Bloco IV avança (`M23`…`M26`), com M24/M25/M26 já no padrão interativo rico (`MODULE_CONTRACT.md §2.6`). A próxima etapa concreta é construir `M27 · os 4 perfis · radar` no mesmo rito:
+A documentação estrutural foi consolidada e reconciliada, e o Bloco IV avança (`M23`…`M27`), com M24…M27 já no padrão interativo rico (`MODULE_CONTRACT.md §2.6`). A próxima etapa concreta é construir `M28 · vasopressores & inotrópicos` no mesmo rito:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m27/model27.js
-3. escrever build/m27/test27.node.js
-4. construir perfunde27.html
-5. escrever build/m27/validate27.js
+2. escrever build/m28/model28.js
+3. escrever build/m28/test28.node.js
+4. construir perfunde28.html
+5. escrever build/m28/validate28.js
 6. atualizar package.json e perfunde.html
 7. atualizar curriculum.json para status published
 8. rodar npm run check
