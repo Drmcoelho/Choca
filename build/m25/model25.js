@@ -48,7 +48,7 @@ function volemic(p){
 }
 
 // Dar um bolus (mecanismo, sem volume prescrito): sobe o volume acumulado em 1 unidade.
-function applyBolus(p){ var s=Object.assign({},p); s.vol=Math.min(6,(p.vol==null?0:p.vol)+1); return s; }
+function applyBolus(p){ p=p||{}; var s=Object.assign({},p); s.vol=Math.min(6,(p.vol==null?0:p.vol)+1); return s; }   // guarda: null/undefined → {} (nunca TypeError)
 
 // Ganho marginal do PRÓXIMO bolus (ΔCO) e custo marginal (Δcongestão).
 function marginal(p){ var a=volemic(p), b=volemic(applyBolus(p));

@@ -304,7 +304,7 @@ function volemic(p){
   return { vol:vol,preDep:preDep,contract:contract,leak:leak,venoTone:venoTone,
     intravasc:intravasc,preload0:preload0,preload:preload,SVmax:SVmax,SV:SV,CO:CO,
     stiff:stiff,congestion:congestion,edema:edema }; }
-function applyBolus(p){ var s=Object.assign({},p); s.vol=Math.min(6,(p.vol==null?0:p.vol)+1); return s; }
+function applyBolus(p){ p=p||{}; var s=Object.assign({},p); s.vol=Math.min(6,(p.vol==null?0:p.vol)+1); return s; }
 function marginal(p){ var a=volemic(p), b=volemic(applyBolus(p)); return { dCO:b.CO-a.CO, dCong:b.congestion-a.congestion, dCOfrac:(a.CO>0?(b.CO-a.CO)/a.CO:0) }; }
 function responsive(p){ return marginal(p).dCOfrac >= BASE.RESP_THRESH; }
 function tolerant(p){ return volemic(p).congestion < BASE.TOL_THRESH; }

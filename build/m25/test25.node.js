@@ -45,6 +45,7 @@ ok('applyBolus incrementa o volume', M.applyBolus(HYPO({vol:1})).vol===2);
 
 console.log('\n— ROBUSTEZ / LIMITES —');
 ok('sem argumento / null não lançam', (function(){try{return !isNaN(f().CO)&&!isNaN(f(null).CO);}catch(e){return false;}})());
+ok('applyBolus/marginal com null/undefined não lançam', (function(){try{return M.applyBolus().vol===1 && M.applyBolus(null).vol===1 && !isNaN(M.marginal(null).dCO);}catch(e){return false;}})());
 const ABS=f({vol:99,preDep:'x',contract:undefined,leak:NaN,venoTone:9});
 ok('NaN/string/absurdo: sem NaN', [ABS.CO,ABS.SV,ABS.preload,ABS.congestion,ABS.intravasc].every(v=>typeof v==='number'&&!isNaN(v)));
 ok('congestão e CO clampados (finitos, não-negativos)', ABS.congestion>=0 && ABS.CO>=0 && ABS.preload>0);
