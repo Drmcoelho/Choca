@@ -15,7 +15,7 @@ A documentação estrutural foi criada, os documentos centrais foram alinhados �
 ```text
 módulos publicados: 0…24
 próximo módulo: M25 · ressuscitação volêmica
-planejados: M25…M30
+planejados: M23…M30
 portão global: npm run check
 manifesto curricular: curriculum.json
 exame global: M30_ASSESSMENT_SPEC.md
@@ -110,17 +110,17 @@ A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narr
 
 ## 5. Próxima ação recomendada
 
-**M23 · choque misto** e **M24 · o coração-pulmão** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`). A próxima ação de conteúdo é construir **M25 · ressuscitação volêmica** sob o mesmo padrão:
+**M22**, **M23 · choque misto** e **M24 · coração-pulmão** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`). A próxima ação de conteúdo é construir **M25 · ressuscitação volêmica** sob o mesmo padrão:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m24/model24.js
-3. escrever build/m24/test24.node.js
-4. escrever perfunde24.html
-5. escrever build/m24/validate24.js
+2. escrever build/m25/model25.js
+3. escrever build/m25/test25.node.js
+4. escrever perfunde25.html
+5. escrever build/m25/validate25.js
 6. atualizar package.json
 7. atualizar perfunde.html
-8. atualizar curriculum.json (M24 → published; M25 → next)
+8. atualizar curriculum.json (M25 → published; M26 → next)
 9. rodar npm run check
 ```
 

@@ -27,7 +27,7 @@ Próximo módulo operacional:
 M25 · ressuscitação volêmica
 ```
 
-(M23 · choque misto e M24 · o coração-pulmão já estão publicados e validados — o Bloco IV de integração avança.)
+(M22 · anafilático × neurogênico, M23 · choque misto e M24 · coração-pulmão já estão publicados e validados — o Bloco IV de integração está em curso.)
 
 Fechamento avaliativo planejado:
 

@@ -8,7 +8,7 @@ Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 ```text
 publicados: M0…M24
 próximo: M25 · ressuscitação volêmica
-planejados: M25…M30
+planejados: M23…M30
 ```
 
 ---
@@ -421,17 +421,29 @@ MASCARAMENTO → compensação/pressor seguram a PAM (≥65) enquanto a DO₂/ex
 
 ## 24 · O coração-pulmão
 
-**Status:** publicado (`perfunde24.html` · `build/m24/*`).
+**Status:** publicado · `perfunde24.html` + `build/m24/`.
 
-**Tese:** a ventilação é hemodinâmica — a pressão intratorácica reescreve de uma vez o retorno venoso (pré-carga do VD), a pós-carga do VD (PVR em U no volume pulmonar) e a pós-carga do VE (transmural).
+**Tese:** a pressão intratorácica (PIT) acopla o pulmão aos dois ventrículos de formas **opostas** — e o mesmo ajuste ventilatório ajuda um e esmaga o outro.
 
-**Variável escondida:** a pressão intratorácica e o ventrículo que ela toca.
+**Engine (`model24.js`):** `cardiopulm()` deriva PIT média, retorno venoso (Pmsf − RAP), PVR em U no volume pulmonar, ejeção de VD (intolerante à pós-carga), pós-carga transmural de VE e o débito em **série** `min(VD, VE)`. Entradas `{peep, effort, lvFail, rvFail, volemia}`.
 
-**Erro cognitivo:** "pressão positiva oxigena, logo ajuda todo mundo" — ignora que a mecânica do retorno venoso pode dominar.
+```text
+pressão positiva (PEEP) → PIT↑ → retorno venoso↓ (VD↓) · pós-carga de VE↓ (VE↑)
+esforço espontâneo (PIT↓) → retorno venoso↑ · pós-carga de VE↑ (risco de edema)
+PVR em U: mínima perto do FRC → existe uma PEEP ótima
+```
 
-**Engine:** `corPulmao(p)` (Guyton com cachoeira venosa, PVR em U, pós-carga transmural do VE, Frank–Starling saturante; reusa `pam` do m9). Discriminador computado: a **curva DC × PEEP** (`peepOtima`) — cai (pré-carga-dependente), tem ótimo interior (atelectásico recrutável) ou sobe (VE congesto). Painel dos **quatro termos** movidos pela pressão positiva (`pressaoTermos`) e a pérola **a CVP engana** (`cvpEngana`).
+**Joias pedagógicas:** `optimalPeep()` varre a PEEP e devolve a que maximiza o débito (alta no VE que falha, baixa no VD que falha); `ventResponse()` mostra a curva espontâneo/passivo/PEEP que **se inverte** entre os ventrículos; `dominantVentricle()` governa a leitura.
 
-**Pontes:** M5 (Guyton/retorno venoso), M7 (pós-carga/alça PV), M9 (PAM macro), M17 (VD), M25 (volume).
+**Camada interativa (módulo de referência do novo padrão):** caso progressivo com decisões (consequência computada pelo motor), prever-depois-revelar, trilha socrática expandida (≥9 passos + pistas progressivas) e banco de ≥16 questões com dificuldade crescente. Ver `MODULE_CONTRACT.md` §2.6.
+
+**Erro cognitivo:** achar que pressão positiva ajuda os dois ventrículos igualmente; girar o botão do ventilador sem saber qual ventrículo falha.
+
+**Invariantes provadas:** PEEP↑→PIT↑→retorno↓; PVR em U; +PEEP sobe o débito no VE que falha e derruba no VD que falha (a pérola); série = min(VD,VE); PEEP ótima alta (VE) vs baixa (VD); clamps seguros.
+
+**Pontes:** M7 (pós-carga/alça PV), M17 (VD), M18 (obstrutivo), M19 (tamponamento/TEP/pneumotórax), M30 (exame global).
+
+**Firewall SaMD:** PEEP e modo como **mecanismo** (ajuste→termo), sem valor, modo ou conduta prescrita — guarda automatizada no validador rejeita ajuste posológico/prescritivo.
 
 ---
 
