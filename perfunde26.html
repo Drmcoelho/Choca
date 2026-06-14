@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 26 · Choque críptico/compensado</title>
+<meta name="description" content="A PAM normal mente: a compensação defende a pressão enquanto a entrega já caiu. A reserva é finita — o paciente fica estável até o precipício e despenca. Lactato, extração/SvO₂, perfusão periférica e pressão de pulso estreita denunciam o choque oculto antes da queda. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c; --purp:#9b6cff;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:260px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:220px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono);margin-top:10px}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.banner.crit{border-color:rgba(255,93,108,.45)} .banner.crit b{color:var(--crit)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:190px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.pista{margin-top:7px}
+.pista summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.pista[open] summary{color:var(--ink-faint)}
+.pista .pb{margin-top:5px;color:var(--ink-dim);font-size:.9rem}
+.casebox{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.casebox h3{margin:0 0 3px} .casebox .cprog{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:10px}
+.decision{border-left:3px solid var(--ven);background:#0e1320;border-radius:0 var(--r-sm) var(--r-sm) 0;padding:11px 14px;margin:10px 0}
+.decision .dq{margin-bottom:9px}
+.dopts{display:grid;gap:7px}
+.dfb{display:none;margin-top:9px;font-size:.88rem;color:var(--ink-dim)} .dfb.show{display:block}
+.dfb .cons{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.predict{background:#0e1320;border:1px solid rgba(63,130,230,.4);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.predict .pq{margin-bottom:9px}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
+.dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 26 · ↳ críptico/compensado</div>
+    <h1>A pressão normal que esconde o abismo</h1>
+    <p class="sub">A compensação — vasoconstrição, taquicardia, mais extração — defende a <em>pressão</em> enquanto a <em>entrega</em> já caiu. A PAM fica normal e tranquiliza. Mas a reserva é finita: o paciente fica "estável", estável, estável — até a reserva acabar e <b>despencar</b>. A periferia conta a verdade antes do precipício.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M30,16 L520,16 C560,16 575,16 600,44 L860,50" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+      <text x="30" y="12" fill="var(--ok)" font-size="10" font-family="monospace">PAM (flat… e despenca)</text>
+      <path d="M30,50 C220,48 380,42 560,30 C680,22 760,14 860,8" fill="none" stroke="var(--crit)" stroke-width="2"/>
+      <text x="640" y="52" fill="var(--crit)" font-size="10" font-family="monospace">lactato (sobe desde cedo)</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>"Os sinais estão bons" — e o lactato 5</h2>
+    <p class="lead">Cinco atos. A variável escondida é a reserva compensatória que está sendo gasta. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Jovem, trauma fechado. PA <b>118/96</b>, FC 104, "estável". A PAM está normal — a equipe relaxa. Mas a pele está fria e mosqueada e o lactato volta <b>5</b>.</p>
+      <div class="vitais"><span>PAM <b>~103</b></span><span>FC 104</span><span>pele <b>fria/mosqueada</b></span><span>lactato <b>5</b></span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"PAM normal = perfusão normal — observar." Mas a PA <b>118/96</b> esconde uma pressão de pulso <b>estreita</b> (22): pura vasoconstrição.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>A compensação está <b>mascarando</b>: a vasoconstrição segura a PAM, a taquicardia segura o débito, a extração sobe (SvO₂ baixa). A entrega já caiu — o lactato e a periferia denunciam. A PAM normal é <em>compensada</em>, não <em>adequada</em>.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>A compensação tem <b>reserva finita</b>. Enquanto cobre o insulto, a PAM fica flat. Quando esgota, há o <b>precipício</b>: a PAM despenca de repente. E um estressor — sedação, indução, um novo sangramento — <b>consome</b> a reserva que restava.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>A curva PAM × insulto (com o precipício) e o painel de marcadores ocultos mostram por que "estável" não é seguro e onde está a borda. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é a <b style="color:var(--art)">reserva compensatória sendo gasta</b>. PAM normal pode ser compensação (vasoconstrição/taquicardia/extração), não adequação. Os marcadores ocultos — lactato, SvO₂, perfusão periférica, pressão de pulso estreita — revelam o choque antes da queda; a reserva define o precipício. Pontes aos módulos 8 (DO₂/VO₂), 9 (PAM = DC × RVS), 13 (lactato) e 14 (hipovolêmico).</div></details>
+
+    <div class="casebox">
+      <h3>À beira do leito · "estável" é seguro?</h3>
+      <div class="cprog" id="caso-prog">0 / 0 decisões</div>
+      <div id="caso-interativo"></div>
+      <p class="hint" style="margin-top:10px">Cada decisão é mecanismo, não conduta: o motor revela os marcadores ocultos e o efeito do estressor sobre a PAM.</p>
+    </div>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Da PAM tranquilizadora ao precipício.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">PAM normal garante perfusão adequada?</div><div class="aa"><b>Não.</b> A PAM é <b>DC × RVS</b>: a vasoconstrição (RVS↑) pode segurá-la mesmo com o débito e a entrega já caídos. PAM normal pode ser <em>compensação</em>, não <em>adequação</em>.</div>
+        <details class="pista"><summary>▸ pista: decomponha a PAM</summary><div class="pb">Uma PAM 90 com RVS muito alta e DC baixo não é a mesma PAM 90 de um coração tranquilo. O número igual esconde fisiologias opostas (módulo 9).</div></details></div>
+      <div class="step"><div class="qq">Como o corpo "segura" a pressão?</div><div class="aa">Três alavancas: <b>vasoconstrição</b> (RVS↑), <b>taquicardia</b> (DC↑) e <b>mais extração</b> de O₂ (SvO₂↓). Elas defendem a pressão e o consumo — às custas da periferia.</div>
+        <details class="pista"><summary>▸ pista: o preço da compensação</summary><div class="pb">A vasoconstrição que segura a PAM é a mesma que esfria e mosqueia a pele e estreita a pressão de pulso. O sinal de compensação é também o sinal de alarme.</div></details></div>
+      <div class="step"><div class="qq">O que denuncia o choque oculto?</div><div class="aa">Os <b>marcadores periféricos/metabólicos</b>: <b>lactato</b> alto, <b>SvO₂</b> baixa (extração alta), <b>enchimento capilar</b> lento/mosqueamento e <b>pressão de pulso estreita</b>. A macro mente; a periferia, não.</div></div>
+      <div class="step"><div class="qq">Por que a PAM fica "flat"?</div><div class="aa">Enquanto a reserva <b>cobre</b> o insulto, cada piora é absorvida pela compensação → a PAM quase não se move. Isso dá a falsa sensação de estabilidade.</div>
+        <details class="pista"><summary>▸ pista: estável ≠ seguro</summary><div class="pb">"Estável" descreve a tendência da PAM, não o estado da entrega. Um paciente pode estar estável e gravíssimo ao mesmo tempo.</div></details></div>
+      <div class="step"><div class="qq">O que é o precipício?</div><div class="aa">O ponto em que a reserva <b>esgota</b>: dali em diante, qualquer piora não é mais compensada e a PAM <b>despenca</b>. A curva é flat, flat, flat… e cai de repente.</div>
+        <details class="pista"><summary>▸ pista: a borda</summary><div class="pb">O precipício fica no insulto ≈ reserva. Quanto menor a reserva (idoso, β-bloqueado, exausto), mais cedo a borda.</div></details></div>
+      <div class="step"><div class="qq">Por que o "estável" coda na indução?</div><div class="aa">A <b>sedação/indução</b> remove o tônus simpático → derruba a reserva que segurava a PAM. O paciente compensado, sem a compensação, <b>cai no precipício</b>.</div>
+        <details class="pista"><summary>▸ pista: o estressor revela</summary><div class="pb">Sedar, ventilar com pressão positiva, um novo sangramento — qualquer estressor consome reserva. O colapso "inesperado" estava previsto na conta.</div></details></div>
+      <div class="step"><div class="qq">Por que o β-bloqueio é traiçoeiro aqui?</div><div class="aa">Ele <b>mascara a taquicardia</b> compensatória: some um dos sinais de alarme. O paciente parece mais "calmo" justamente quando está em apuros.</div></div>
+      <div class="step"><div class="qq">Quem tem menos reserva?</div><div class="aa">Idosos, β-bloqueados, cardiopatas, exaustos por choque prolongado. A mesma gravidade os leva ao precipício <b>mais cedo</b> — a reserva é o que muda.</div></div>
+      <div class="step"><div class="qq">A regra final, então, é…</div><div class="aa">Não tratar a PAM como sinal de segurança. <b>Olhar a periferia e a tendência da reserva</b> — lactato, SvO₂, enchimento, pressão de pulso. Compensação não é resolução; é tempo emprestado.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · a curva do precipício</h2>
+    <p class="lead">A <span style="color:var(--ok)">PAM</span> fica flat enquanto a reserva cobre o insulto — e despenca no <span style="color:var(--accent)">precipício</span> (insulto = reserva). Por baixo, o <span style="color:var(--crit)">lactato</span> sobe desde cedo: a entrega já caiu enquanto a pressão "tranquilizava".</p>
+    <div class="predict" id="prever">
+      <div class="pq"><b>Preveja antes de revelar.</b> Para o paciente nos sliders abaixo (cuja PAM você verá), aplicar um <b>estressor</b> (sedação/indução) vai derrubar a PAM:</div>
+      <div class="dopts" id="prever-opts">
+        <button class="opt" type="button" data-v="muito">muito (cai no precipício)</button>
+        <button class="opt" type="button" data-v="pouco">pouco</button>
+        <button class="opt" type="button" data-v="nada">quase nada (tem reserva)</button>
+      </div>
+      <div class="dfb" id="prever-fb"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="cliff" class="casc" width="820" height="260" aria-label="PAM e lactato versus gravidade do insulto"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>PAM</span><span><i style="background:var(--crit)"></i>lactato</span>
+        <span><i style="background:var(--accent)"></i>precipício (insulto = reserva)</span><span><i style="background:var(--ven)"></i>insulto atual</span>
+      </div>
+      <div class="opbox" id="opbox-cliff"></div>
+    </div>
+    <h3>Marcadores ocultos (a macro tranquiliza, a periferia denuncia)</h3>
+    <div class="plotwrap">
+      <canvas id="markers" class="plot" width="820" height="220" aria-label="painel de marcadores de hipoperfusão"></canvas>
+      <div class="opbox" id="opbox-markers"></div>
+      <div class="pharm">
+        <b>Fisiologia (compensação → termo · mecanismo, sem conduta):</b><br>
+        vasoconstrição → RVS↑ segura a PAM, mas estreita a pressão de pulso e esfria/mosqueia a pele · taquicardia → DC↑ (some no β-bloqueio) · extração↑ → SvO₂↓. Lactato↑ marca a entrega já caída.
+        <span class="fw">PAM normal pode ser compensação, não adequação — e a reserva é tempo emprestado.</span>
+      </div>
+    </div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Gravidade do insulto <span class="v"><span id="vInsult">55</span> %</span></label><input id="iInsult" type="range" min="0" max="100" step="5" value="55"></div>
+        <div class="ctrl"><label>Reserva compensatória <span class="v"><span id="vReserve">80</span> %</span></label><input id="iReserve" type="range" min="10" max="100" step="5" value="80"></div>
+        <div class="ctrl"><label>β-bloqueio (mascara FC) <span class="v"><span id="vBeta">0</span> %</span></label><input id="iBeta" type="range" min="0" max="100" step="5" value="0"></div>
+      </div>
+      <div class="hint">Suba o insulto e veja a PAM ficar flat e despencar; baixe a reserva e veja o precipício chegar mais cedo.</div>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · não confie na PAM</h2>
+    <p class="lead">Cenários ou as alavancas. O <b>veredito</b> nomeia o estágio (normal, críptico, à beira, descompensado); os banners explicam o choque oculto, o precipício, os marcadores e a armadilha do estressor.</p>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="normal">Normal</button>
+      <button class="preset" type="button" data-preset="criptico">Críptico (PAM normal, lactato alto)</button>
+      <button class="preset" type="button" data-preset="precipicio">À beira do precipício</button>
+      <button class="preset" type="button" data-preset="descompensado">Descompensado</button>
+      <button class="preset" type="button" data-preset="idoso_beta">Idoso β-bloqueado (reserva baixa)</button>
+      <button class="preset" type="button" data-preset="pos_estressor">Após estressor (reserva consumida)</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="cliffLab" class="casc" width="820" height="260" aria-label="curva do precipício no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Estágio do choque</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner art" id="ban-cripto"><b>Choque críptico.</b> PAM aceitável MAS marcadores de hipoperfusão presentes (lactato, SvO₂, periferia, pressão de pulso estreita). A pressão normal é compensação, não adequação.</div>
+      <div class="banner crit" id="ban-precipicio"><b>À beira do precipício.</b> Quase toda a reserva compensatória foi gasta: a próxima piora — ou um estressor — não será compensada e a PAM despenca.</div>
+      <div class="banner art" id="ban-lactato"><b>Lactato / entrega.</b> O lactato sobe porque a entrega já caiu, independentemente da PAM. É a denúncia metabólica do choque oculto.</div>
+      <div class="banner art" id="ban-perfusao"><b>Periferia.</b> Enchimento capilar lento/mosqueamento, SvO₂ baixa e pressão de pulso estreita: a vasoconstrição que segura a PAM também denuncia o choque.</div>
+      <div class="banner ven" id="ban-betabloq"><b>β-bloqueio.</b> A taquicardia compensatória está mascarada: falta um sinal de alarme. Não se tranquilize pela FC "normal".</div>
+      <div class="banner crit" id="ban-estressor"><b>Cuidado com o estressor.</b> Sedação/indução, pressão positiva ou novo insulto consomem a reserva que segura a PAM — o "estável" pode colabar. <span id="estressor-txt"></span></div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha a curva do precipício (ou o painel de marcadores) ao vivo. Leia se a PAM está mentindo e onde está a borda — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se a fisiologia da compensação (PAM = DC × RVS, reserva, marcadores ocultos, precipício) — <b>nunca</b> meta de PAM, momento de intubar ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ "Insulto", "reserva" e "β-bloqueio" são <b>fatores normalizados</b>, não medidas. → O precipício é um joelho <b>idealizado</b>; o colapso real é gradual e multifatorial. → Lactato, SvO₂, enchimento capilar e pressão de pulso são <b>proxies</b> de perfusão, cada um com erros e exceções. → A reserva real depende de idade, fármacos, cardiopatia e tempo de choque. → O estressor é mecanismo (consome reserva), não recomendação sobre sedar ou não. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde8.html">Módulo 8 · DO₂/VO₂ &amp; supply-dependence</a> — a entrega que cai antes da pressão.</div>
+    <div class="ponte">→ <a href="perfunde9.html">Módulo 9 · PAM = DC × RVS</a> — por que a mesma PAM esconde pacientes opostos.</div>
+    <div class="ponte">→ <a href="perfunde13.html">Módulo 13 · Lactato &amp; depuração</a> — a denúncia metabólica do choque oculto.</div>
+    <div class="ponte">→ <a href="perfunde14.html">Módulo 14 · Hipovolêmico</a> — o insulto que a compensação mascara.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 26
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model26.js inlined) ===================== -->
+<script>
+var BASE={ PAM0:92, kPAMfall:62, PAM_crit:65, LAC_BASE:1.0, LAC_K:12, LAC_KNEE:0.12,
+  SaO2:0.98, O2ER0:0.28, kO2ER:0.55, CR0:1.8, kCR:4.2, PP0:48, kPP:30, HR0:74, kHR:60, RES_CLIFF:0.85 };
+function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }
+function clamp01(v){ return clampv(v,0,1); }
+function cryptic(p){
+  p=p||{}; var B=BASE;
+  var insult=clamp01(p.insult), reserve=(p.reserve==null?0.8:clamp01(p.reserve)), betaBlock=clamp01(p.betaBlock);
+  var compNeed=insult, compDeployed=Math.min(compNeed,reserve), uncompGap=Math.max(0,compNeed-reserve);
+  var reserveUsed=(reserve>0?compDeployed/reserve:1);
+  var PAM=clampv(B.PAM0 - B.kPAMfall*uncompGap, 30, 100);
+  var deficit=insult;
+  var lactate=clampv(B.LAC_BASE + B.LAC_K*Math.max(0,deficit-B.LAC_KNEE), 1.0, 14);
+  var o2er=clampv(B.O2ER0 + B.kO2ER*compDeployed, 0.2, 0.85);
+  var svo2=clampv(B.SaO2*(1-o2er), 0.20, 0.85);
+  var capRefill=clampv(B.CR0 + B.kCR*compDeployed, 1.5, 8);
+  var pulsePressure=clampv(B.PP0 - B.kPP*compDeployed, 12, 60);
+  var HR=clampv(B.HR0 + B.kHR*compDeployed*(1-0.8*betaBlock), 50, 170);
+  return { insult:insult,reserve:reserve,betaBlock:betaBlock,compDeployed:compDeployed,uncompGap:uncompGap,reserveUsed:reserveUsed,
+    PAM:PAM,deficit:deficit,lactate:lactate,o2er:o2er,svo2:svo2,capRefill:capRefill,pulsePressure:pulsePressure,HR:HR }; }
+function occult(R){ return R.PAM>=BASE.PAM_crit && (R.lactate>2.0 || R.svo2<0.65); }
+function nearCliff(R){ return R.PAM>=BASE.PAM_crit && R.reserveUsed>=BASE.RES_CLIFF; }
+function stage(p){ var R=cryptic(p); if(R.PAM<BASE.PAM_crit) return 'descompensado'; if(occult(R)){ return nearCliff(R)?'precipicio':'criptico'; } return 'normal'; }
+function cliffInsult(p){ p=p||{}; return clamp01(p.reserve==null?0.8:p.reserve); }
+function applySedation(p){ p=p||{}; var s=Object.assign({},p); var r=clamp01(p.reserve==null?0.8:p.reserve); s.reserve=Math.max(0,r-0.35); return s; }
+function applyHit(p){ p=p||{}; var s=Object.assign({},p); s.insult=Math.min(1,clamp01(p.insult)+0.2); return s; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return (typeof x==='number'&&!isNaN(x))?x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';};
+  var state={ insult:0.55, reserve:0.8, betaBlock:0 };
+  var STMETA={ normal:{lab:'SEM CHOQUE', kl:'ok', sub:'sem insulto relevante e marcadores tranquilos'},
+    criptico:{lab:'CHOQUE CRÍPTICO', kl:'lim', sub:'PAM aceitável, MAS a periferia denuncia — compensação, não adequação'},
+    precipicio:{lab:'À BEIRA DO PRECIPÍCIO', kl:'crit', sub:'compensado, mas quase toda a reserva foi gasta — a borda'},
+    descompensado:{lab:'DESCOMPENSADO', kl:'crit', sub:'a reserva esgotou e a pressão caiu — choque manifesto'} };
+
+  // ---- curva do precipício: PAM (flat→cai) e lactato (sobe) vs insulto ----
+  function drawCliff(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var padL=44,padR=16,padT=16,padB=28, pw=W-padL-padR, ph=H-padT-padB;
+      var X=function(i){ return padL+(clampv(i,0,1))*pw; };
+      var PAMy=function(v){ return padT+ph-((clampv(v,30,100)-30)/70)*ph; };
+      var LACy=function(v){ return padT+ph-(clampv(v,0,14)/14)*ph; };
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1; ctx.font='10px monospace'; ctx.fillStyle='#5e6c87';
+      [0,0.25,0.5,0.75,1].forEach(function(i){ ctx.beginPath(); ctx.moveTo(X(i),padT); ctx.lineTo(X(i),padT+ph); ctx.stroke(); ctx.fillText(Math.round(i*100),X(i)-6,padT+ph+16); });
+      ctx.fillText('gravidade do insulto (%) →', padL, padT+ph+16);
+      // PAM crítica
+      ctx.strokeStyle='rgba(255,93,108,.4)'; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(padL,PAMy(65)); ctx.lineTo(padL+pw,PAMy(65)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(255,93,108,.6)'; ctx.fillText('PAM crítica 65', padL+pw-92, PAMy(65)-4);
+      // PAM (verde) e lactato (vermelho)
+      ctx.strokeStyle='#3ec78d'; ctx.lineWidth=2.5; ctx.beginPath();
+      for(var s1=0;s1<=50;s1++){ var i1=s1/50; var pm=cryptic(Object.assign({},p,{insult:i1})).PAM; var x=X(i1),y=PAMy(pm); if(s1===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+      ctx.strokeStyle='#ff5d6c'; ctx.lineWidth=2; ctx.beginPath();
+      for(var s2=0;s2<=50;s2++){ var i2=s2/50; var lc=cryptic(Object.assign({},p,{insult:i2})).lactate; var x2=X(i2),y2=LACy(lc); if(s2===0)ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2); } ctx.stroke();
+      // precipício (insulto = reserva) e insulto atual
+      var cliff=cliffInsult(p);
+      ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([5,3]); ctx.beginPath(); ctx.moveTo(X(cliff),padT); ctx.lineTo(X(cliff),padT+ph); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffcf5c'; ctx.fillText('precipício', X(cliff)-2, padT+ph-4);
+      ctx.strokeStyle='#3f82e6'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(X(p.insult),padT); ctx.lineTo(X(p.insult),padT+ph); ctx.stroke(); ctx.setLineDash([]);
+      var cur=cryptic(p);
+      ctx.fillStyle='#3ec78d'; ctx.beginPath(); ctx.arc(X(p.insult),PAMy(cur.PAM),4,0,2*Math.PI); ctx.fill();
+      ctx.fillStyle='#e9eef7'; ctx.font='11px monospace';
+      ctx.fillText('PAM '+br(cur.PAM,0)+' · lactato '+br(cur.lactate,1)+' · reserva usada '+br(cur.reserveUsed*100,0)+'%', padL+2, padT+12);
+      return cur;
+    }catch(e){ return {}; }
+  }
+  // ---- painel de marcadores ocultos ----
+  function drawMarkers(ctx,W,H,p){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var R=cryptic(p);
+      var rows=[
+        {label:'PAM', v:R.PAM, frac:clampv((R.PAM-30)/70,0,1), good:R.PAM>=65, txt:br(R.PAM,0)+' mmHg', reassure:true},
+        {label:'lactato', v:R.lactate, frac:clampv(R.lactate/8,0,1), good:R.lactate<2, txt:br(R.lactate,1)+' mmol/L'},
+        {label:'SvO₂', v:R.svo2, frac:clampv(R.svo2/0.85,0,1), good:R.svo2>=0.65, txt:br(R.svo2*100,0)+'%'},
+        {label:'ench. capilar', v:R.capRefill, frac:clampv(R.capRefill/6,0,1), good:R.capRefill<3, txt:br(R.capRefill,1)+' s'},
+        {label:'pressão de pulso', v:R.pulsePressure, frac:clampv(R.pulsePressure/55,0,1), good:R.pulsePressure>=35, txt:br(R.pulsePressure,0)+' mmHg'},
+        {label:'reserva usada', v:R.reserveUsed, frac:clampv(R.reserveUsed,0,1), good:R.reserveUsed<0.85, txt:br(R.reserveUsed*100,0)+'%'}
+      ];
+      var padL=120,padR=16,padT=10,padB=14, pw=W-padL-padR;
+      var n=rows.length, gap=6, rh=(H-padT-padB-gap*(n-1))/n;
+      rows.forEach(function(rw,i){ var y=padT+i*(rh+gap);
+        var col=rw.good?(rw.reassure?'#3ec78d':'#3ec78d'):'#ff5d6c';
+        ctx.fillStyle='#11151f'; ctx.fillRect(padL,y,pw,rh);
+        ctx.fillStyle=col; ctx.globalAlpha=0.85; ctx.fillRect(padL,y,Math.max(2,rw.frac*pw),rh); ctx.globalAlpha=1;
+        ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.textAlign='right'; ctx.fillText(rw.label, padL-8, y+rh/2+3); ctx.textAlign='left';
+        ctx.fillStyle='#e9eef7'; ctx.fillText(rw.txt+(rw.good?'':'  ⚠'), padL+6, y+rh/2+3); });
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('verde = tranquilizador · vermelho = alarme · note a PAM verde com a periferia vermelha', padL, H-2);
+      return R;
+    }catch(e){ return {}; }
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||260,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+
+  function recompute(){
+    $('vInsult').textContent=Math.round(state.insult*100); $('vReserve').textContent=Math.round(state.reserve*100); $('vBeta').textContent=Math.round(state.betaBlock*100);
+    var R=drawOn('cliff', drawCliff, state); if(!R.PAM) R=cryptic(state);
+    $('opbox-cliff').innerHTML='PAM <b>'+br(R.PAM,0)+'</b> · lactato <b>'+br(R.lactate,1)+'</b> · SvO₂ '+br(R.svo2*100,0)+'% · reserva usada <b>'+br(R.reserveUsed*100,0)+'%</b> · estágio <b>'+STMETA[stage(state)].lab+'</b>';
+    drawOn('markers', drawMarkers, state);
+    $('opbox-markers').innerHTML='PP '+br(R.pulsePressure,0)+' · ench. capilar '+br(R.capRefill,1)+'s · FC '+br(R.HR,0)+(occult(R)?' · <span style="color:var(--crit)">CHOQUE OCULTO</span>':'');
+    resetPredict();
+    renderLab();
+  }
+  function renderLab(){
+    var R=drawOn('cliffLab', drawCliff, state); if(!R.PAM) R=cryptic(state);
+    var st=stage(state), sed=cryptic(applySedation(state));
+    $('opbox-lab').innerHTML='PAM '+br(R.PAM,0)+' · lactato '+br(R.lactate,1)+' · SvO₂ '+br(R.svo2*100,0)+'% · PP '+br(R.pulsePressure,0)+' · reserva usada '+br(R.reserveUsed*100,0)+'%';
+    var vEl=$('lab-veredito'); vEl.className='veredito '+STMETA[st].kl; $('lab-vbig').textContent=STMETA[st].lab;
+    $('lab-vnum').textContent=STMETA[st].sub+' · PAM '+br(R.PAM,0)+' · lactato '+br(R.lactate,1);
+    show($('ban-cripto'), st==='criptico');
+    show($('ban-precipicio'), nearCliff(R));
+    show($('ban-lactato'), R.lactate>2);
+    show($('ban-perfusao'), R.capRefill>3 || R.svo2<0.65 || R.pulsePressure<35);
+    show($('ban-betabloq'), state.betaBlock>=0.4);
+    show($('ban-estressor'), R.PAM>=65 && R.reserveUsed>0.5);
+    $('estressor-txt').textContent='Aqui, um estressor levaria a PAM de '+br(R.PAM,0)+' a '+br(sed.PAM,0)+' (no modelo).';
+  }
+  function syncSliders(){ $('iInsult').value=state.insult*100; $('iReserve').value=state.reserve*100; $('iBeta').value=state.betaBlock*100; }
+  function setState(p){ state={ insult:0, reserve:0.8, betaBlock:0 }; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- caso progressivo com decisões ----
+  var CASO=[
+    { txt:'Jovem, trauma fechado. PA 118/96, FC 104, "estável". A PAM está normal. Você está tranquilo?', P:{insult:0.55,reserve:0.85}, act:null,
+      opts:[ {t:'Sim — PAM normal, sinais ok', ok:false}, {t:'Não — pressão de pulso estreita e pele fria pedem olhar os marcadores', ok:true} ],
+      fb:'PAM normal pode ser compensação: a pressão de pulso estreita (vasoconstrição) e a periferia já denunciam.' },
+    { txt:'Os exames voltam: lactato 5, SvO₂ baixa. O que isso significa com a PAM normal?', P:{insult:0.6,reserve:0.85}, act:null,
+      opts:[ {t:'Erro de coleta — a PAM está boa', ok:false}, {t:'Choque oculto: a entrega já caiu; a PAM é compensada, não adequada', ok:true} ],
+      fb:'Lactato alto + SvO₂ baixa com PAM normal = choque críptico. A macro mente; o metabolismo conta a verdade.' },
+    { txt:'Decide-se intubar. A indução/sedação, neste paciente compensado, tende a:', P:{insult:0.6,reserve:0.6}, act:'sedacao',
+      opts:[ {t:'Não afetar a hemodinâmica', ok:false}, {t:'Consumir a reserva que segurava a PAM → risco de colapso', ok:true} ],
+      fb:'A sedação remove o tônus simpático: a reserva cai e o compensado pode cair no precipício.' },
+    { txt:'A regra que organiza o choque críptico é:', P:{insult:0.55,reserve:0.7}, act:null,
+      opts:[ {t:'PAM normal = paciente seguro', ok:false}, {t:'Olhar a periferia e a reserva — compensação é tempo emprestado, não resolução', ok:true} ],
+      fb:'Estável descreve a PAM, não a entrega. Lactato, SvO₂, enchimento e pressão de pulso revelam o que a macro esconde.' }
+  ];
+  function renderCaso(){
+    var box=$('caso-interativo'); if(!box) return; box.innerHTML=''; var nodes=[]; var done=0, total=CASO.length;
+    if($('caso-prog')) $('caso-prog').textContent='0 / '+total+' decisões';
+    CASO.forEach(function(nd,i){
+      var card=document.createElement('div'); card.className='decision'; if(i>0) card.style.display='none';
+      var q=document.createElement('div'); q.className='dq'; q.innerHTML='<b>Decisão '+(i+1)+'.</b> '+nd.txt; card.appendChild(q);
+      var opts=document.createElement('div'); opts.className='dopts'; var fb=document.createElement('div'); fb.className='dfb';
+      nd.opts.forEach(function(op,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=op.t;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          b.classList.add(op.ok?'right':'wrong'); if(!op.ok){ for(var k=0;k<nd.opts.length;k++){ if(nd.opts[k].ok) opts.children[k].classList.add('right'); } }
+          var a=cryptic(nd.P), cons;
+          if(nd.act==='sedacao'){ var sd=cryptic(applySedation(nd.P)); cons='no motor, após o estressor: PAM '+br(a.PAM,0)+'→'+br(sd.PAM,0)+' ('+stage(applySedation(nd.P))+')'; }
+          else { cons='no motor: PAM '+br(a.PAM,0)+' · lactato '+br(a.lactate,1)+' · SvO₂ '+br(a.svo2*100,0)+'% · reserva usada '+br(a.reserveUsed*100,0)+'%'; }
+          fb.className='dfb show'; fb.innerHTML=(op.ok?'✓ ':'✗ ')+nd.fb+'<br><span class="cons">'+cons+'</span>';
+          if(nodes[i+1]) nodes[i+1].style.display='block';
+          if($('caso-prog')) $('caso-prog').textContent=done+' / '+total+' decisões'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card); nodes.push(card);
+    });
+  }
+  // ---- prever-depois-revelar (o estressor) ----
+  function resetPredict(){ var box=$('prever-opts'); if(!box) return; box.dataset.answered=''; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
+    box.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); }); }
+  function predictAnswer(choice){
+    var box=$('prever-opts'); if(!box||box.dataset.answered) return; box.dataset.answered='1';
+    var before=cryptic(state).PAM, after=cryptic(applySedation(state)).PAM, drop=before-after;
+    var truth=(drop>=15)?'muito':(drop>=5)?'pouco':'nada', okc=(choice===truth);
+    box.querySelectorAll('.opt').forEach(function(b){ var v=b.getAttribute('data-v'); if(v===truth) b.classList.add('right'); if(v===choice&&!okc) b.classList.add('wrong'); });
+    var fb=$('prever-fb'); if(fb){ fb.className='dfb show'; fb.innerHTML=(okc?'✓ ':'✗ ')+'o estressor leva a PAM de <b>'+br(before,0)+'</b> a <b>'+br(after,0)+'</b> ('+truth+'). Reserva usada antes: '+br(cryptic(state).reserveUsed*100,0)+'% — quanto mais gasta, maior a queda.'; }
+  }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[];
+    var S=function(o){ return Object.assign({ insult:0.5,reserve:0.8,betaBlock:0 }, o); };
+    T.push({kind:'cliff',P:S({insult:0.55,reserve:0.85}), cap:'PA 118/96, FC 104, lactato 5.',
+      q:'PAM normal com lactato alto e pele fria. A leitura correta é:',
+      o:['perfusão normal, observar','choque oculto — a PAM é compensação, não adequação','erro laboratorial','febre'], a:1,
+      fb:'A vasoconstrição segura a PAM enquanto a entrega já caiu; o lactato e a periferia denunciam.', hint:'PAM normal ≠ perfusão normal.'});
+    T.push({kind:'markers',P:S({insult:0.6,reserve:0.85}), cap:'Painel de marcadores.',
+      q:'Qual achado MELHOR revela o choque oculto quando a PAM está normal?',
+      o:['a própria PAM','lactato alto / SvO₂ baixa / pressão de pulso estreita','a FC sozinha','a temperatura axilar'], a:1,
+      fb:'Os marcadores de perfusão/extração denunciam a entrega caída que a PAM esconde.', hint:'Olhe a periferia.'});
+    T.push({kind:'cliff',P:S({insult:0.3,reserve:0.8}), cap:'PAM × insulto (reserva 0,8).',
+      q:'Por que a PAM fica "flat" mesmo com o insulto piorando?',
+      o:['porque não há choque','porque a reserva compensatória absorve a piora até esgotar','porque a PAM não mede nada','porque o lactato cai'], a:1,
+      fb:'Enquanto a reserva cobre o insulto, cada piora é compensada e a PAM quase não se move.', hint:'A reserva está pagando.'});
+    T.push({kind:'cliff',P:S({insult:0.55,reserve:0.55}), cap:'Reserva menor.',
+      q:'O "precipício" (onde a PAM despenca) fica:',
+      o:['sempre em PAM 60','no insulto ≈ reserva — mais cedo se a reserva é baixa','em insulto 100% sempre','indeterminado'], a:1,
+      fb:'Quando o insulto excede a reserva, a compensação acaba e a PAM cai de repente.', hint:'A linha amarela.'});
+    T.push({kind:'markers',P:S({insult:0.6,reserve:0.8,betaBlock:0.9}), cap:'Paciente β-bloqueado.',
+      q:'O β-bloqueio torna o choque críptico mais perigoso porque:',
+      o:['aumenta a PAM','mascara a taquicardia compensatória (some um alarme)','baixa o lactato','dilata a pele'], a:1,
+      fb:'Sem a taquicardia, falta um sinal de alarme: o paciente parece mais calmo justamente quando piora.', hint:'A FC mente também.'});
+    T.push({kind:'cliff',P:S({insult:0.65,reserve:0.7}), cap:'Antes de intubar.',
+      q:'A sedação/indução num compensado tende a:',
+      o:['estabilizar','consumir a reserva e poder precipitar o colapso','baixar o lactato','não ter efeito hemodinâmico'], a:1,
+      fb:'A sedação remove tônus simpático → a reserva cai → o compensado pode cair no precipício.', hint:'Estressor = menos reserva.'});
+    T.push({kind:'markers',P:S({insult:0.5,reserve:0.8}), cap:'Pressão de pulso.',
+      q:'Uma pressão de pulso estreita (ex.: 118/96) sugere:',
+      o:['vasodilatação','vasoconstrição compensatória (RVS↑) segurando a PAM','PAM baixa','bradicardia'], a:1,
+      fb:'A diferença sistólica-diastólica estreita reflete a vasoconstrição que defende a pressão.', hint:'O delta da pressão.'});
+    T.push({kind:'cliff',P:S({insult:0.4,reserve:0.9}), cap:'Reserva alta.',
+      q:'Um paciente jovem com reserva alta, mesmo com insulto, tende a:',
+      o:['cair logo','manter a PAM por mais tempo (precipício mais tardio) — e enganar mais','não compensar','ter lactato baixo sempre'], a:1,
+      fb:'Mais reserva = PAM defendida por mais tempo = mais risco de subestimar a gravidade.', hint:'Quanto mais reserva, mais tarde a borda.'});
+    T.push({kind:'markers',P:S({insult:0.55,reserve:0.85}), cap:'SvO₂ no críptico.',
+      q:'A SvO₂ baixa no choque compensado indica:',
+      o:['boa entrega','extração aumentada para defender o consumo (compensação)','hiperóxia','anemia apenas'], a:1,
+      fb:'O tecido extrai mais O₂ para manter o consumo com entrega caída → SvO₂ baixa. É compensação metabólica.', hint:'Extração sobe.'});
+    T.push({kind:'cliff',P:S({insult:0.55,reserve:0.8}), cap:'Síntese.',
+      q:'A regra central do choque críptico é:',
+      o:['PAM normal = seguro','PAM normal pode ser compensação — olhar periferia e reserva, não só a pressão','tratar só a PAM','ignorar o lactato'], a:1,
+      fb:'Compensação é tempo emprestado: os marcadores ocultos e a reserva dizem a verdade antes do precipício.', hint:'Não confie na macro.'});
+    T.push({kind:'cliff',P:S({insult:0.75,reserve:0.8}), cap:'Reserva quase no fim.',
+      q:'"À beira do precipício" significa:',
+      o:['já descompensado','ainda compensado, mas quase toda a reserva gasta — a próxima piora não é absorvida','PAM baixa estável','sem risco'], a:1,
+      fb:'A PAM ainda está ok, mas a margem acabou: qualquer estressor leva ao colapso.', hint:'Compensado e sem margem.'});
+    T.push({kind:'markers',P:S({insult:0.6,reserve:0.6}), cap:'Enchimento capilar.',
+      q:'O enchimento capilar lento / mosqueamento, com PAM normal, é:',
+      o:['irrelevante','um marcador de hipoperfusão periférica pela vasoconstrição compensatória','sinal de boa perfusão','efeito do frio ambiente apenas'], a:1,
+      fb:'A vasoconstrição que segura a PAM sacrifica a perfusão da pele — daí o mosqueamento e o enchimento lento.', hint:'A periferia paga.'});
+    T.push({kind:'cliff',P:S({insult:0.5,reserve:0.5}), cap:'Idoso/cardiopata.',
+      q:'Por que idosos e cardiopatas chegam ao precipício mais cedo?',
+      o:['têm mais reserva','têm MENOS reserva compensatória — a mesma gravidade descompensa antes','não compensam lactato','têm PAM mais alta'], a:1,
+      fb:'A reserva é o que muda: menos reserva = borda mais cedo para o mesmo insulto.', hint:'Reserva reduzida.'});
+    T.push({kind:'markers',P:S({insult:0.7,reserve:0.7}), cap:'A macro vs a periferia.',
+      q:'No painel, a dissociação típica do choque críptico é:',
+      o:['tudo vermelho','PAM verde (tranquilizadora) com a periferia vermelha (alarme)','tudo verde','PAM vermelha isolada'], a:1,
+      fb:'É exatamente a armadilha: a PAM tranquiliza enquanto lactato, SvO₂, enchimento e pressão de pulso alarmam.', hint:'Verde em cima, vermelho embaixo.'});
+    T.push({kind:'cliff',P:S({insult:0.55,reserve:0.8}), cap:'Tendência.',
+      q:'Reavaliar a tendência da reserva importa porque:',
+      o:['a PAM já diz tudo','a reserva se gasta com o tempo e com estressores — a borda se aproxima','o lactato é fixo','a FC não muda'], a:1,
+      fb:'O estado pode parecer igual enquanto a margem encolhe: a tendência avisa antes do número cair.', hint:'A margem encolhe em silêncio.'});
+    T.push({kind:'markers',P:S({insult:0.6,reserve:0.55}), cap:'A regra final.',
+      q:'"Estável", no choque críptico, descreve:',
+      o:['a entrega adequada','apenas a tendência da PAM — não o estado da perfusão','a cura','a ausência de choque'], a:1,
+      fb:'Um paciente pode estar estável (PAM) e gravíssimo (entrega) ao mesmo tempo. Estável não é seguro.', hint:'PAM ≠ perfusão.'});
+    var __tg=[1,3,0,2,1,3,0,2,1,3,2,0,3,1,2,0];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var dif=(qi<6)?['b','básico']:(qi<10)?['i','intermediário']:['a','avançado'];
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span><span class="dif dif-'+dif[0]+'">'+dif[1]+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=190; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ return item.kind==='markers'?drawMarkers(ctx,W||760,H||190,item.P):drawCliff(ctx,W||760,H||190,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||190); }catch(e){} }); }
+
+  var PRESETS={
+    normal:{insult:0.05,reserve:0.85},
+    criptico:{insult:0.55,reserve:0.85},
+    precipicio:{insult:0.74,reserve:0.8},
+    descompensado:{insult:0.95,reserve:0.5},
+    idoso_beta:{insult:0.55,reserve:0.45,betaBlock:0.8},
+    pos_estressor:{insult:0.6,reserve:0.3}
+  };
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iInsult','insult'],['iReserve','reserve'],['iBeta','betaBlock']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; recompute(); }); });
+    document.querySelectorAll('.preset').forEach(function(b){ b.addEventListener('click',function(){
+      document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); setState(PRESETS[b.getAttribute('data-preset')]); }); });
+    var pbox=$('prever-opts'); if(pbox){ pbox.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ predictAnswer(b.getAttribute('data-v')); }); }); }
+    TUTOR=buildTutor(); syncSliders(); recompute(); renderTutor(); renderCaso();
+    window.recompute=recompute; window.drawCliff=drawCliff; window.drawMarkers=drawMarkers; window.activateTab=activate; window.setLabState=setState;
+    window.crypticFn=cryptic; window.occultFn=occult; window.nearCliffFn=nearCliff; window.stageFn=stage; window.cliffInsultFn=cliffInsult; window.applySedationFn=applySedation; window.applyHitFn=applyHit;
+    window.predictAnswerFn=predictAnswer; window.CASO=CASO;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
