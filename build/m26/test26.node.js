@@ -52,7 +52,10 @@ ok('a FC compensatória some no β-bloqueado', f({insult:0.7,reserve:0.8,betaBlo
 
 console.log('\n— ROBUSTEZ / LIMITES —');
 ok('cryptic() sem argumento / null não lançam', (function(){try{return !isNaN(f().PAM)&&!isNaN(f(null).PAM);}catch(e){return false;}})());
-ok('applySedation/applyHit com null/undefined não lançam', (function(){try{return !isNaN(M.applySedation().reserve)&&M.applyHit(null).insult===0.2;}catch(e){return false;}})());
+ok('applySedation/applyHit sanitizam null/undefined/NaN/string', (function(){try{
+  return !isNaN(M.applySedation().reserve) && !isNaN(M.applySedation({reserve:'x'}).reserve)
+    && M.applyHit(null).insult===0.2 && !isNaN(M.applyHit({insult:NaN}).insult);
+}catch(e){return false;}})());
 const ABS=f({insult:9,reserve:'x',betaBlock:NaN});
 ok('NaN/string/absurdo: sem NaN', [ABS.PAM,ABS.lactate,ABS.svo2,ABS.capRefill,ABS.HR].every(v=>typeof v==='number'&&!isNaN(v)));
 ok('PAM e marcadores clampados', ABS.PAM>=30 && ABS.PAM<=100 && ABS.lactate<=14);

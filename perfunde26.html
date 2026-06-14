@@ -299,8 +299,8 @@ function occult(R){ return R.PAM>=BASE.PAM_crit && (R.lactate>2.0 || R.svo2<0.65
 function nearCliff(R){ return R.PAM>=BASE.PAM_crit && R.reserveUsed>=BASE.RES_CLIFF; }
 function stage(p){ var R=cryptic(p); if(R.PAM<BASE.PAM_crit) return 'descompensado'; if(occult(R)){ return nearCliff(R)?'precipicio':'criptico'; } return 'normal'; }
 function cliffInsult(p){ p=p||{}; return clamp01(p.reserve==null?0.8:p.reserve); }
-function applySedation(p){ p=p||{}; var s=Object.assign({},p); s.reserve=Math.max(0,(p.reserve==null?0.8:p.reserve)-0.35); return s; }
-function applyHit(p){ p=p||{}; var s=Object.assign({},p); s.insult=Math.min(1,(p.insult||0)+0.2); return s; }
+function applySedation(p){ p=p||{}; var s=Object.assign({},p); var r=clamp01(p.reserve==null?0.8:p.reserve); s.reserve=Math.max(0,r-0.35); return s; }
+function applyHit(p){ p=p||{}; var s=Object.assign({},p); s.insult=Math.min(1,clamp01(p.insult)+0.2); return s; }
 </script>
 
 <!-- ===================== UI ===================== -->
@@ -331,9 +331,9 @@ function applyHit(p){ p=p||{}; var s=Object.assign({},p); s.insult=Math.min(1,(p
       ctx.fillStyle='rgba(255,93,108,.6)'; ctx.fillText('PAM crítica 65', padL+pw-92, PAMy(65)-4);
       // PAM (verde) e lactato (vermelho)
       ctx.strokeStyle='#3ec78d'; ctx.lineWidth=2.5; ctx.beginPath();
-      for(var i1=0;i1<=1;i1+=0.02){ var pm=cryptic(Object.assign({},p,{insult:i1})).PAM; var x=X(i1),y=PAMy(pm); if(i1===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+      for(var s1=0;s1<=50;s1++){ var i1=s1/50; var pm=cryptic(Object.assign({},p,{insult:i1})).PAM; var x=X(i1),y=PAMy(pm); if(s1===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
       ctx.strokeStyle='#ff5d6c'; ctx.lineWidth=2; ctx.beginPath();
-      for(var i2=0;i2<=1;i2+=0.02){ var lc=cryptic(Object.assign({},p,{insult:i2})).lactate; var x2=X(i2),y2=LACy(lc); if(i2===0)ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2); } ctx.stroke();
+      for(var s2=0;s2<=50;s2++){ var i2=s2/50; var lc=cryptic(Object.assign({},p,{insult:i2})).lactate; var x2=X(i2),y2=LACy(lc); if(s2===0)ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2); } ctx.stroke();
       // precipício (insulto = reserva) e insulto atual
       var cliff=cliffInsult(p);
       ctx.strokeStyle='#ffcf5c'; ctx.setLineDash([5,3]); ctx.beginPath(); ctx.moveTo(X(cliff),padT); ctx.lineTo(X(cliff),padT+ph); ctx.stroke(); ctx.setLineDash([]);

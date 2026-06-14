@@ -66,9 +66,9 @@ function cliffInsult(p){ p=p||{}; return clamp01(p.reserve==null?0.8:p.reserve);
 
 // ---- Estressores (mecanismo, SEM conduta) — consomem a reserva que restava ----
 // Sedação/indução: remove o tônus simpático → derruba a reserva (revela/precipita o colapso).
-function applySedation(p){ p=p||{}; var s=Object.assign({},p); s.reserve=Math.max(0,(p.reserve==null?0.8:p.reserve)-0.35); return s; }
+function applySedation(p){ p=p||{}; var s=Object.assign({},p); var r=clamp01(p.reserve==null?0.8:p.reserve); s.reserve=Math.max(0,r-0.35); return s; }
 // Novo insulto (sangramento, broncoaspiração): agrava o choque subjacente.
-function applyHit(p){ p=p||{}; var s=Object.assign({},p); s.insult=Math.min(1,(p.insult||0)+0.2); return s; }
+function applyHit(p){ p=p||{}; var s=Object.assign({},p); s.insult=Math.min(1,clamp01(p.insult)+0.2); return s; }
 
 if (typeof module!=='undefined' && module.exports){
   module.exports = { BASE, clampv, clamp01, cryptic, occult, nearCliff, stage, cliffInsult, applySedation, applyHit };
