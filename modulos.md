@@ -530,7 +530,7 @@ a MESMA alavanca tem efeito OPOSTO: volume salva o frio-seco e AFOGA o frio-úmi
 
 ## 28 · Vasopressores & inotrópicos
 
-**Status:** publicado · `perfunde28.html` + `build/m28/` (1ª metade; casos V/F dinâmicos virão na 2ª).
+**Status:** publicado · `perfunde28.html` + `build/m28/` (completo: mecanismo + farmácia + 100 assertivas V/F).
 
 **Tese:** a droga vasoativa é um **perfil de receptores** que move **termos** da equação — prevê-se o efeito pelo receptor, não pelo nome; e o agente certo é o que move o **termo quebrado**.
 
@@ -544,6 +544,8 @@ a MESMA droga: certa num termo, errada no outro (fenilefrina afunda o cardiogên
 ```
 
 **Camada interativa (§2.6):** caso de decisões receptor↔termo, prever-depois-revelar (apto/inapto/custo), trilha de 9 passos, **6ª aba "Farmácia"** com a calculadora, e **banco de 24 questões** — dificuldade crescente, **gabarito disproporcional** (A4 B7 C6 D7), correta **≠ a mais longa** (38%) e pegadinhas.
+
+**Casos dinâmicos V/F (`cases28.js`, 7ª aba):** 5 casos que evoluem por etapas (séptico→misto, cardiogênico→VD, misto, anafilático×neurogênico, obstrutivo/TEP→síntese), cada um com 4 etapas × 5 assertivas Verdadeiro/Falso = **100 assertivas** (50/50, cada caso 10/10), com gabarito + racional mecanístico. A etapa seguinte só revela depois de respondida a atual (evolução dinâmica). Afirmações educacionais de mecanismo, sob o firewall (`§11`): sem ordem imperativa nem dose individualizada.
 
 **Erro cognitivo:** escolher a droga pelo nome; dar vasopressor na bomba fraca; tratar a referência como prescrição.
 

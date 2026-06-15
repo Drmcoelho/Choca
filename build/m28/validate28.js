@@ -23,12 +23,13 @@ const ev=e=>window.eval(e);
 
 console.log('— ESTRUTURA / ABAS (6, com Farmácia) —');
 ['backlink','kicker','disclaimer','honestidade','pontes','tutor','score','receptors','outcome','outcomeLab',
- 'panel-caso','panel-trilha','panel-instrumento','panel-lab','panel-avaliacao','panel-farmacologia',
+ 'panel-caso','panel-trilha','panel-instrumento','panel-lab','panel-avaliacao','panel-farmacologia','panel-vf',
+ 'vf-navcasos','vf-caso','vf-score',
  'iA1','iB1','iB2','iV1','iPDE','presets','lab-veredito','opbox-receptors','opbox-outcome','opbox-lab','lab-vbig',
  'caso-interativo','caso-prog','prever','prever-opts','prever-fb',
  'farm-aviso','farm-agentes','iWeight','iDose','farm-out','farm-faixa','farm-titulacao','farm-diluicoes','farm-combos','farm-interacoes','farm-usos','farm-iatro'].forEach(id=>ok('#'+id,!!$(id)));
 ok('footer',!!doc.querySelector('footer'));
-['tab-caso','tab-trilha','tab-instrumento','tab-lab','tab-avaliacao','tab-farmacologia'].forEach(t=>ok('aba '+t,!!$(t)));
+['tab-caso','tab-trilha','tab-instrumento','tab-lab','tab-avaliacao','tab-farmacologia','tab-vf'].forEach(t=>ok('aba '+t,!!$(t)));
 ok('Caso 5 atos',doc.querySelectorAll('#panel-caso .ato').length===5);
 ok('Trilha expandida ≥9',doc.querySelectorAll('#panel-trilha .step').length>=9);
 ok('Trilha com pistas progressivas',doc.querySelectorAll('#panel-trilha .pista').length>=4);
@@ -92,6 +93,29 @@ ok('pontes 7/9/16/20/22',['perfunde7','perfunde9','perfunde16','perfunde20','per
 const foot=doc.querySelector('footer').textContent;
 ok('rodapé CRM',/CRM-?SP\s*151\.?318/.test(foot));
 ok('rodapé Coelho·Limeira',/Matheus M\. Coelho/.test(foot)&&/Limeira/.test(foot));
+
+console.log('\n— CASOS DINÂMICOS V/F (100 assertivas, evolução por etapas) —');
+const VF=window.CASES_VFref;
+ok('5 casos carregados',Array.isArray(VF)&&VF.length===5,VF?VF.length:'∅');
+ok('total = 100 assertivas',ev('vfScoreFn().tot')===100,ev('vfScoreFn().tot'));
+ok('cada caso 4 etapas × 5 assertivas',VF.every(c=>c.etapas.length===4&&c.etapas.every(e=>e.asser.length===5)));
+(function(){ let v=0,f=0,bad=0; VF.forEach(c=>c.etapas.forEach(e=>e.asser.forEach(a=>{ a.v?v++:f++; if(!(a.t&&a.t.length>10&&typeof a.v==='boolean'&&a.r&&a.r.length>5))bad++; })));
+  ok('balanço V/F 50/50',v===50&&f===50,v+' V / '+f+' F'); ok('toda assertiva bem-formada (texto+gabarito+racional)',bad===0); })();
+window.activateTab('tab-vf'); ok('troca aba ativa Casos V/F',$('panel-vf').classList.contains('active'));
+ok('navegação: 5 botões de caso',doc.querySelectorAll('#vf-navcasos .preset').length===5);
+ok('abertura + etapa 1 renderizadas',!!doc.querySelector('#vf-caso .vfopen') && doc.querySelectorAll('#vf-caso .vfstage').length>=1);
+ok('etapa 2 começa bloqueada (evolução dinâmica)',!!doc.querySelector('#vf-caso .vfstage.locked'));
+ok('etapa 1 oferece 10 botões V/F (5 assertivas × 2)',doc.querySelectorAll('#vf-caso .vfstage:not(.locked) .vfb').length===10);
+// responde TODAS as 5 da etapa 1 (clicando sempre no 1º botão disponível) e confirma desbloqueio + feedback
+for(let i=0;i<5;i++){ const b=doc.querySelector('#vf-caso .vfas .vfbtns .vfb'); if(b) b.dispatchEvent(new window.Event('click',{bubbles:true})); }
+ok('responder revela gabarito + racional',doc.querySelectorAll('#vf-caso .vffb').length>=5 && /gabarito/.test((doc.querySelector('#vf-caso .vffb')||{}).textContent||''));
+ok('etapa 1 completa desbloqueia a etapa 2',doc.querySelectorAll('#vf-caso .vfstage:not(.locked)').length>=2);
+ok('placar atualiza (5 respondidas)',ev('vfScoreFn().ans')===5,ev('vfScoreFn().ans')+' respondidas');
+ok('gabarito correto computado (séptico/etapa1 = V,V,V,F,F → 3 acertos ao marcar tudo V)',ev('vfScoreFn().cor')===3,ev('vfScoreFn().cor')+' corretas');
+ok('feedback marca certo/errado (classes ok/no presentes)',!!doc.querySelector('#vf-caso .vfas.ok') && !!doc.querySelector('#vf-caso .vfas.no'));
+(function(){ let imp=false,dose=false; VF.forEach(c=>c.etapas.forEach(e=>e.asser.forEach(a=>{ if(/\b(inicie|administre|titule|prescreva|comece|fa[çc]a|d[êe])\s+\w+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i.test(a.t))imp=true; if(/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(a.t))dose=true; })));
+  ok('assertivas SEM ordem imperativa individualizada (firewall)',!imp); ok('assertivas SEM dose numérica imperativa',!dose); })();
+window.activateTab('tab-instrumento');
 
 console.log('\n— GUARDA SaMD §11 (referência permitida · ordem individualizada proibida) —');
 ok('disclaimer cita referência educacional + protocolo institucional', /refer[êe]ncia educacional/i.test(html) && /protocolo da sua institui/i.test(html));
