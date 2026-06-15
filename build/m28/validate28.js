@@ -113,7 +113,7 @@ ok('etapa 1 completa desbloqueia a etapa 2',doc.querySelectorAll('#vf-caso .vfst
 ok('placar atualiza (5 respondidas)',ev('vfScoreFn().ans')===5,ev('vfScoreFn().ans')+' respondidas');
 ok('gabarito correto computado (séptico/etapa1 = V,V,V,F,F → 3 acertos ao marcar tudo V)',ev('vfScoreFn().cor')===3,ev('vfScoreFn().cor')+' corretas');
 ok('feedback marca certo/errado (classes ok/no presentes)',!!doc.querySelector('#vf-caso .vfas.ok') && !!doc.querySelector('#vf-caso .vfas.no'));
-(function(){ let imp=false,dose=false; VF.forEach(c=>c.etapas.forEach(e=>e.asser.forEach(a=>{ if(/\b(inicie|administre|titule|prescreva|comece)\s+\S+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i.test(a.t))imp=true; if(/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(a.t))dose=true; })));
+(function(){ let imp=false,dose=false; VF.forEach(c=>c.etapas.forEach(e=>e.asser.forEach(a=>{ if(/\b(inicie|administre|titule|prescreva|comece|fa[çc]a|d[êe])\s+\w+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i.test(a.t))imp=true; if(/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(a.t))dose=true; })));
   ok('assertivas SEM ordem imperativa individualizada (firewall)',!imp); ok('assertivas SEM dose numérica imperativa',!dose); })();
 window.activateTab('tab-instrumento');
 

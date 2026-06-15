@@ -926,16 +926,16 @@ function vfStats(){ var f=flatAssertions(), v=0; f.forEach(function(a){ if(a.v) 
   // ---- CASOS DINÂMICOS V/F (evolução por etapas · 100 assertivas) ----
   var vf={ caso:0, ans:{} };   // ans['casoIdx-etapaIdx-asserIdx'] = booleano escolhido
   function vfKey(ci,ei,ai){ return ci+'-'+ei+'-'+ai; }
-  function vfStageDone(ci,ei){ var c=CASES_VF[ci]; for(var ai=0;ai<c.etapas[ei].asser.length;ai++){ if(!(vfKey(ci,ei,ai) in vf.ans)) return false; } return true; }
+  function vfStageDone(ci,ei){ var c=CASES_VF[ci]; if(!c||!c.etapas[ei]) return false; for(var ai=0;ai<c.etapas[ei].asser.length;ai++){ if(!(vfKey(ci,ei,ai) in vf.ans)) return false; } return true; }
   function vfScore(){ var tot=0,ans=0,cor=0; CASES_VF.forEach(function(c,ci){ c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; var k=vfKey(ci,ei,ai); if(k in vf.ans){ ans++; if(vf.ans[k]===a.v) cor++; } }); }); }); return {tot:tot,ans:ans,cor:cor}; }
   function vfAnswer(ci,ei,ai,val){ var k=vfKey(ci,ei,ai); if(k in vf.ans) return; vf.ans[k]=val; renderVF(); }
   function renderVFNav(){ var box=$('vf-navcasos'); if(!box) return; box.innerHTML='';
-    CASES_VF.forEach(function(c,ci){ var b=document.createElement('button'); b.className='preset'+(ci===vf.caso?' on':''); b.type='button'; var s=vfScore_case(ci); b.innerHTML=(ci+1)+'. '+c.titulo.replace(/ →.*$/,'')+' <span style="opacity:.6">'+s.ans+'/'+s.tot+'</span>';
+    CASES_VF.forEach(function(c,ci){ var b=document.createElement('button'); b.className='preset'+(ci===vf.caso?' on':''); b.type='button'; var s=vfScore_case(ci); var curto=c.titulo.split(/ [—–→(]/)[0]; b.innerHTML=(ci+1)+'. '+curto+' <span style="opacity:.6">'+s.ans+'/'+s.tot+'</span>';
       b.addEventListener('click',function(){ vf.caso=ci; renderVF(); }); box.appendChild(b); }); }
-  function vfScore_case(ci){ var c=CASES_VF[ci],tot=0,ans=0,cor=0; c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; var k=vfKey(ci,ei,ai); if(k in vf.ans){ ans++; if(vf.ans[k]===a.v) cor++; } }); }); return {tot:tot,ans:ans,cor:cor}; }
+  function vfScore_case(ci){ var c=CASES_VF[ci]; if(!c) return {tot:0,ans:0,cor:0}; var tot=0,ans=0,cor=0; c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; var k=vfKey(ci,ei,ai); if(k in vf.ans){ ans++; if(vf.ans[k]===a.v) cor++; } }); }); return {tot:tot,ans:ans,cor:cor}; }
   function renderVF(){
     renderVFNav();
-    var ci=vf.caso, c=CASES_VF[ci], box=$('vf-caso'); if(!box) return;
+    var ci=vf.caso; if(!CASES_VF[ci]){ vf.caso=ci=0; } var c=CASES_VF[ci], box=$('vf-caso'); if(!c||!box) return;
     var html='<div class="vfhead"><h3 style="margin:.2em 0">'+c.titulo+'</h3><div class="vfsub">'+c.sub+'</div><div class="vfopen">'+c.abertura+'</div></div>';
     for(var ei=0;ei<c.etapas.length;ei++){
       var revelar=(ei===0)||vfStageDone(ci,ei-1);
