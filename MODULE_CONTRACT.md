@@ -289,6 +289,8 @@ se lactato tal, faça tal intervenção
 
 O módulo pode comparar alavancas fisiológicas. Não pode virar algoritmo terapêutico.
 
+**Exceção · referência farmacológica educacional (a partir do M28).** Módulos designados podem incluir apresentação, diluições e faixas de dose **usuais de referência**, titulação como faixa, infusão em mL/h e uma **calculadora de conversão** (dose ↔ mL/h), sob as regras do `SAFETY.md §11`: rotulado como referência educacional, com "confira o protocolo da sua instituição", sem comando imperativo nem alvo individualizado para paciente real, peso tratado como hipotético. A calculadora é aritmética de unidades, não suporte à decisão.
+
 ---
 
 ## 6. Checklist antes de commit

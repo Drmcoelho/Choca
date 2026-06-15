@@ -13,8 +13,8 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 A documentação estrutural foi criada, os documentos centrais foram alinhados à numeração publicada em `perfunde.html`, e o fechamento avaliativo M30 foi especificado.
 
 ```text
-módulos publicados: 0…27
-próximo módulo: M28 · vasopressores & inotrópicos
+módulos publicados: 0…28
+próximo módulo: M29 · capstone integrado
 planejados: M23…M30
 portão global: npm run check
 manifesto curricular: curriculum.json
@@ -110,17 +110,17 @@ A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narr
 
 ## 5. Próxima ação recomendada
 
-**M22…M27** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`); M24…M27 já trazem a camada interativa do `MODULE_CONTRACT.md §2.6`. A próxima ação de conteúdo é construir **M28 · vasopressores & inotrópicos** sob o mesmo padrão:
+**M22…M28** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`); M24…M28 já trazem a camada interativa do `MODULE_CONTRACT.md §2.6`; o M28 inaugurou a camada de referência farmacológica do `SAFETY.md §11`. A próxima ação de conteúdo é construir **M29 · capstone · caso integrado** sob o mesmo padrão:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m28/model28.js
-3. escrever build/m28/test28.node.js
-4. escrever perfunde28.html
-5. escrever build/m28/validate28.js
+2. escrever build/m29/model29.js
+3. escrever build/m29/test29.node.js
+4. escrever perfunde29.html
+5. escrever build/m29/validate29.js
 6. atualizar package.json
 7. atualizar perfunde.html
-8. atualizar curriculum.json (M28 → published; M29 → next)
+8. atualizar curriculum.json (M29 → published; M30 permanece planned/avaliação)
 9. rodar npm run check
 ```
 
