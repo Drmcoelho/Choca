@@ -79,5 +79,18 @@ ok('droga inválida / NaN → 0 (não lança)', Ph.infusionRate('xxx',1,70)===0 
 ok('peso fora de faixa é clampado (não NaN/Infinity)', isFinite(Ph.infusionRate('noradrenalina',0.1,0)) && isFinite(Ph.infusionRate('noradrenalina',0.1,9999)) && Ph.infusionRate('noradrenalina',0.1,0)>0);
 ok('concentração de droga inexistente não lança', (function(){try{return Ph.concentration('nada').value===0;}catch(e){return false;}})());
 
+console.log('\n— CASOS DINÂMICOS V/F (banco de 100 assertivas) —');
+const Cv=require('./cases28.js');
+const st=Cv.vfStats(), flat=Cv.flatAssertions();
+ok('total = 100 assertivas', st.total===100, st.total);
+ok('5 casos × 4 etapas (20 etapas)', st.casos===5 && st.etapas===20, st.casos+' casos / '+st.etapas+' etapas');
+ok('cada etapa com exatamente 5 assertivas', Cv.CASES_VF.every(c=>c.etapas.length===4 && c.etapas.every(e=>e.asser.length===5)));
+ok('balanço V/F exatamente 50/50', st.v===50 && st.f===50, st.v+' V / '+st.f+' F');
+ok('cada caso internamente balanceado (10 V / 10 F)', Cv.CASES_VF.every(c=>{let v=0,f=0;c.etapas.forEach(e=>e.asser.forEach(a=>a.v?v++:f++));return v===10&&f===10;}));
+ok('toda assertiva tem texto, gabarito booleano e racional', flat.every(a=>typeof a.t==='string'&&a.t.length>10&&typeof a.v==='boolean'&&typeof a.r==='string'&&a.r.length>5));
+ok('assertivas são únicas (sem duplicata)', (new Set(flat.map(a=>a.t))).size===flat.length);
+ok('SEM ordem imperativa nas assertivas (firewall SaMD)', !flat.some(a=>/\b(inicie|administre|titule|prescreva|comece|fa[çc]a|d[êe])\s+\w+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i.test(a.t)));
+ok('SEM dose numérica imperativa em assertiva', !flat.some(a=>/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(a.t)));
+
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);
