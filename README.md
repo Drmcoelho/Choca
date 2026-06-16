@@ -14,7 +14,7 @@ A pressão arterial é um número resultante. A fisiologia mora nos termos que p
 
 ## Estado atual
 
-O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde28.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
+O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde29.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
 
 Estado curricular atual:
 
@@ -28,9 +28,9 @@ Estado curricular atual:
 - **M25** — publicado: ressuscitação volêmica — volume como droga com janela terapêutica (benefício decai, custo acumula); o 2×2 responsivo × tolerante.
 - **M26** — publicado: choque críptico/compensado — a PAM normal mente; a compensação tem reserva finita e há um precipício; marcadores ocultos denunciam.
 - **M27** — publicado: os 4 perfis · radar — perfusão (fluxo) × congestão num mapa 2×2 (A/B/L/C); a mesma alavanca tem efeito oposto por canto.
-- **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`. Próximo módulo de conteúdo: **M29 · capstone integrado**.
-- **M29** — integração final.
-- **M30** — revisão global / exame de domínio com 100 questões.
+- **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`.
+- **M29** — publicado: capstone · caso integrado — o braço inteiro num **motor unificado** (cascata CaO₂→DO₂→VO₂→PAM→perfil), com instrumento ao vivo, caso que muda de categoria, 30 MCQ e 120 assertivas V/F. Próximo: **M30 · exame global de domínio**.
+- **M30** — revisão global / exame de domínio com 100 questões (especificado, a construir).
 
 ---
 
@@ -119,14 +119,14 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Próxima fronteira
 
-A documentação estrutural foi consolidada e reconciliada, e o Bloco IV avança (`M23`…`M28`), com M24…M28 já no padrão interativo rico (`MODULE_CONTRACT.md §2.6`) e o M28 inaugurando a camada de referência farmacológica (`SAFETY.md §11`). A próxima etapa concreta é construir `M29 · capstone · caso integrado` no mesmo rito:
+A documentação estrutural foi consolidada e reconciliada, e o Bloco IV está completo (`M23`…`M29`), no padrão interativo rico (`MODULE_CONTRACT.md §2.6`); o M28 inaugurou a camada de referência farmacológica (`SAFETY.md §11`) e o M29 fechou o conteúdo com o motor unificado da cascata. A próxima etapa concreta é construir `M30 · revisão global · exame de domínio`:
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m29/model29.js
-3. escrever build/m29/test29.node.js
-4. construir perfunde29.html
-5. escrever build/m29/validate29.js
+2. montar o banco de 100 questões (4 partes de 25)
+3. escrever o validador psicométrico (distribuição, dificuldade, sem padrão)
+4. construir perfunde30.html
+5. rodar o portão
 6. atualizar package.json e perfunde.html
 7. atualizar curriculum.json para status published
 8. rodar npm run check

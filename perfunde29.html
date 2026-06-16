@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 29 · Capstone · caso integrado</title>
+<meta name="description" content="O capstone do braço: um paciente integrado cuja cascata inteira é computada de ponta a ponta — conteúdo (CaO₂) → entrega (DO₂) → consumo/extração (VO₂, SvO₂, lactato) → pressão (PAM = DC × RVS) → perfil. Decompor a PAM, achar o termo quebrado, escolher a alavanca que o move e pesar o custo. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c; --purp:#9b6cff; --cyan:#37c8d8;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:300px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:210px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono);margin-top:10px}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.preset.pac{border-radius:8px} .preset.pac.on{border-color:var(--ven);background:rgba(63,130,230,.16);color:#cfe0ff}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.banner.crit{border-color:rgba(255,93,108,.45)} .banner.crit b{color:var(--crit)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.vfhead{margin:6px 0 14px} .vfsub{font-family:var(--mono);font-size:.82rem;color:var(--accent);margin:2px 0} .vfopen{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 13px;margin-top:8px;font-size:.9rem;color:var(--ink-dim)}
+.vfstage{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r-sm);padding:12px 14px;margin:12px 0;background:#0b0f18}
+.vfstage.locked{border-left-color:var(--ink-faint);color:var(--ink-faint);font-size:.86rem;font-style:italic}
+.vffase{font-weight:700;color:var(--ink);font-size:.96rem} .vffase .vfnum{display:inline-block;min-width:1.5em;text-align:center;background:var(--accent);color:#04121a;border-radius:50%;font-family:var(--mono);font-size:.8rem;margin-right:6px}
+.vfevol{color:var(--ink-dim);font-size:.88rem;margin:4px 0 10px}
+.vfas{border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;margin:7px 0;background:#0e1320}
+.vfas.ok{border-color:rgba(62,199,141,.5)} .vfas.no{border-color:rgba(229,57,78,.5)}
+.vfq{font-size:.9rem;color:var(--ink);margin-bottom:7px}
+.vfbtns{display:flex;gap:8px} .vfb{font-family:var(--mono);font-size:.82rem;padding:5px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:#11192a;color:var(--ink-dim);cursor:pointer} .vfb:hover{border-color:var(--accent);color:var(--ink)}
+.vffb{font-size:.84rem;color:var(--ink-dim);line-height:1.45} .vfas.ok .vffb b{color:var(--ok)} .vfas.no .vffb b{color:var(--crit)}
+.vfprog{font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);margin-top:8px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.pista{margin-top:7px}
+.pista summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.pista[open] summary{color:var(--ink-faint)}
+.pista .pb{margin-top:5px;color:var(--ink-dim);font-size:.9rem}
+.casebox{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.casebox h3{margin:0 0 3px} .casebox .cprog{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:10px}
+.decision{border-left:3px solid var(--ven);background:#0e1320;border-radius:0 var(--r-sm) var(--r-sm) 0;padding:11px 14px;margin:10px 0}
+.decision .dq{margin-bottom:9px}
+.dopts{display:grid;gap:7px}
+.dfb{display:none;margin-top:9px;font-size:.88rem;color:var(--ink-dim)} .dfb.show{display:block}
+.dfb .cons{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.predict{background:#0e1320;border:1px solid rgba(63,130,230,.4);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.predict .pq{margin-bottom:9px}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
+.dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
+.casc-num{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.casc-num div{background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.casc-num div b{display:block;color:var(--ink);font-size:1.02rem}
+.casc-num div.lo b{color:var(--crit)} .casc-num div.mid b{color:var(--warn)} .casc-num div.hi b{color:var(--ok)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 29 · ↳ capstone · caso integrado</div>
+    <h1>O choque inteiro num só paciente</h1>
+    <p class="sub">O capstone costura o braço: um paciente cuja <b>cascata inteira</b> é computada de ponta a ponta — conteúdo (CaO₂) → entrega (DO₂) → consumo/extração (VO₂, SvO₂, lactato) → pressão (PAM = DC × RVS) → perfil. A regra que tudo unifica: <b>decompor a PAM, achar o termo quebrado, escolher a alavanca que o move e pesar o custo.</b></p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <text x="20" y="20" fill="var(--art)" font-size="11" font-family="monospace">CaO₂</text><text x="20" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">conteúdo</text>
+      <text x="170" y="20" fill="var(--ven)" font-size="11" font-family="monospace">DO₂ = DC·CaO₂</text><text x="170" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">entrega</text>
+      <text x="400" y="20" fill="var(--ok)" font-size="11" font-family="monospace">VO₂ / SvO₂ / lactato</text><text x="400" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">extração</text>
+      <text x="700" y="20" fill="var(--purp)" font-size="11" font-family="monospace">PAM = DC·RVS</text><text x="700" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">pressão/perfil</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-cascata"     aria-controls="panel-cascata"     aria-selected="false"><span class="tn">3</span>Cascata</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+    <button class="tab" role="tab" id="tab-vf"          aria-controls="panel-vf"          aria-selected="false"><span class="tn">6</span>Casos V/F</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>Caso integrado · a fisiologia que evolui</h2>
+    <p class="lead">Um paciente que <b>muda de categoria</b> ao longo do tempo. A cada ato: decomponha a PAM, identifique o termo quebrado e escolha a alavanca — o motor mostra a consequência na cascata.</p>
+    <div class="ato">
+      <div class="at">Ato 0 · admissão</div>
+      <p id="caso-narr">Mulher, 62 anos, pielonefrite. Chega quente, taquicárdica e hipotensa.</p>
+      <div class="vitais" id="caso-vitais"></div>
+    </div>
+    <div class="casebox" id="caso-interativo"></div>
+    <div class="cprog" id="caso-prog" style="margin-top:10px"></div>
+
+    <h3>Prever antes de revelar</h3>
+    <div class="predict" id="prever">
+      <div class="pq" id="prever-q">Num distributivo (RVS quebrada), aplicar um <b>α1 puro</b> (vasopressor) à PAM faz o quê — e por quê?</div>
+      <div class="opts" id="prever-opts">
+        <button class="opt" data-v="sobe">Sobe a PAM movendo o termo certo (RVS)</button>
+        <button class="opt" data-v="afunda">Derruba o débito, afundando a perfusão</button>
+        <button class="opt" data-v="nada">Não muda nada</button>
+      </div>
+      <div class="fb" id="prever-fb"></div>
+    </div>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha · a síntese do braço</h2>
+    <p class="lead">Nove passos que amarram o módulo inteiro num só raciocínio.</p>
+    <div class="trilha" id="trilha"></div>
+  </section>
+
+  <!-- 3 · CASCATA (instrumento) -->
+  <section class="panel" role="tabpanel" id="panel-cascata" aria-labelledby="tab-cascata">
+    <h2>Cascata · o transporte computado ao vivo</h2>
+    <p class="lead">Mexa nas <b>primitivas</b> do paciente e veja a cadeia inteira responder: conteúdo → entrega → consumo/extração → pressão. A curva mostra onde a entrega cruza o limiar crítico (supply-dependence).</p>
+    <div class="plotwrap"><canvas class="casc" id="casc" width="860" height="300"></canvas>
+      <div class="legend"><span><i style="background:var(--art)"></i>conteúdo/entrega</span><span><i style="background:var(--ok)"></i>VO₂ (consumo)</span><span><i style="background:var(--warn)"></i>DO₂crit</span><span><i style="background:var(--purp)"></i>ponto do paciente</span></div>
+    </div>
+    <div class="casc-num" id="casc-num"></div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Hemoglobina <span class="v"><span id="vHb">15</span> g/dL</span></label><input id="iHb" type="range" min="3" max="18" step="0.5" value="15"></div>
+        <div class="ctrl"><label>SaO₂ <span class="v"><span id="vSat">98</span> %</span></label><input id="iSat" type="range" min="60" max="100" step="1" value="98"></div>
+        <div class="ctrl"><label>Freq. cardíaca <span class="v"><span id="vHr">75</span> bpm</span></label><input id="iHr" type="range" min="40" max="170" step="1" value="75"></div>
+        <div class="ctrl"><label>Contratilidade <span class="v"><span id="vIno">0,70</span></span></label><input id="iIno" type="range" min="10" max="140" step="1" value="70"></div>
+        <div class="ctrl"><label>Pré-carga <span class="v"><span id="vPre">0,90</span></span></label><input id="iPre" type="range" min="20" max="150" step="1" value="90"></div>
+        <div class="ctrl"><label>RVS <span class="v"><span id="vRvs">1200</span> dyn</span></label><input id="iRvs" type="range" min="300" max="2600" step="20" value="1200"></div>
+        <div class="ctrl"><label>Demanda VO₂ <span class="v"><span id="vDem">250</span> mL/min</span></label><input id="iDem" type="range" min="150" max="600" step="10" value="250"></div>
+        <div class="ctrl"><label>Extração máx. (O2ERmax) <span class="v"><span id="vExt">0,60</span></span></label><input id="iExt" type="range" min="25" max="75" step="1" value="60"></div>
+      </div>
+      <div class="hint" id="casc-hint"></div>
+    </div>
+    <div class="pharm"><b>A cadeia:</b> CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂ · DO₂ = DC × CaO₂ × 10 · acima do DO₂crit o VO₂ é independente da oferta; abaixo, vira supply-dependent e acumula déficit → lactato · PAM = PVC + DC·RVS/80. <span class="fw">Números exatos dentro do modelo; é demonstração de mecanismo, não medida de paciente real.</span></div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · termo quebrado × alavanca</h2>
+    <p class="lead">Escolha uma <b>categoria</b> (que quebra termos) e uma <b>alavanca</b> (receptor→termo ou volume/transfusão). O motor diz qual é o termo quebrado e se a alavanca o move — sem virar conduta.</p>
+    <h3>Categoria do choque</h3>
+    <div class="presets" id="lab-presets"></div>
+    <h3>Alavanca</h3>
+    <div class="presets" id="lab-levers"></div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">veredito do mecanismo</div>
+      <div class="vbig" id="lab-vbig">escolha categoria + alavanca</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners"></div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · 30 questões integradas</h2>
+    <p class="lead">Dificuldade crescente, gabarito disproporcional e a correta nunca é só a mais longa — pegadinhas perspicazes, feedback causal.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <!-- 6 · CASOS V/F -->
+  <section class="panel" role="tabpanel" id="panel-vf" aria-labelledby="tab-vf">
+    <h2>Casos dinâmicos · Verdadeiro / Falso · 120 assertivas</h2>
+    <p class="lead">Seis casos integrados que <b>evoluem por etapas</b>. A cada interação, julgue as assertivas sobre o caso, a condução (mecanismo) e os correlatos. São afirmações educacionais de mecanismo — não conduta para paciente real.</p>
+    <div class="presets" id="vf-navcasos"></div>
+    <div id="vf-caso"></div>
+    <div class="scorebar" id="vf-score">0 / 0 assertivas · 0 corretas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> O capstone integra os mecanismos do braço (transporte, hemodinâmica, categorias, alavancas) num único modelo computado. Ensina-se a <b>decompor</b> e a <b>casar a alavanca ao termo quebrado</b> — <b>nunca</b> dose, titulação, alvo ou conduta para um paciente específico.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ As primitivas (Hb, SaO₂, contratilidade, pré-carga, RVS, demanda, extração) são <b>fatores didáticos normalizados</b>, não medidas reais. → A cascata é exata <em>dentro</em> do modelo, mas simplifica (curva de O₂, regionalização, reflexos). → O "termo quebrado" e a "adequação" da alavanca são do mecanismo, não recomendação. → PAM = DC × RVS pode subir com perfusão pior. → As alavancas vasoativas operam sob o <b>SAFETY.md §11</b>: referência educacional, sem prescrição individualizada.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde1.html">M1 · CaO₂</a> e <a href="perfunde8.html">M8 · DO₂/VO₂</a> — o conteúdo e a entrega que abrem a cascata.</div>
+    <div class="ponte">→ <a href="perfunde9.html">M9 · PAM = DC × RVS</a> — a inversão que se decompõe aqui.</div>
+    <div class="ponte">→ <a href="perfunde16.html">M16 · cardiogênico</a>, <a href="perfunde20.html">M20 · distributivo</a>, <a href="perfunde18.html">M18 · obstrutivo</a> — as categorias integradas.</div>
+    <div class="ponte">→ <a href="perfunde23.html">M23 · misto</a> e <a href="perfunde27.html">M27 · 4 perfis</a> — quando os termos se somam.</div>
+    <div class="ponte">→ <a href="perfunde28.html">M28 · vasopressores & inotrópicos</a> — a alavanca receptor→termo.</div>
+    <div class="ponte"><span class="pend">→ M30 · exame global de domínio — o fechamento avaliativo (em breve).</span></div>
+  </div>
+
+  <footer>
+    PERFUNDE · CHOCA · Módulo 29 — capstone · caso integrado<br>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira
+  </footer>
+</div>
+
+<!-- model29.js · motor unificado (SAFETY.md §11) inlined -->
+<script>
+// build/m29/model29.js — Motor UNIFICADO do capstone (PERFUNDE · CHOCA · Módulo 29)
+// Costura o braço inteiro num único paciente integrado: conteúdo (CaO2) →
+// entrega (DO2) → consumo/extração (VO2, O2ER, SvO2, lactato) → pressão
+// (PAM = PVC + DC·RVS/80) → perfil. As categorias de choque são presets que
+// quebram termos específicos; a alavanca vasoativa (receptor→termo, do M28)
+// recalcula a cascata inteira. Funções puras, determinísticas, calibradas
+// contra os motores canônicos m1 (CaO2/DO2), m8 (VO2/supply-dependence) e
+// m9 (PAM=DC×RVS). Firewall SaMD: mecanismo, não conduta individualizada.
+// ---- constantes canônicas (consistentes com m1/m8/m9) ----
+var K_HUFNER=1.34, K_DISS=0.003;     // CaO2 = 1.34·Hb·SaO2 + 0.003·PaO2
+var SV_BASE=83;                       // mL — calibra CO normal ≈ 5 L/min
+var K_AFTER=0.25;                      // sensibilidade do VS à pós-carga (modulada pela fraqueza do ventrículo)
+var LACT_BASE=1.0, LACT_K=0.03;   // m8
+var PVC_NL=6;                         // mmHg
+
+function clamp(x,a,b){ return x<a?a:(x>b?b:x); }
+function num(x,d){ return (typeof x==='number'&&isFinite(x))?x:d; }
+function asFrac(s){ return s>1 ? s/100 : s; }
+
+// ---- paciente integrado normal (todas as primitivas em bandas fisiológicas) ----
+var NORMAL={ hb:15, sao2:0.98, pao2:95, hr:75, contractility:0.70, preload:0.90, rvs:1200, vo2demand:250, o2ermax:0.60, pvc:PVC_NL };
+
+function normState(s){ s=s||{};
+  return { hb:clamp(num(s.hb,NORMAL.hb),2,22), sao2:clamp(asFrac(num(s.sao2,NORMAL.sao2)),0.4,1), pao2:clamp(num(s.pao2,NORMAL.pao2),20,600),
+    hr:clamp(num(s.hr,NORMAL.hr),30,200), contractility:clamp(num(s.contractility,NORMAL.contractility),0.05,1.6),
+    preload:clamp(num(s.preload,NORMAL.preload),0.1,1.6), rvs:clamp(num(s.rvs,NORMAL.rvs),200,3000),
+    vo2demand:clamp(num(s.vo2demand,NORMAL.vo2demand),120,700), o2ermax:clamp(num(s.o2ermax,NORMAL.o2ermax),0.2,0.8), pvc:clamp(num(s.pvc,NORMAL.pvc),0,20) };
+}
+
+// ---- blocos físicos ----
+function cao2(hb,sao2,pao2){ return K_HUFNER*hb*asFrac(sao2) + K_DISS*pao2; }                  // mL/dL
+// Volume sistólico SENSÍVEL À PÓS-CARGA: o ventrículo fraco (contratilidade baixa)
+// perde VS quando a RVS sobe; o ventrículo normal é quase insensível. rvs default
+// 1200 (normal) → fator 1, preservando a calibração e as chamadas de 2 argumentos.
+function strokeVolume(contractility, preload, rvs){ var p=preload*preload;
+  var base=SV_BASE*(contractility/0.7)*(p/(p+0.2));
+  var aff=1 - K_AFTER*((num(rvs,1200)-1200)/1000)*(1.1-clamp(num(contractility,0.7),0.05,1.1));
+  return base*clamp(aff,0.3,1.25); } // mL
+function cardiacOutput(hr, contractility, preload, rvs){ return hr*strokeVolume(contractility,preload,rvs)/1000; } // L/min
+function pamOf(co, rvs, pvc){ return (pvc==null?PVC_NL:pvc) + co*rvs/80; }                     // mmHg (RVS em dyn·s·cm⁻⁵)
+function do2crit(vo2demand,o2ermax){ return vo2demand/o2ermax; }
+function vo2Of(do2, vo2demand, o2ermax){ var crit=do2crit(vo2demand,o2ermax); return do2>=crit ? vo2demand : o2ermax*do2; }
+
+// ---- cascata integrada completa ----
+function cascade(state){
+  var s=normState(state);
+  var CaO2=cao2(s.hb,s.sao2,s.pao2);
+  var SV=strokeVolume(s.contractility,s.preload,s.rvs);
+  var CO=s.hr*SV/1000;
+  var DO2=CO*CaO2*10;                                  // mL/min
+  var crit=do2crit(s.vo2demand,s.o2ermax);
+  var VO2=vo2Of(DO2,s.vo2demand,s.o2ermax);
+  var O2ER=DO2>0?VO2/DO2:0;
+  var SvO2=DO2>0?s.sao2*(1-O2ER):0;
+  var deficit=Math.max(0,s.vo2demand-VO2);
+  var lactate=LACT_BASE+LACT_K*deficit;
+  var PAM=clamp(pamOf(CO,s.rvs,s.pvc),35,140);
+  var supplyDependent=DO2<crit;
+  return { hb:s.hb, sao2:s.sao2, pao2:s.pao2, hr:s.hr, contractility:s.contractility, preload:s.preload, rvs:s.rvs, vo2demand:s.vo2demand, o2ermax:s.o2ermax, pvc:s.pvc,
+    cao2:CaO2, sv:SV, co:CO, do2:DO2, do2crit:crit, vo2:VO2, o2er:O2ER, svo2:SvO2, lactate:lactate, o2deficit:deficit, pam:PAM,
+    supplyDependent:supplyDependent,
+    profile:profileOf(CO,s.rvs), cryptic:(PAM>=65 && deficit>0) };
+}
+function profileOf(co, rvs){
+  return { temp:(rvs<800?'quente':(rvs>1400?'frio':'neutro')), fluxo:(co<3.5?'baixo':(co>7?'alto':'normal')),
+           vasodilatado:rvs<800, vasoconstrito:rvs>1400, baixoDebito:co<3.5 };
+}
+
+// ---- classificador do TERMO QUEBRADO (qual primitiva saiu da banda) ----
+// retorna o termo dominante e o ranking; bandas didáticas.
+var TERMOS=[
+  { id:'conteudo', label:'conteúdo de O₂ (CaO₂)', test:function(s){ return Math.max(0,(18 - cao2(s.hb,s.sao2,s.pao2))/18); } },        // anemia/hipoxemia
+  { id:'pre',      label:'retorno/pré-carga',      test:function(s){ return Math.max(0,(0.85 - s.preload)/0.85); } },                   // hipovolêmico/obstrutivo
+  { id:'bomba',    label:'bomba (contratilidade)', test:function(s){ return Math.max(0,(0.6 - s.contractility)/0.6); } },               // cardiogênico
+  { id:'rvs',      label:'resistência (RVS)',      test:function(s){ return Math.max(0,(950 - s.rvs)/950); } },                          // distributivo
+  { id:'extracao', label:'extração/mitocôndria',   test:function(s){ return Math.max(0,(0.55 - s.o2ermax)/0.55) + Math.max(0,(s.vo2demand-300)/300)*0.5; } } // micro/mito
+];
+function brokenRanking(state){ var s=normState(state); return TERMOS.map(function(t){ return { id:t.id, label:t.label, sev:t.test(s) }; }).sort(function(a,b){ return b.sev-a.sev; }); }
+function brokenTerm(state){ var r=brokenRanking(state); return (r[0].sev>0.12)?r[0].id:'nenhum'; }
+function isMixed(state){ var r=brokenRanking(state); var sig=r.filter(function(x){return x.sev>0.2;}); return sig.length>=2; }
+
+// ---- alavanca vasoativa: receptor → termo (consistente com o M28) ----
+// perfil de receptores normalizado {a1,b1,b2,v1,pde}; aplica deltas à cascata.
+var LEVERS={
+  noradrenalina:{ nome:'Noradrenalina', a1:1.0, b1:0.25, b2:0, v1:0, pde:0 },
+  adrenalina:   { nome:'Adrenalina',     a1:0.8, b1:0.9,  b2:0.6, v1:0, pde:0 },
+  dobutamina:   { nome:'Dobutamina',     a1:0,   b1:1.0,  b2:0.5, v1:0, pde:0 },
+  dopamina:     { nome:'Dopamina',       a1:0.5, b1:0.7,  b2:0.2, v1:0, pde:0 },
+  vasopressina: { nome:'Vasopressina',   a1:0,   b1:0,    b2:0,   v1:1.0, pde:0 },
+  milrinona:    { nome:'Milrinona',      a1:0,   b1:0,    b2:0,   v1:0, pde:1.0 },
+  fenilefrina:  { nome:'Fenilefrina',    a1:1.0, b1:0,    b2:0,   v1:0, pde:0 },
+  volume:       { nome:'Volume (pré-carga)', a1:0, b1:0,  b2:0,   v1:0, pde:0, dPreload:0.35 },
+  transfusao:   { nome:'Transfusão (conteúdo)', a1:0, b1:0, b2:0, v1:0, pde:0, dHb:3 }
+};
+var K_RVS=520, K_INO=0.42, K_HR=26, K_MET=130;   // ganhos didáticos por unidade de receptor
+function applyLever(state, lever){
+  var s=normState(state); var L=lever||{};
+  var dRVS=K_RVS*(num(L.a1,0)+num(L.v1,0)) - K_RVS*0.8*num(L.b2,0) - K_RVS*0.7*num(L.pde,0);
+  var dIno=K_INO*(num(L.b1,0)+num(L.pde,0));
+  var dHR =K_HR*num(L.b1,0);
+  var dMet=K_MET*(num(L.b1,0)+num(L.b2,0));
+  return normState({ hb:s.hb+num(L.dHb,0), sao2:s.sao2, pao2:s.pao2, hr:s.hr+dHR,
+    contractility:s.contractility+dIno, preload:s.preload+num(L.dPreload,0), rvs:s.rvs+dRVS,
+    vo2demand:s.vo2demand+dMet, o2ermax:s.o2ermax, pvc:s.pvc });
+}
+
+// ---- adequação da alavanca ao termo quebrado (mecanismo casado + custo) ----
+function appropriate(state, lever){
+  var pre=cascade(state), broken=brokenTerm(state);
+  var post=cascade(applyLever(state, lever));
+  var rankPre=brokenRanking(state), rankPost=brokenRanking(post);
+  var sevPre=(rankPre.filter(function(x){return x.id===broken;})[0]||{sev:0,label:broken});
+  var sevPost=(rankPost.filter(function(x){return x.id===broken;})[0]||{sev:0});
+  var moveuTermo = broken==='nenhum' ? false : (sevPost.sev < sevPre.sev - 0.04);
+  var pioraFluxo = post.co < pre.co - 0.3;                      // ex.: α1 puro afundando o débito
+  var pioraDeficit = post.o2deficit > pre.o2deficit + 1;
+  var piorouPerfusao = pioraFluxo || pioraDeficit;
+  var metCost = post.vo2demand - pre.vo2demand;
+  var custoProibitivo = !moveuTermo && metCost > 120;          // β custa O2 sem mover o termo
+  var melhorouEntrega = (post.o2deficit < pre.o2deficit - 1) || (moveuTermo && !piorouPerfusao && post.co > pre.co - 0.05 && post.pam >= pre.pam - 2);
+  var ok = moveuTermo && !piorouPerfusao && !custoProibitivo;
+  var why;
+  if(broken==='nenhum') why='Sem termo claramente quebrado para casar a alavanca.';
+  else if(pioraFluxo) why='Alavanca no termo errado: pós-carga sobre bomba fraca afunda o débito.';
+  else if(pioraDeficit) why='A alavanca piora a relação oferta/demanda (déficit de O₂ sobe).';
+  else if(custoProibitivo) why='Não move o termo quebrado e cobra demanda de O₂ desproporcional.';
+  else if(ok) why='Move o termo quebrado ('+sevPre.label+') e melhora a entrega, com custo aceitável.';
+  else why='Não move suficientemente o termo quebrado.';
+  return { ok:ok, broken:broken, why:why, moveuTermo:moveuTermo, melhorouEntrega:melhorouEntrega, piorouPerfusao:piorouPerfusao, custoProibitivo:custoProibitivo, pre:pre, post:post };
+}
+
+// ---- presets de categoria (cada um quebra termos específicos) ----
+var PRESETS={
+  normal:       { label:'Normal', state:{}, broken:'nenhum' },
+  hipovolemico: { label:'Hipovolêmico', state:{ preload:0.45, hr:115, rvs:1500 }, broken:'pre' },
+  hemorragico:  { label:'Hemorrágico', state:{ preload:0.5, hb:7, hr:120, rvs:1450 }, broken:'pre' },
+  cardiogenico: { label:'Cardiogênico', state:{ contractility:0.32, preload:1.15, hr:108, rvs:1750 }, broken:'bomba' },
+  obstrutivo:   { label:'Obstrutivo (TEP)', state:{ preload:0.5, contractility:0.6, hr:122, rvs:1500 }, broken:'pre' },
+  distributivo: { label:'Distributivo/séptico', state:{ rvs:520, hr:120, o2ermax:0.42, vo2demand:330 }, broken:'rvs' },
+  anafilatico:  { label:'Anafilático', state:{ rvs:480, preload:0.6, hr:130 }, broken:'rvs' },
+  neurogenico:  { label:'Neurogênico', state:{ rvs:560, hr:55, preload:0.7 }, broken:'rvs' },
+  misto:        { label:'Misto (séptico+cardiogênico)', state:{ rvs:600, contractility:0.38, hr:118, o2ermax:0.45, vo2demand:320 }, broken:'rvs' },
+  criptico:     { label:'Críptico/compensado', state:{ contractility:0.5, rvs:1500, hr:95, o2ermax:0.5, vo2demand:300 }, broken:'bomba' }
+};
+
+window.M29={ K_HUFNER:K_HUFNER, K_DISS:K_DISS, SV_BASE:SV_BASE, NORMAL:NORMAL, normState:normState,
+    cao2:cao2, strokeVolume:strokeVolume, cardiacOutput:cardiacOutput, pamOf:pamOf, do2crit:do2crit, vo2Of:vo2Of,
+    cascade:cascade, profileOf:profileOf, brokenRanking:brokenRanking, brokenTerm:brokenTerm, isMixed:isMixed,
+    LEVERS:LEVERS, applyLever:applyLever, appropriate:appropriate, PRESETS:PRESETS, TERMOS:TERMOS };
+</script>
+<!-- quiz29.js · banco de 30 MCQ inlined -->
+<script>
+// build/m29/quiz29.js — Banco de MCQ integradas do capstone (Módulo 29)
+// 30 questões que cruzam o braço inteiro (CaO2/DO2, supply-dependence, a
+// inversão PAM=DC×RVS, micro/lactato, as categorias, misto, 4 perfis,
+// receptor→termo). Dificuldade crescente. Gabarito DISPROPORCIONAL e a correta
+// NUNCA é sistematicamente a mais longa. Firewall SaMD: mecanismo, não conduta.
+// cada item: {tier:'b'|'i'|'a', cap, q, o:[4], a:índice da correta tal como AUTORADA, fb, ref?:presetId}
+var RAW=[
+  // — básico: leitura da cascata —
+  { tier:'b', cap:'Conteúdo de O₂', q:'Numa anemia grave com SaO₂ e PaO₂ normais, o que cai primeiro na cadeia de transporte?', o:[
+    'a PaO₂, porque a hemoglobina disponível deixa de saturar adequadamente o plasma','o conteúdo arterial de O₂ (CaO₂), porque depende da hemoglobina','a saturação venosa, exclusivamente, sem afetar o conteúdo arterial','nada muda enquanto a SaO₂ estiver normal'], a:1,
+    fb:'CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂: a Hb é o termo dominante. Menos Hb → menos conteúdo, mesmo com SaO₂ e PaO₂ normais.' },
+  { tier:'b', cap:'DO₂', q:'A entrega de oxigênio (DO₂) é o produto de:', o:[
+    'débito cardíaco × conteúdo arterial de O₂ (× 10)','pressão arterial média × resistência vascular','frequência cardíaca × pressão de pulso','saturação venosa × lactato'], a:0,
+    fb:'DO₂ = DC × CaO₂ × 10. Cai por bomba/ritmo/volume (DC) ou por anemia/hipoxemia (CaO₂).' },
+  { tier:'b', cap:'A inversão', q:'Por que a pressão arterial média (PAM) é um número que engana?', o:[
+    'porque é sempre normal no choque','porque pode estar normal com débito e perfusão ruins, já que PAM = DC × RVS','porque não tem relação com o débito cardíaco','porque depende apenas da volemia e do tônus venoso, sendo a resistência arteriolar um fator secundário e tardio'], a:1,
+    fb:'PAM = PVC + DC·RVS: a vasoconstrição (RVS↑) sustenta a PAM enquanto o débito e a perfusão despencam.' },
+  { tier:'b', cap:'Lactato', q:'Um lactato elevado, na cadeia de transporte, sinaliza sobretudo:', o:[
+    'sempre infecção bacteriana ativa','déficit entre demanda e oferta de O₂ (ou desacoplamento metabólico)','exclusivamente falência hepática, já que o fígado é o único órgão capaz de produzir e depurar o lactato circulante','um erro laboratorial na maioria das vezes'], a:1,
+    fb:'Lactato sobe quando a oferta não cobre a demanda (tipo A) ou por estímulo metabólico/β (tipo B). É marcador, não diagnóstico único.' },
+  { tier:'b', cap:'Perfil', q:'Num mapa débito × resistência, o perfil "frio" corresponde a:', o:[
+    'resistência vascular elevada (vasoconstrição) com débito baixo','resistência baixa com débito alto','pressão de pulso aumentada por elevação isolada do volume sistólico, mantida a resistência vascular preservada','saturação venosa alta'], a:0,
+    fb:'Frio = vasoconstrito (RVS alta) tentando defender a PAM apesar do débito baixo; quente = vasodilatado (RVS baixa).' },
+  { tier:'b', cap:'SvO₂', q:'A saturação venosa central (ScvO₂) tende a CAIR quando:', o:[
+    'a oferta de O₂ cai e o tecido extrai mais para manter o consumo','a oferta de O₂ sobe acima da demanda','a hemoglobina aumenta sem mudar o débito, elevando proporcionalmente a saturação do sangue que retorna ao coração direito','a demanda metabólica zera'], a:0,
+    fb:'SvO₂ ≈ SaO₂·(1 − O2ER): se a oferta cai, a extração sobe e a SvO₂ desce. (Pode subir paradoxalmente quando a extração falha — micro/mito.)' },
+  { tier:'b', cap:'Termo quebrado', q:'A lógica unificadora do braço para escolher uma alavanca é:', o:[
+    'tratar sempre a pressão até normalizar o número','identificar o termo quebrado, escolher a alavanca que o move e pesar o custo','dar volume a todos os choques de início, pois a pré-carga é o determinante universal do débito cardíaco','começar por vasopressor em qualquer caso'], a:1,
+    fb:'Termo quebrado → alavanca que o move → custo. A droga/medida é mecanismo casado ao problema, não receita fixa.' },
+  { tier:'b', cap:'Categorias', q:'O choque distributivo se distingue por:', o:[
+    'débito baixo com resistência muito alta','resistência vascular baixa (vasoplegia), com débito geralmente alto','pré-carga altíssima por retenção hidrossalina, com congestão venosa sistêmica como traço predominante','conteúdo de O₂ sempre baixo'], a:1,
+    fb:'Distributivo = RVS baixa (vasoplegia); o débito costuma estar alto. O termo quebrado é a resistência.' },
+
+  // — intermediário: relações e contrastes —
+  { tier:'i', cap:'Supply-dependence', q:'Abaixo do limiar crítico de entrega (DO₂crit), o consumo de O₂ (VO₂) passa a:', o:[
+    'permanecer constante, pois é independente da oferta em qualquer faixa','depender linearmente da oferta — cai junto com a DO₂, e surge déficit/lactato','aumentar acima da demanda','não ter relação com a extração'], a:1,
+    fb:'Acima do DO₂crit, o VO₂ é independente da oferta (a extração compensa); abaixo, vira supply-dependent e acumula déficit → lactato.' },
+  { tier:'i', cap:'Mesma PAM', q:'Dois pacientes têm a MESMA PAM de 70 mmHg. Por que isso não os iguala?', o:[
+    'porque a PAM de 70 é sempre normal e nada muda','porque um pode ter DC alto/RVS baixa e o outro DC baixo/RVS alta — mecânicas opostas','porque a PAM não depende do débito cardíaco, apenas do tônus arteriolar e da pressão venosa central medida','porque ambos têm necessariamente o mesmo lactato'], a:1,
+    fb:'PAM = DC × RVS: o mesmo produto nasce de fatores opostos. Decompor antes de interpretar.' },
+  { tier:'i', cap:'Cardiogênico', q:'No cardiogênico, por que a resistência vascular costuma estar ALTA?', o:[
+    'por vasoplegia inflamatória','por vasoconstrição compensatória que tenta defender a PAM apesar do débito baixo','porque o coração bombeia em excesso','por efeito vasoconstritor direto do lactato acumulado sobre a musculatura lisa das arteríolas periféricas'], a:1,
+    fb:'O baixo débito dispara vasoconstrição reflexa; a RVS alta mascara a PAM. O termo quebrado é a bomba, não a RVS.' },
+  { tier:'i', cap:'Pós-carga', q:'Dar um vasoconstritor α1 puro a um ventrículo já fraco tende a:', o:[
+    'melhorar o débito por aumentar a contratilidade','reduzir o débito, porque a pós-carga extra sobrecarrega a bomba que já falha','não ter efeito sobre o débito','corrigir a causa da falência ao restaurar a pressão de perfusão coronária do miocárdio isquêmico'], a:1,
+    fb:'α1 sobe a pós-carga = RVS; o ventrículo fraco é sensível à pós-carga e o volume sistólico cai. Termo errado.' },
+  { tier:'i', cap:'Micro/mito', q:'No choque séptico, uma ScvO₂ paradoxalmente ALTA com lactato alto sugere:', o:[
+    'oferta excessiva e tecido satisfeito','falha de extração/utilização (micro/mitocôndria): o O₂ chega mas não é usado','anemia grave isolada, com a queda do conteúdo arterial reduzindo a saturação do sangue venoso de retorno','erro de medida obrigatório'], a:1,
+    fb:'Quando a extração falha, o sangue volta "cheio" de O₂ (SvO₂ alta) enquanto o tecido segue faminto (lactato alto).' },
+  { tier:'i', cap:'Volume como droga', q:'A reposição volêmica perde benefício quando:', o:[
+    'o paciente deixa de ser responsivo a volume — mais pré-carga não gera mais débito, só congestão','a pré-carga ainda está na porção ascendente da curva','o débito ainda sobe a cada alíquota','nunca; volume sempre ajuda'], a:0,
+    fb:'Frank-Starling tem platô: passado o ponto responsivo, volume vira custo (congestão) sem ganho de débito.' },
+  { tier:'i', cap:'Inodilatador', q:'A vantagem mecanística de um inodilatador (PDE-3) sobre um β-agonista, no mesmo objetivo inotrópico, é:', o:[
+    'elevar a resistência vascular ao mesmo tempo','gerar inotropia sem passar pelo receptor β, com menos demanda de O₂ e arritmia','ser dose fixa e dispensar diluição','sedar e reduzir a demanda metabólica cerebral concomitante, poupando oxigênio para o miocárdio sobrecarregado'], a:1,
+    fb:'A PDE-3 contorna o β: sobe a contratilidade com menos custo adrenérgico (mas vasodilata, podendo baixar a PA).' },
+  { tier:'i', cap:'Vasopressina', q:'O que torna a vasopressina (V1) singular entre os vasopressores?', o:[
+    'sobe a contratilidade seletivamente','sustenta a pressão por via NÃO-adrenérgica, poupando catecolamina','broncodilata intensamente','reduz seletivamente a pós-carga do ventrículo direito ao vasodilatar o leito arterial pulmonar'], a:1,
+    fb:'V1 age fora do eixo adrenérgico: pressão poupadora de catecolamina, útil na vasoplegia.' },
+  { tier:'i', cap:'Obstrutivo', q:'No TEP maciço, o termo mecanicamente quebrado é mais bem descrito como:', o:[
+    'vasoplegia sistêmica','barreira ao débito por sobrecarga aguda do ventrículo direito (pós-carga pulmonar)','perda primária de conteúdo de O₂','excesso de pré-carga do ventrículo esquerdo por congestão pulmonar retrógrada maciça e aguda'], a:1,
+    fb:'A obstrução pulmonar sobrecarrega o VD; o VE recebe menos. É obstrutivo — tratar a obstrução é o pilar.' },
+  { tier:'i', cap:'Anaf × neuro', q:'Anafilático e neurogênico são ambos distributivos. O melhor discriminador clínico é:', o:[
+    'a cor da pele isoladamente','a frequência cardíaca: alta favorece anafilático; baixa/normal favorece neurogênico','o valor exato da PAM','a hemoglobina'], a:1,
+    fb:'Ambos vasodilatam, mas por vias distintas; a FC (resposta simpática presente × ausente) os separa.' },
+  { tier:'i', cap:'Críptico', q:'Choque "críptico/compensado" significa:', o:[
+    'PAM francamente baixa e sintomática desde a apresentação, dispensando qualquer marcador laboratorial de perfusão','PAM normal mantida por compensação, mascarando hipoperfusão (lactato/marcadores denunciam)','ausência total de choque','choque apenas laboratorial, sem risco'], a:1,
+    fb:'A compensação tem reserva finita: a PAM normal mente até o precipício. Marcadores ocultos revelam o déficit.' },
+  { tier:'i', cap:'Adrenalina', q:'A hiperlactatemia que pode surgir com adrenalina, sem piora da perfusão, deve-se a:', o:[
+    'hipoperfusão tecidual por vasoconstrição excessiva','estímulo β2 da glicólise (lactato tipo B), e não a déficit de O₂','contaminação da amostra','falência hepática aguda'], a:1,
+    fb:'β2 acelera a glicólise → lactato tipo B; pode simular piora sem haver déficit de oferta.' },
+
+  // — avançado: integração e armadilhas —
+  { tier:'a', cap:'Misto', q:'Um paciente séptico evolui com FE 30% ao ECO. O que muda na conduta mecanística?', o:[
+    'nada: segue sendo distributivo puro','passa a misto (RVS baixa + bomba fraca): endereçar os dois termos, p.ex. vasopressor + inotrópico','deve-se apenas repor volume até normalizar a PAM','troca-se o diagnóstico para cardiogênico puro, ignorando a vasoplegia'], a:1,
+    fb:'Cardiomiopatia séptica soma um termo de bomba ao distributivo. Mistos pedem alavancas para cada termo quebrado.' },
+  { tier:'a', cap:'DO₂ vs PAM', q:'Subir apenas a RVS (vasoconstritor puro) num débito baixo pode:', o:[
+    'garantir a perfusão tecidual por elevar a PAM','elevar a PAM enquanto a entrega (DO₂) e a perfusão pioram, porque o fluxo não aumentou','aumentar o débito cardíaco diretamente, já que mais pressão na raiz da aorta acelera o esvaziamento ventricular','corrigir a anemia subjacente'], a:1,
+    fb:'PAM ≠ perfusão. RVS alta sobe o número, mas a DO₂ depende do fluxo (DC × CaO₂). Pressão sem fluxo engana.' },
+  { tier:'a', cap:'Extração', q:'Por que aumentar a DO₂ acima do normal NÃO eleva indefinidamente o VO₂?', o:[
+    'porque o VO₂ é independente da oferta acima do DO₂crit — limitado pela demanda, não pela oferta','porque a extração cresce sem limite','porque o lactato bloqueia o consumo','porque a SvO₂ cai a zero'], a:0,
+    fb:'Acima do limiar, o consumo é ditado pela demanda metabólica; ofertar mais não cria consumo (supply-independence).' },
+  { tier:'a', cap:'Hemorrágico', q:'No choque hemorrágico, por que o vasopressor não "resolve" o quadro?', o:[
+    'porque corrige a causa, tornando-se suficiente','porque a causa é a perda de volume/conteúdo: o pilar é hemostasia + reposição; pressor só maquia o número','porque o vasopressor reduz a frequência cardíaca e o consumo miocárdico, estancando o sangramento por vasoconstrição esplâncnica seletiva','porque eleva a hemoglobina'], a:1,
+    fb:'O termo quebrado é o retorno/pré-carga (e o conteúdo, se sangrou). Pressor sobe a PAM sem repor o que falta.' },
+  { tier:'a', cap:'Fenilefrina', q:'Em qual cenário um α1 puro (fenilefrina) faz mais sentido mecanístico?', o:[
+    'cardiogênico com bomba muito fraca','hipotensão com taquicardia e bomba preservada, onde subir a RVS e aceitar bradicardia reflexa ajuda','choque hemorrágico não controlado','sepse com débito alto e extração falha'], a:1,
+    fb:'α1 puro sobe a RVS e gera bradicardia reflexa — útil quando a bomba está boa e a RVS é o que falta, não na bomba fraca.' },
+  { tier:'a', cap:'Acidose', q:'Por que a acidemia intensa pode tornar os vasopressores "menos eficazes"?', o:[
+    'porque aumenta a resposta α, exigindo doses menores','porque reduz a responsividade do receptor α — corrigir o pH costuma melhorar a resposta','porque converte funcionalmente o estímulo α em resposta β, invertendo o efeito vascular esperado da droga','porque eleva a pré-carga'], a:1,
+    fb:'O meio ácido reduz a responsividade adrenérgica; a correção do distúrbio melhora a resposta pressórica.' },
+  { tier:'a', cap:'Coração-pulmão', q:'A pressão intratorácica positiva (ventilação) pode AJUDAR o ventrículo esquerdo que falha porque:', o:[
+    'aumenta o retorno venoso ao máximo','reduz a pós-carga transmural do VE (descarrega a bomba), embora possa reduzir a pré-carga','eleva diretamente a contratilidade','remove o líquido alveolar mecanicamente'], a:1,
+    fb:'A pressão pleural positiva baixa a pós-carga transmural do VE — descarrega a bomba que falha; no VD sobrecarregado o efeito pode ser oposto.' },
+  { tier:'a', cap:'Síntese 4 perfis', q:'No 2×2 perfusão × congestão, "frio e úmido" típico do cardiogênico pede, mecanicamente:', o:[
+    'volume generoso para subir a pré-carga','melhorar o fluxo (inotropismo) e, se preciso, sustentar a pressão — não mais congestão','apenas vasoconstritor potente para subir a PAM e, com ela, garantir a perfusão dos órgãos nobres','reduzir a frequência cardíaca como medida central'], a:1,
+    fb:'Frio (baixo fluxo) + úmido (congesto): o termo quebrado é a bomba; somar volume só agrava a congestão.' },
+  { tier:'a', cap:'Reavaliação', q:'A razão mais robusta para reavaliar o choque dinamicamente ao longo do tempo é:', o:[
+    'os valores nunca mudam, então é apenas protocolo','o termo dominante pode mudar (categorias se somam/evoluem), exigindo recasar a alavanca ao novo termo quebrado','para repetir exames sem motivo','porque a PAM isolada basta e dispensa reavaliação'], a:1,
+    fb:'O choque é móvel: o que era distributivo vira misto, o obstrutivo resolve etc. Decompor de novo a cada interação.' },
+  { tier:'a', cap:'Custo', q:'Por que "mover o termo quebrado" não basta — também se pesa o custo?', o:[
+    'porque o custo é irrelevante se a PAM subir','porque toda alavanca cobra um preço (demanda de O₂, arritmia, congestão); a escolha pesa benefício × custo no termo certo','porque o custo só existe para vasopressores','porque mover o termo errado não tem custo'], a:1,
+    fb:'A regra final: termo quebrado → alavanca que o move → custo. β custa O₂/ritmo; volume custa congestão; pressor custa isquemia. Casar e pesar.' }
+];
+
+// gabarito-alvo DISPROPORCIONAL (30 questões → A5 B9 C8 D8 ≈ 17/30/27/27%) — nunca round-robin
+var TG=[0,1,2,3,1,0,2,3,1,2,0,1,3,2,1,3,0,2,1,3,2,1,0,3,2,1,3,2,1,3];
+
+function buildBank(){
+  return RAW.map(function(it,qi){
+    var o=it.o.slice(), tg=TG[qi%TG.length], a=it.a;
+    var sh=((tg-a)%4+4)%4; for(var s=0;s<sh;s++){ o.unshift(o.pop()); }
+    return { tier:it.tier, cap:it.cap, q:it.q, o:o, a:tg, fb:it.fb, ref:it.ref||null };
+  });
+}
+function stats(){ var b=buildBank(), d=[0,0,0,0], longest=0;
+  b.forEach(function(q){ d[q.a]++; var L=q.o.map(function(x){return x.length;}); if(L[q.a]===Math.max.apply(null,L)) longest++; });
+  return { n:b.length, dist:d, longest:longest, tiers:{ b:b.filter(function(x){return x.tier==='b';}).length, i:b.filter(function(x){return x.tier==='i';}).length, a:b.filter(function(x){return x.tier==='a';}).length } };
+}
+</script>
+<!-- cases29.js · 120 assertivas V/F inlined -->
+<script>
+// build/m29/cases29.js — Casos clínicos dinâmicos V/F INTEGRADOS do capstone (M29)
+// 6 casos que evoluem por etapas e costuram o braço inteiro (conteúdo → entrega
+// → consumo/extração → pressão → categoria → alavanca). 6 × 4 etapas × 5 = 120
+// assertivas Verdadeiro/Falso (60 V / 60 F; cada caso 10/10), com gabarito +
+// racional. Mesma forma de dados do M28 (UI reutilizável). Firewall SaMD:
+// afirmações educacionais de mecanismo — sem ordem imperativa nem dose.
+var CASES_VF=[
+  { id:'septico', titulo:'Séptico → a cascata inteira', sub:'conteúdo ok, mas entrega e extração quebram',
+    abertura:'Mulher, 62 anos, pielonefrite. PA 80/40, FC 122, Hb 12, SaO₂ 97%, lactato 4,5, extremidades quentes.',
+    etapas:[
+      { fase:'Decompor a apresentação', evol:'Quente, hipotensa, débito alto presumido; conteúdo de O₂ preservado.', asser:[
+        { t:'Com Hb 12 e SaO₂ 97%, o conteúdo arterial de O₂ (CaO₂) está praticamente preservado — o problema não é de conteúdo.', v:true, r:'CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂: Hb e SaO₂ adequadas mantêm o conteúdo.' },
+        { t:'PA 80/40 com extremidades quentes e débito alto aponta para o termo RVS quebrado (distributivo).', v:true, r:'Vasoplegia: RVS baixa com débito alto = distributivo.' },
+        { t:'O lactato de 4,5, na sepse, pode somar hipoperfusão (tipo A) e estímulo metabólico (tipo B).', v:true, r:'Os dois mecanismos coexistem na sepse.' },
+        { t:'A PA baixa, por si, prova que a bomba é o termo primário deste choque.', v:false, r:'O débito está alto; o termo quebrado é a RVS, não a contratilidade.' },
+        { t:'Como a SaO₂ é 97%, está descartada qualquer hipoperfusão tecidual.', v:false, r:'SaO₂ alta não garante entrega nem extração; o lactato denuncia o déficit.' }
+      ]},
+      { fase:'A entrega e a extração', evol:'ScvO₂ 82%, lactato persistente apesar de PA quase normalizada com volume.', asser:[
+        { t:'A entrega de O₂ (DO₂) depende diretamente da PAM, de modo que normalizar a pressão já garante a entrega.', v:false, r:'DO₂ = DC × CaO₂ × 10: depende de fluxo e conteúdo, não da PAM diretamente.' },
+        { t:'ScvO₂ alta com lactato alto sugere falha de extração/utilização (microcirculação/mitocôndria).', v:true, r:'O O₂ chega mas não é usado: o sangue volta "cheio".' },
+        { t:'Uma PAM normalizada garante que a perfusão tecidual foi restaurada.', v:false, r:'PAM normal pode coexistir com déficit (lactato persistente).' },
+        { t:'Repor volume indefinidamente corrige a vasoplegia subjacente.', v:false, r:'Volume tem janela; a RVS quebrada pede o termo certo (vasopressor), não mais volume.' },
+        { t:'A ScvO₂ alta, neste contexto, indica oferta excessiva e tecido plenamente satisfeito.', v:false, r:'Indica extração falha, não satisfação tecidual.' }
+      ]},
+      { fase:'A alavanca para a RVS', evol:'Inicia-se suporte vasopressor; lactato começa a cair.', asser:[
+        { t:'Um agente de perfil α1 predominante move o termo quebrado (RVS) e sustenta a PAM.', v:true, r:'α1 → vasoconstrição = sobe a RVS, o termo certo aqui.' },
+        { t:'A vasopressina (V1) acrescenta pressão por via não-adrenérgica, poupando catecolamina.', v:true, r:'V1 age fora do eixo adrenérgico.' },
+        { t:'A queda do lactato com melhora clínica sugere que a oferta voltou a cobrir a demanda.', v:true, r:'Marcador de perfusão melhorando.' },
+        { t:'Um inodilatador isolado (dobutamina) é a melhor escolha para a vasoplegia.', v:false, r:'Vasodilata ainda mais o vasoplégico: termo errado, agrava a hipotensão.' },
+        { t:'Em acidemia intensa, a resposta ao vasopressor α tende a aumentar.', v:false, r:'A acidose reduz a responsividade α; corrigir o pH ajuda.' }
+      ]},
+      { fase:'Cardiomiopatia séptica (vira misto)', evol:'ECO: FE 30%. Soma-se um componente de bomba.', asser:[
+        { t:'A disfunção miocárdica séptica acrescenta um termo de bomba: o quadro passa a MISTO.', v:true, r:'RVS baixa + bomba fraca = misto.' },
+        { t:'No misto, faz sentido endereçar os dois termos (ex.: vasopressor + inotrópico).', v:true, r:'Cada alavanca move o seu termo quebrado.' },
+        { t:'Subir apenas a RVS, agora, sempre melhora a perfusão.', v:false, r:'Mais pós-carga sobre bomba fraca pode reduzir o débito/entrega.' },
+        { t:'Uma PAM-alvo atingida dispensa reavaliar a perfusão daqui em diante.', v:false, r:'A PAM normal não garante perfusão; reavaliar lactato/ScvO₂.' },
+        { t:'A milrinona gera inotropia sem passar pelo receptor β (inibe a PDE-3).', v:true, r:'PDE-3 contorna o β: inotropia com menos demanda/arritmia.' }
+      ]}
+    ]},
+
+  { id:'hemorragico', titulo:'Hemorrágico → conteúdo + pré-carga', sub:'dois termos quebrados: volume perdido e Hb caindo',
+    abertura:'Homem, 30 anos, trauma abdominal. PA 84/58, FC 132, Hb 6,5, extremidades frias, lactato 5,0.',
+    etapas:[
+      { fase:'Decompor', evol:'Taquicárdico, frio, hipotenso; sangramento ativo presumido.', asser:[
+        { t:'O choque hemorrágico quebra dois termos: o retorno/pré-carga (volume) e o conteúdo (Hb).', v:true, r:'Perda de sangue tira volume E hemoglobina.' },
+        { t:'A Hb 6,5 reduz diretamente o CaO₂ e, portanto, a entrega de O₂ (DO₂).', v:true, r:'CaO₂ ∝ Hb; menos Hb → menos DO₂ para o mesmo débito.' },
+        { t:'Extremidades frias com FC 132 indicam vasoconstrição compensatória (RVS alta).', v:true, r:'Resposta simpática à hipovolemia: vasoconstrição + taquicardia.' },
+        { t:'A RVS baixa por vasoplegia é o mecanismo primário aqui.', v:false, r:'A RVS está ALTA (compensatória); o problema é volume/conteúdo.' },
+        { t:'Como a SaO₂ está normal, o conteúdo de O₂ está garantido.', v:false, r:'Conteúdo depende sobretudo da Hb, que está muito baixa.' }
+      ]},
+      { fase:'A alavanca certa', evol:'Discute-se o que move os termos quebrados.', asser:[
+        { t:'O pilar mecânico é controlar a fonte (hemostasia) e repor o que se perdeu.', v:true, r:'Tratar a causa: estancar + repor volume/hemácias.' },
+        { t:'A transfusão move o termo CONTEÚDO: sobe a Hb, o CaO₂ e a DO₂.', v:true, r:'Repor hemácias eleva o conteúdo arterial de O₂.' },
+        { t:'Um vasopressor isolado corrige a causa do choque hemorrágico.', v:false, r:'Pressor maquia a PAM; não repõe volume nem Hb.' },
+        { t:'Encher de cristaloide sem limite é inofensivo enquanto a PA estiver baixa.', v:false, r:'Diluição/coagulopatia e custo; volume tem janela.' },
+        { t:'Subir a RVS com α1 puro aumenta o conteúdo de O₂ perdido no sangramento.', v:false, r:'α1 não tem efeito sobre Hb/conteúdo; só sobe a pós-carga.' }
+      ]},
+      { fase:'Resposta à reposição', evol:'Após hemostasia e hemocomponentes, lactato cai, FC 98.', asser:[
+        { t:'A queda do lactato e da FC sugere que a entrega voltou a cobrir a demanda.', v:true, r:'Marcadores de perfusão melhorando.' },
+        { t:'Restaurados volume e Hb, a vasoconstrição compensatória tende a ceder.', v:true, r:'Resolvido o estímulo, a RVS alta normaliza.' },
+        { t:'A pré-carga responsiva é mais bem avaliada pela PVC isolada do que por testes dinâmicos.', v:false, r:'PVC estática prediz mal; índices dinâmicos (PLR, ΔPP) são superiores.' },
+        { t:'Com a PA normalizada, não há mais necessidade de vigiar a perfusão.', v:false, r:'Reavaliar sempre: pode ressangrar ou descompensar.' },
+        { t:'Transfundir além do necessário é sempre benéfico e sem custo.', v:false, r:'Excesso transfusional tem custos próprios; repor o necessário.' }
+      ]},
+      { fase:'Recidiva', evol:'Nova queda de PA; suspeita de ressangramento.', asser:[
+        { t:'Reavaliar dinamicamente é essencial: o termo quebrado pode reabrir (ressangramento).', v:true, r:'O choque é móvel; o volume/conteúdo pode cair de novo.' },
+        { t:'A mesma PAM de antes pode agora coexistir com um débito e uma entrega piores.', v:true, r:'PAM = DC × RVS: o número repete com mecânica pior.' },
+        { t:'Um lactato que volta a subir, com a PAM mantida, deve ser ignorado como ruído laboratorial.', v:false, r:'Lactato subindo sinaliza hipoperfusão recorrente — não se ignora.' },
+        { t:'Persistir só elevando a PAM com pressor resolve um ressangramento ativo.', v:false, r:'Sem controlar a fonte e repor, o pressor apenas maquia.' },
+        { t:'Decompor a PAM em débito e resistência continua sendo obrigatório a cada reavaliação.', v:true, r:'Decompor antes de interpretar, sempre.' }
+      ]}
+    ]},
+
+  { id:'cardiogenico', titulo:'Cardiogênico → coração-pulmão', sub:'bomba fraca, pós-carga e a pressão intratorácica',
+    abertura:'Homem, 70 anos, IAM anterior. PA 82/60, FC 108, frio, congestão pulmonar, lactato 3,2, SaO₂ 88%.',
+    etapas:[
+      { fase:'Decompor', evol:'Frio, úmido, hipoxêmico; baixo débito com congestão.', asser:[
+        { t:'Frio + úmido + PA baixa configura perfil cardiogênico: a bomba é o termo quebrado.', v:true, r:'Baixo fluxo + congestão = falência de VE.' },
+        { t:'A RVS tende a estar ELEVADA por vasoconstrição compensatória.', v:true, r:'Compensação que defende a PAM e mascara o débito baixo.' },
+        { t:'A hipoxemia (SaO₂ 88%) reduz o CaO₂ e agrava ainda mais a entrega já comprometida pelo baixo débito.', v:true, r:'Dois fatores derrubando a DO₂: débito↓ e conteúdo↓.' },
+        { t:'A RVS baixa por vasoplegia domina o quadro.', v:false, r:'A RVS está alta; o termo quebrado é a contratilidade.' },
+        { t:'Repor volume generosamente é o pilar do cardiogênico já congesto.', v:false, r:'Há congestão; volume agrava o edema sem corrigir a bomba.' }
+      ]},
+      { fase:'A alavanca e o custo', evol:'Escolhe-se a alavanca pelo termo quebrado.', asser:[
+        { t:'Um inotrópico (β1) ataca a contratilidade, aceitando custo de demanda de O₂.', v:true, r:'β1 sobe a bomba; o preço é demanda miocárdica.' },
+        { t:'Um α1 puro (fenilefrina) tende a afundar o débito por somar pós-carga à bomba fraca.', v:true, r:'O ventrículo fraco é sensível à pós-carga: VS cai.' },
+        { t:'A milrinona, por ser β-bloqueador, está contraindicada para inotropismo.', v:false, r:'Não é β-bloqueador: é inibidor da PDE-3 (inodilatador).' },
+        { t:'Subir só a RVS é a forma mais segura de tratar a bomba.', v:false, r:'Mais pós-carga sobre bomba fraca reduz o débito.' },
+        { t:'O custo de O₂ do suporte β é desprezível.', v:false, r:'β eleva a demanda miocárdica — custo central na isquemia.' }
+      ]},
+      { fase:'Ventilação e VD', evol:'Indicada ventilação com pressão positiva.', asser:[
+        { t:'A pressão intratorácica positiva pode descarregar o VE ao reduzir sua pós-carga transmural.', v:true, r:'Pressão pleural positiva baixa a pós-carga do VE que falha.' },
+        { t:'A mesma pressão positiva, num VD sobrecarregado, pode reduzir o retorno e piorar o débito.', v:true, r:'Pré-carga do VD cai e a RVP pode subir — efeito oposto.' },
+        { t:'A PEEP nunca afeta a pré- ou a pós-carga ventricular.', v:false, r:'Afeta ambas (coração-pulmão); por isso há PEEP "ótima".' },
+        { t:'A ventilação corrige diretamente a contratilidade do miocárdio isquêmico.', v:false, r:'Não age na contratilidade; modula cargas e oxigenação.' },
+        { t:'Corrigir a hipoxemia não altera o conteúdo de O₂, pois o CaO₂ depende apenas da hemoglobina.', v:false, r:'CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂: a SaO₂ entra no conteúdo; corrigi-la o eleva.' }
+      ]},
+      { fase:'Refratário / síntese', evol:'Bomba refratária à droga.', asser:[
+        { t:'Quando a inotropia farmacológica se esgota, o suporte mecânico atua onde a droga não basta.', v:true, r:'Suporte circulatório mecânico no refratário.' },
+        { t:'O objetivo mecânico é restaurar fluxo (débito), não apenas o número da pressão.', v:true, r:'Perfusão é fluxo; PAM é resultado.' },
+        { t:'Atingir uma PAM "boa" com vasoconstritor garante a perfusão coronária e a recuperação.', v:false, r:'Pressão sem fluxo não garante perfusão; pode piorar o débito.' },
+        { t:'No cardiogênico, taquicardizar mais sempre melhora o débito.', v:false, r:'Encurta a diástole e eleva a demanda — pode agravar a isquemia.' },
+        { t:'Reavaliar o equilíbrio oferta/demanda (lactato, ScvO₂) guia melhor que a PAM isolada.', v:true, r:'Marcadores de perfusão acima do número de pressão.' }
+      ]}
+    ]},
+
+  { id:'obstrutivo', titulo:'Obstrutivo (TEP) → ventrículo direito', sub:'barreira mecânica e interdependência ventricular',
+    abertura:'Mulher, 55 anos, pós-operatório, dispneia súbita. PA 86/54, FC 126, SaO₂ 89%, VD dilatado ao ECO.',
+    etapas:[
+      { fase:'Decompor', evol:'Hipotensão aguda com VD dilatado e hipoxemia.', asser:[
+        { t:'O TEP maciço é obstrutivo: aumento agudo da pós-carga do VD por obstrução do leito pulmonar.', v:true, r:'Barreira ao fluxo pulmonar sobrecarrega o VD.' },
+        { t:'O VD dilatado pode desviar o septo e reduzir o enchimento do VE (interdependência).', v:true, r:'Mecânica do VD que limita o VE.' },
+        { t:'A taquicardia é uma resposta compensatória esperada.', v:true, r:'Tenta defender o débito caindo.' },
+        { t:'O termo primário quebrado é a RVS sistêmica baixa.', v:false, r:'É obstrutivo (pós-carga do VD), não vasoplegia.' },
+        { t:'A hipotensão exige, necessariamente, um VE intrinsecamente doente.', v:false, r:'O VE pode ser normal; a falha é do VD/obstrução.' }
+      ]},
+      { fase:'Suporte enquanto se trata a causa', evol:'Sustenta-se a pressão e avalia-se desobstrução.', asser:[
+        { t:'O suporte vasopressor mantém a pressão de perfusão coronária do VD enquanto se trata a causa.', v:true, r:'A perfusão do VD depende da PA sistêmica.' },
+        { t:'O tratamento mecânico definitivo é reduzir/remover a obstrução.', v:true, r:'Sem desobstruir, o mecanismo persiste.' },
+        { t:'Encher de volume sem limite o VD sobrecarregado melhora sempre o débito.', v:false, r:'Sobredistensão do VD piora a interdependência.' },
+        { t:'O quadro se resolve apenas com inotrópico, sem tratar a obstrução.', v:false, r:'A obstrução é a causa; inotrópico não a remove.' },
+        { t:'Reduzir a pós-carga do VD (vasodilatação pulmonar) não tem qualquer papel.', v:false, r:'Em casos selecionados, baixar a RVP descarrega o VD.' }
+      ]},
+      { fase:'Contrastes obstrutivos', evol:'Diferencial com tamponamento e pneumotórax.', asser:[
+        { t:'Tamponamento e pneumotórax hipertensivo também são obstrutivos (restrição ao enchimento/retorno).', v:true, r:'Obstrutivo = barreira mecânica ao enchimento/ejeção.' },
+        { t:'No tamponamento, o tratamento é drenar (pericardiocentese), não apenas pressóricos.', v:true, r:'Remover a restrição é o pilar.' },
+        { t:'O pneumotórax hipertensivo melhora com volume isolado, sem descompressão.', v:false, r:'Exige descompressão; volume não resolve.' },
+        { t:'Esses quadros são, na verdade, distributivos por vasoplegia.', v:false, r:'São obstrutivos, não distributivos.' },
+        { t:'Turgência jugular com hipotensão e bulhas abafadas evoca tamponamento.', v:true, r:'Tríade de Beck, clássica.' }
+      ]},
+      { fase:'Pós-desobstrução / síntese', evol:'Tratada a causa, reavalia-se.', asser:[
+        { t:'Removida a obstrução, a pós-carga do VD cai e o enchimento do VE tende a melhorar.', v:true, r:'Desfeita a barreira, a interdependência alivia.' },
+        { t:'O suporte pressórico pode ser desmamado conforme o VD se recupera.', v:true, r:'Retira-se o suporte do termo que se resolve.' },
+        { t:'A mesma PAM de antes da desobstrução significava a mesma fisiologia.', v:false, r:'Mesmo número, mecânica diferente: decompor sempre.' },
+        { t:'Após a melhora, dispensa-se qualquer reavaliação da perfusão.', v:false, r:'Reavaliar: pode recorrer ou deixar disfunção residual de VD.' },
+        { t:'Uma vez corrigida, a hipoxemia não influencia a entrega de O₂ neste contexto.', v:false, r:'SaO₂↑ → CaO₂↑ → DO₂↑: a oxigenação influencia a entrega.' }
+      ]}
+    ]},
+
+  { id:'criptico', titulo:'Críptico/compensado → o precipício', sub:'a PAM normal mente; a reserva é finita',
+    abertura:'Homem, 48 anos, pancreatite. PA 118/72 (PAM 87), FC 104, lactato 3,8, pele pálida, diurese caindo.',
+    etapas:[
+      { fase:'A PAM que mente', evol:'PAM normal, mas lactato alto e sinais sutis de hipoperfusão.', asser:[
+        { t:'Uma PAM normal pode coexistir com hipoperfusão tecidual (choque críptico/compensado).', v:true, r:'A compensação sustenta o número enquanto o tecido sofre.' },
+        { t:'Lactato alto com diurese caindo são marcadores ocultos que denunciam o déficit.', v:true, r:'Sinais de hipoperfusão apesar da PAM "boa".' },
+        { t:'A vasoconstrição compensatória pode manter a PAM mesmo com débito reduzido.', v:true, r:'PAM = DC × RVS: RVS alta compensa DC baixo.' },
+        { t:'PAM 87 exclui, com segurança, qualquer estado de choque.', v:false, r:'Choque é falência de perfusão, não um número de pressão.' },
+        { t:'Lactato elevado sem hipotensão é sempre artefato laboratorial.', v:false, r:'Pode refletir hipoperfusão compensada real.' }
+      ]},
+      { fase:'Reserva finita', evol:'A compensação consome reserva; aproxima-se o limite.', asser:[
+        { t:'A compensação tem reserva finita: passado o limite, a descompensação é abrupta (precipício).', v:true, r:'Curva não linear: pequeno empurrão → queda brusca.' },
+        { t:'Decompor a PAM em débito e resistência revela o débito baixo escondido.', v:true, r:'A decomposição expõe o mecanismo.' },
+        { t:'Enquanto a PAM estiver normal, a intervenção pode ser sempre adiada com segurança.', v:false, r:'Adiar gasta reserva; o precipício chega sem aviso pela PAM.' },
+        { t:'A taquicardia leve aqui é irrelevante e não merece atenção.', v:false, r:'Pode ser sinal compensatório precoce do déficit.' },
+        { t:'Um único valor de PAM informa mais do que a tendência de lactato, diurese e perfusão.', v:false, r:'A trajetória (tendência) informa mais que um ponto isolado.' }
+      ]},
+      { fase:'Identificar o termo', evol:'Investiga-se o que está quebrado sob a PAM normal.', asser:[
+        { t:'O termo quebrado deve ser buscado mesmo com PAM normal — pode ser bomba, volume ou extração.', v:true, r:'A categoria não se lê pela PAM; decompor.' },
+        { t:'POCUS e marcadores ajudam a discriminar o mecanismo oculto.', v:true, r:'Imagem + laboratório revelam o termo.' },
+        { t:'Com a pressão normal, a oferta de O₂ (DO₂) está sempre garantida.', v:false, r:'DO₂ = DC × CaO₂; independe da PAM — pode estar baixa com pressão normal.' },
+        { t:'Com PAM normal, a DO₂ está necessariamente adequada.', v:false, r:'DO₂ depende de fluxo e conteúdo, não da pressão.' },
+        { t:'Tratar o número da PAM resolve o choque críptico.', v:false, r:'O número já está "bom"; o déficit é de perfusão/entrega.' }
+      ]},
+      { fase:'Descompensa', evol:'Súbita queda de PA; o precipício chegou.', asser:[
+        { t:'A descompensação tardia confirma que a reserva compensatória se esgotou.', v:true, r:'O precipício materializa-se quando a compensação cede.' },
+        { t:'Agora o termo quebrado precisa ser endereçado diretamente, não só a pressão.', v:true, r:'Casar a alavanca ao termo, não perseguir o número.' },
+        { t:'A descompensação prova que a PAM normal anterior nunca significou segurança.', v:true, r:'A PAM "boa" mascarava o déficit o tempo todo.' },
+        { t:'Ter esperado a PAM cair foi a conduta mais segura possível.', v:false, r:'A janela de intervenção precoce foi perdida; o precipício pune o atraso.' },
+        { t:'Após estabilizar, não é mais necessário reavaliar a perfusão.', v:false, r:'Reavaliação contínua segue obrigatória.' }
+      ]}
+    ]},
+
+  { id:'politrauma', titulo:'Politrauma → a grande integração (misto)', sub:'hemorragia + pneumotórax + componente distributivo',
+    abertura:'Homem, 25 anos, colisão. PA 78/50, FC 138, Hb 7, SaO₂ 86%, MV abolido à direita, jugulares túrgidas.',
+    etapas:[
+      { fase:'Vários termos ao mesmo tempo', evol:'Hipotensão grave com hemorragia E sinais de obstrução torácica.', asser:[
+        { t:'O politrauma pode quebrar vários termos juntos: conteúdo/pré-carga (hemorragia) e enchimento (pneumotórax hipertensivo).', v:true, r:'Choque misto: termos somados de categorias diferentes.' },
+        { t:'MV abolido à direita com jugulares túrgidas e hipotensão sugere pneumotórax hipertensivo (obstrutivo).', v:true, r:'Obstrução ao retorno/enchimento — emergência mecânica.' },
+        { t:'A Hb 7 e a SaO₂ 86% derrubam o conteúdo (CaO₂) e a entrega de O₂.', v:true, r:'Conteúdo baixo por anemia + hipoxemia.' },
+        { t:'Atribuir todo o quadro a um único mecanismo é a leitura correta aqui.', v:false, r:'É misto; reduzir a um só termo engana e atrasa.' },
+        { t:'Jugulares túrgidas excluem hipovolemia, encerrando o raciocínio.', v:false, r:'A turgência aqui é obstrutiva; a hemorragia coexiste — não se exclui.' }
+      ]},
+      { fase:'Ordem dos termos', evol:'Prioriza-se o que mata mais rápido e é reversível mecanicamente.', asser:[
+        { t:'O pneumotórax hipertensivo exige descompressão mecânica — volume ou pressor não substituem.', v:true, r:'Remover a obstrução é o pilar imediato.' },
+        { t:'A hemorragia exige controle da fonte e reposição de volume e hemácias.', v:true, r:'Tratar a causa: hemostasia + repor o perdido.' },
+        { t:'Um vasopressor isolado, sem descomprimir nem repor, corrige o politrauma.', v:false, r:'Maquia a PAM; não remove a obstrução nem repõe volume/Hb.' },
+        { t:'Transfundir e descomprimir movem o mesmo termo quebrado, sendo medidas intercambiáveis.', v:false, r:'São termos distintos (conteúdo × enchimento), cada um com a sua alavanca.' },
+        { t:'Corrigir a SaO₂ não tem efeito sobre a entrega de O₂.', v:false, r:'SaO₂↑ eleva o CaO₂ e a DO₂.' }
+      ]},
+      { fase:'Componente distributivo tardio', evol:'Horas depois: febre, RVS caindo, novo componente vasoplégico.', asser:[
+        { t:'Surge um componente distributivo (vasoplegia) que soma um terceiro termo quebrado (RVS).', v:true, r:'O misto evolui; um novo termo entra.' },
+        { t:'A mesma PAM de antes pode agora esconder uma mecânica totalmente diferente.', v:true, r:'PAM = DC × RVS: o número se repete com fatores novos.' },
+        { t:'Instalada a vasoplegia, o termo RVS pode pedir suporte vasopressor por mecanismo.', v:true, r:'RVS quebrada = alavanca α1/V1.' },
+        { t:'Uma vez misto, o quadro nunca incorpora novos mecanismos.', v:false, r:'Pode incorporar — aqui somou-se um componente distributivo.' },
+        { t:'Ler a PAM isolada basta para conduzir um politrauma em evolução.', v:false, r:'Decompor a cada reavaliação é obrigatório.' }
+      ]},
+      { fase:'Síntese do braço', evol:'Estabilização e a regra final.', asser:[
+        { t:'A regra do braço: identificar o termo quebrado → escolher a alavanca que o move → pesar o custo.', v:true, r:'A síntese que unifica todos os módulos.' },
+        { t:'Toda alavanca cobra um preço (demanda de O₂, arritmia, congestão), e a escolha pesa benefício × custo.', v:true, r:'Mover o termo certo não basta: pesar o custo.' },
+        { t:'O desmame dos suportes deve ser simultâneo, independentemente da recuperação de cada termo.', v:false, r:'Desmama-se o suporte do termo que se recupera — guiado pela recuperação, não em bloco.' },
+        { t:'No misto, a meta correta é o número da PAM, ignorando os mecanismos somados.', v:false, r:'Decompor e tratar cada termo; o número não é a meta.' },
+        { t:'Choque é, afinal, apenas pressão arterial baixa.', v:false, r:'Choque é falência da entrega efetiva de O₂ ao tecido — não um número.' }
+      ]}
+    ]}
+];
+
+function flatAssertions(){ var out=[]; CASES_VF.forEach(function(c){ c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ out.push({caso:c.id, etapa:ei, idx:ai, t:a.t, v:a.v, r:a.r}); }); }); }); return out; }
+function vfStats(){ var f=flatAssertions(), v=0; f.forEach(function(a){ if(a.v) v++; }); return { total:f.length, v:v, f:f.length-v, casos:CASES_VF.length, etapas:CASES_VF.reduce(function(s,c){return s+c.etapas.length;},0) }; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  var M29=window.M29, buildBank=window.buildBank, CASES_VF=window.CASES_VF;   // referências locais explícitas aos motores inlined
+  var $=function(id){ return document.getElementById(id); };
+  function clampn(x,a,b){ return x<a?a:(x>b?b:x); }
+  function br(x,d){ d=(d==null?1:d); var s=(Math.round(x*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); return s.replace('.',','); }
+
+  // ---------- estado da cascata ----------
+  var cs={ hb:15, sao2:0.98, pao2:95, hr:75, contractility:0.70, preload:0.90, rvs:1200, vo2demand:250, o2ermax:0.60, pvc:6 };
+
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false'); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id===('panel-'+tabId.replace('tab-',''))); });
+    if(tabId==='tab-cascata') drawCascade(); }
+
+  // ---------- instrumento da cascata ----------
+  function statClass(v, lo, hi){ return v<lo?'lo':(v>hi?'hi':'mid'); }
+  function renderCascNums(c){
+    var box=$('casc-num'); if(!box) return;
+    function cell(label,val,cls){ return '<div class="'+cls+'"><span>'+label+'</span><b>'+val+'</b></div>'; }
+    box.innerHTML=
+      cell('CaO₂ (mL/dL)', br(c.cao2,1), c.cao2<14?'lo':(c.cao2>17?'hi':'mid'))+
+      cell('Débito (L/min)', br(c.co,2), c.co<3.5?'lo':(c.co>4.5?'hi':'mid'))+
+      cell('DO₂ (mL/min)', Math.round(c.do2), c.do2<c.do2crit?'lo':(c.do2>800?'hi':'mid'))+
+      cell('VO₂ (mL/min)', Math.round(c.vo2), c.o2deficit>0?'lo':'hi')+
+      cell('SvO₂ (%)', br(c.svo2*100,0), c.svo2<0.6?'lo':(c.svo2>0.7?'hi':'mid'))+
+      cell('Lactato (mmol/L)', br(c.lactate,1), c.lactate>2?'lo':(c.lactate<1.5?'hi':'mid'))+
+      cell('PAM (mmHg)', br(c.pam,0), c.pam<65?'lo':(c.pam>=75?'hi':'mid'))+
+      cell('Perfil', (c.profile.temp+'/'+c.profile.fluxo), c.supplyDependent?'lo':'mid');
+  }
+  function drawCascade(){
+    var cv=$('casc'); if(!cv) return; var ctx; try{ ctx=cv.getContext('2d'); }catch(e){ return; } if(!ctx) return;
+    var W=cv.width||860, H=cv.height||300, c=M29.cascade(cs);
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      // topo: cadeia de 4 caixas
+      var labels=[['Hb·SaO₂ → CaO₂', br(c.cao2,1)+' mL/dL', c.cao2<14?'#ff5d6c':'#3ec78d'],
+                  ['×DC → DO₂', Math.round(c.do2)+' mL/min', c.do2<c.do2crit?'#ff5d6c':'#3ec78d'],
+                  ['extração → VO₂', Math.round(c.vo2)+'/'+Math.round(c.vo2demand), c.o2deficit>0?'#ff5d6c':'#3ec78d'],
+                  ['PAM = DC·RVS', br(c.pam,0)+' mmHg', c.pam<65?'#ff5d6c':'#3ec78d']];
+      var bw=190, gap=(W-20-bw*4)/3, x=10, by=14, bh=58;
+      for(var i=0;i<4;i++){ var bx=x+i*(bw+gap);
+        ctx.fillStyle='#0e1320'; ctx.strokeStyle='#26314a'; ctx.lineWidth=1; ctx.beginPath(); ctx.rect(bx,by,bw,bh); ctx.fill(); ctx.stroke();
+        ctx.fillStyle='#97a3ba'; ctx.font='11px monospace'; ctx.fillText(labels[i][0], bx+10, by+20);
+        ctx.fillStyle=labels[i][2]; ctx.font='bold 16px monospace'; ctx.fillText(labels[i][1], bx+10, by+44);
+        if(i<3){ ctx.strokeStyle='#5e6c87'; ctx.beginPath(); ctx.moveTo(bx+bw,by+bh/2); ctx.lineTo(bx+bw+gap,by+bh/2); ctx.stroke();
+          ctx.fillStyle='#5e6c87'; ctx.fillText('▶', bx+bw+gap/2-4, by+bh/2-4); }
+      }
+      // curva DO2 × VO2 (supply-dependence)
+      var px=50, py=H-26, pw=W-90, ph=H-110;
+      ctx.strokeStyle='#26314a'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py-ph); ctx.moveTo(px,py); ctx.lineTo(px+pw,py); ctx.stroke();
+      ctx.fillStyle='#5e6c87'; ctx.font='10px monospace'; ctx.fillText('DO₂ →', px+pw-44, py+16); ctx.fillText('VO₂', px-44, py-ph+10);
+      var DOmax=1800, VOmax=Math.max(420, c.vo2demand*1.3);
+      function sx(d){ return px + clampn(d/DOmax,0,1)*pw; }
+      function sy(v){ return py - clampn(v/VOmax,0,1)*ph; }
+      var crit=c.do2crit;
+      // curva: VO2 = min(demand, o2ermax*DO2)
+      ctx.strokeStyle='#3ec78d'; ctx.lineWidth=2; ctx.beginPath();
+      for(var d=0; d<=DOmax; d+=20){ var v=Math.min(c.vo2demand, c.o2ermax*d); var X=sx(d),Y=sy(v); if(d===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+      ctx.stroke();
+      // DO2crit vertical
+      ctx.strokeStyle='#ffb454'; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(sx(crit),py); ctx.lineTo(sx(crit),py-ph); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#ffb454'; ctx.fillText('DO₂crit '+Math.round(crit), sx(crit)-20, py-ph-2);
+      // ponto do paciente
+      ctx.fillStyle='#9b6cff'; ctx.beginPath(); ctx.arc(sx(c.do2), sy(c.vo2), 6, 0, 6.2832); ctx.fill();
+      ctx.strokeStyle='#9b6cff'; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(sx(c.do2),py); ctx.lineTo(sx(c.do2),sy(c.vo2)); ctx.stroke(); ctx.setLineDash([]);
+    }catch(e){}
+    renderCascNums(c);
+    var broken=M29.brokenTerm(cs), rank=M29.brokenRanking(cs);
+    $('casc-hint').textContent='supply-dependence: '+(c.supplyDependent?'SIM — abaixo do limiar; déficit '+Math.round(c.o2deficit)+' mL/min, lactato sobe':'não — o consumo é independente da oferta')+' · termo dominante: '+(broken==='nenhum'?'nenhum (banda normal)':(rank[0].label));
+  }
+  function bindCasc(){
+    function setv(id,el,fn,fmt){ var s=$(el); if(!s) return; s.addEventListener('input',function(){ fn(parseFloat(s.value)); $(id).textContent=fmt(); drawCascade(); }); }
+    setv('vHb','iHb',function(v){cs.hb=v;},function(){return br(cs.hb,cs.hb%1?1:0);});
+    setv('vSat','iSat',function(v){cs.sao2=v/100;},function(){return Math.round(cs.sao2*100);});
+    setv('vHr','iHr',function(v){cs.hr=v;},function(){return Math.round(cs.hr);});
+    setv('vIno','iIno',function(v){cs.contractility=v/100;},function(){return br(cs.contractility,2);});
+    setv('vPre','iPre',function(v){cs.preload=v/100;},function(){return br(cs.preload,2);});
+    setv('vRvs','iRvs',function(v){cs.rvs=v;},function(){return Math.round(cs.rvs);});
+    setv('vDem','iDem',function(v){cs.vo2demand=v;},function(){return Math.round(cs.vo2demand);});
+    setv('vExt','iExt',function(v){cs.o2ermax=v/100;},function(){return br(cs.o2ermax,2);});
+  }
+
+  // ---------- LAB ----------
+  var lab={ preset:'distributivo', lever:null };
+  var LAB_LEVERS=['noradrenalina','dobutamina','vasopressina','milrinona','fenilefrina','volume','transfusao'];
+  function renderLabPresets(){ var box=$('lab-presets'); if(!box) return; box.innerHTML='';
+    Object.keys(M29.PRESETS).forEach(function(k){ var b=document.createElement('button'); b.className='preset'+(k===lab.preset?' on':''); b.type='button'; b.textContent=M29.PRESETS[k].label;
+      b.addEventListener('click',function(){ lab.preset=k; renderLabPresets(); renderLab(); }); box.appendChild(b); }); }
+  function renderLabLevers(){ var box=$('lab-levers'); if(!box) return; box.innerHTML='';
+    LAB_LEVERS.forEach(function(k){ var b=document.createElement('button'); b.className='preset pac'+(k===lab.lever?' on':''); b.type='button'; b.textContent=M29.LEVERS[k].nome;
+      b.addEventListener('click',function(){ lab.lever=k; renderLabLevers(); renderLab(); }); box.appendChild(b); }); }
+  function renderLab(){
+    var st=M29.PRESETS[lab.preset].state, broken=M29.brokenTerm(st), rank=M29.brokenRanking(st);
+    var ver=$('lab-veredito'), big=$('lab-vbig'), num=$('lab-vnum');
+    var brokenLabel = broken==='nenhum' ? 'nenhum termo claramente quebrado' : rank[0].label;
+    if(!lab.lever){ ver.className='veredito'; big.textContent='termo quebrado: '+brokenLabel; num.textContent='escolha uma alavanca para testar o casamento mecanismo↔termo.'; renderLabBanners(null); return; }
+    var ap=M29.appropriate(st, M29.LEVERS[lab.lever]);
+    ver.className='veredito '+(ap.ok?'ok':'crit');
+    big.textContent=(ap.ok?'ALAVANCA APTA':'ALAVANCA INAPTA')+' · '+M29.LEVERS[lab.lever].nome;
+    num.innerHTML='termo quebrado: <b>'+brokenLabel+'</b> · '+ap.why+'<br>cascata: PAM '+br(ap.pre.pam,0)+'→'+br(ap.post.pam,0)+' mmHg · DC '+br(ap.pre.co,2)+'→'+br(ap.post.co,2)+' L/min · déficit O₂ '+Math.round(ap.pre.o2deficit)+'→'+Math.round(ap.post.o2deficit)+' mL/min';
+    renderLabBanners(ap);
+  }
+  function renderLabBanners(ap){
+    var box=$('lab-banners'); if(!box) return; box.innerHTML='';
+    function ban(cls,html){ var d=document.createElement('div'); d.className='banner '+cls+' show'; d.innerHTML=html; box.appendChild(d); }
+    if(!ap){ ban('ven','<b>Decompor antes de interpretar.</b> A categoria define o termo quebrado; a alavanca certa é a que o move.'); return; }
+    if(ap.piorouPerfusao) ban('crit','<b>Termo errado.</b> A alavanca piorou a perfusão (o débito/entrega caiu) — pressão não é perfusão.');
+    else if(ap.ok) ban('ven','<b>Mecanismo casado.</b> A alavanca move o termo quebrado e melhora a entrega, com custo aceitável.');
+    else if(ap.custoProibitivo) ban('art','<b>Custo desproporcional.</b> A alavanca não move o termo quebrado e cobra demanda de O₂.');
+    else ban('art','<b>Não casa.</b> A alavanca não move suficientemente o termo quebrado.');
+  }
+
+  // ---------- CASO interativo (evolui de categoria) ----------
+  var caso={ step:0, state:null };
+  var CASO_ATOS=[
+    { narr:'Quente, taquicárdica, hipotensa; débito alto presumido, lactato 4,5.', preset:'distributivo',
+      q:'Decomponha: qual é o termo quebrado?', opts:[
+        {t:'conteúdo de O₂ (anemia/hipoxemia)', k:'conteudo'},{t:'resistência (RVS) — vasoplegia', k:'rvs'},{t:'bomba (contratilidade)', k:'bomba'},{t:'pré-carga (volume)', k:'pre'}], ans:'rvs',
+      cons:'Distributivo: RVS baixa com débito alto. O termo quebrado é a resistência.' },
+    { narr:'Confirmado distributivo. Qual alavanca move o termo quebrado, ao menor custo?', preset:'distributivo',
+      q:'Escolha a alavanca:', opts:[
+        {t:'dobutamina (β1 inotrópico)', k:'dobutamina'},{t:'noradrenalina (α1>β1)', k:'noradrenalina'},{t:'volume sem limite', k:'volume'},{t:'fenilefrina em bomba fraca', k:'fenilefrina'}], ans:'noradrenalina',
+      cons:'α1 sobe a RVS (o termo certo) e sustenta a PAM; um inodilatador vasodilataria ainda mais.' },
+    { narr:'Horas depois, ECO mostra FE 30%. O quadro evoluiu.', preset:'misto',
+      q:'O que mudou na fisiologia?', opts:[
+        {t:'virou cardiogênico puro; ignore a vasoplegia', k:'card'},{t:'somou um termo de bomba: agora é MISTO', k:'misto'},{t:'nada mudou; segue distributivo puro', k:'nada'},{t:'o problema agora é só conteúdo', k:'cont'}], ans:'misto',
+      cons:'Cardiomiopatia séptica: RVS baixa + bomba fraca. Mistos pedem alavanca para cada termo quebrado.' },
+    { narr:'Misto instalado: hipotenso, débito caindo, lactato voltando a subir.', preset:'misto',
+      q:'Qual a lógica de alavanca mais coerente?', opts:[
+        {t:'só vasoconstritor, até a PAM normalizar', k:'so'},{t:'inotrópico (bomba) + vasopressor (RVS): cada termo a sua alavanca', k:'combo'},{t:'só volume, em grande quantidade', k:'vol'},{t:'reduzir a frequência cardíaca', k:'fc'}], ans:'combo',
+      cons:'Dois termos quebrados → duas alavancas: somam fluxo (inotrópico) e pressão (vasopressor), pesando o custo.' }
+  ];
+  function renderCaso(){
+    var box=$('caso-interativo'); if(!box) return; box.innerHTML='';
+    var st0=M29.PRESETS[CASO_ATOS[0].preset].state, c0=M29.cascade(st0);
+    $('caso-vitais').innerHTML='<span>PA <b>'+br(c0.pam,0)+'</b> mmHg</span><span>FC <b>'+Math.round(c0.hr)+'</b></span><span>DC <b>'+br(c0.co,1)+'</b> L/min</span><span>lactato <b>4,5</b></span><span>perfil <b>'+c0.profile.temp+'</b></span>';
+    for(var i=0;i<=caso.step && i<CASO_ATOS.length;i++){
+      var a=CASO_ATOS[i], answered=(i<caso.step), div=document.createElement('div'); div.className='decision';
+      var html='<div class="dq"><b>Ato '+(i+1)+'.</b> '+a.narr+'<br>'+a.q+'</div>';
+      if(!answered){ html+='<div class="dopts">'; a.opts.forEach(function(o){ html+='<button class="opt" data-i="'+i+'" data-k="'+o.k+'">'+o.t+'</button>'; }); html+='</div><div class="dfb" id="dfb-'+i+'"></div>'; }
+      else { var picked=a._picked, ok=(picked===a.ans); html+='<div class="dfb show '+(ok?'':'')+'"><b style="color:'+(ok?'var(--ok)':'var(--crit)')+'">'+(ok?'✓ correto':'✗ revisto')+'</b> <span class="cons">'+a.cons+'</span></div>'; }
+      div.innerHTML=html; box.appendChild(div);
+    }
+    box.querySelectorAll('.opt[data-k]').forEach(function(b){ b.addEventListener('click',function(){ var i=+b.getAttribute('data-i'); CASO_ATOS[i]._picked=b.getAttribute('data-k'); if(caso.step===i) caso.step++; renderCaso(); }); });
+    $('caso-prog').textContent='ato '+Math.min(caso.step+1,CASO_ATOS.length)+' de '+CASO_ATOS.length+(caso.step>=CASO_ATOS.length?' · caso completo — o choque mudou de categoria e a alavanca foi recasada':'');
+  }
+  function predictAnswer(v){
+    var fb=$('prever-fb'); if(!fb) return;
+    var st=M29.PRESETS.cardiogenico.state; var ap=M29.appropriate(st, M29.LEVERS.fenilefrina);
+    var correct='afunda';
+    fb.className='fb show '+(v===correct?'ok':'no');
+    fb.innerHTML=(v===correct?'<b>Isso.</b> ':'<b>Reveja. </b>')+'Aplicar α1 puro numa bomba fraca (cardiogênico) sobe a pós-carga e <b>afunda o débito</b>: o motor mostra DC '+br(ap.pre.co,2)+'→'+br(ap.post.co,2)+' L/min (perfusão pior, apesar da pressão). O termo certo do distributivo é a RVS; numa bomba quebrada, α1 puro é o termo errado.';
+  }
+
+  // ---------- TRILHA ----------
+  var TRILHA=[
+    ['Qual é a pergunta-mãe do braço?','Não "qual a pressão?", e sim "qual termo da entrega de O₂ quebrou?". Choque é falência da entrega efetiva de O₂ ao tecido, não um número de PAM.'],
+    ['Por onde começa a cascata?','No conteúdo: CaO₂ = 1,34·Hb·SaO₂ + 0,003·PaO₂. Sem Hb/SaO₂, não há o que entregar — anemia e hipoxemia quebram o topo da cadeia.', 'pista: a Hb domina o conteúdo; o O₂ dissolvido é quase desprezível.'],
+    ['Como o conteúdo vira entrega?','DO₂ = DC × CaO₂ × 10. A entrega cai por bomba/ritmo/volume (DC) ou por anemia/hipoxemia (CaO₂). Duas portas para o mesmo déficit.'],
+    ['Quando a entrega baixa "quebra" o consumo?','Abaixo do DO₂crit: o VO₂ deixa de ser independente e passa a seguir a oferta (supply-dependence), acumulando déficit → lactato sobe.', 'pista: acima do limiar, ofertar mais não cria consumo.'],
+    ['Por que a SvO₂ pode enganar?','SvO₂ ≈ SaO₂·(1−O2ER): cai quando a oferta cai e o tecido extrai mais. Mas pode subir paradoxalmente quando a extração falha (micro/mito) — O₂ chega e não é usado.'],
+    ['Como a pressão entra?','PAM = PVC + DC·RVS/80. O mesmo número nasce de mecânicas opostas (DC alto/RVS baixa × DC baixo/RVS alta). Decompor antes de interpretar.', 'pista: PAM normal pode esconder débito e perfusão ruins (críptico).'],
+    ['Como nomear a categoria?','Pela primitiva quebrada: conteúdo (anemia), pré-carga (hipovolêmico/obstrutivo), bomba (cardiogênico), RVS (distributivo), extração (micro/mito). O perfil (quente/frio × fluxo) ajuda.'],
+    ['E quando há mais de um termo?','Misto: os termos se somam e o quadro evolui. Atribuir tudo a um só mecanismo engana; cada termo quebrado pede a sua alavanca.', 'pista: o termo dominante pode mudar no tempo — reavaliar.'],
+    ['Qual a regra final?','Achar o termo quebrado → escolher a alavanca que o move (receptor→termo, volume, transfusão, desobstrução) → pesar o custo (O₂, arritmia, congestão). Mecanismo casado ao problema, nunca receita.']
+  ];
+  function renderTrilha(){ var box=$('trilha'); if(!box) return; box.innerHTML='';
+    TRILHA.forEach(function(s){ var d=document.createElement('div'); d.className='step';
+      var h='<div class="qq">'+s[0]+'</div><div class="aa">'+s[1]+'</div>';
+      if(s[2]) h+='<details class="pista"><summary>▸ '+s[2].split(':')[0]+'</summary><div class="pb">'+s[2].split(':').slice(1).join(':').trim()+'</div></details>';
+      d.innerHTML=h; box.appendChild(d); }); }
+
+  // ---------- TUTOR (MCQ quiz29) ----------
+  var BANK=[], answered={};
+  function renderTutor(){ var box=$('tutor'); if(!box) return; BANK=buildBank(); box.innerHTML='';
+    BANK.forEach(function(q,qi){ var dif=q.tier==='b'?['b','básico']:q.tier==='i'?['i','intermediário']:['a','avançado'];
+      var div=document.createElement('div'); div.className='q';
+      var h='<div class="qt"><span class="dif dif-'+dif[0]+'">'+dif[1]+'</span><span class="tag">'+q.cap+'</span>'+q.q+'</div><div class="opts">';
+      q.o.forEach(function(opt,oi){ h+='<button class="opt" data-q="'+qi+'" data-o="'+oi+'">'+opt+'</button>'; });
+      h+='</div><div class="fb" id="fb-'+qi+'"></div>'; div.innerHTML=h; box.appendChild(div); });
+    box.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ answerTutor(+b.getAttribute('data-q'), +b.getAttribute('data-o')); }); });
+    updateScore();
+  }
+  function answerTutor(qi,oi){ if(answered[qi]!=null) return; answered[qi]=oi; var q=BANK[qi], correct=q.a;
+    var opts=document.querySelectorAll('.opt[data-q="'+qi+'"]');
+    opts.forEach(function(b){ var o=+b.getAttribute('data-o'); if(o===correct) b.classList.add('right'); else if(o===oi) b.classList.add('wrong'); b.disabled=true; });
+    var fb=$('fb-'+qi); fb.className='fb show '+(oi===correct?'ok':'no'); fb.innerHTML=q.fb; updateScore();
+  }
+  function updateScore(){ var n=Object.keys(answered).length, cor=0; Object.keys(answered).forEach(function(k){ if(answered[k]===BANK[k].a) cor++; });
+    $('score').textContent=n+' / '+BANK.length+' respondidas · '+cor+' corretas'+(n?(' ('+Math.round(cor/n*100)+'%)'):''); }
+
+  // ---------- CASOS V/F (cases29) ----------
+  var vf={ caso:0, ans:{} };
+  function vfKey(ci,ei,ai){ return ci+'-'+ei+'-'+ai; }
+  function vfStageDone(ci,ei){ var c=CASES_VF[ci]; if(!c||!c.etapas[ei]) return false; for(var ai=0;ai<c.etapas[ei].asser.length;ai++){ if(!(vfKey(ci,ei,ai) in vf.ans)) return false; } return true; }
+  function vfScore(){ var tot=0,ans=0,cor=0; CASES_VF.forEach(function(c,ci){ c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; var k=vfKey(ci,ei,ai); if(k in vf.ans){ ans++; if(vf.ans[k]===a.v) cor++; } }); }); }); return {tot:tot,ans:ans,cor:cor}; }
+  function vfScoreCase(ci){ var c=CASES_VF[ci]; if(!c) return {tot:0,ans:0}; var tot=0,ans=0; c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; if(vfKey(ci,ei,ai) in vf.ans) ans++; }); }); return {tot:tot,ans:ans}; }
+  function vfAnswer(ci,ei,ai,val){ var k=vfKey(ci,ei,ai); if(k in vf.ans) return; vf.ans[k]=val; renderVF(); }
+  function renderVFNav(){ var box=$('vf-navcasos'); if(!box) return; box.innerHTML='';
+    CASES_VF.forEach(function(c,ci){ var b=document.createElement('button'); b.className='preset'+(ci===vf.caso?' on':''); b.type='button'; var s=vfScoreCase(ci); var curto=c.titulo.split(/ [—–→(]/)[0]; b.innerHTML=(ci+1)+'. '+curto+' <span style="opacity:.6">'+s.ans+'/'+s.tot+'</span>';
+      b.addEventListener('click',function(){ vf.caso=ci; renderVF(); }); box.appendChild(b); }); }
+  function renderVF(){ renderVFNav();
+    var ci=vf.caso; if(!CASES_VF[ci]){ vf.caso=ci=0; } var c=CASES_VF[ci], box=$('vf-caso'); if(!c||!box) return;
+    var html='<div class="vfhead"><h3 style="margin:.2em 0">'+c.titulo+'</h3><div class="vfsub">'+c.sub+'</div><div class="vfopen">'+c.abertura+'</div></div>';
+    for(var ei=0;ei<c.etapas.length;ei++){
+      var revelar=(ei===0)||vfStageDone(ci,ei-1), et=c.etapas[ei];
+      if(!revelar){ html+='<div class="vfstage locked">▢ <b>Etapa '+(ei+1)+'</b> — responda a etapa anterior para revelar a evolução.</div>'; break; }
+      html+='<div class="vfstage"><div class="vffase"><span class="vfnum">'+(ei+1)+'</span> '+et.fase+'</div><div class="vfevol">'+et.evol+'</div>';
+      for(var ai=0;ai<et.asser.length;ai++){
+        var a=et.asser[ai], k=vfKey(ci,ei,ai), an=(k in vf.ans), chosen=vf.ans[k], correct=an&&(chosen===a.v);
+        html+='<div class="vfas'+(an?(correct?' ok':' no'):'')+'"><div class="vfq">'+a.t+'</div>';
+        if(!an){ html+='<div class="vfbtns"><button class="vfb" data-c="'+ci+'" data-e="'+ei+'" data-a="'+ai+'" data-v="1">Verdadeiro</button><button class="vfb" data-c="'+ci+'" data-e="'+ei+'" data-a="'+ai+'" data-v="0">Falso</button></div>'; }
+        else { html+='<div class="vffb"><b>'+(correct?'✓ Correto':'✗ Incorreto')+'</b> · gabarito: <b>'+(a.v?'Verdadeiro':'Falso')+'</b> — '+a.r+'</div>'; }
+        html+='</div>';
+      }
+      html+='<div class="vfprog">'+(vfStageDone(ci,ei)?'✓ etapa completa — evolução liberada':'responda as 5 assertivas desta etapa')+'</div></div>';
+    }
+    box.innerHTML=html;
+    box.querySelectorAll('.vfb').forEach(function(b){ b.addEventListener('click',function(){ vfAnswer(+b.getAttribute('data-c'),+b.getAttribute('data-e'),+b.getAttribute('data-a'),b.getAttribute('data-v')==='1'); }); });
+    var s=vfScore(); $('vf-score').textContent=s.ans+' / '+s.tot+' assertivas · '+s.cor+' corretas'+(s.ans?(' ('+Math.round(s.cor/s.ans*100)+'%)'):'');
+  }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    bindCasc();
+    renderLabPresets(); renderLabLevers(); renderLab();
+    renderCaso(); renderTrilha(); renderTutor(); renderVF(); drawCascade();
+    var pbox=$('prever-opts'); if(pbox){ pbox.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ predictAnswer(b.getAttribute('data-v')); }); }); }
+    // expor para o validador
+    window.M29ref=M29; window.activateTab=activate; window.drawCascadeFn=drawCascade; window.cascStateRef=cs;
+    window.BANKref=function(){return BANK;}; window.answerTutorFn=answerTutor; window.CASES_VFref=CASES_VF; window.vfScoreFn=vfScore; window.vfAnswerFn=vfAnswer;
+    window.labStateRef=lab; window.renderLabFn=renderLab; window.predictAnswerFn=predictAnswer; window.CASO_ATOSref=CASO_ATOS;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>

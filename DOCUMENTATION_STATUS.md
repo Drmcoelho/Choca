@@ -13,8 +13,8 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 A documentação estrutural foi criada, os documentos centrais foram alinhados à numeração publicada em `perfunde.html`, e o fechamento avaliativo M30 foi especificado.
 
 ```text
-módulos publicados: 0…28
-próximo módulo: M29 · capstone integrado
+módulos publicados: 0…29
+próximo módulo: M30 · revisão global / exame de domínio
 planejados: M23…M30
 portão global: npm run check
 manifesto curricular: curriculum.json
@@ -110,17 +110,17 @@ A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narr
 
 ## 5. Próxima ação recomendada
 
-**M22…M28** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`); M24…M28 já trazem a camada interativa do `MODULE_CONTRACT.md §2.6`; o M28 inaugurou a camada de referência farmacológica do `SAFETY.md §11`. A próxima ação de conteúdo é construir **M29 · capstone · caso integrado** sob o mesmo padrão:
+**M22…M29** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`); M24…M29 já trazem a camada interativa do `MODULE_CONTRACT.md §2.6`; o M28 inaugurou a camada de referência farmacológica do `SAFETY.md §11` e o M29 fechou o conteúdo com o motor unificado (cascata integrada). A próxima ação é construir **M30 · revisão global / exame de domínio** (100 questões, validador psicométrico):
 
 ```text
 1. especificar variáveis de estado
-2. escrever build/m29/model29.js
-3. escrever build/m29/test29.node.js
-4. escrever perfunde29.html
-5. escrever build/m29/validate29.js
+2. escrever build/m30 (banco de 100 questões em 4 partes)
+3. escrever o validador psicométrico (distribuição A/B/C/D, dificuldade por quarto, sem padrão explorável)
+4. escrever perfunde30.html
+5. validar e rodar o portão
 6. atualizar package.json
 7. atualizar perfunde.html
-8. atualizar curriculum.json (M29 → published; M30 permanece planned/avaliação)
+8. atualizar curriculum.json (M30 → published)
 9. rodar npm run check
 ```
 
