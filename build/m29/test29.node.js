@@ -60,5 +60,15 @@ ok('estado vazio não lança e dá normal plausível', (function(){try{const c=C
 ok('valores absurdos são clampados (sem NaN/Infinity)', (function(){const c=C({hb:1e9,sao2:9,hr:-50,rvs:1e9,preload:-3});return isFinite(c.pam)&&isFinite(c.do2)&&isFinite(c.lactate);})());
 ok('applyLever com alavanca vazia não altera nada', near(M.applyLever(dist,{}).rvs, M.normState(dist).rvs, 1e-9));
 
+console.log('\n— BANCO DE MCQ INTEGRADAS (quiz29) —');
+const Q=require('./quiz29.js'); const qs=Q.stats(), bank=Q.buildBank();
+ok('banco grande (30 questões)', qs.n===30, qs.n);
+ok('dificuldade em três faixas (b/i/a)', qs.tiers.b>0&&qs.tiers.i>0&&qs.tiers.a>0, JSON.stringify(qs.tiers));
+ok('gabarito DISPROPORCIONAL com as 4 letras', qs.dist.every(d=>d>0)&&(Math.max.apply(null,qs.dist)-Math.min.apply(null,qs.dist))>=2, 'A'+qs.dist[0]+' B'+qs.dist[1]+' C'+qs.dist[2]+' D'+qs.dist[3]);
+ok('a correta NÃO é a mais longa na maioria (<50%)', qs.longest/qs.n<0.5, qs.longest+'/'+qs.n);
+ok('4 opções, índice válido, feedback presente', bank.every(q=>q.o.length===4&&q.o[q.a]&&q.fb&&q.fb.length>15));
+ok('perguntas únicas', new Set(bank.map(q=>q.q)).size===bank.length);
+ok('firewall: sem dose imperativa nas questões', !bank.some(q=>[q.q,...q.o,q.fb].some(t=>/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(t))));
+
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);
