@@ -1,6 +1,6 @@
 # M30+ · Sistema de Avaliação de Domínio — Plano de construção (Step 0)
 
-> **Tese do salto.** O `M30_ASSESSMENT_SPEC.md` pede um *exame* de 100 questões. Esta proposta cumpre **toda** a constituição vigente e a **excede**: transforma o M30 num **sistema de avaliação de domínio** — banco com o **triplo do tamanho (300 itens)**, **dobro da robustez psicométrica**, e cinco inovações que nenhum módulo anterior tem. Nada aqui afrouxa o firewall SaMD nem a regra "mecanismo, não conduta".
+> **Tese do salto.** O `M30_ASSESSMENT_SPEC.md` pede um *exame* de 100 questões. Esta proposta cumpre **toda** a constituição vigente e a **excede**: transforma o M30 num **sistema de avaliação de domínio** — banco de **150 itens** (1,5× a spec), **dobro da robustez psicométrica**, e cinco inovações que nenhum módulo anterior tem. Densidade > volume: 150 itens *bem construídos* (6 formatos, engine-grounded, radar) valem mais que 300 rasos. Nada aqui afrouxa o firewall SaMD nem a regra "mecanismo, não conduta".
 
 O critério-mãe permanece: *quem passa não decorou o curso — internalizou o mapa causal.* O que muda é que agora o sistema **prova** isso, **mede onde o mapa tem buracos** e **devolve a rota de remediação**.
 
@@ -10,7 +10,7 @@ O critério-mãe permanece: *quem passa não decorou o curso — internalizou o 
 
 | Eixo | Spec vigente (M30) | M30+ (esta proposta) |
 |---|---|---|
-| Tamanho | 100 itens | **300 itens** (×3) |
+| Tamanho | 100 itens | **150 itens** (1,5×; densidade > volume) |
 | Formatos | 1 (SBA-MCQ) | **6 formatos** (SBA, asserção-razão, V/F-cluster, estimativa computada, "ache a pegadinha", vinheta de 2 passos) |
 | Gabarito provado | revisão humana | **itens engine-grounded**: o validador **recomputa** a resposta pelos motores m1/m8/m9/m28/m29 |
 | Saída | nota /100 | **radar de maestria** em 8 eixos + veredito de domínio + **remediação** ligada ao módulo |
@@ -59,36 +59,36 @@ T07 hipotensão ≠ hipovolemia      T15 a mais longa/“mais técnica” ≠ co
 T08 VD ≠ VE                       T16 referência educacional ≠ prescrição (§11)
 ```
 
-O validador exige que **cada armadilha** apareça como conceito testado em **≥ 8 itens** (cobertura da taxonomia).
+O validador exige que **cada armadilha** apareça como conceito testado em **≥ 4 itens** (cobertura da taxonomia).
 
 ---
 
-## 4. Composição dos 300 itens
+## 4. Composição dos 150 itens
 
 Por **formato** (auditado):
 
 ```text
-SBA-MCQ              ~165
-engine-grounded       ~45   (estimativa computada + SBA recomputado)
-asserção-razão        ~30
-"ache a pegadinha"    ~25
-vinheta de 2 passos   ~20   (cada uma = 2 itens encadeados)
-V/F-cluster           ~15   (clusters; cada um conta como item-mãe com sub-assertivas)
+SBA-MCQ              ~80
+engine-grounded       ~25   (estimativa computada + SBA recomputado)
+asserção-razão        ~15
+"ache a pegadinha"    ~12
+vinheta de 2 passos   ~10   (cada uma = 2 itens encadeados)
+V/F-cluster            ~8   (clusters; cada um conta como item-mãe com sub-assertivas)
 ```
 
 Por **dificuldade** (4 estratos, montados em ordem crescente na prova):
 
 ```text
-D1 reconhecimento/decomposição   ~75
-D2 aplicação/contraste           ~75
-D3 integração/conflito           ~75
-D4 exceção/simultaneidade        ~75
+D1 reconhecimento/decomposição   ~38
+D2 aplicação/contraste           ~38
+D3 integração/conflito           ~37
+D4 exceção/simultaneidade        ~37
 ```
 
 Por **eixo** (piso de cobertura — nenhum eixo abaixo do mínimo):
 
 ```text
-E1 ≥25  E2 ≥40  E3 ≥35  E4 ≥25  E5 ≥60  E6 ≥45  E7 ≥25  E8 ≥30   (soma ≥ 285; folga p/ ajuste)
+E1 ≥12  E2 ≥20  E3 ≥18  E4 ≥12  E5 ≥30  E6 ≥22  E7 ≥12  E8 ≥15   (soma ≥ 141; folga p/ ajuste)
 ```
 
 Distribuição de letras (constituição §4, mantida e endurecida): **cada letra 15–35% do total**, assimétrica, **e** sem padrão **por quarto**; correta-mais-longa **< 30%**.
@@ -99,7 +99,7 @@ Distribuição de letras (constituição §4, mantida e endurecida): **cada letr
 
 ```text
 build/m30/
-  bank30.js        # os 300 itens (dados + metadados §10 estendido), montados pelos 6 partes
+  bank30.js        # os 150 itens (dados + metadados §10 estendido), montados pelas 3 partes
   psyche30.js      # motor psicométrico PURO: LCG semeado, distribuição A/B/C/D (global+quarto),
                    #   varredura de padrões (corridas, sequências, maior-número, absolutos, todas/nenhuma),
                    #   paridade de comprimento, monotonia de dificuldade, piso de cobertura, taxonomia
@@ -121,13 +121,13 @@ Metadados por item (estende o §10 da spec):
   "rationale": { "correct":"...", "A":"...", "B":"...", "C":"...", "D":"...", "trap":"...", "concept":"..." } }
 ```
 
-> **Firewall.** `grounded.engine` só chama motores **mecanísticos**; nenhum item carrega dose imperativa, prescrição ou conduta individualizada. O `validate30` roda os mesmos scanners de firewall do M28/M29 sobre os 300 itens.
+> **Firewall.** `grounded.engine` só chama motores **mecanísticos**; nenhum item carrega dose imperativa, prescrição ou conduta individualizada. O `validate30` roda os mesmos scanners de firewall do M28/M29 sobre os 150 itens.
 
 ---
 
 ## 6. Validador psicométrico (~24 auditorias = dobro)
 
-**Obrigatórias (constituição §11):** 300 itens; 4 quartos; A/B/C/D; uma única correta; cada letra 15–35%; sem padrão por quarto; sem corrida longa de letra; sem repetição mecânica de módulo; metadados presentes; rationale das 4 + correta; **zero dose/conduta**.
+**Obrigatórias (constituição §11):** 150 itens; 4 quartos; A/B/C/D; uma única correta; cada letra 15–35%; sem padrão por quarto; sem corrida longa de letra; sem repetição mecânica de módulo; metadados presentes; rationale das 4 + correta; **zero dose/conduta**.
 
 **De 2ª ordem (o reforço):** recomputação engine-grounded (gabarito = motor); monotonia de dificuldade por quarto; distribuição de letras **por quarto**; correta-mais-longa < 30%; maior-número-correto < limiar; varredura de termos absolutos; sem "todas/nenhuma"; paridade de comprimento correta×distratores; piso de cobertura por eixo; cobertura da taxonomia (cada T ≥ 8); diversidade de formato por quarto; determinismo do embaralhamento semeado (replay); unicidade de enunciados; mapeamento distrator→armadilha completo; rationale de 5 camadas presente em **todos**.
 
@@ -137,16 +137,16 @@ O validador imprime `N OK · M falhas` e sai 1 se `M>0`. Entra no `npm run check
 
 ## 7. Construção em partes (6 entregas, auditadas entre si)
 
-O usuário pediu "em partes". Cada parte é um PR auditado antes da próxima.
+O usuário pediu "em partes". 150 itens → **3 partes de 50**, cada uma um PR auditado antes da próxima.
 
 ```text
-Parte 1 · itens 1–50    + INFRA: psyche30.js, grounding30.js, scoring30.js, validate30 esqueleto.
-                          Eixos E1–E2 (fundamentos/determinantes) + 1º lote engine-grounded (CaO₂/DO₂).
-Parte 2 · itens 51–100   E3–E4 (inversão/beira-leito, micro/lactato) + grounded PAM=DC×RVS.
-Parte 3 · itens 101–150  E5a (hipo, cardio, VD, obstrutivo) + vinhetas de 2 passos.
-Parte 4 · itens 151–200  E5b (distributivo, séptico, anaf×neuro) + V/F-clusters.
-Parte 5 · itens 201–250  E6 (misto, coração-pulmão, ressuscitação, críptico, perfis) + asserção-razão.
-Parte 6 · itens 251–300  E7–E8 (alavancas §11 + capstone) + RADAR de maestria/remediação + AUDITORIA GLOBAL final
+Parte 1 · itens 1–50    + INFRA: psyche30.js, grounding30.js, scoring30.js, test30.node.js, validate30 esqueleto.
+                          Eixos E1–E3 (fundamentos, determinantes, inversão/beira-leito) +
+                          1º lote engine-grounded (CaO₂/DO₂ via m1; PAM=DC×RVS via m9). Prova o conceito.
+Parte 2 · itens 51–100   Eixos E4–E5 (micro/lactato + categorias: hipo, cardio, VD, obstrutivo, distributivo+subtipos)
+                          + vinhetas de 2 passos + V/F-clusters.
+Parte 3 · itens 101–150  Eixos E6–E8 (integração/mistos/perfis + alavancas §11 + capstone) +
+                          asserção-razão + RADAR de maestria/remediação + AUDITORIA GLOBAL final
                           (distribuição, cobertura, dificuldade, padrões, gabaritos) e publicação do HTML.
 ```
 
@@ -171,11 +171,11 @@ O M30+ está excelente quando, além de tudo que a spec §13 exige: **nenhum gab
 ## 10. Riscos & mitigações
 
 ```text
-risco: 300 itens com gabarito frouxo → mitigação: engine-grounded + rationale de 5 camadas + auditoria por parte
+risco: 150 itens com gabarito frouxo → mitigação: engine-grounded + rationale de 5 camadas + auditoria por parte
 risco: padrão de letra emergente ao crescer o banco → mitigação: psyche30 recalcula distribuição a cada parte
 risco: dificuldade "por enunciado longo" → mitigação: paridade de comprimento + dificuldade medida
 risco: HTML gigante → mitigação: bancos em build/m30 inlinados; UI enxuta; mesmo rito do M28/M29
-risco: firewall → mitigação: scanners de dose/conduta sobre os 300, grounded só em motor mecanístico
+risco: firewall → mitigação: scanners de dose/conduta sobre os 150, grounded só em motor mecanístico
 ```
 
 ## 11. Step 1 proposto (quando você der o sinal)
