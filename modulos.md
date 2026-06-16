@@ -589,6 +589,8 @@ mesma PAM, mecânicas opostas · supply-dependence abaixo do DO₂crit · α1 pu
 
 **Extensão inter-braços (eixo E9, 75 itens):** cada questão liga **2–3 braços do hexápode** — RESPIRA·VENTILA (R, anterior) × PERFUNDE·CHOCA (P, atual) × FILTRA·DIALISA (F, próximo), **nunca um só**. Revê o atual e adianta o próximo (síndrome cardiorrenal, ARDS+choque+LRA, PEEP×retorno×congestão renal, pH partilhado por pulmão e rim, etc.).
 
+**Trilhas (`trails30.js`, 21 categorias):** não criam itens novos — **selecionam e ordenam** os 225 existentes para uma categoria + tamanho à escolha (todas/50/100), em dificuldade crescente. Níveis: graduada (novato→avançado), tema (eixos E1–E8), inter-braços (pulmão×coração, coração×rim, os três juntos) e formato (engine-grounded, cálculo, pegadinhas).
+
 **Estrutura:**
 
 ```text
