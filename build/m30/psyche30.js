@@ -26,9 +26,9 @@ function nonUniform(items, tol){ tol=(tol==null?0.04:tol); var f=letterFractions
 function maxRun(items){ var run=1,mx=1; for(var i=1;i<items.length;i++){ if(items[i].a===items[i-1].a){ run++; if(run>mx)mx=run; } else run=1; } return mx; }
 // detecta sequência regular A,B,C,D,A,B,C,D... ou A,A,B,B,...
 function hasRegularSequence(items){ if(items.length<8) return false;
-  var asc=true, pair=true;
+  var asc=true, pair=(items.length%2===0);   // ímpar não pode ser pareamento perfeito A-A-B-B
   for(var i=1;i<items.length;i++){ if((items[i-1].a+1)%4!==items[i].a%4) asc=false; }
-  for(var j=0;j<items.length-1;j+=2){ if(items[j].a!==items[j+1].a) pair=false; }
+  if(pair){ for(var j=0;j<items.length-1;j+=2){ if(items[j].a!==items[j+1].a) pair=false; } }
   return asc||pair; }
 
 // ---- forma das alternativas ----

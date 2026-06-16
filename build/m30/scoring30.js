@@ -5,17 +5,15 @@
 'use strict';
 
 var AXES=[
-  { id:'E1', nome:'Conteúdo & transporte',        modulos:['M1','M2'] },
+  { id:'E1', nome:'Conteúdo & transporte',        modulos:['M0','M1','M2'] },
   { id:'E2', nome:'Determinantes do débito',      modulos:['M3','M4','M5','M6','M7','M8'] },
   { id:'E3', nome:'Inversão & beira-leito',       modulos:['M9','M10','M11'] },
   { id:'E4', nome:'Microcirculação & lactato',    modulos:['M12','M13'] },
-  { id:'E5', nome:'Categorias de choque',         modulos:['M14','M16','M17','M18','M19','M20','M21','M22'] },
+  { id:'E5', nome:'Categorias de choque',         modulos:['M14','M15','M16','M17','M18','M19','M20','M21','M22'] },
   { id:'E6', nome:'Integração & mistos',          modulos:['M23','M24','M25','M26','M27'] },
   { id:'E7', nome:'Alavancas (farmacologia §11)', modulos:['M28'] },
   { id:'E8', nome:'Síntese / capstone',           modulos:['M29'] }
 ];
-var AXIS_BY_ID={}; AXES.forEach(function(a){ AXIS_BY_ID[a.id]=a; });
-
 // answers: { itemId: índiceEscolhido }
 function score(items, answers){
   answers=answers||{};
@@ -35,6 +33,7 @@ function axisVerdict(p){ if(!p.answered) return 'sem dados'; if(p.pct>=0.80) ret
 // veredito global de domínio
 function domainVerdict(s){
   if(!s.answered) return { nivel:'sem dados', texto:'Responda o exame para gerar o veredito.' };
+  if(s.answered < s.total) return { nivel:'incompleto', texto:'Responda a todas as questões para gerar o veredito de domínio.' };
   var fracas=s.axes.filter(function(p){ return p.answered && p.pct<0.60; });
   if(s.pct>=0.85 && fracas.length===0) return { nivel:'domínio sólido', texto:'Internalizou o mapa causal: decompõe, casa a alavanca ao termo e pesa o custo em todos os eixos.' };
   if(s.pct>=0.70 && fracas.length<=1) return { nivel:'domínio consistente', texto:'Mapa causal sólido, com '+(fracas.length?('uma lacuna em '+fracas[0].nome):'pequenas arestas')+'.' };

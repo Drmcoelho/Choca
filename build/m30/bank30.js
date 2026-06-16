@@ -285,7 +285,7 @@ function _targets(n, seed){
   var r=_lcg(seed); for(i=ms.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)); var t=ms[i]; ms[i]=ms[j]; ms[j]=t; }
   return ms;
 }
-var TG=_targets(BANK.length, 1);   // seed fixa → reprodutível e auditável (maxRun ≤ 3)
+var TG=_targets(150, 1);   // tamanho FINAL do plano (150) → gabaritos estáveis ao crescer o banco; seed fixa, auditável
 function _rotate(item, tg){
   var sh=((tg-item.a)%4+4)%4; if(sh===0) return item;
   var o=item.o.slice(), why=item.rationale.why.slice(), ov=item.grounded?item.grounded.optionValues.slice():null;
@@ -296,6 +296,6 @@ function _rotate(item, tg){
     grounded: item.grounded ? { ref:item.grounded.ref, args:item.grounded.args, kind:item.grounded.kind, optionValues:ov, tol:item.grounded.tol } : null };
   return ni;
 }
-function buildBank(){ return BANK.map(function(it,i){ return _rotate(it, TG[i%TG.length]); }); }
+function buildBank(){ return BANK.map(function(it,i){ return _rotate(it, TG[i]); }); }   // item i → alvo fixo TG[i] (estável entre as partes)
 
 if(typeof module!=='undefined' && module.exports){ module.exports={ BANK:BANK, buildBank:buildBank, TG:TG, _targets:_targets }; }
