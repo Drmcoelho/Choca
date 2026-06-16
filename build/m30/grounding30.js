@@ -28,6 +28,10 @@ function compute(g){
     case 'model9.rvsForPam':     return m9.rvsForPam(a.pam, a.dc, a.pvc);
     case 'pharm.infusionRate':   return pharm.infusionRate(a.drug, a.dose, a.weight);
     case 'pharm.concentration':  return pharm.concentration(a.drug).value;
+    case 'model29.aptLeverAmong': {  // qual das alavancas candidatas move o termo quebrado (deve haver exatamente UMA)
+      var apt=(a.levers||[]).filter(function(k){ return m29.appropriate(a.state, m29.LEVERS[k]).ok; });
+      return apt.length===1 ? apt[0] : ('AMBIGUO:'+apt.length);
+    }
     default: throw new Error('grounding30: ref desconhecida ' + g.ref);
   }
 }

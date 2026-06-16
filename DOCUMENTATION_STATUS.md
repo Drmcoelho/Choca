@@ -13,8 +13,8 @@ Ele existe para impedir um erro comum em projetos longos: a documentação parec
 A documentação estrutural foi criada, os documentos centrais foram alinhados à numeração publicada em `perfunde.html`, e o fechamento avaliativo M30 foi especificado.
 
 ```text
-módulos publicados: 0…29
-próximo módulo: M30 · revisão global / exame de domínio
+módulos publicados: 0…30 (braço completo)
+fechamento: M30 · exame global de domínio (150 itens, engine-grounded) — publicado
 planejados: M23…M30
 portão global: npm run check
 manifesto curricular: curriculum.json

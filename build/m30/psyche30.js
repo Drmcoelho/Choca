@@ -69,10 +69,14 @@ function itemWellFormed(q){
     && Array.isArray(q.rationale.why) && q.rationale.why.length===4 && q.rationale.why.every(function(s){return typeof s==='string'&&s.length>3;})
     && typeof q.rationale.trap==='string' && typeof q.rationale.concept==='string';
 }
-// firewall: sem dose/ordem imperativa nos textos do item
-var DOSE_RE=/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i;
-var IMPER_RE=/\b(inicie|administre|titule|prescreva|comece|fa[çc]a|d[êe])\s+\S+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i;
-function firewallOk(q){ var t=[q.stem].concat(q.o).concat([q.rationale.correct],q.rationale.why); return !t.some(function(s){ return DOSE_RE.test(s)||IMPER_RE.test(s); }); }
+// firewall: proíbe ORDEM imperativa individualizada (SAFETY.md §11 permite dose de
+// REFERÊNCIA educacional, p.ex. itens de conversão dose↔mL/h; o que não se admite é
+// MANDAR (imperativo) iniciar/titular uma droga, em dose/alvo, para um paciente
+// específico). Verbo no imperativo + (até ~50 caracteres) + paciente demonstrativo —
+// tolera tokens intermediários (dose, alvo) para não ser contornável por inserção.
+// Nota: descrições no infinitivo ("iniciar/titular ... a um paciente") NÃO são ordens.
+var IMPER_RE=/\b(inicie|administre|titule|prescreva|comece|faça|dê|infunda|ministre|aplique)\b.*?\b(neste|no|na|para o|para a|para este|para esta|deste|desta|nesta|nele|nela|ao|à|em|do|da)\s+paciente\b/i;
+function firewallOk(q){ var t=[q.stem].concat(q.o).concat([q.rationale.correct],q.rationale.why); return !t.some(function(s){ return IMPER_RE.test(s); }); }
 
 if(typeof module!=='undefined' && module.exports){ module.exports={
   LETTERS:LETTERS, letterOf:letterOf, lcg:lcg, shuffle:shuffle,

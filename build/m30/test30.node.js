@@ -19,17 +19,17 @@ ok('correctIsLongest detecta opção correta mais longa', P.correctIsLongest({o:
 
 console.log('\n— GROUNDING30 · recomputação engine-grounded —');
 const vb=G.verifyBank(items);
-ok('itens engine-grounded (≥10 nas Partes 1–2; cresce na Parte 3)', vb.grounded>=10, vb.grounded);
+ok('itens engine-grounded (≥20 no banco completo)', vb.grounded>=20, vb.grounded);
 ok('TODO gabarito grounded bate com o motor', vb.ok===vb.grounded && vb.fails.length===0, vb.ok+'/'+vb.grounded+(vb.fails.length?(' · falhas: '+JSON.stringify(vb.fails.slice(0,3))):''));
 ok('grounded numérico discrimina (distrator não cola na correta)', items.filter(q=>q.grounded&&q.grounded.kind==='number').every(q=>G.verify(q).discriminates));
 
-console.log('\n— BANK30 · itens 1–100 (Partes 1–2) —');
-ok('100 itens (Partes 1–2)', items.length===100, items.length);
+console.log('\n— BANK30 · banco COMPLETO (150 itens) —');
+ok('150 itens', items.length===150, items.length);
 ok('ids únicos', new Set(items.map(q=>q.id)).size===items.length);
 ok('enunciados únicos', new Set(items.map(q=>q.stem)).size===items.length);
 ok('todos bem-formados (4 opções, índice, metadados, rationale 5 camadas)', items.every(P.itemWellFormed));
-ok('firewall: sem dose/ordem imperativa em nenhum item', items.every(P.firewallOk));
-ok('eixos E1–E5 cobertos (E6–E8 vêm na Parte 3)', ['E1','E2','E3','E4','E5'].every(e=>P.axisCounts(items)[e]>0) && items.every(q=>['E1','E2','E3','E4','E5'].indexOf(q.axis)>=0), JSON.stringify(P.axisCounts(items)));
+ok('firewall: sem ordem imperativa individualizada (§11 permite referência)', items.every(P.firewallOk));
+ok('8 eixos cobertos (E1–E8)', P.AXES.every(e=>P.axisCounts(items)[e]>0), JSON.stringify(P.axisCounts(items)));
 ok('6 formatos presentes', Object.keys(P.formatCounts(items)).length>=6, JSON.stringify(P.formatCounts(items)));
 
 console.log('\n— DISTRIBUIÇÃO & ANTI-PADRÃO (sobre o banco acumulado) —');

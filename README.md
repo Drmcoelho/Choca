@@ -14,7 +14,7 @@ A pressão arterial é um número resultante. A fisiologia mora nos termos que p
 
 ## Estado atual
 
-O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde29.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
+O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde30.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
 
 Estado curricular atual:
 
@@ -29,8 +29,8 @@ Estado curricular atual:
 - **M26** — publicado: choque críptico/compensado — a PAM normal mente; a compensação tem reserva finita e há um precipício; marcadores ocultos denunciam.
 - **M27** — publicado: os 4 perfis · radar — perfusão (fluxo) × congestão num mapa 2×2 (A/B/L/C); a mesma alavanca tem efeito oposto por canto.
 - **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`.
-- **M29** — publicado: capstone · caso integrado — o braço inteiro num **motor unificado** (cascata CaO₂→DO₂→VO₂→PAM→perfil), com instrumento ao vivo, caso que muda de categoria, 30 MCQ e 120 assertivas V/F. Próximo: **M30 · exame global de domínio**.
-- **M30** — revisão global / exame de domínio com 100 questões (especificado, a construir).
+- **M29** — publicado: capstone · caso integrado — o braço inteiro num **motor unificado** (cascata CaO₂→DO₂→VO₂→PAM→perfil), com instrumento ao vivo, caso que muda de categoria, 30 MCQ e 120 assertivas V/F.
+- **M30** — publicado: exame global de domínio — **150 itens** em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores), **radar de maestria** em 8 eixos e psicometria anti-gaming. Fecha o braço.
 
 ---
 
@@ -117,21 +117,8 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ---
 
-## Próxima fronteira
+## Estado do braço
 
-A documentação estrutural foi consolidada e reconciliada, e o Bloco IV está completo (`M23`…`M29`), no padrão interativo rico (`MODULE_CONTRACT.md §2.6`); o M28 inaugurou a camada de referência farmacológica (`SAFETY.md §11`) e o M29 fechou o conteúdo com o motor unificado da cascata. A próxima etapa concreta é construir `M30 · revisão global · exame de domínio`:
+O braço está **completo**: `M0`…`M30` publicados e validados (`npm run check` verde). O Bloco IV (`M23`…`M29`) está no padrão interativo rico (`MODULE_CONTRACT.md §2.6`); o M28 inaugurou a camada de referência farmacológica (`SAFETY.md §11`); o M29 fechou o conteúdo com o motor unificado da cascata; e o **M30** fecha o braço como **sistema de avaliação de domínio**: 150 itens em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores em `build/m30/grounding30.js`), **radar de maestria** (`scoring30.js`) e psicometria anti-gaming (`psyche30.js`), com `build/m30/PLAN.md` documentando o desenho.
 
-```text
-1. especificar variáveis de estado
-2. montar o banco de 100 questões (4 partes de 25)
-3. escrever o validador psicométrico (distribuição, dificuldade, sem padrão)
-4. construir perfunde30.html
-5. rodar o portão
-6. atualizar package.json e perfunde.html
-7. atualizar curriculum.json para status published
-8. rodar npm run check
-```
-
-Em paralelo, M30 já está especificado como fechamento avaliativo do braço. Ele será construído em quatro partes de 25 questões após estabilização de M22–M29.
-
-O alvo final é um sistema em que cada botão obedeça à fisiologia, cada fórmula seja testável, cada erro do aluno revele uma falha conceitual e cada módulo pertença a um mapa causal maior.
+O alvo foi atingido: cada botão obedece à fisiologia, cada fórmula é testável, cada erro do aluno revela uma falha conceitual e cada módulo pertence a um mapa causal maior — agora com uma prova final que mede o domínio desse mapa.

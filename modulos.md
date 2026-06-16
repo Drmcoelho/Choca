@@ -6,9 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M29
-próximo: M30 · revisão global / exame de domínio
-planejado: M30 (avaliação global, não conteúdo novo)
+publicados: M0…M30 (braço completo)
+fechamento: M30 · exame global de domínio (150 itens) — publicado
 ```
 
 ---
