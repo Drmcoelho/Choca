@@ -269,7 +269,267 @@ var BANK=[
   { id:'m30_q050', format:'sba', quarter:4, difficulty:4, axis:'E3', modules:['M9','M10','M12'], concepts:['sintese','leitura'], trap:'T02',
     stem:'A leitura beira-leito mais robusta de um choque combina:',
     o:['decompor a PAM (DC × RVS), checar marcadores de perfusão (lactato, ScvO₂) e questionar a origem de cada número','confiar no valor de PAM exibido, que resume todo o estado hemodinâmico','escolher a variável isolada mais alarmante e agir sobre ela','adiar qualquer interpretação até obter um cateter de artéria pulmonar'], a:0,
-    rationale:{ correct:'Decompor + marcadores de perfusão + ceticismo com o número: é assim que a beira-leito vira mecanismo, não palpite.', why:['correta: decomposição + perfusão + ceticismo','a PAM não resume o estado','uma variável isolada engana','não se adia a leitura por um cateter'], trap:'PAM ≠ perfusão', concept:'M9/M10/M12 · síntese de leitura' } }
+    rationale:{ correct:'Decompor + marcadores de perfusão + ceticismo com o número: é assim que a beira-leito vira mecanismo, não palpite.', why:['correta: decomposição + perfusão + ceticismo','a PAM não resume o estado','uma variável isolada engana','não se adia a leitura por um cateter'], trap:'PAM ≠ perfusão', concept:'M9/M10/M12 · síntese de leitura' } },
+
+  // ===================== PARTE 2 · itens 51–100 (E4 micro/lactato · E5 categorias) =====================
+  // ---- E4 · Microcirculação & lactato (M12–M13) ----
+  { id:'m30_q051', format:'sba', quarter:2, difficulty:2, axis:'E4', modules:['M12'], concepts:['microcirculacao','macro'], trap:'T14',
+    stem:'Por que uma macro-hemodinâmica normalizada pode coexistir com tecido faminto?',
+    o:['porque a microcirculação (shunt, heterogeneidade, glicocálice) pode falhar mesmo com pressão e fluxo sistêmicos adequados','porque a PAM normal garante, por definição, a perfusão de cada capilar do organismo','porque o débito cardíaco normal distribui o fluxo de modo perfeitamente homogêneo a todos os leitos','porque a saturação venosa central reflete sempre e exatamente a extração de cada tecido isolado'], a:0,
+    rationale:{ correct:'Macro e micro dissociam: shunt e heterogeneidade capilar mantêm o déficit apesar da pressão/fluxo sistêmicos.', why:['correta: a micro pode falhar isolada','PAM não garante o capilar','o fluxo não é homogêneo','ScvO₂ é média, não local'], trap:'pressor melhora macro ≠ micro', concept:'M12 · microcirculação' } },
+
+  { id:'m30_q052', format:'sba', quarter:2, difficulty:2, axis:'E4', modules:['M13'], concepts:['lactato','tipoA','tipoB'], trap:'T12',
+    stem:'Um lactato elevado deve ser lido como:',
+    o:['balanço entre produção (hipóxia tipo A e estímulo metabólico tipo B) e depuração (fígado/rim), não um sinônimo simples de hipóxia','prova inequívoca e isolada de hipoperfusão tecidual grave em todos os contextos clínicos possíveis','consequência exclusiva de baixa saturação periférica de oxigênio detectada no oxímetro de pulso','um marcador sem qualquer valor prognóstico ou de acompanhamento na evolução do choque'], a:0,
+    rationale:{ correct:'Lactato é produção (A e B) menos depuração; tipo B (β/metabólico) e clearance hepático entram na conta.', why:['correta: balanço produção × depuração','não é só hipóxia','não depende da SpO₂','tem valor prognóstico'], trap:'lactato alto ≠ sempre hipóxia (A×B)', concept:'M13 · lactato & depuração' } },
+
+  { id:'m30_q053', format:'est', quarter:2, difficulty:2, axis:'E4', modules:['M1','M8'], concepts:['DO2','anemia'], trap:'T03',
+    grounded:{ ref:'model29.cascade.do2', args:{state:{hb:6, sao2:0.92, hr:110}}, kind:'number', optionValues:[562, 1000, 300, 780], tol:40 },
+    stem:'Numa anemia (Hb 6) com SaO₂ 92% e FC 110, a entrega de O₂ (DO₂) computada fica em torno de (mL/min):',
+    o:['562','1000','300','780'], a:0,
+    rationale:{ correct:'CaO₂ cai com a Hb 6; mesmo com débito compensatório, a DO₂ fica ~560, bem abaixo do normal.', why:['correta: ~560, reduzida pela anemia','seria o normal, não anemia','baixa demais para esse débito','superestima o conteúdo'], trap:'conteúdo ≠ saturação', concept:'M8 · DO₂ na anemia (computado)' } },
+
+  { id:'m30_q054', format:'vf', quarter:3, difficulty:3, axis:'E4', modules:['M12','M8'], concepts:['SvO2','extracao'], trap:'T06',
+    stem:'Sobre extração e saturação venosa, qual assertiva é VERDADEIRA?',
+    o:['uma SvO₂ alta com lactato alto sugere falha de extração/utilização, não tecido satisfeito','uma SvO₂ alta sempre indica boa extração e perfusão tecidual plenamente adequada em qualquer cenário','a extração de O₂ pelos tecidos não tem qualquer relação com o valor da saturação venosa medida','a SvO₂ depende apenas da hemoglobina, sendo independente da oferta e do consumo de oxigênio'], a:0,
+    rationale:{ correct:'SvO₂ alta + lactato alto = O₂ chega e não é usado (micro/mito), não satisfação.', why:['correta: falha de extração','SvO₂ alta pode ser falha de extração','SvO₂ ≈ SaO₂·(1−O₂ER): há relação','depende de oferta e consumo'], trap:'SvO₂ alta ≠ boa extração', concept:'M12 · extração' } },
+
+  { id:'m30_q055', format:'sba', quarter:3, difficulty:3, axis:'E4', modules:['M13'], concepts:['clearance','depuracao'], trap:'T12',
+    stem:'Por que a depuração (clearance) do lactato importa tanto quanto o valor absoluto?',
+    o:['porque a tendência de queda reflete restauração da perfusão e da função hepática, informando mais que um ponto isolado','porque o valor absoluto inicial é o único determinante prognóstico relevante, devendo guiar sozinho toda a conduta subsequente do paciente grave','porque a depuração depende exclusivamente da função renal e não tem relação com a perfusão sistêmica','porque um lactato que não cai indica sempre erro de coleta laboratorial e deve ser desconsiderado'], a:0,
+    rationale:{ correct:'A trajetória (clearance) reflete perfusão e fígado se recuperando — informa mais que um valor único.', why:['correta: a tendência manda','o ponto isolado não basta','não é só rim','não é erro de coleta'], trap:'número ≠ mecanismo', concept:'M13 · clearance' } },
+
+  { id:'m30_q056', format:'sba', quarter:4, difficulty:4, axis:'E4', modules:['M12','M13','M21'], concepts:['mito','desacoplamento'], trap:'T13',
+    stem:'Na sepse, a "falência citopática" descreve:',
+    o:['incapacidade da mitocôndria de utilizar o O₂ entregue, gerando déficit mesmo com oferta e extração macroscópicas preservadas','um defeito puramente macro-hemodinâmico de débito cardíaco que responde prontamente à reposição volêmica','um excesso de oferta de O₂ que satura por completo a cadeia respiratória e cessa a produção de lactato','uma anemia funcional por sequestro de hemoglobina que reduz o conteúdo arterial de oxigênio'], a:0,
+    rationale:{ correct:'A mitocôndria não usa o O₂ entregue (disóxia citopática): déficit apesar de macro/extração ok.', why:['correta: mitocôndria não usa o O₂','não é só macro','não é excesso de oferta','não é anemia'], trap:'supply-independent × dependent', concept:'M12/M21 · mitocôndria' } },
+
+  { id:'m30_q057', format:'trap', quarter:3, difficulty:3, axis:'E4', modules:['M13'], concepts:['lactato'], trap:'T12',
+    stem:'Qual frase comete a armadilha "lactato alto = sempre hipóxia"?',
+    o:['"o lactato subiu, logo há necessariamente hipoperfusão e baixa oferta de O₂ ao tecido"','"a adrenalina pode elevar o lactato por estímulo β, sem que haja déficit de oferta (tipo B)"','"o lactato é um balanço de produção e depuração, e o fígado participa do clearance"','"a tendência do lactato informa mais que um valor isolado na evolução do choque"'], a:0,
+    rationale:{ correct:'Igualar lactato a hipóxia ignora o tipo B (metabólico/β) e a depuração.', why:['correta: a armadilha','reconhece o tipo B','correto: balanço','correto: tendência'], trap:'lactato alto ≠ sempre hipóxia (A×B)', concept:'M13 · meta-armadilha' } },
+
+  { id:'m30_q058', format:'sba', quarter:2, difficulty:2, axis:'E4', modules:['M12'], concepts:['glicocalice'], trap:'T14',
+    stem:'O glicocálice endotelial, quando lesado (sepse, ressuscitação agressiva), contribui para:',
+    o:['extravasamento capilar e heterogeneidade de fluxo, agravando o déficit de extração tecidual','aumento da contratilidade miocárdica e elevação direta do débito cardíaco sistêmico','vasoconstrição arteriolar seletiva que melhora a pressão de perfusão e desvia o fluxo sanguíneo para os tecidos isquêmicos dos órgãos nobres','elevação do conteúdo arterial de O₂ por captação pulmonar mais eficiente do oxigênio'], a:0,
+    rationale:{ correct:'A lesão do glicocálice aumenta leak e heterogeneidade microvascular — piora a extração.', why:['correta: leak + heterogeneidade','não age na contratilidade','não é vasoconstrição benéfica','não muda o conteúdo'], trap:'pressor melhora macro ≠ micro', concept:'M12 · glicocálice' } },
+
+  { id:'m30_q059', format:'ar', quarter:3, difficulty:3, axis:'E4', modules:['M12','M9'], concepts:['macro','micro'], trap:'T14',
+    stem:'ASSERÇÃO: corrigir a PAM não garante corrigir a perfusão tecidual. PORQUE: a microcirculação pode permanecer disfuncional apesar da macro-hemodinâmica restaurada.',
+    o:['as duas são verdadeiras e a segunda justifica a primeira','as duas são verdadeiras, mas não há relação causal direta entre elas neste caso','a primeira é verdadeira e a segunda é falsa','a primeira é falsa e a segunda é verdadeira'], a:0,
+    rationale:{ correct:'V/V com nexo: a disfunção micro persistente explica por que a PAM corrigida não basta.', why:['correta: V/V com causa','há nexo causal','a segunda é verdadeira','a primeira é verdadeira'], trap:'pressor melhora macro ≠ micro', concept:'M12 · macro × micro' } },
+
+  { id:'m30_q060', format:'sba', quarter:1, difficulty:1, axis:'E4', modules:['M13'], concepts:['lactato','depuracao'], trap:'T12',
+    stem:'Um lactato normal sempre significa ausência de hipoperfusão?',
+    o:['não: depuração eficiente ou hipoperfusão regional localizada podem mascarar o déficit no valor sistêmico','sim: lactato normal é prova definitiva e suficiente de perfusão tecidual global adequada','sim: a produção de lactato cessa por completo assim que a oferta de O₂ se torna adequada','não: porque o lactato normal indica sempre falência hepática compensatória subjacente'], a:0,
+    rationale:{ correct:'Lactato normal não exclui hipoperfusão: clearance bom ou déficit regional podem mascarar.', why:['correta: pode mascarar','não é prova suficiente','a produção não cessa abruptamente','não indica falência hepática'], trap:'lactato alto ≠ sempre hipóxia (A×B)', concept:'M13 · interpretação' } },
+
+  { id:'m30_q061', format:'vignette', quarter:3, difficulty:3, axis:'E4', modules:['M8','M12','M13'], concepts:['supply','lactato'], trap:'T13',
+    stem:'Passo 1: paciente com DO₂ caindo e lactato subindo. Passo 2: eleva-se a DO₂ acima do normal e o lactato se estabiliza, mas não zera. A leitura mais coerente é:',
+    o:['havia componente supply-dependent (corrigido pela oferta) somado a produção tipo B/depuração, que mantém algum lactato residual','a oferta de O₂ não tinha qualquer relação com o lactato, que subiu apenas por erro analítico de laboratório','o lactato residual prova que a entrega de O₂ permanece criticamente baixa apesar da intervenção realizada','elevar a DO₂ acima do normal deveria zerar o lactato, e a falha indica hipóxia tecidual progressiva'], a:0,
+    rationale:{ correct:'A resposta à oferta revela o componente supply-dependent; o resíduo reflete tipo B/clearance, não déficit de oferta.', why:['correta: supply-dependent + tipo B','não foi erro analítico','a DO₂ está alta, não baixa','acima do limiar, mais O₂ não zera o lactato'], trap:'supply-independent × dependent', concept:'M8/M13 · vinheta' } },
+
+  { id:'m30_q062', format:'sba', quarter:2, difficulty:2, axis:'E4', modules:['M12'], concepts:['heterogeneidade'], trap:'T14',
+    stem:'A heterogeneidade do fluxo microvascular na sepse significa que:',
+    o:['capilares vizinhos podem ter fluxos muito distintos, com áreas hipoperfundidas mesmo quando o fluxo global está normal','todos os capilares recebem exatamente o mesmo fluxo quando o débito cardíaco está adequado','o fluxo microvascular é sempre proporcional e idêntico à pressão arterial média medida','a microcirculação deixa de existir funcionalmente assim que a PAM ultrapassa 65 mmHg'], a:0,
+    rationale:{ correct:'Fluxo heterogêneo: áreas de shunt e áreas isquêmicas coexistem apesar do fluxo global normal.', why:['correta: fluxos distintos lado a lado','não é homogêneo','não é proporcional à PAM','a micro não "desaparece"'], trap:'pressor melhora macro ≠ micro', concept:'M12 · heterogeneidade' } },
+
+  { id:'m30_q063', format:'sba', quarter:1, difficulty:1, axis:'E4', modules:['M13'], concepts:['lactato','tipoB'], trap:'T12',
+    stem:'Lactato "tipo B" refere-se a:',
+    o:['produção sem hipóxia tecidual, por estímulo metabólico/adrenérgico ou redução de depuração','produção exclusivamente por hipoperfusão e baixa oferta de O₂ aos tecidos periféricos, sem qualquer contribuição de estímulo metabólico','um valor que só aparece em pacientes com parada cardíaca recente documentada','uma forma de lactato que não é detectada pelos métodos laboratoriais habituais'], a:0,
+    rationale:{ correct:'Tipo B = sem hipóxia: β-adrenérgico, metabólico, ou clearance reduzido (fígado).', why:['correta: sem hipóxia','isso é tipo A','não exige PCR','é detectável'], trap:'lactato alto ≠ sempre hipóxia (A×B)', concept:'M13 · tipo B' } },
+
+  { id:'m30_q064', format:'sba', quarter:4, difficulty:4, axis:'E4', modules:['M12','M13','M9'], concepts:['integracao'], trap:'T14',
+    stem:'Após otimizar PAM e débito, o lactato persiste alto e a perfusão capilar (vídeo-microscopia) está heterogênea. A conduta mecanística coerente é:',
+    o:['reconhecer a dissociação macro–micro e evitar escalar a pressão indefinidamente, que não corrige a microcirculação','elevar a PAM-alvo progressivamente até o lactato normalizar, pois pressão e perfusão capilar são exatamente a mesma variável fisiológica','assumir erro de medida do lactato e da vídeo-microscopia, mantendo a conduta sem qualquer reavaliação','interromper toda monitorização de perfusão, já que a macro-hemodinâmica foi otimizada com sucesso'], a:0,
+    rationale:{ correct:'Macro otimizada + micro disfuncional: subir a pressão não conserta o capilar e tem custo.', why:['correta: reconhece a dissociação','pressão ≠ perfusão capilar','não é erro de medida','não se abandona a perfusão'], trap:'pressor melhora macro ≠ micro', concept:'M12 · dissociação macro-micro' } },
+
+  // ---- E5 · Categorias de choque (M14–M22) ----
+  { id:'m30_q065', format:'est', quarter:2, difficulty:2, axis:'E5', modules:['M20'], concepts:['distributivo','termo'], trap:'T05',
+    grounded:{ ref:'model29.brokenTerm', args:{state:{rvs:520, hr:120, o2ermax:0.42, vo2demand:330}}, kind:'label', optionValues:['conteudo','pre','bomba','rvs'] },
+    stem:'Choque com RVS muito baixa, débito alto e extremidades quentes. O termo quebrado, computado pelo motor, é:',
+    o:['conteúdo de O₂','pré-carga / retorno venoso','bomba / contratilidade','resistência vascular (RVS)'], a:3,
+    rationale:{ correct:'O motor classifica a RVS como termo dominante quebrado — é o distributivo.', why:['conteúdo está preservado','a pré-carga não é o primário','a bomba não é o problema','correta: RVS (distributivo)'], trap:'distributivo ≠ séptico', concept:'M20 · distributivo (computado)' } },
+
+  { id:'m30_q066', format:'est', quarter:2, difficulty:2, axis:'E5', modules:['M16'], concepts:['cardiogenico','termo'], trap:'T08',
+    grounded:{ ref:'model29.brokenTerm', args:{state:{contractility:0.32, preload:1.15, hr:108, rvs:1750}}, kind:'label', optionValues:['rvs','bomba','pre','conteudo'] },
+    stem:'Choque frio, congesto, com RVS elevada e contratilidade reduzida. O termo quebrado, computado, é:',
+    o:['resistência vascular (RVS)','bomba / contratilidade','pré-carga / retorno venoso','conteúdo de O₂'], a:1,
+    rationale:{ correct:'O motor aponta a bomba (contratilidade) como termo quebrado — é o cardiogênico.', why:['a RVS está alta, mas compensatória','correta: bomba','a pré-carga não é o primário','o conteúdo está preservado'], trap:'VD ≠ VE', concept:'M16 · cardiogênico (computado)' } },
+
+  { id:'m30_q067', format:'est', quarter:3, difficulty:3, axis:'E5', modules:['M15'], concepts:['hemorragico','conteudo'], trap:'T03',
+    grounded:{ ref:'model29.brokenTerm', args:{state:{preload:0.5, hb:7, hr:120, rvs:1450}}, kind:'label', optionValues:['conteudo','rvs','bomba','pre'] },
+    stem:'Trauma com hipotensão, Hb 7, taquicardia e vasoconstrição. O termo dominante quebrado, computado, é:',
+    o:['conteúdo de O₂ (Hb baixa)','resistência vascular (RVS)','bomba / contratilidade','pré-carga / retorno venoso'], a:0,
+    rationale:{ correct:'Com Hb 7, o motor classifica o conteúdo como termo dominante (somado à pré-carga perdida).', why:['correta: conteúdo (Hb 7)','a RVS está alta, compensatória','a bomba está preservada','a pré-carga também caiu, mas o conteúdo domina aqui'], trap:'conteúdo ≠ saturação', concept:'M15 · hemorrágico (computado)' } },
+
+  { id:'m30_q068', format:'sba', quarter:1, difficulty:1, axis:'E5', modules:['M14'], concepts:['hipovolemico'], trap:'T07',
+    stem:'A quebra primária no choque hipovolêmico é:',
+    o:['o retorno venoso / pré-carga, por perda de volume efetivo circulante','a contratilidade miocárdica, que falha de modo intrínseco e primário','a resistência vascular sistêmica, que cai por vasoplegia inflamatória','o conteúdo arterial de O₂, mesmo quando não houve perda de sangue'], a:0,
+    rationale:{ correct:'Hipovolemia quebra o retorno venoso/pré-carga; RVS e FC sobem em compensação.', why:['correta: pré-carga/retorno','a bomba está íntegra','a RVS sobe, não cai','sem sangramento, o conteúdo é normal'], trap:'hipotensão ≠ hipovolemia', concept:'M14 · hipovolêmico' } },
+
+  { id:'m30_q069', format:'sba', quarter:3, difficulty:3, axis:'E5', modules:['M17'], concepts:['VD','interdependencia'], trap:'T08',
+    stem:'O ventrículo direito falha por regras próprias porque:',
+    o:['é sensível à pós-carga pulmonar e, dilatado, reduz o enchimento do VE por interdependência (septo/pericárdio)','tem a mesma fisiologia do VE, podendo ser tratado exatamente como uma falência de ventrículo esquerdo','não sofre influência da pressão intratorácica nem da resistência vascular pulmonar em nenhuma circunstância hemodinâmica relevante','responde sempre a grandes volumes, que melhoram seu débito de forma proporcional e previsível'], a:0,
+    rationale:{ correct:'VD é afterload-sensível (RVP) e, dilatado, comprime o VE — interdependência ventricular.', why:['correta: pós-carga pulmonar + interdependência','não é igual ao VE','sofre influência pleural/RVP','volume excessivo piora o VD'], trap:'VD ≠ VE', concept:'M17 · ventrículo direito' } },
+
+  { id:'m30_q070', format:'sba', quarter:3, difficulty:3, axis:'E5', modules:['M18','M19'], concepts:['obstrutivo'], trap:'T07',
+    stem:'O denominador comum dos choques obstrutivos (TEP, tamponamento, pneumotórax hipertensivo) é:',
+    o:['uma barreira mecânica ao enchimento ou à ejeção, que reduz o fluxo apesar de bomba e volume frequentemente preservados','uma vasoplegia sistêmica grave que derruba a resistência vascular e o retorno venoso simultaneamente','uma falência intrínseca e primária da contratilidade dos dois ventrículos ao mesmo tempo','uma perda maciça de volume circulante por hemorragia interna oculta não identificada'], a:0,
+    rationale:{ correct:'Obstrutivo = barreira mecânica (ao enchimento/retorno/ejeção); bomba e volume podem estar ok.', why:['correta: barreira mecânica','não é vasoplegia','não é falência de contratilidade','não é hipovolemia'], trap:'hipotensão ≠ hipovolemia', concept:'M18 · obstrutivo' } },
+
+  { id:'m30_q071', format:'vf', quarter:3, difficulty:3, axis:'E5', modules:['M19'], concepts:['tamponamento','pneumotorax'], trap:'T10',
+    stem:'Sobre os obstrutivos torácicos, qual assertiva é VERDADEIRA?',
+    o:['no tamponamento, o tratamento mecânico é drenar o pericárdio; vasopressor apenas sustenta a pressão enquanto isso','o pneumotórax hipertensivo melhora de forma definitiva apenas com reposição volêmica generosa, sem necessidade de descompressão imediata','o tamponamento se resolve com inotrópico, pois a falha é primariamente de contratilidade do ventrículo','esses quadros são distributivos por vasoplegia e respondem bem a expansão volêmica isolada'], a:0,
+    rationale:{ correct:'Remover a restrição (drenar) é o pilar; o pressor é ponte, não solução.', why:['correta: drenar é o tratamento','pneumotórax exige descompressão','tamponamento não é falha de bomba','são obstrutivos, não distributivos'], trap:'procedimento ≠ indicação', concept:'M19 · obstrutivos torácicos' } },
+
+  { id:'m30_q072', format:'sba', quarter:2, difficulty:2, axis:'E5', modules:['M20','M21'], concepts:['distributivo','septico'], trap:'T05',
+    stem:'Por que "distributivo" e "séptico" não são sinônimos?',
+    o:['distributivo é a categoria (RVS baixa); séptico é um subtipo, somando micro/mitocôndria/extração quebradas','são exatamente o mesmo conceito, apenas com nomes diferentes para a mesma fisiologia','séptico é a categoria ampla e distributivo é um subtipo raro dentro dela','distributivo é sempre infeccioso, enquanto séptico pode ter qualquer etiologia não infecciosa'], a:0,
+    rationale:{ correct:'Distributivo = categoria (vasoplegia); séptico = subtipo com micro/mito/extração também quebradas.', why:['correta: categoria × subtipo','não são sinônimos','é o inverso da hierarquia','distributivo não é sempre infeccioso (anaf/neuro)'], trap:'distributivo ≠ séptico', concept:'M20/M21 · categoria × subtipo' } },
+
+  { id:'m30_q073', format:'est', quarter:3, difficulty:3, axis:'E5', modules:['M18'], concepts:['obstrutivo','VD'], trap:'T08',
+    grounded:{ ref:'model29.brokenTerm', args:{state:{preload:0.5, contractility:0.6, hr:122, rvs:1500}}, kind:'label', optionValues:['bomba','conteudo','pre','rvs'] },
+    stem:'TEP com VD sobrecarregado e enchimento do VE reduzido. O termo dominante quebrado, computado, é:',
+    o:['bomba / contratilidade','conteúdo de O₂','pré-carga / enchimento','resistência vascular (RVS)'], a:2,
+    rationale:{ correct:'O motor aponta o enchimento (pré-carga efetiva do VE) como dominante — a barreira do VD limita o VE.', why:['a contratilidade do VE não é o primário','o conteúdo está preservado','correta: enchimento/pré-carga efetiva','a RVS está alta, compensatória'], trap:'VD ≠ VE', concept:'M18 · obstrutivo (computado)' } },
+
+  { id:'m30_q074', format:'sba', quarter:4, difficulty:4, axis:'E5', modules:['M22'], concepts:['anafilatico','neurogenico'], trap:'T05',
+    stem:'O melhor discriminador entre anafilático e neurogênico (ambos distributivos) é:',
+    o:['a frequência cardíaca: taquicardia compensatória favorece o anafilático; bradicardia relativa, o neurogênico (perda simpática)','a pressão arterial média exata, que é sistematicamente mais baixa no choque neurogênico do que no anafilático','o valor isolado da hemoglobina, que cai no anafilático por extravasamento e permanece normal no neurogênico','a temperatura das extremidades, sempre frias no anafilático e sempre quentes no choque neurogênico'], a:0,
+    rationale:{ correct:'A FC separa: anafilático taquicardiza; neurogênico perde o simpático e não taquicardiza.', why:['correta: a FC é o discriminador','a PAM não os separa de forma fixa','a Hb não é o discriminador','a temperatura não os separa assim'], trap:'distributivo ≠ séptico', concept:'M22 · anaf × neuro' } },
+
+  { id:'m30_q075', format:'sba', quarter:1, difficulty:1, axis:'E5', modules:['M16'], concepts:['cardiogenico','perfil'], trap:'T08',
+    stem:'O perfil clássico do choque cardiogênico é:',
+    o:['frio e congesto (baixo débito com pressões de enchimento elevadas a montante)','quente e seco, com resistência baixa e débito cardíaco elevado','quente e congesto, com vasoplegia e extremidades bem perfundidas e débito cardíaco bastante elevado','frio e seco, exclusivamente por perda de volume circulante'], a:0,
+    rationale:{ correct:'Cardiogênico = bomba falha: baixo débito (frio) + congestão a montante (úmido).', why:['correta: frio e congesto','isso é distributivo','vasoplegia não é cardiogênico','frio e seco sugere hipovolemia'], trap:'VD ≠ VE', concept:'M16 · perfil cardiogênico' } },
+
+  { id:'m30_q076', format:'vignette', quarter:4, difficulty:4, axis:'E5', modules:['M14','M16','M23'], concepts:['categoria','evolucao'], trap:'T05',
+    stem:'Passo 1: jovem hipotenso, frio, taquicárdico, após diarreia volumosa — responde parcialmente a volume. Passo 2: persiste hipotenso, e o ECO mostra função sistólica deprimida. A leitura é:',
+    o:['hipovolemia inicial que desmascarou (ou somou) um componente de bomba — o quadro evoluiu para misto e pede reavaliação','hipovolemia pura desde o início, e a disfunção sistólica ao ECO é necessariamente um artefato de imagem','choque distributivo por vasoplegia, já que toda hipotensão que responde a volume é distributiva','choque obstrutivo, pois a resposta parcial a volume exclui qualquer outro mecanismo possível'], a:0,
+    rationale:{ correct:'A resposta parcial + disfunção sistólica revelam um componente de bomba somado: virou misto.', why:['correta: misto (volume + bomba)','a disfunção não é artefato','responder a volume não define distributivo','não há sinais de obstrução'], trap:'distributivo ≠ séptico', concept:'M23 · vinheta de evolução' } },
+
+  { id:'m30_q077', format:'sba', quarter:2, difficulty:2, axis:'E5', modules:['M21'], concepts:['septico','micro'], trap:'T14',
+    stem:'No choque séptico, a macro-hemodinâmica restaurada pode não bastar porque:',
+    o:['a disfunção microcirculatória e mitocondrial mantém o déficit de extração apesar de pressão e fluxo adequados','a sepse é um choque puramente hipovolêmico que sempre se resolve apenas com grandes volumes','a pressão arterial média elevada garante por si a normalização do lactato em todos os casos','o séptico não envolve componente distributivo, sendo um choque essencialmente cardiogênico'], a:0,
+    rationale:{ correct:'Séptico soma micro/mito/extração quebradas ao distributivo: macro ok não garante perfusão.', why:['correta: micro/mito mantêm o déficit','não é só hipovolêmico','PAM alta não normaliza o lactato','é distributivo, não cardiogênico'], trap:'pressor melhora macro ≠ micro', concept:'M21 · séptico' } },
+
+  { id:'m30_q078', format:'sba', quarter:3, difficulty:3, axis:'E5', modules:['M17','M24'], concepts:['VD','coracaoPulmao'], trap:'T08',
+    stem:'A ventilação com pressão positiva, num VD já sobrecarregado, pode:',
+    o:['reduzir o retorno venoso e elevar a pós-carga pulmonar, piorando o débito do VD que falha','descarregar o VD de forma sempre benéfica, reduzindo sua pós-carga em qualquer ajuste de PEEP','aumentar diretamente a contratilidade do VD por estímulo mecânico da parede livre','corrigir a interdependência ventricular por restaurar a geometria septal imediatamente'], a:0,
+    rationale:{ correct:'Pressão positiva baixa o retorno e pode subir a RVP — duplo golpe no VD sobrecarregado.', why:['correta: retorno↓ + RVP↑','nem sempre descarrega o VD','não eleva a contratilidade','não corrige a geometria por si'], trap:'VD ≠ VE', concept:'M24 · coração-pulmão' } },
+
+  { id:'m30_q079', format:'sba', quarter:1, difficulty:1, axis:'E5', modules:['M20'], concepts:['distributivo','perfil'], trap:'T07',
+    stem:'O perfil hemodinâmico típico do distributivo é:',
+    o:['quente, com resistência vascular baixa e débito cardíaco geralmente alto','frio, com resistência alta e débito cardíaco muito reduzido','congesto, com pressões de enchimento elevadas por falência de bomba do ventrículo esquerdo','seco e frio, por perda aguda de grande volume circulante'], a:0,
+    rationale:{ correct:'Distributivo = vasoplegia: RVS baixa, débito alto, extremidades quentes.', why:['correta: quente, RVS baixa, débito alto','frio/RVS alta é cardiogênico/hipo','congestão é cardiogênico','seco/frio é hipovolêmico'], trap:'hipotensão ≠ hipovolemia', concept:'M20 · perfil distributivo' } },
+
+  { id:'m30_q080', format:'sba', quarter:4, difficulty:4, axis:'E5', modules:['M22'], concepts:['neurogenico'], trap:'T07',
+    stem:'A ausência de taquicardia num paciente hipotenso após trauma raquimedular sugere:',
+    o:['choque neurogênico: a perda do tônus simpático vasodilata e impede a resposta cronotrópica compensatória','hipovolemia simples, já que toda hipotensão pós-trauma decorre exclusivamente de sangramento','choque séptico precoce, pois a bradicardia é a assinatura mais comum da sepse inicial','choque cardiogênico, definido pela presença de bradicardia em qualquer contexto clínico'], a:0,
+    rationale:{ correct:'Sem simpático: vasodilata e não taquicardiza — assinatura do neurogênico.', why:['correta: perda simpática','pode haver hemorragia associada, mas a FC baixa aponta neuro','sepse não cursa com bradicardia típica','bradicardia não define cardiogênico'], trap:'hipotensão ≠ hipovolemia', concept:'M22 · neurogênico' } },
+
+  { id:'m30_q081', format:'est', quarter:4, difficulty:4, axis:'E5', modules:['M23'], concepts:['misto','termo'], trap:'T05',
+    grounded:{ ref:'model29.brokenTerm', args:{state:{rvs:600, contractility:0.38, hr:118, o2ermax:0.45, vo2demand:320}}, kind:'label', optionValues:['pre','conteudo','rvs','bomba'] },
+    stem:'Séptico que evolui com FE reduzida (RVS baixa + contratilidade baixa). O termo dominante computado é:',
+    o:['pré-carga / retorno venoso','conteúdo de O₂','resistência vascular (RVS)','bomba / contratilidade'], a:2,
+    rationale:{ correct:'O motor aponta a RVS como dominante, mas há também a bomba — é misto (dois termos).', why:['a pré-carga não é o dominante','o conteúdo está preservado','correta: RVS domina (com bomba somada)','a bomba está quebrada também, mas a RVS domina'], trap:'distributivo ≠ séptico', concept:'M23 · misto (computado)' } },
+
+  { id:'m30_q082', format:'sba', quarter:2, difficulty:2, axis:'E5', modules:['M15'], concepts:['hemorragico','conteudo'], trap:'T03',
+    stem:'Por que cristaloide não "substitui" sangue do ponto de vista da entrega de O₂?',
+    o:['porque repõe volume, mas não repõe hemoglobina — não restaura o conteúdo (CaO₂) nem a entrega (DO₂)','porque o cristaloide tem maior capacidade de transporte de O₂ que as próprias hemácias','porque o cristaloide eleva a saturação arterial de O₂ de forma mais eficiente que a própria transfusão de hemácias','porque volume e conteúdo são a mesma variável fisiológica na equação da entrega de oxigênio'], a:0,
+    rationale:{ correct:'Cristaloide repõe pré-carga, não Hb; sem conteúdo, a DO₂ não se restaura.', why:['correta: volume ≠ conteúdo','cristaloide não transporta O₂','não eleva a SaO₂','volume e conteúdo são distintos'], trap:'conteúdo ≠ saturação', concept:'M15 · hemorrágico' } },
+
+  { id:'m30_q083', format:'sba', quarter:3, difficulty:3, axis:'E5', modules:['M21','M12'], concepts:['septico','SvO2'], trap:'T06',
+    stem:'No séptico, uma ScvO₂ normal ou alta:',
+    o:['não exclui hipoperfusão: pode refletir falha de extração tecidual, com O₂ entregue e não utilizado','prova que a oferta de O₂ excede a demanda e que a perfusão tecidual está plenamente adequada em qualquer fase da sepse','indica sempre que a reposição volêmica foi excessiva e deve ser imediatamente revertida','é incompatível com o diagnóstico de sepse e sugere erro na coleta da amostra venosa'], a:0,
+    rationale:{ correct:'ScvO₂ alta no séptico pode ser falha de extração (micro/mito), não tecido satisfeito.', why:['correta: pode ser falha de extração','não prova adequação','não indica só excesso de volume','é compatível com sepse'], trap:'SvO₂ alta ≠ boa extração', concept:'M21 · ScvO₂ na sepse' } },
+
+  { id:'m30_q084', format:'sba', quarter:1, difficulty:1, axis:'E5', modules:['M18'], concepts:['obstrutivo','TEP'], trap:'T08',
+    stem:'No TEP maciço, a hipotensão decorre primariamente de:',
+    o:['sobrecarga aguda do VD por aumento da pós-carga pulmonar, reduzindo o enchimento do VE','falência intrínseca e primária da contratilidade do ventrículo esquerdo','vasoplegia sistêmica por liberação maciça de mediadores inflamatórios do coágulo trombótico pulmonar','perda de volume circulante para o leito pulmonar obstruído pelo trombo'], a:0,
+    rationale:{ correct:'A obstrução pulmonar sobrecarrega o VD; o VE recebe menos e o débito cai.', why:['correta: sobrecarga do VD','o VE não é o primário','não é vasoplegia','não é perda de volume'], trap:'VD ≠ VE', concept:'M18 · TEP' } },
+
+  { id:'m30_q085', format:'ar', quarter:4, difficulty:4, axis:'E5', modules:['M16','M7'], concepts:['cardiogenico','posCarga'], trap:'T09',
+    stem:'ASSERÇÃO: no cardiogênico, reduzir a pós-carga pode melhorar o débito. PORQUE: o ventrículo falho é sensível à carga contra a ejeção.',
+    o:['as duas são verdadeiras e a segunda justifica a primeira','as duas são verdadeiras, mas não há nexo causal entre elas neste contexto clínico','a primeira é verdadeira e a segunda é falsa','a primeira é falsa e a segunda é verdadeira'], a:0,
+    rationale:{ correct:'V/V com nexo: o ventrículo afterload-sensível ganha débito quando a pós-carga cai.', why:['correta: V/V com causa','há nexo causal','a segunda é verdadeira','a primeira é verdadeira'], trap:'pós-carga ≠ PA', concept:'M16 · pós-carga no cardiogênico' } },
+
+  { id:'m30_q086', format:'sba', quarter:2, difficulty:2, axis:'E5', modules:['M14','M5'], concepts:['hipovolemico','responsividade'], trap:'T04',
+    stem:'Por que nem todo hipovolêmico se beneficia de volume indefinidamente?',
+    o:['porque a responsividade se esgota: além do ponto da curva, mais volume gera congestão sem ganho de débito','porque a hipovolemia, uma vez instalada, nunca responde a qualquer reposição de volume','porque o volume administrado se converte integralmente em débito cardíaco sem qualquer perda','porque a pré-carga não tem relação com o débito no choque hipovolêmico estabelecido'], a:0,
+    rationale:{ correct:'Mesmo no hipovolêmico há janela: passada a responsividade, volume vira custo.', why:['correta: a responsividade se esgota','responde, sim, na fase inicial','há perdas (terceiro espaço)','a pré-carga determina o débito aqui'], trap:'responsivo ≠ tolerante', concept:'M14 · responsividade' } },
+
+  { id:'m30_q087', format:'vf', quarter:3, difficulty:3, axis:'E5', modules:['M16','M20','M14'], concepts:['perfil','categoria'], trap:'T07',
+    stem:'Sobre perfis e categorias, qual assertiva é VERDADEIRA?',
+    o:['o mesmo valor de PAM pode aparecer num quente (RVS baixa/débito alto) e num frio (RVS alta/débito baixo)','toda hipotensão com extremidades frias é, por definição, um choque hipovolêmico por perda de volume circulante efetivo','o perfil quente com débito alto é exclusivo do choque cardiogênico em fase descompensada','a resistência vascular não influencia o perfil clínico nem a temperatura das extremidades'], a:0,
+    rationale:{ correct:'PAM = DC × RVS: a mesma pressão nasce de perfis opostos (quente × frio).', why:['correta: mesma PAM, perfis opostos','frio não é só hipovolemia','quente/débito alto é distributivo','a RVS define o perfil térmico'], trap:'hipotensão ≠ hipovolemia', concept:'M9/M20 · perfis' } },
+
+  { id:'m30_q088', format:'sba', quarter:4, difficulty:4, axis:'E5', modules:['M21','M13'], concepts:['septico','lactato'], trap:'T12',
+    stem:'No séptico tratado, um lactato que cai lentamente apesar de macro otimizada pode refletir:',
+    o:['clearance hepático reduzido e/ou produção tipo B residual, além de disfunção microcirculatória persistente','exclusivamente hipoperfusão macro-hemodinâmica não corrigida, exigindo escalonar a pressão arterial de forma agressiva','um erro analítico sistemático do laboratório que deve ser ignorado na decisão clínica','uma resposta normal e esperada que dispensa qualquer reavaliação da perfusão tecidual'], a:0,
+    rationale:{ correct:'Lactato lento: clearance reduzido + tipo B + micro persistente — não só macro.', why:['correta: clearance + tipo B + micro','não é só macro','não é erro analítico','merece reavaliação'], trap:'lactato alto ≠ sempre hipóxia (A×B)', concept:'M21/M13 · lactato na sepse' } },
+
+  { id:'m30_q089', format:'sba', quarter:2, difficulty:2, axis:'E5', modules:['M19'], concepts:['tamponamento'], trap:'T07',
+    stem:'A tríade de Beck (hipotensão, turgência jugular, bulhas abafadas) sugere:',
+    o:['tamponamento cardíaco: a restrição pericárdica impede o enchimento, reduzindo o débito','choque hipovolêmico clássico, no qual as jugulares estão sempre colapsadas','sepse com vasoplegia, na qual a turgência jugular reflete a resistência vascular sistêmica elevada','infarto de VE com edema agudo, definido pela ausência de turgência jugular'], a:0,
+    rationale:{ correct:'Beck = tamponamento: restrição ao enchimento (obstrutivo), com turgência jugular.', why:['correta: tamponamento','hipovolemia tem jugular colapsada','não é vasoplegia','a turgência está presente, não ausente'], trap:'hipotensão ≠ hipovolemia', concept:'M19 · tamponamento' } },
+
+  { id:'m30_q090', format:'sba', quarter:3, difficulty:3, axis:'E5', modules:['M20','M12','M13'], concepts:['septico','definicao'], trap:'T05',
+    stem:'A definição mecanística mais completa do choque séptico inclui:',
+    o:['vasoplegia (RVS baixa) somada a disfunção microcirculatória, mitocondrial e de extração — e, por vezes, de bomba','apenas hipotensão refratária a volume, sem qualquer componente micro ou metabólico associado','exclusivamente uma queda do débito cardíaco por falência primária da contratilidade miocárdica','somente uma perda de volume intravascular por extravasamento capilar, sem vasoplegia'], a:0,
+    rationale:{ correct:'Séptico = distributivo + micro/mito/extração (± cardiomiopatia): vários termos.', why:['correta: vasoplegia + micro/mito (± bomba)','não é só hipotensão','não é só bomba','não é só leak'], trap:'distributivo ≠ séptico', concept:'M21 · definição integrada' } },
+
+  { id:'m30_q091', format:'est', quarter:3, difficulty:3, axis:'E5', modules:['M14'], concepts:['hipovolemico','termo'], trap:'T07',
+    grounded:{ ref:'model29.brokenTerm', args:{state:{preload:0.45, hr:115, rvs:1500}}, kind:'label', optionValues:['rvs','pre','bomba','conteudo'] },
+    stem:'Hipotensão com pré-carga muito baixa, taquicardia e vasoconstrição, sem anemia. O termo quebrado computado é:',
+    o:['resistência vascular (RVS)','pré-carga / retorno venoso','bomba / contratilidade','conteúdo de O₂'], a:1,
+    rationale:{ correct:'O motor aponta a pré-carga como termo quebrado — é o hipovolêmico.', why:['a RVS está alta, compensatória','correta: pré-carga/retorno','a bomba está preservada','sem anemia, o conteúdo é normal'], trap:'hipotensão ≠ hipovolemia', concept:'M14 · hipovolêmico (computado)' } },
+
+  { id:'m30_q092', format:'sba', quarter:4, difficulty:4, axis:'E5', modules:['M17','M19'], concepts:['VD','obstrutivo'], trap:'T08',
+    stem:'Por que o TEP e o tamponamento, embora ambos obstrutivos, exigem leituras mecânicas distintas?',
+    o:['o TEP sobrecarrega o VD por pós-carga pulmonar; o tamponamento restringe o enchimento de ambas as câmaras por pressão pericárdica','são fisiologicamente idênticos e o tratamento mecânico é exatamente o mesmo nos dois casos','o tamponamento é uma falência de contratilidade e o TEP é uma vasoplegia pulmonar aguda','ambos se resolvem apenas com grandes volumes, sem necessidade de intervenção mecânica específica'], a:0,
+    rationale:{ correct:'Mecanismos distintos: pós-carga do VD (TEP) × restrição ao enchimento (tamponamento) — intervenções diferentes.', why:['correta: pós-carga × restrição','não são idênticos','nenhum é falência de contratilidade','volume não resolve a barreira'], trap:'VD ≠ VE', concept:'M17/M19 · obstrutivos distintos' } },
+
+  { id:'m30_q093', format:'sba', quarter:1, difficulty:1, axis:'E5', modules:['M15'], concepts:['hemorragico','classes'], trap:'T07',
+    stem:'No choque hemorrágico, a taquicardia e a vasoconstrição precoces representam:',
+    o:['compensação à perda de volume, que pode manter a PAM normal até um ponto de descompensação abrupta','sinais de vasoplegia distributiva por liberação de mediadores do sangramento','evidência de falência primária da bomba cardíaca pela perda de sangue','indicação de que o conteúdo de O₂ está elevado para compensar a anemia'], a:0,
+    rationale:{ correct:'Compensação simpática: FC↑ e RVS↑ defendem a PAM até a reserva esgotar (precipício).', why:['correta: compensação à perda','não é vasoplegia','a bomba está íntegra','o conteúdo cai, não sobe'], trap:'hipotensão ≠ hipovolemia', concept:'M15 · classes de perda' } },
+
+  { id:'m30_q094', format:'vignette', quarter:4, difficulty:4, axis:'E5', modules:['M18','M16','M9'], concepts:['obstrutivo','decomposicao'], trap:'T02',
+    stem:'Passo 1: hipotensão súbita, VD dilatado, VE pequeno e hiperdinâmico ao ECO. Passo 2: a PAM "responde" a um vasopressor, mas a hipoxemia persiste. A leitura é:',
+    o:['obstrutivo (provável TEP): o vasopressor sustenta a pressão de perfusão do VD, mas não remove a obstrução — tratar a causa','cardiogênico por falência de VE, já que a hipotensão respondeu ao vasopressor administrado','distributivo por vasoplegia, definido pela resposta da PAM ao vasopressor utilizado','hipovolemia, pois todo VE pequeno ao ECO indica perda de volume circulante como causa única'], a:0,
+    rationale:{ correct:'VD dilatado + VE pequeno hiperdinâmico = obstrutivo (VD); o pressor é ponte, a causa é a obstrução.', why:['correta: obstrutivo, tratar a causa','VE hiperdinâmico não é falência de VE','responder ao pressor não define distributivo','o VE pequeno aqui é por baixo enchimento do VD'], trap:'PAM ≠ perfusão', concept:'M18 · vinheta obstrutiva' } },
+
+  { id:'m30_q095', format:'sba', quarter:2, difficulty:2, axis:'E5', modules:['M16','M27'], concepts:['perfil','fluxoCongestao'], trap:'T07',
+    stem:'No 2×2 perfusão × congestão, "frio e úmido" corresponde mecanicamente a:',
+    o:['baixo fluxo (má perfusão) com congestão a montante — o padrão do cardiogênico descompensado','bom fluxo com ausência de congestão, o padrão de um paciente compensado e estável','vasoplegia com débito alto e extremidades quentes, típica do distributivo','perda de volume sem congestão, definindo o quadro hipovolêmico clássico'], a:0,
+    rationale:{ correct:'Frio (baixo fluxo) + úmido (congesto) = cardiogênico descompensado; o termo é a bomba.', why:['correta: baixo fluxo + congestão','isso é "quente e seco"','quente/débito alto é distributivo','sem congestão sugere hipovolemia'], trap:'hipotensão ≠ hipovolemia', concept:'M27 · perfis' } },
+
+  { id:'m30_q096', format:'sba', quarter:3, difficulty:3, axis:'E5', modules:['M22'], concepts:['anafilatico','eixo'], trap:'T05',
+    stem:'O choque anafilático difere do séptico, mesmo sendo ambos distributivos, porque:',
+    o:['soma à vasoplegia um eixo respiratório/imunológico de instalação rápida (broncoespasmo, edema, leak maciço)','é, na verdade, um choque cardiogênico por depressão miocárdica primária mediada por histamina','não cursa com queda da resistência vascular, mantendo a RVS elevada durante toda a evolução','depende exclusivamente de perda de volume, sem qualquer componente de vasodilatação associado'], a:0,
+    rationale:{ correct:'Anafilático = vasoplegia + leak + via aérea (broncoespasmo/edema), rápido — eixo respiratório/imune.', why:['correta: soma o eixo respiratório/imune','não é cardiogênico','a RVS cai (é distributivo)','há vasodilatação, não só leak'], trap:'distributivo ≠ séptico', concept:'M22 · anafilático' } },
+
+  { id:'m30_q097', format:'sba', quarter:4, difficulty:4, axis:'E5', modules:['M23','M27'], concepts:['misto','reavaliacao'], trap:'T05',
+    stem:'Por que o choque misto exige reavaliação dinâmica mais que qualquer categoria pura?',
+    o:['porque os termos quebrados se somam e o termo dominante pode mudar ao longo do tempo, exigindo recasar a leitura','porque, uma vez classificado como misto, o quadro permanece idêntico e dispensa qualquer reavaliação posterior do estado clínico','porque o misto é sempre menos grave que as categorias puras e evolui invariavelmente para a cura','porque a PAM isolada, no misto, passa a refletir com exatidão todo o estado hemodinâmico do paciente'], a:0,
+    rationale:{ correct:'No misto os termos se somam e o dominante muda — a leitura precisa ser refeita no tempo.', why:['correta: termo dominante muda','não permanece idêntico','não é menos grave','a PAM isolada segue enganando'], trap:'distributivo ≠ séptico', concept:'M23 · misto dinâmico' } },
+
+  { id:'m30_q098', format:'sba', quarter:1, difficulty:1, axis:'E5', modules:['M14','M15'], concepts:['hipovolemico','assinatura'], trap:'T07',
+    stem:'A assinatura hemodinâmica clássica do choque hipovolêmico é:',
+    o:['débito cardíaco baixo, resistência vascular alta e extração de O₂ aumentada','débito alto, resistência baixa e extração reduzida, com extremidades quentes','resistência baixa por vasoplegia com pressões de enchimento elevadas','débito alto com congestão pulmonar por sobrecarga de volume circulante'], a:0,
+    rationale:{ correct:'Hipovolêmico: DC↓ (pouco retorno), RVS↑ (compensação), extração↑ (tecido espremendo O₂).', why:['correta: DC↓, RVS↑, extração↑','isso é distributivo','vasoplegia não é hipovolemia','não há sobrecarga de volume'], trap:'hipotensão ≠ hipovolemia', concept:'M14 · assinatura' } },
+
+  { id:'m30_q099', format:'trap', quarter:3, difficulty:3, axis:'E5', modules:['M20','M14'], concepts:['categoria'], trap:'T07',
+    stem:'Qual frase comete a armadilha "toda hipotensão é hipovolemia"?',
+    o:['"está hipotenso, então com certeza está hipovolêmico e precisa de mais volume"','"a hipotensão com extremidades quentes e débito alto aponta para vasoplegia distributiva"','"a hipotensão com bomba falha e congestão sugere cardiogênico, não hipovolemia"','"decompor a PAM em débito e resistência define a categoria antes de repor volume"'], a:0,
+    rationale:{ correct:'Assumir hipovolemia em toda hipotensão ignora distributivo, cardiogênico e obstrutivo.', why:['correta: a armadilha','reconhece o distributivo','reconhece o cardiogênico','correto: decompor primeiro'], trap:'hipotensão ≠ hipovolemia', concept:'M14/M20 · meta-armadilha' } },
+
+  { id:'m30_q100', format:'sba', quarter:4, difficulty:4, axis:'E5', modules:['M21','M23','M12'], concepts:['septico','misto','integracao'], trap:'T14',
+    stem:'Um séptico com PAM 70 (em vasopressor), ScvO₂ 78%, lactato 4 e tempo de enchimento capilar lento ilustra que:',
+    o:['a macro pode estar "no alvo" enquanto micro/extração seguem quebradas — a perfusão não se resume ao número da PAM','a PAM de 70 garante perfusão tecidual adequada e o lactato elevado é necessariamente um artefato laboratorial sem valor real','a ScvO₂ de 78% prova extração eficiente e exclui qualquer disfunção microcirculatória residual','o quadro já está resolvido, pois todos os alvos macro-hemodinâmicos foram plenamente atingidos'], a:0,
+    rationale:{ correct:'PAM no alvo + ScvO₂ alta + lactato alto + TEC lento = micro/extração quebradas apesar da macro.', why:['correta: macro ok, micro quebrada','PAM 70 não garante perfusão','ScvO₂ alta pode ser falha de extração','não está resolvido'], trap:'pressor melhora macro ≠ micro', concept:'M21/M12 · síntese integrada' } }
 ];
 
 // ---- distribuição do gabarito: rotação semeada determinística ----
@@ -285,7 +545,7 @@ function _targets(n, seed){
   var r=_lcg(seed); for(i=ms.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)); var t=ms[i]; ms[i]=ms[j]; ms[j]=t; }
   return ms;
 }
-var TG=_targets(150, 1);   // tamanho FINAL do plano (150) → gabaritos estáveis ao crescer o banco; seed fixa, auditável
+var TG=_targets(150, 7);   // tamanho FINAL (150); seed 7 → prefixos 50/100/150 todos em banda, maxRun ≤ 3 (estável entre as partes)
 function _rotate(item, tg){
   var sh=((tg-item.a)%4+4)%4; if(sh===0) return item;
   var o=item.o.slice(), why=item.rationale.why.slice(), ov=item.grounded?item.grounded.optionValues.slice():null;
