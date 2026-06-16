@@ -46,7 +46,7 @@ npm test          # motores fisiológicos
 npm run validate  # HTML, DOM, tutor, gráficos, cromo e disclaimers
 ```
 
-A cadeia atual cobre módulos `0…29`. Ao criar `M30` (exame global), atualizar `package.json` com `test:30`, `validate:30` e a cadeia agregada, além do validador psicométrico.
+A cadeia cobre módulos `0…30` (braço completo). O M30 (exame global) tem motor psicométrico próprio (`build/m30/psyche30.js`), recomputação engine-grounded (`grounding30.js`) e maestria (`scoring30.js`), com `test:30`/`validate:30` no portão.
 
 ---
 

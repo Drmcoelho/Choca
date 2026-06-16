@@ -1,3 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 30 · Exame global de domínio</title>
+<meta name="description" content="M30 · Sistema de avaliação de domínio do braço PERFUNDE·CHOCA: 150 itens em 4 quartos de dificuldade crescente, módulos embaralhados por seed, 6 formatos, itens engine-grounded (gabarito recomputado pelos motores), radar de maestria em 8 eixos, remediação e gabarito de 5 camadas. Mecanismo, nunca conduta (SAFETY.md §11).">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --ven:#3f82e6; --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c; --purp:#9b6cff; --cyan:#37c8d8;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:66ch}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:68ch}
+.qsec{margin:18px 0 6px;font-family:var(--mono);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border-top:1px solid var(--line);padding-top:14px}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px}
+.q .meta{font-family:var(--mono);font-size:.7rem;color:var(--ink-faint);margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.q .meta .fmt{color:var(--ven)}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-size:.92rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt .ol{font-family:var(--mono);color:var(--ink-faint);margin-right:8px}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.right .ol{color:var(--ok)} .opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb} .opt.wrong .ol{color:var(--crit)}
+.fb{font-size:.86rem;margin-top:10px;color:var(--ink-dim);display:none;border-left:2px solid var(--line);padding-left:10px} .fb.show{display:block}
+.fb .fl{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);display:block;margin-top:6px}
+.fb.ok .fhead{color:var(--ok)} .fb.no .fhead{color:var(--crit)} .fb .fhead{font-weight:700;font-family:var(--mono)}
+.fb .grd{color:var(--accent)}
+.scorebar{position:sticky;top:0;z-index:5;background:var(--bg-elev);font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+.bar{height:6px;background:#0e1320;border-radius:4px;overflow:hidden;margin-top:6px} .bar>i{display:block;height:100%;background:var(--accent);width:0}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px}
+.dif-1{color:var(--ok);background:rgba(62,199,141,.12)} .dif-2{color:var(--cyan);background:rgba(55,200,216,.12)} .dif-3{color:var(--warn);background:rgba(255,180,84,.12)} .dif-4{color:var(--crit);background:rgba(255,93,108,.12)}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px;text-align:center}
+canvas.radar{display:block;width:100%;max-width:460px;height:380px;margin:0 auto;background:#06070b;border-radius:8px}
+.verdict{border-radius:var(--r);padding:16px 18px;margin:6px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.verdict .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.verdict .vbig{font-size:1.24rem;font-weight:700;font-family:var(--mono);margin-top:3px;color:var(--accent)}
+.verdict .vtx{color:var(--ink-dim);margin-top:6px;font-size:.95rem}
+.axes{display:grid;gap:7px;margin-top:8px}
+.axrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;font-size:.86rem;background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.axrow .axn{color:var(--ink)} .axrow .axn small{color:var(--ink-faint);font-family:var(--mono)}
+.axrow .axv{font-family:var(--mono);font-weight:600}
+.axrow.domina .axv{color:var(--ok)} .axrow.parcial .axv{color:var(--warn)} .axrow.lacuna .axv{color:var(--crit)} .axrow.sem .axv{color:var(--ink-faint)}
+.remed{background:#0e1320;border:1px solid rgba(255,93,108,.35);border-radius:var(--r-sm);padding:12px 14px;margin-top:8px;font-size:.9rem;color:var(--ink-dim)}
+.remed b{color:var(--crit)} .remed a{font-family:var(--mono);font-size:.84rem}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:20px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.howli{margin:6px 0;color:var(--ink-dim);font-size:.94rem} .howli b{color:var(--ink)}
+.empty{color:var(--ink-faint);font-style:italic;font-size:.92rem}
+.btn{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:7px 13px;cursor:pointer} .btn:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 30 · ↳ exame global de domínio</div>
+    <h1>Sistema de avaliação de domínio</h1>
+    <p class="sub"><b>150 itens</b> em 4 quartos de dificuldade crescente, com os módulos <b>embaralhados por seed</b>, <b>6 formatos</b>, itens <b>engine-grounded</b> (gabarito recomputado pelos motores do braço) e um <b>radar de maestria</b> em 8 eixos com remediação. Quem passa não decorou o curso — internalizou o mapa causal. Mecanismo, nunca conduta.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-exame"     aria-controls="panel-exame"     aria-selected="true"><span class="tn">1</span>Exame</button>
+    <button class="tab" role="tab" id="tab-maestria"  aria-controls="panel-maestria"  aria-selected="false"><span class="tn">2</span>Maestria</button>
+    <button class="tab" role="tab" id="tab-revisao"   aria-controls="panel-revisao"   aria-selected="false"><span class="tn">3</span>Revisão</button>
+    <button class="tab" role="tab" id="tab-como"      aria-controls="panel-como"      aria-selected="false"><span class="tn">4</span>Como funciona</button>
+  </div>
+
+  <!-- 1 · EXAME -->
+  <section class="panel active" role="tabpanel" id="panel-exame" aria-labelledby="tab-exame">
+    <div class="scorebar" id="scorebar">0 / 150 respondidas · 0 corretas<div class="bar"><i id="bar"></i></div></div>
+    <p class="lead">Os quartos vão de <b>reconhecimento</b> a <b>exceção/integração</b>. Cada item revela um gabarito de 5 camadas (correta, por que cada alternativa, conceito/módulo, armadilha). A maestria se atualiza a cada resposta.</p>
+    <div id="exam"></div>
+  </section>
+
+  <!-- 2 · MAESTRIA -->
+  <section class="panel" role="tabpanel" id="panel-maestria" aria-labelledby="tab-maestria">
+    <h2>Radar de maestria · 8 eixos</h2>
+    <p class="lead">O domínio é medido por eixo de competência, não só pelo placar. Responda o exame para preencher o radar; os eixos fracos viram remediação ligada ao módulo.</p>
+    <div class="plotwrap"><canvas class="radar" id="radar" width="460" height="380"></canvas></div>
+    <div class="verdict" id="verdict"><div class="vlabel">veredito de domínio</div><div class="vbig" id="verdict-big">sem dados</div><div class="vtx" id="verdict-tx">Responda o exame para gerar o veredito.</div></div>
+    <div class="axes" id="axes"></div>
+    <div id="remed-box"></div>
+  </section>
+
+  <!-- 3 · REVISÃO -->
+  <section class="panel" role="tabpanel" id="panel-revisao" aria-labelledby="tab-revisao">
+    <h2>Revisão · refazer as erradas</h2>
+    <p class="lead">As questões que você errou reaparecem aqui, com o gabarito de 5 camadas. Reabrir e refazer fixa o mecanismo no eixo certo.</p>
+    <div id="revisao"></div>
+  </section>
+
+  <!-- 4 · COMO FUNCIONA -->
+  <section class="panel" role="tabpanel" id="panel-como" aria-labelledby="tab-como">
+    <h2>Como o exame é construído (honestidade)</h2>
+    <div class="howli">→ <b>Engine-grounded.</b> Uma classe de itens tem a resposta <b>computada pelos motores</b> do braço (m1 CaO₂/DO₂, m9 PAM=DC×RVS, m28 conversão dose↔mL/h, m29 termo quebrado e alavanca apta). O validador <b>recomputa</b> e exige que o gabarito case com o motor — gabarito provadamente correto.</div>
+    <div class="howli">→ <b>Sem padrão explorável.</b> Distribuição de letras controlada (cada letra 15–35%), sem corrida longa, sem sequência regular; a correta <b>não</b> é a mais longa (≈29%) nem o maior número. A correta é correta por <b>fisiologia</b>, não por forma.</div>
+    <div class="howli">→ <b>Ordem por seed.</b> Os módulos são embaralhados dentro de cada quarto por uma <b>seed determinística</b>: parece aleatório, é reproduzível e auditável. Você não prevê o tema pela posição.</div>
+    <div class="howli">→ <b>Dificuldade crescente.</b> Quatro quartos: reconhecimento → aplicação → integração → exceção/simultaneidade.</div>
+    <div class="howli">→ <b>Cobertura.</b> 8 eixos de competência e 16 armadilhas cognitivas, com piso mínimo por eixo e por armadilha.</div>
+    <div class="howli">→ <b>Firewall (SAFETY.md §11).</b> Mecanismo e referência educacional; <b>nunca</b> ordem de dose, alvo ou conduta para um paciente real. Faixas/diluições aparecem apenas como referência em itens de conversão.</div>
+    <div class="howli" id="how-stats"></div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> O M30 avalia o domínio do mapa causal do braço (decompor a fisiologia, casar a alavanca ao termo quebrado, pesar o custo). <b>Nunca</b> prescreve dose, alvo ou conduta para um paciente real. Itens com valores de referência seguem o <b>SAFETY.md §11</b>.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Os itens engine-grounded são <b>recomputados pelos motores</b> do braço, mas os motores são modelos didáticos (fatores normalizados), não medidas reais. → O radar de maestria estima competência por eixo a partir das respostas; é orientação de estudo, não certificação. → A ordem é reproduzível por seed, sem padrão de gabarito explorável.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ O M30 cobre <b>todo o braço</b>: <a href="perfunde1.html">M1</a>, <a href="perfunde8.html">M8</a>, <a href="perfunde9.html">M9</a>, <a href="perfunde20.html">M20</a>, <a href="perfunde28.html">M28</a>, <a href="perfunde29.html">M29</a> e os demais.</div>
+    <div class="ponte">→ <a href="perfunde29.html">M29 · capstone</a> — a cascata integrada que o M30 avalia.</div>
+    <div class="ponte">→ Especificação: <span class="pend">M30_ASSESSMENT_SPEC.md · build/m30/PLAN.md</span>.</div>
+  </div>
+
+  <footer>
+    PERFUNDE · CHOCA · Módulo 30 — exame global de domínio<br>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira
+  </footer>
+</div>
+
+<!-- bank30.js · 150 itens inlined -->
+<script>
 // build/m30/bank30.js — Banco do M30+ · Sistema de Avaliação de Domínio
 // PARTE 1 · itens 1–50 (eixos E1–E3: conteúdo/transporte, determinantes,
 // inversão/beira-leito). Crescerá para 150 nas partes 2–3. Formato de item:
@@ -6,8 +156,6 @@
 //     stem, o:[4], a:índice, rationale:{correct, why:[4], trap, concept} }
 // Firewall SaMD: mecanismo, nunca dose/conduta. Itens grounded recomputados
 // pelo grounding30 (gabarito = motor). Ver build/m30/PLAN.md.
-'use strict';
-
 var m29=(typeof require!=='undefined')?require('../m29/model29.js'):null;
 var _dist=m29?m29.PRESETS.distributivo.state:null, _card=m29?m29.PRESETS.cardiogenico.state:null;
 
@@ -822,4 +970,247 @@ function _rotate(item, tg){
 }
 function buildBank(){ return BANK.map(function(it,i){ return _rotate(it, TG[i]); }); }   // item i → alvo fixo TG[i] (estável entre as partes)
 
-if(typeof module!=='undefined' && module.exports){ module.exports={ BANK:BANK, buildBank:buildBank, TG:TG, _targets:_targets }; }
+window.BANK30={ BANK:BANK, buildBank:buildBank, TG:TG, _targets:_targets };
+</script>
+<!-- psyche30.js · motor psicométrico inlined -->
+<script>
+// build/m30/psyche30.js — Motor PSICOMÉTRICO do M30+ (puro, determinístico)
+// Embaralhamento semeado (LCG), distribuição de letras (global + por quarto),
+// varreduras anti-padrão (corridas, sequências regulares, maior-número,
+// termos absolutos, atalhos "todas/nenhuma"), paridade de comprimento,
+// monotonia de dificuldade, pisos de cobertura (eixo) e da taxonomia de
+// armadilhas. Opera sobre itens no formato do bank30 (o:[4], a:índice).
+var LETTERS=['A','B','C','D'];
+function letterOf(i){ return LETTERS[i]; }
+
+// ---- LCG determinístico (Numerical Recipes) ----
+function lcg(seed){ var s=(seed>>>0)||1; return function(){ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function shuffle(arr, seed){ var r=lcg(seed), a=arr.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+// ---- distribuição de letras ----
+function letterCounts(items){ var d={A:0,B:0,C:0,D:0}; items.forEach(function(q){ d[letterOf(q.a)]++; }); return d; }
+function letterFractions(items){ var d=letterCounts(items), n=items.length||1; return {A:d.A/n,B:d.B/n,C:d.C/n,D:d.D/n}; }
+// cada letra entre min e max (frações); por padrão a banda constitucional 0,15–0,35
+function letterDistOk(items, min, max){ min=(min==null?0.15:min); max=(max==null?0.35:max); var f=letterFractions(items);
+  return LETTERS.every(function(L){ return f[L]>=min && f[L]<=max; }); }
+// não-uniforme (assimétrica o bastante): amplitude entre maior e menor ≥ tol
+function nonUniform(items, tol){ tol=(tol==null?0.04:tol); var f=letterFractions(items); var vs=LETTERS.map(function(L){return f[L];}); return (Math.max.apply(null,vs)-Math.min.apply(null,vs))>=tol; }
+
+// ---- varreduras de padrão (sobre uma ORDEM montada de itens) ----
+function maxRun(items){ var run=1,mx=1; for(var i=1;i<items.length;i++){ if(items[i].a===items[i-1].a){ run++; if(run>mx)mx=run; } else run=1; } return mx; }
+// detecta sequência regular A,B,C,D,A,B,C,D... ou A,A,B,B,...
+function hasRegularSequence(items){ if(items.length<8) return false;
+  var asc=true, pair=(items.length%2===0);   // ímpar não pode ser pareamento perfeito A-A-B-B
+  for(var i=1;i<items.length;i++){ if((items[i-1].a+1)%4!==items[i].a%4) asc=false; }
+  if(pair){ for(var j=0;j<items.length-1;j+=2){ if(items[j].a!==items[j+1].a) pair=false; } }
+  return asc||pair; }
+
+// ---- forma das alternativas ----
+// estritamente mais longa que TODOS os distratores (empates não contam como "gaming por tamanho")
+function correctIsLongest(q){ var L=q.o.map(function(s){return s.length;}); var cl=L[q.a]; return L.every(function(x,i){ return i===q.a || x<cl; }); }
+function longestCorrectFraction(items){ var c=0; items.forEach(function(q){ if(correctIsLongest(q)) c++; }); return items.length?c/items.length:0; }
+// itens cujas 4 opções são numéricas: a correta é o maior número?
+function numericOf(s){ var m=String(s).replace(',','.').match(/-?\d+(\.\d+)?/); return m?parseFloat(m[0]):null; }
+function largestNumberCorrectFraction(items){ var n=0,c=0; items.forEach(function(q){ var nums=q.o.map(numericOf); if(nums.every(function(x){return x!==null;})){ n++; if(nums[q.a]===Math.max.apply(null,nums)) c++; } }); return n?c/n:0; }
+var ABS_RE=/\b(sempre|nunca|todos?|todas?|nenhum[ao]?|jamais|qualquer|impossível|garante|exclui)\b/i;
+function absoluteCorrectFraction(items){ var c=0; items.forEach(function(q){ if(ABS_RE.test(q.o[q.a])) c++; }); return items.length?c/items.length:0; }
+function hasAllNoneShortcut(items){ var re=/(todas as (anteriores|alternativas)|nenhuma das (anteriores|alternativas)|n\.d\.a\.|t\.d\.a\.)/i; return items.some(function(q){ return q.o.some(function(o){ return re.test(o); }); }); }
+
+// ---- dificuldade crescente por quarto ----
+function meanBy(items, key){ if(!items.length) return 0; return items.reduce(function(s,q){return s+q[key];},0)/items.length; }
+function difficultyMonotonic(items){ var qs=[1,2,3,4].map(function(Q){ return meanBy(items.filter(function(x){return x.quarter===Q;}),'difficulty'); });
+  for(var i=1;i<qs.length;i++){ if(qs[i] < qs[i-1]) return false; } return true; }
+
+// ---- cobertura ----
+function axisCounts(items){ var d={}; items.forEach(function(q){ d[q.axis]=(d[q.axis]||0)+1; }); return d; }
+function axisFloorOk(items, floors){ var c=axisCounts(items); return Object.keys(floors).every(function(E){ return (c[E]||0)>=floors[E]; }); }
+function trapCounts(items){ var d={}; items.forEach(function(q){ if(q.trap) d[q.trap]=(d[q.trap]||0)+1; }); return d; }
+function trapCoverageOk(items, traps, min){ var c=trapCounts(items); return traps.every(function(T){ return (c[T]||0)>=min; }); }
+function formatCounts(items){ var d={}; items.forEach(function(q){ d[q.format]=(d[q.format]||0)+1; }); return d; }
+
+// ---- bem-formação de item ----
+var FORMATS=['sba','ar','vf','est','trap','vignette'];
+var AXES=['E1','E2','E3','E4','E5','E6','E7','E8'];
+function itemWellFormed(q){
+  return q && typeof q.id==='string'
+    && FORMATS.indexOf(q.format)>=0 && AXES.indexOf(q.axis)>=0
+    && [1,2,3,4].indexOf(q.quarter)>=0 && [1,2,3,4].indexOf(q.difficulty)>=0
+    && Array.isArray(q.o) && q.o.length===4 && q.o.every(function(s){return typeof s==='string'&&s.length>1;})
+    && Number.isInteger(q.a) && q.a>=0 && q.a<4
+    && Array.isArray(q.modules) && q.modules.length>0
+    && typeof q.stem==='string' && q.stem.length>8
+    && q.rationale && typeof q.rationale.correct==='string' && q.rationale.correct.length>8
+    && Array.isArray(q.rationale.why) && q.rationale.why.length===4 && q.rationale.why.every(function(s){return typeof s==='string'&&s.length>3;})
+    && typeof q.rationale.trap==='string' && typeof q.rationale.concept==='string';
+}
+// firewall: proíbe ORDEM imperativa individualizada (SAFETY.md §11 permite dose de
+// REFERÊNCIA educacional, p.ex. itens de conversão dose↔mL/h; o que não se admite é
+// mandar iniciar/titular uma droga, em dose/alvo, para um paciente específico).
+var IMPER_RE=/\b(inicie|administre|titule|prescreva|comece|fa[çc]a|d[êe])\s+\S+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i;
+function firewallOk(q){ var t=[q.stem].concat(q.o).concat([q.rationale.correct],q.rationale.why); return !t.some(function(s){ return IMPER_RE.test(s); }); }
+
+window.PSY={
+  LETTERS:LETTERS, letterOf:letterOf, lcg:lcg, shuffle:shuffle,
+  letterCounts:letterCounts, letterFractions:letterFractions, letterDistOk:letterDistOk, nonUniform:nonUniform,
+  maxRun:maxRun, hasRegularSequence:hasRegularSequence,
+  correctIsLongest:correctIsLongest, longestCorrectFraction:longestCorrectFraction,
+  largestNumberCorrectFraction:largestNumberCorrectFraction, absoluteCorrectFraction:absoluteCorrectFraction, hasAllNoneShortcut:hasAllNoneShortcut,
+  difficultyMonotonic:difficultyMonotonic, axisCounts:axisCounts, axisFloorOk:axisFloorOk,
+  trapCounts:trapCounts, trapCoverageOk:trapCoverageOk, formatCounts:formatCounts,
+  itemWellFormed:itemWellFormed, firewallOk:firewallOk, FORMATS:FORMATS, AXES:AXES
+};
+</script>
+<!-- scoring30.js · maestria inlined -->
+<script>
+// build/m30/scoring30.js — Motor de MAESTRIA do M30+ (puro)
+// Agrega respostas por eixo de competência → radar (% por eixo), veredito de
+// domínio e remediação (módulos a revisar nos eixos fracos). Entrada: itens do
+// bank + um mapa de respostas {id -> índice escolhido}.
+var AXES=[
+  { id:'E1', nome:'Conteúdo & transporte',        modulos:['M0','M1','M2'] },
+  { id:'E2', nome:'Determinantes do débito',      modulos:['M3','M4','M5','M6','M7','M8'] },
+  { id:'E3', nome:'Inversão & beira-leito',       modulos:['M9','M10','M11'] },
+  { id:'E4', nome:'Microcirculação & lactato',    modulos:['M12','M13'] },
+  { id:'E5', nome:'Categorias de choque',         modulos:['M14','M15','M16','M17','M18','M19','M20','M21','M22'] },
+  { id:'E6', nome:'Integração & mistos',          modulos:['M23','M24','M25','M26','M27'] },
+  { id:'E7', nome:'Alavancas (farmacologia §11)', modulos:['M28'] },
+  { id:'E8', nome:'Síntese / capstone',           modulos:['M29'] }
+];
+// answers: { itemId: índiceEscolhido }
+function score(items, answers){
+  answers=answers||{};
+  var per={}; AXES.forEach(function(a){ per[a.id]={ id:a.id, nome:a.nome, total:0, answered:0, correct:0, modulos:a.modulos }; });
+  var total=0, answered=0, correct=0;
+  items.forEach(function(q){
+    var ax=per[q.axis]; if(!ax) return; ax.total++; total++;
+    if(q.id in answers){ ax.answered++; answered++; var ok=(answers[q.id]===q.a); if(ok){ ax.correct++; correct++; } }
+  });
+  AXES.forEach(function(a){ var p=per[a.id]; p.pct=p.answered?(p.correct/p.answered):0; });
+  return { total:total, answered:answered, correct:correct, pct:(answered?correct/answered:0), axes:AXES.map(function(a){return per[a.id];}) };
+}
+
+// veredito por eixo: domina ≥0,80 · parcial ≥0,60 · lacuna <0,60 (só conta eixos respondidos)
+function axisVerdict(p){ if(!p.answered) return 'sem dados'; if(p.pct>=0.80) return 'domina'; if(p.pct>=0.60) return 'parcial'; return 'lacuna'; }
+
+// veredito global de domínio
+function domainVerdict(s){
+  if(!s.answered) return { nivel:'sem dados', texto:'Responda o exame para gerar o veredito.' };
+  if(s.answered < s.total) return { nivel:'incompleto', texto:'Responda a todas as questões para gerar o veredito de domínio.' };
+  var fracas=s.axes.filter(function(p){ return p.answered && p.pct<0.60; });
+  if(s.pct>=0.85 && fracas.length===0) return { nivel:'domínio sólido', texto:'Internalizou o mapa causal: decompõe, casa a alavanca ao termo e pesa o custo em todos os eixos.' };
+  if(s.pct>=0.70 && fracas.length<=1) return { nivel:'domínio consistente', texto:'Mapa causal sólido, com '+(fracas.length?('uma lacuna em '+fracas[0].nome):'pequenas arestas')+'.' };
+  if(s.pct>=0.55) return { nivel:'domínio em formação', texto:'Bases presentes; revise os eixos marcados como lacuna antes de considerar o domínio fechado.' };
+  return { nivel:'domínio frágil', texto:'Vários eixos com lacuna: o raciocínio ainda decora rótulos em vez de decompor o mecanismo.' };
+}
+
+// remediação: módulos a revisar nos eixos fracos
+function remediation(s){
+  return s.axes.filter(function(p){ return p.answered && p.pct<0.60; })
+    .sort(function(a,b){ return a.pct-b.pct; })
+    .map(function(p){ return { eixo:p.id, nome:p.nome, pct:p.pct, modulos:p.modulos }; });
+}
+
+function report(items, answers){ var s=score(items, answers);
+  return { score:s, axisVerdicts:s.axes.map(function(p){ return { id:p.id, nome:p.nome, pct:p.pct, veredito:axisVerdict(p) }; }),
+           domain:domainVerdict(s), remediation:remediation(s) }; }
+
+window.SCORE={ AXES:AXES, score:score, axisVerdict:axisVerdict, domainVerdict:domainVerdict, remediation:remediation, report:report };
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  var $=function(id){ return document.getElementById(id); };
+  var ITEMS=window.BANK30.buildBank();
+  var BYID={}; ITEMS.forEach(function(q){ BYID[q.id]=q; });
+  var answers={};
+  var LET=['A','B','C','D'];
+  var QNOME={1:'Quarto 1 · reconhecimento & decomposição',2:'Quarto 2 · aplicação & contraste',3:'Quarto 3 · integração & conflito',4:'Quarto 4 · exceção & simultaneidade'};
+
+  function order(){ var out=[]; for(var q=1;q<=4;q++){ var inq=ITEMS.filter(function(x){return x.quarter===q;}); out=out.concat(window.PSY.shuffle(inq, 730+q)); } return out; }
+  var ORDER=order();
+
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ t.setAttribute('aria-selected', t.id===tabId?'true':'false'); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id===('panel-'+tabId.replace('tab-',''))); });
+    if(tabId==='tab-maestria') renderRadar(); if(tabId==='tab-revisao') renderRevisao(); }
+
+  function optHTML(q, prefix){ var h='<div class="opts">';
+    q.o.forEach(function(opt,oi){ h+='<button class="opt" data-id="'+q.id+'" data-o="'+oi+'" data-pfx="'+prefix+'"><span class="ol">'+LET[oi]+'.</span>'+opt+'</button>'; });
+    return h+'</div>'; }
+  function fbHTML(q){ var h='<div class="fb" id="fb-'+q.id+'"></div>'; return h; }
+  function itemHTML(q, n){
+    var d='dif-'+q.difficulty, gr=q.grounded?' · <span style="color:var(--purp)">engine-grounded</span>':'';
+    return '<div class="q" id="q-'+q.id+'"><div class="meta"><span class="dif '+d+'">Q'+q.quarter+'</span><span class="fmt">'+q.format+'</span><span>eixo '+q.axis+'</span>'+gr+'<span style="margin-left:auto">#'+n+'</span></div>'+
+      '<div class="qt">'+q.stem+'</div>'+optHTML(q,'exam')+fbHTML(q)+'</div>'; }
+
+  function renderExam(){ var box=$('exam'); if(!box) return; var html='', curQ=0, n=0;
+    ORDER.forEach(function(q){ if(q.quarter!==curQ){ curQ=q.quarter; html+='<div class="qsec">'+QNOME[curQ]+'</div>'; } n++; html+=itemHTML(q,n); });
+    box.innerHTML=html;
+    box.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ answer(b.getAttribute('data-id'), +b.getAttribute('data-o'), 'exam'); }); });
+    updateScore();
+  }
+  function reveal(q, prefix){
+    var pfx=(prefix==='rev'?'rev-':''); var opts=document.querySelectorAll('.opt[data-id="'+q.id+'"][data-pfx="'+prefix+'"]');
+    var chosen=answers[q.id];
+    opts.forEach(function(b){ var o=+b.getAttribute('data-o'); if(o===q.a) b.classList.add('right'); else if(o===chosen) b.classList.add('wrong'); b.disabled=true; });
+    var fb=document.getElementById((prefix==='rev'?'fbrev-':'fb-')+q.id); if(!fb) return;
+    var ok=(chosen===q.a);
+    var why=''; q.o.forEach(function(opt,oi){ why+='<span class="fl">'+LET[oi]+(oi===q.a?' (correta)':'')+'</span>'+q.rationale.why[oi]; });
+    fb.className='fb show '+(ok?'ok':'no');
+    fb.innerHTML='<span class="fhead">'+(ok?'✓ correto':'✗ incorreto')+' · gabarito '+LET[q.a]+'</span><div style="margin-top:4px">'+q.rationale.correct+'</div>'+
+      why+'<span class="fl">conceito</span><span class="grd">'+q.rationale.concept+' · '+q.modules.join(', ')+'</span><span class="fl">armadilha testada</span>'+q.rationale.trap;
+  }
+  function answer(id, idx, prefix){ if(answers[id]!=null) return; answers[id]=idx; reveal(BYID[id], prefix); updateScore(); renderRadar(); }
+  function updateScore(){ var n=0,cor=0; Object.keys(answers).forEach(function(k){ n++; if(answers[k]===BYID[k].a) cor++; });
+    $('scorebar').firstChild.textContent=n+' / 150 respondidas · '+cor+' corretas'+(n?(' ('+Math.round(cor/n*100)+'%)'):''); $('bar').style.width=(n/150*100)+'%'; }
+
+  // ---- radar de maestria ----
+  function drawRadar(rep){ var cv=$('radar'); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
+    var W=cv.width||460, H=cv.height||380, cx=W/2, cy=H/2+6, R=Math.min(W,H)/2-46, axes=rep.score.axes, N=axes.length;
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      // teias
+      ctx.strokeStyle='#1c2436'; ctx.lineWidth=1;
+      [0.25,0.5,0.75,1].forEach(function(r){ ctx.beginPath(); for(var i=0;i<=N;i++){ var a=-Math.PI/2+i*2*Math.PI/N, x=cx+Math.cos(a)*R*r, y=cy+Math.sin(a)*R*r; if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke(); });
+      for(var i=0;i<N;i++){ var a=-Math.PI/2+i*2*Math.PI/N; ctx.strokeStyle='#1c2436'; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R); ctx.stroke();
+        ctx.fillStyle='#97a3ba'; ctx.font='11px monospace'; var lx=cx+Math.cos(a)*(R+18), ly=cy+Math.sin(a)*(R+18); ctx.textAlign=Math.abs(Math.cos(a))<0.3?'center':(Math.cos(a)>0?'left':'right'); ctx.fillText(axes[i].id, lx, ly); }
+      // polígono de desempenho
+      ctx.beginPath(); for(var j=0;j<=N;j++){ var k=j%N, aa=-Math.PI/2+k*2*Math.PI/N, val=axes[k].answered?axes[k].pct:0, x=cx+Math.cos(aa)*R*val, y=cy+Math.sin(aa)*R*val; if(j===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+      ctx.closePath(); ctx.fillStyle='rgba(255,207,92,.16)'; ctx.fill(); ctx.strokeStyle='#ffcf5c'; ctx.lineWidth=2; ctx.stroke();
+      for(var m=0;m<N;m++){ var am=-Math.PI/2+m*2*Math.PI/N, vm=axes[m].answered?axes[m].pct:0; ctx.fillStyle=axes[m].answered?(vm>=0.8?'#3ec78d':(vm>=0.6?'#ffb454':'#ff5d6c')):'#5e6c87'; ctx.beginPath(); ctx.arc(cx+Math.cos(am)*R*vm, cy+Math.sin(am)*R*vm, 3.5, 0, 6.2832); ctx.fill(); }
+    }catch(e){}
+  }
+  function renderRadar(){ var rep=window.SCORE.report(ITEMS, answers); drawRadar(rep);
+    $('verdict-big').textContent=rep.domain.nivel; $('verdict-tx').textContent=rep.domain.texto;
+    var ax=$('axes'); if(ax){ ax.innerHTML=''; rep.axisVerdicts.forEach(function(v){ var sc=rep.score.axes.filter(function(a){return a.id===v.id;})[0];
+      var cls=v.veredito==='domina'?'domina':v.veredito==='parcial'?'parcial':v.veredito==='lacuna'?'lacuna':'sem';
+      var d=document.createElement('div'); d.className='axrow '+cls;
+      d.innerHTML='<div class="axn">'+v.nome+' <small>'+v.id+'</small></div><div class="axv">'+(sc.answered?(Math.round(v.pct*100)+'% · '+v.veredito):'—')+'</div>'; ax.appendChild(d); }); }
+    var rb=$('remed-box'); if(rb){ if(rep.remediation.length){ var h='<div class="remed"><b>Remediação</b> — eixos a revisar (e os módulos para fechar a lacuna):<ul style="margin:6px 0 0;padding-left:18px">';
+      rep.remediation.forEach(function(r){ h+='<li>'+r.nome+' ('+Math.round(r.pct*100)+'%) → '+r.modulos.map(function(m){ var num=m.replace('M',''); return '<a href="perfunde'+num+'.html">'+m+'</a>'; }).join(' · ')+'</li>'; });
+      rb.innerHTML=h+'</ul></div>'; } else rb.innerHTML=''; }
+  }
+
+  // ---- revisão ----
+  function renderRevisao(){ var box=$('revisao'); if(!box) return; var wrong=ORDER.filter(function(q){ return (q.id in answers) && answers[q.id]!==q.a; });
+    if(!wrong.length){ box.innerHTML='<div class="empty">Nenhuma questão errada (ainda). Responda o exame e as erradas aparecerão aqui para refazer.</div>'; return; }
+    var html='<div class="lead">'+wrong.length+' questão(ões) a refazer:</div>';
+    wrong.forEach(function(q,i){ html+='<div class="q" id="qrev-'+q.id+'"><div class="meta"><span class="dif dif-'+q.difficulty+'">Q'+q.quarter+'</span><span class="fmt">'+q.format+'</span><span>eixo '+q.axis+'</span></div><div class="qt">'+q.stem+'</div>'+
+      '<div class="opts">'+q.o.map(function(opt,oi){ return '<button class="opt" data-id="'+q.id+'" data-o="'+oi+'" data-pfx="rev"><span class="ol">'+LET[oi]+'.</span>'+opt+'</button>'; }).join('')+'</div><div class="fb" id="fbrev-'+q.id+'"></div></div>'; });
+    box.innerHTML=html;
+    box.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ var id=b.getAttribute('data-id'); answers[id]=+b.getAttribute('data-o'); reveal(BYID[id],'rev'); updateScore(); renderRadar(); }); });
+  }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    renderExam(); renderRadar();
+    var hs=$('how-stats'); if(hs){ var d=window.PSY.letterCounts(ITEMS); hs.innerHTML='→ <b>Este banco:</b> 150 itens · letras A'+d.A+' B'+d.B+' C'+d.C+' D'+d.D+' · '+(ITEMS.filter(function(q){return q.grounded;}).length)+' engine-grounded · 6 formatos · 8 eixos.'; }
+    // expor para o validador
+    window.M30=ITEMS; window.M30order=ORDER; window.activateTab=activate; window.answerFn=answer; window.M30answers=answers;
+    window.scoreReportFn=function(){ return window.SCORE.report(ITEMS, answers); }; window.renderRadarFn=renderRadar; window.renderRevisaoFn=renderRevisao;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
