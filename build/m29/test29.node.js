@@ -70,5 +70,17 @@ ok('4 opções, índice válido, feedback presente', bank.every(q=>q.o.length===
 ok('perguntas únicas', new Set(bank.map(q=>q.q)).size===bank.length);
 ok('firewall: sem dose imperativa nas questões', !bank.some(q=>[q.q,...q.o,q.fb].some(t=>/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(t))));
 
+console.log('\n— BANCO V/F INTEGRADO (cases29 · 120 assertivas) —');
+const Cv=require('./cases29.js'); const vs=Cv.vfStats(), flat=Cv.flatAssertions();
+ok('total = 120 assertivas', vs.total===120, vs.total);
+ok('6 casos × 4 etapas (24 etapas)', vs.casos===6 && vs.etapas===24, vs.casos+' casos / '+vs.etapas+' etapas');
+ok('cada caso 4 etapas × 5 assertivas', Cv.CASES_VF.every(c=>c.etapas.length===4 && c.etapas.every(e=>e.asser.length===5)));
+ok('balanço V/F exatamente 60/60', vs.v===60 && vs.f===60, vs.v+' V / '+vs.f+' F');
+ok('cada caso internamente 10 V / 10 F', Cv.CASES_VF.every(c=>{let v=0,f=0;c.etapas.forEach(e=>e.asser.forEach(a=>a.v?v++:f++));return v===10&&f===10;}));
+ok('toda assertiva bem-formada (texto + gabarito + racional)', flat.every(a=>a.t.length>10&&typeof a.v==='boolean'&&a.r.length>5));
+ok('assertivas únicas', new Set(flat.map(a=>a.t)).size===flat.length);
+ok('firewall: sem ordem imperativa individualizada', !flat.some(a=>/\b(inicie|administre|titule|prescreva|comece|fa[çc]a|d[êe])\s+\w+\s+(neste|no|na|para o|para a|para este|deste|nesta)\s+paciente/i.test(a.t)));
+ok('firewall: sem dose numérica imperativa', !flat.some(a=>/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i.test(a.t)));
+
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);
