@@ -12,11 +12,10 @@
 var K_HUFNER=1.34, K_DISS=0.003;     // CaO2 = 1.34·Hb·SaO2 + 0.003·PaO2
 var SV_BASE=83;                       // mL — calibra CO normal ≈ 5 L/min
 var K_AFTER=0.25;                      // sensibilidade do VS à pós-carga (modulada pela fraqueza do ventrículo)
-var O2ERMAX_NL=0.6, LACT_BASE=1.0, LACT_K=0.03;   // m8
+var LACT_BASE=1.0, LACT_K=0.03;   // m8
 var PVC_NL=6;                         // mmHg
 
 function clamp(x,a,b){ return x<a?a:(x>b?b:x); }
-function clamp01(x){ return clamp(x,0,1); }
 function num(x,d){ return (typeof x==='number'&&isFinite(x))?x:d; }
 function asFrac(s){ return s>1 ? s/100 : s; }
 
@@ -54,7 +53,7 @@ function cascade(state){
   var crit=do2crit(s.vo2demand,s.o2ermax);
   var VO2=vo2Of(DO2,s.vo2demand,s.o2ermax);
   var O2ER=DO2>0?VO2/DO2:0;
-  var SvO2=s.sao2*(1-O2ER);
+  var SvO2=DO2>0?s.sao2*(1-O2ER):0;
   var deficit=Math.max(0,s.vo2demand-VO2);
   var lactate=LACT_BASE+LACT_K*deficit;
   var PAM=clamp(pamOf(CO,s.rvs,s.pvc),35,140);
