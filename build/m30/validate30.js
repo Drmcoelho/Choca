@@ -126,6 +126,13 @@ ok('trilha dinâmica sem dados aparece desabilitada (remediação)',doc.querySel
   var nao=window.TRAILS30.trailStats(window.M30,{answers:window.M30answers,weakAxes:[]}).filter(function(s){return s.id==='nao-respondidas';})[0];
   ok('dinâmica "o que falta" reflete o que já foi respondido (<225)',nao.total<225 && nao.dyn===true, nao.total);
 })();
+(function(){ // ao trocar de trilha, as já respondidas mantêm o gabarito revelado e travado
+  var firstId=window.M30order[0].id; if(!(firstId in window.M30answers)) window.answerFn(firstId, (window.currentOrderFn()[0].a), 'exam');
+  window.setTrailFn('escada', 0);
+  var card=$('q-'+firstId);
+  ok('estado revelado preservado ao trocar de trilha',!!card && !!card.querySelector('.opt.right, .opt.wrong') && !!card.querySelector('.fb.show') && card.querySelector('.opt').disabled);
+  window.setTrailFn(null, 0);
+})();
 window.activateTab('tab-exame');
 
 console.log('\n— CROMO / SaMD —');

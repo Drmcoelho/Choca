@@ -48,7 +48,7 @@ var TRAP_NOME={ T01:'número ≠ mecanismo', T02:'PAM ≠ perfusão', T03:'conte
 ['T01','T02','T03','T04','T05','T06','T07','T08','T09','T11','T12','T13','T14'].forEach(function(code){
   TRAILS.push({ id:'armadilha-'+code, nome:'Armadilha · '+TRAP_NOME[code], nivel:'armadilha', foco:code,
     desc:'Treino dirigido à armadilha cognitiva "'+TRAP_NOME[code]+'" — todas as questões que a testam.',
-    sel:(function(c){ return function(q){ return q.trap===c; }; })(code) });
+    sel:function(q){ return q.trap===code; } });   // `code` já é fresco por iteração do forEach
 });
 
 function byId(id){ for(var i=0;i<TRAILS.length;i++){ if(TRAILS[i].id===id) return TRAILS[i]; } return null; }

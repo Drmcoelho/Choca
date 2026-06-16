@@ -1575,7 +1575,7 @@ var TRAP_NOME={ T01:'número ≠ mecanismo', T02:'PAM ≠ perfusão', T03:'conte
 ['T01','T02','T03','T04','T05','T06','T07','T08','T09','T11','T12','T13','T14'].forEach(function(code){
   TRAILS.push({ id:'armadilha-'+code, nome:'Armadilha · '+TRAP_NOME[code], nivel:'armadilha', foco:code,
     desc:'Treino dirigido à armadilha cognitiva "'+TRAP_NOME[code]+'" — todas as questões que a testam.',
-    sel:(function(c){ return function(q){ return q.trap===c; }; })(code) });
+    sel:function(q){ return q.trap===code; } });   // `code` já é fresco por iteração do forEach
 });
 
 function byId(id){ for(var i=0;i<TRAILS.length;i++){ if(TRAILS[i].id===id) return TRAILS[i]; } return null; }
@@ -1643,7 +1643,9 @@ window.TRAILS30={ TRAILS:TRAILS, byId:byId, buildTrail:buildTrail, trailStats:tr
     var c=$('trail-clear'); if(c) c.addEventListener('click',function(){ setTrail(null, trailLen); }); }
   function setTrail(id, len){ activeTrail=id; trailLen=len||0;
     ORDER = id ? window.TRAILS30.buildTrail(ITEMS, id, {length:trailLen, seed:730, ctx:getCtx()}) : fullOrder;
-    renderExam(); renderTrailHead(); activate('tab-exame'); window.scrollTo(0,0); }
+    renderExam();
+    ORDER.forEach(function(q){ if(q.id in answers) reveal(q, 'exam'); });   // restaura o gabarito revelado das já respondidas
+    renderTrailHead(); activate('tab-exame'); window.scrollTo(0,0); }
   function renderTrilhas(){ var lenBox=$('trail-len'), list=$('trail-list'); if(!list) return;
     if(lenBox){ lenBox.innerHTML=''; [['Todas',0],['50',50],['100',100]].forEach(function(p){ var b=document.createElement('button'); b.className='preset'+(trailLen===p[1]?' on':''); b.type='button'; b.textContent=p[0];
       b.addEventListener('click',function(){ trailLen=p[1]; if(activeTrail) setTrail(activeTrail, trailLen); else renderTrilhas(); }); lenBox.appendChild(b); }); }
