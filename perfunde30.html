@@ -1343,14 +1343,15 @@ function _targets(n, seed){
 // cada letra 15–35% no total (A45 B68 C59 D53), maxRun ≤ 3. Os gabaritos dos 1–150 não deslizam.
 var TG=_targets(150, 7).concat(_targets(75, 1));
 function _rotate(item, tg){
-  var sh=((tg-item.a)%4+4)%4; if(sh===0) return item;
+  // sempre devolve um CLONE (mesmo sem rotação, sh===0) para não vazar estado ao BANK estático
+  var sh=((tg-item.a)%4+4)%4;
   var o=item.o.slice(), why=item.rationale.why.slice(), ov=item.grounded?item.grounded.optionValues.slice():null;
   for(var s=0;s<sh;s++){ o.unshift(o.pop()); why.unshift(why.pop()); if(ov) ov.unshift(ov.pop()); }
   var ni={ id:item.id, format:item.format, quarter:item.quarter, difficulty:item.difficulty, axis:item.axis,
-    modules:item.modules, concepts:item.concepts, trap:item.trap, stem:item.stem, o:o, a:tg,
+    modules:item.modules.slice(), concepts:item.concepts.slice(), trap:item.trap, stem:item.stem, o:o, a:tg,
     rationale:{ correct:item.rationale.correct, why:why, trap:item.rationale.trap, concept:item.rationale.concept },
     grounded: item.grounded ? { ref:item.grounded.ref, args:item.grounded.args, kind:item.grounded.kind, optionValues:ov, tol:item.grounded.tol } : null };
-  if(item.arms) ni.arms=item.arms;   // preserva o campo inter-braços na rotação
+  if(item.arms) ni.arms=item.arms.slice();   // clona o array inter-braços (sem compartilhar referência)
   return ni;
 }
 function buildBank(){ return BANK.map(function(it,i){ return _rotate(it, TG[i]); }); }   // item i → alvo fixo TG[i] (estável entre as partes)
