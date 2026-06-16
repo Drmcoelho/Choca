@@ -7,12 +7,12 @@ let oks=0,falhas=0;
 const ok=(n,c,got='')=>{ if(c){oks++;console.log('  OK  · '+n+(got!==''?'  ['+got+']':''));} else {falhas++;console.log('FALHA · '+n+(got!==''?'  ['+got+']':''));} };
 const items=Bank.buildBank();
 
-console.log('— AUDITORIA PSICOMÉTRICA GLOBAL (150 itens) —');
-ok('150 itens', items.length===150, items.length);
+console.log('— AUDITORIA PSICOMÉTRICA GLOBAL (225 itens: 150 M30 + 75 inter-braços) —');
+ok('225 itens', items.length===225, items.length);
 ok('4 quartos presentes', [1,2,3,4].every(q=>items.some(x=>x.quarter===q)));
 ok('cada item A/B/C/D com uma única correta', items.every(x=>Array.isArray(x.o)&&x.o.length===4&&Number.isInteger(x.a)&&x.a>=0&&x.a<4));
 ok('todos bem-formados (metadados + rationale 5 camadas)', items.every(P.itemWellFormed));
-ok('enunciados únicos', new Set(items.map(x=>x.stem)).size===150);
+ok('enunciados únicos', new Set(items.map(x=>x.stem)).size===225);
 const lc=P.letterCounts(items), lf=P.letterFractions(items);
 ok('distribuição de letras 15–35% por letra', P.letterDistOk(items,0.15,0.35), 'A'+lc.A+' B'+lc.B+' C'+lc.C+' D'+lc.D);
 ok('distribuição assimétrica (não fabricada/uniforme)', P.nonUniform(items,0.05)&&!(lc.A===lc.B&&lc.B===lc.C&&lc.C===lc.D));
@@ -22,8 +22,9 @@ ok('termos absolutos não dominam a correta (<20%)', P.absoluteCorrectFraction(i
 ok('sem atalho "todas/nenhuma das anteriores"', !P.hasAllNoneShortcut(items));
 ok('dificuldade crescente por quarto (monotônica)', P.difficultyMonotonic(items));
 // cobertura de eixos
-const ac=P.axisCounts(items), floors={E1:8,E2:20,E3:15,E4:12,E5:30,E6:18,E7:12,E8:14};
-ok('piso de cobertura por eixo (8 eixos)', P.axisFloorOk(items,floors), JSON.stringify(ac));
+const ac=P.axisCounts(items), floors={E1:8,E2:20,E3:15,E4:12,E5:30,E6:18,E7:12,E8:14,E9:60};
+ok('piso de cobertura por eixo (9 eixos, incl. inter-braços)', P.axisFloorOk(items,floors), JSON.stringify(ac));
+(function(){ var e9=items.filter(q=>q.axis==='E9'); ok('inter-braços: 75 itens, cada um com 2–3 braços (nunca um só)', e9.length===75 && e9.every(q=>Array.isArray(q.arms)&&q.arms.length>=2&&q.arms.length<=3&&q.arms.every(a=>['R','P','F'].indexOf(a)>=0))); })();
 // cobertura da taxonomia de armadilhas
 const tc=P.trapCounts(items), TRAPS=['T01','T02','T03','T04','T05','T06','T07','T08','T09','T10','T11','T12','T13','T14','T15','T16'];
 ok('todas as 16 armadilhas presentes (≥1)', TRAPS.every(t=>(tc[t]||0)>=1), TRAPS.filter(t=>!(tc[t])).join(',')||'todas');
@@ -38,8 +39,8 @@ ok('TODO gabarito grounded bate com o motor (m1/m9/m28/m29)', vb.fails.length===
 ok('firewall §11: nenhum item com ordem imperativa individualizada', items.every(P.firewallOk));
 // embaralhamento semeado determinístico (replay)
 ok('embaralhamento por seed é determinístico (replay)', JSON.stringify(P.shuffle(items,4242).map(x=>x.id))===JSON.stringify(P.shuffle(items,4242).map(x=>x.id)) && JSON.stringify(P.shuffle(items,1).map(x=>x.id))!==JSON.stringify(P.shuffle(items,2).map(x=>x.id)));
-// gabaritos estáveis: TG dimensionado para o tamanho final (150)
-ok('gabaritos estáveis (TG de 150) → item i não desliza ao crescer o banco', Bank.TG.length===150);
+// gabaritos estáveis: os 150 originais não deslizam ao anexar os 75 inter-braços
+ok('gabaritos: TG de 225 (150 estáveis + 75)', Bank.TG.length===225);
 
 (async()=>{
 try {
@@ -61,22 +62,22 @@ console.log('\n— ESTRUTURA / UI —');
  'panel-exame','panel-maestria','panel-revisao','panel-como','radar','verdict','verdict-big','axes','remed-box','revisao','how-stats'].forEach(id=>ok('#'+id,!!$(id)));
 ok('footer',!!doc.querySelector('footer'));
 ['tab-exame','tab-maestria','tab-revisao','tab-como'].forEach(t=>ok('aba '+t,!!$(t)));
-ok('exame renderiza 150 questões',doc.querySelectorAll('#exam .q').length===150);
+ok('exame renderiza 225 questões',doc.querySelectorAll('#exam .q').length===225);
 ok('4 seções de quarto',doc.querySelectorAll('#exam .qsec').length===4);
 ok('cada questão com 4 opções',[...doc.querySelectorAll('#exam .q')].every(q=>q.querySelectorAll('.opt').length===4));
-ok('motor M30 exposto (150 itens, ordem)',window.M30&&window.M30.length===150&&window.M30order.length===150);
+ok('motor M30 exposto (225 itens, ordem)',window.M30&&window.M30.length===225&&window.M30order.length===225);
 
 console.log('\n— INTERAÇÃO: responder revela gabarito de 5 camadas —');
 const first=doc.querySelector('#exam .q .opt'); first.dispatchEvent(new window.Event('click',{bubbles:true}));
 const fb=doc.querySelector('#exam .fb.show');
 ok('responder revela feedback',!!fb);
 ok('feedback traz gabarito + conceito + armadilha',!!fb && /gabarito/.test(fb.textContent) && /conceito/i.test(fb.textContent) && /armadilha/i.test(fb.textContent));
-ok('placar e barra atualizam',/1 \/ 150/.test(txt('scorebar')));
+ok('placar e barra atualizam',/1 \/ 225/.test(txt('scorebar')));
 
 console.log('\n— RADAR DE MAESTRIA —');
 window.activateTab('tab-maestria');
-ok('radar report gerado (8 eixos)',window.scoreReportFn().score.axes.length===8);
-ok('linhas de eixo renderizadas',doc.querySelectorAll('#axes .axrow').length===8);
+ok('radar report gerado (9 eixos, incl. inter-braços)',window.scoreReportFn().score.axes.length===9);
+ok('linhas de eixo renderizadas',doc.querySelectorAll('#axes .axrow').length===9);
 ok('veredito de domínio exibido',!!txt('verdict-big') && txt('verdict-big').length>2, txt('verdict-big'));
 // simula: acertar todo E1, errar todo E5 → E1 domina, E5 lacuna + remediação
 (function(){ window.M30.forEach(q=>{ if(q.axis==='E1') window.M30answers[q.id]=q.a; else if(q.axis==='E5') window.M30answers[q.id]=(q.a+1)%4; }); window.renderRadarFn();

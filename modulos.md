@@ -581,9 +581,13 @@ mesma PAM, mecânicas opostas · supply-dependence abaixo do DO₂crit · α1 pu
 
 ## 30 · Revisão global · exame de domínio
 
-**Status:** planejado.
+**Status:** publicado · `perfunde30.html` + `build/m30/` · **225 itens** (150 do braço + 75 inter-braços).
 
 **Tese:** domínio real exige reconhecer mecanismos fora da ordem curricular, com dificuldade crescente e sem pistas formais de gabarito.
+
+**Sistema (`build/m30/`):** motor psicométrico (`psyche30.js`: LCG semeado, varreduras anti-padrão, paridade de comprimento, cobertura), recomputação **engine-grounded** (`grounding30.js`: o gabarito de itens computados é recalculado por m1/m9/m28/m29 e conferido), **maestria** (`scoring30.js`: radar de 9 eixos + veredito + remediação) e o banco (`bank30.js`). 6 formatos (SBA, asserção-razão, V/F, estimativa computada, "ache a pegadinha", vinheta de 2 passos).
+
+**Extensão inter-braços (eixo E9, 75 itens):** cada questão liga **2–3 braços do hexápode** — RESPIRA·VENTILA (R, anterior) × PERFUNDE·CHOCA (P, atual) × FILTRA·DIALISA (F, próximo), **nunca um só**. Revê o atual e adianta o próximo (síndrome cardiorrenal, ARDS+choque+LRA, PEEP×retorno×congestão renal, pH partilhado por pulmão e rim, etc.).
 
 **Estrutura:**
 

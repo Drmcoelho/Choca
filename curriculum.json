@@ -41,7 +41,10 @@
   ],
   "assessment_spec": {
     "module": 30,
-    "total_questions": 100,
+    "total_questions": 225,
+    "intra_arm_questions": 150,
+    "cross_arm_questions": 75,
+    "cross_arm_axis": "E9_R_P_F",
     "quarters": 4,
     "questions_per_quarter": 25,
     "module_order": "randomized_within_quarters",
