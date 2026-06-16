@@ -6,9 +6,9 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M28
-próximo: M29 · capstone integrado
-planejados: M23…M30
+publicados: M0…M29
+próximo: M30 · revisão global / exame de domínio
+planejado: M30 (avaliação global, não conteúdo novo)
 ```
 
 ---
@@ -557,13 +557,24 @@ a MESMA droga: certa num termo, errada no outro (fenilefrina afunda o cardiogên
 
 ## 29 · Capstone · caso integrado
 
-**Status:** planejado.
+**Status:** publicado · `perfunde29.html` + `build/m29/` (motor unificado + 30 MCQ + 120 V/F).
 
-**Tese:** o aluno precisa ler múltiplas variáveis, reconhecer compensações e identificar termos quebrados simultâneos.
+**Tese:** o braço inteiro num só paciente — a **cascata** do transporte é computada de ponta a ponta e o aluno aprende a **decompor, achar o termo quebrado, escolher a alavanca que o move e pesar o custo.**
 
-**Formato ideal:** caso progressivo + tutor gráfico dinâmico + mapa causal final.
+**Motor unificado (`model29.js`):** costura `m1` (CaO₂/DO₂), `m8` (VO₂/supply-dependence) e `m9` (PAM=DC×RVS) num único `cascade(state)` — CaO₂ → DO₂ → VO₂/SvO₂/lactato → PAM → perfil. Acrescenta **acoplamento de pós-carga** (o ventrículo fraco perde VS com RVS alta), `brokenTerm()` (classificador do termo quebrado por categoria), `PRESETS` (10 categorias), `LEVERS` (receptor→termo + volume/transfusão) e `appropriate()` (a alavanca move o termo quebrado, sem afundar o fluxo nem custo proibitivo).
 
-**Pontes:** todos os módulos de conteúdo; prepara M30.
+```text
+conteúdo (CaO₂) → entrega (DO₂ = DC·CaO₂) → consumo/extração (VO₂, SvO₂, lactato) → pressão (PAM = DC·RVS) → perfil
+mesma PAM, mecânicas opostas · supply-dependence abaixo do DO₂crit · α1 puro afunda a bomba fraca
+```
+
+**Camada interativa (§2.6):** **aba Cascata** (instrumento ao vivo: 8 primitivas → cadeia computada + curva DO₂×VO₂ com o DO₂crit e o ponto do paciente); **caso que evolui de categoria** (distributivo → misto) com decompor→alavanca a cada ato; prever-depois-revelar; trilha de 9; **Lab** categoria×alavanca com veredito pre→post; **30 MCQ integradas** (dificuldade crescente, gabarito disproporcional A5 B9 C8 D8, correta ≠ a mais longa em 37%); **120 assertivas V/F** em 6 casos integrados que evoluem (60/60, cada caso 10/10).
+
+**Erro cognitivo:** perseguir o número da PAM; tratar o misto como categoria única; não reavaliar quando o termo dominante muda.
+
+**Firewall SaMD:** mecanismo integrado + alavancas sob o `SAFETY.md §11` (referência educacional); primitivas são fatores didáticos, não medidas; sem dose, alvo ou conduta individualizada — guarda no teste e no validador.
+
+**Pontes:** M1, M8 (conteúdo/entrega), M9 (inversão), M16/M20/M18 (categorias), M23/M27 (misto/perfis), M28 (alavanca), M30 (exame).
 
 ---
 
