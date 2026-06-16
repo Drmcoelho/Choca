@@ -30,7 +30,7 @@ Estado curricular atual:
 - **M27** — publicado: os 4 perfis · radar — perfusão (fluxo) × congestão num mapa 2×2 (A/B/L/C); a mesma alavanca tem efeito oposto por canto.
 - **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`.
 - **M29** — publicado: capstone · caso integrado — o braço inteiro num **motor unificado** (cascata CaO₂→DO₂→VO₂→PAM→perfil), com instrumento ao vivo, caso que muda de categoria, 30 MCQ e 120 assertivas V/F.
-- **M30** — publicado: exame global de domínio — **150 itens** em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores), **radar de maestria** em 8 eixos e psicometria anti-gaming. Fecha o braço.
+- **M30** — publicado: exame global de domínio — **225 itens** (150 do braço + **75 inter-braços**) em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores), **radar de maestria** em 9 eixos (incl. integração inter-braços) e psicometria anti-gaming. Fecha o braço e costura os vizinhos.
 
 ---
 
@@ -119,6 +119,6 @@ Ele é uma máquina educacional: explicita causalidade, força decomposição fi
 
 ## Estado do braço
 
-O braço está **completo**: `M0`…`M30` publicados e validados (`npm run check` verde). O Bloco IV (`M23`…`M29`) está no padrão interativo rico (`MODULE_CONTRACT.md §2.6`); o M28 inaugurou a camada de referência farmacológica (`SAFETY.md §11`); o M29 fechou o conteúdo com o motor unificado da cascata; e o **M30** fecha o braço como **sistema de avaliação de domínio**: 150 itens em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores em `build/m30/grounding30.js`), **radar de maestria** (`scoring30.js`) e psicometria anti-gaming (`psyche30.js`), com `build/m30/PLAN.md` documentando o desenho.
+O braço está **completo**: `M0`…`M30` publicados e validados (`npm run check` verde). O Bloco IV (`M23`…`M29`) está no padrão interativo rico (`MODULE_CONTRACT.md §2.6`); o M28 inaugurou a camada de referência farmacológica (`SAFETY.md §11`); o M29 fechou o conteúdo com o motor unificado da cascata; e o **M30** fecha o braço como **sistema de avaliação de domínio**: 225 itens (150 do braço + 75 **inter-braços**, eixo E9, cada questão ligando 2–3 braços do hexápode: RESPIRA·VENTILA × PERFUNDE·CHOCA × FILTRA·DIALISA), 6 formatos, **engine-grounded** (`build/m30/grounding30.js`), **radar de maestria** em 9 eixos (`scoring30.js`) e psicometria anti-gaming (`psyche30.js`), com `build/m30/PLAN.md` documentando o desenho.
 
 O alvo foi atingido: cada botão obedece à fisiologia, cada fórmula é testável, cada erro do aluno revela uma falha conceitual e cada módulo pertence a um mapa causal maior — agora com uma prova final que mede o domínio desse mapa.

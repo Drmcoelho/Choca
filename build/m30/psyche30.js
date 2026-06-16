@@ -56,7 +56,7 @@ function formatCounts(items){ var d={}; items.forEach(function(q){ d[q.format]=(
 
 // ---- bem-formação de item ----
 var FORMATS=['sba','ar','vf','est','trap','vignette'];
-var AXES=['E1','E2','E3','E4','E5','E6','E7','E8'];
+var AXES=['E1','E2','E3','E4','E5','E6','E7','E8','E9'];   // E9 = integração inter-braços
 function itemWellFormed(q){
   return q && typeof q.id==='string'
     && FORMATS.indexOf(q.format)>=0 && AXES.indexOf(q.axis)>=0

@@ -23,14 +23,18 @@ ok('itens engine-grounded (≥20 no banco completo)', vb.grounded>=20, vb.ground
 ok('TODO gabarito grounded bate com o motor', vb.ok===vb.grounded && vb.fails.length===0, vb.ok+'/'+vb.grounded+(vb.fails.length?(' · falhas: '+JSON.stringify(vb.fails.slice(0,3))):''));
 ok('grounded numérico discrimina (distrator não cola na correta)', items.filter(q=>q.grounded&&q.grounded.kind==='number').every(q=>G.verify(q).discriminates));
 
-console.log('\n— BANK30 · banco COMPLETO (150 itens) —');
-ok('150 itens', items.length===150, items.length);
+console.log('\n— BANK30 · banco COMPLETO (225 itens: 150 M30 + 75 inter-braços) —');
+ok('225 itens', items.length===225, items.length);
 ok('ids únicos', new Set(items.map(q=>q.id)).size===items.length);
 ok('enunciados únicos', new Set(items.map(q=>q.stem)).size===items.length);
 ok('todos bem-formados (4 opções, índice, metadados, rationale 5 camadas)', items.every(P.itemWellFormed));
 ok('firewall: sem ordem imperativa individualizada (§11 permite referência)', items.every(P.firewallOk));
-ok('8 eixos cobertos (E1–E8)', P.AXES.every(e=>P.axisCounts(items)[e]>0), JSON.stringify(P.axisCounts(items)));
+ok('9 eixos cobertos (E1–E8 + E9 inter-braços)', P.AXES.every(e=>P.axisCounts(items)[e]>0), JSON.stringify(P.axisCounts(items)));
 ok('6 formatos presentes', Object.keys(P.formatCounts(items)).length>=6, JSON.stringify(P.formatCounts(items)));
+(function(){ var e9=items.filter(q=>q.axis==='E9'); var combos={}; e9.forEach(q=>{var k=(q.arms||[]).slice().sort().join('');combos[k]=(combos[k]||0)+1;});
+  ok('75 itens inter-braços (E9)', e9.length===75, e9.length);
+  ok('cada item inter-braços envolve 2–3 braços, NUNCA um só', e9.every(q=>Array.isArray(q.arms)&&q.arms.length>=2&&q.arms.length<=3&&q.arms.every(a=>['R','P','F'].indexOf(a)>=0)));
+  ok('combos de braços presentes (R·P, P·F, R·F, R·P·F)', combos['PR']>0&&combos['FP']>0&&combos['FPR']>0, JSON.stringify(combos)); })();
 
 console.log('\n— DISTRIBUIÇÃO & ANTI-PADRÃO (sobre o banco acumulado) —');
 const lc=P.letterCounts(items);

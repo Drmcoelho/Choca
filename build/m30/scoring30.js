@@ -12,7 +12,8 @@ var AXES=[
   { id:'E5', nome:'Categorias de choque',         modulos:['M14','M15','M16','M17','M18','M19','M20','M21','M22'] },
   { id:'E6', nome:'Integração & mistos',          modulos:['M23','M24','M25','M26','M27'] },
   { id:'E7', nome:'Alavancas (farmacologia §11)', modulos:['M28'] },
-  { id:'E8', nome:'Síntese / capstone',           modulos:['M29'] }
+  { id:'E8', nome:'Síntese / capstone',           modulos:['M29'] },
+  { id:'E9', nome:'Integração inter-braços',       modulos:['M8','M9','M24','M29'] }   // pulmão × circulação × rim (R·P·F)
 ];
 // answers: { itemId: índiceEscolhido }
 function score(items, answers){
