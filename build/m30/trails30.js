@@ -36,8 +36,20 @@ var TRAILS=[
   // ---- formato / meta ----
   { id:'grounded',      nome:'Prova viva (engine-grounded)',   nivel:'formato', foco:'computado', desc:'Só os itens cujo gabarito é recomputado pelos motores do braço — fisiologia computada.', sel:function(q){ return !!q.grounded; } },
   { id:'calculo',       nome:'Cálculo & estimativa',           nivel:'formato', foco:'est', desc:'Itens numéricos de estimativa: CaO₂, DO₂, PAM, RVS, conversão dose↔mL/h.', sel:function(q){ return q.format==='est'; } },
-  { id:'pegadinhas',    nome:'Caça às pegadinhas',             nivel:'formato', foco:'trap+ar', desc:'"Ache a pegadinha" e asserção-razão: treinar a identificar armadilhas e nexos.', sel:function(q){ return q.format==='trap' || q.format==='ar'; } }
+  { id:'pegadinhas',    nome:'Caça às pegadinhas',             nivel:'formato', foco:'trap+ar', desc:'"Ache a pegadinha" e asserção-razão: treinar a identificar armadilhas e nexos.', sel:function(q){ return q.format==='trap' || q.format==='ar'; } },
+
+  // ---- pessoais (dinâmicas: dependem das suas respostas/maestria) ----
+  { id:'nao-respondidas', nome:'Continuar · o que falta',        nivel:'pessoal', foco:'pendentes', dyn:true, desc:'As questões que você ainda NÃO respondeu, em dificuldade crescente — continue de onde parou.', selDyn:function(q,ctx){ return !(ctx.answers&&(q.id in ctx.answers)); } },
+  { id:'remediacao',      nome:'Remediação · meus eixos fracos', nivel:'pessoal', foco:'lacunas', dyn:true, desc:'Itens ainda não feitos nos eixos em que o radar de maestria aponta lacuna (<60%). Responda algumas questões para ativar.', selDyn:function(q,ctx){ return ctx.weakAxes && ctx.weakAxes.indexOf(q.axis)>=0 && !(ctx.answers&&(q.id in ctx.answers)); } }
 ];
+
+// ---- por armadilha cognitiva: uma trilha para cada armadilha com itens suficientes ----
+var TRAP_NOME={ T01:'número ≠ mecanismo', T02:'PAM ≠ perfusão', T03:'conteúdo ≠ saturação', T04:'responsivo ≠ tolerante', T05:'distributivo ≠ séptico', T06:'SvO₂ alta ≠ boa extração', T07:'hipotensão ≠ hipovolemia', T08:'VD ≠ VE', T09:'pós-carga ≠ PA', T11:'mecanismo farmacológico ≠ dose', T12:'lactato alto ≠ sempre hipóxia', T13:'supply-independent × dependent', T14:'pressor melhora macro ≠ micro' };
+['T01','T02','T03','T04','T05','T06','T07','T08','T09','T11','T12','T13','T14'].forEach(function(code){
+  TRAILS.push({ id:'armadilha-'+code, nome:'Armadilha · '+TRAP_NOME[code], nivel:'armadilha', foco:code,
+    desc:'Treino dirigido à armadilha cognitiva "'+TRAP_NOME[code]+'" — todas as questões que a testam.',
+    sel:(function(c){ return function(q){ return q.trap===c; }; })(code) });
+});
 
 function byId(id){ for(var i=0;i<TRAILS.length;i++){ if(TRAILS[i].id===id) return TRAILS[i]; } return null; }
 
@@ -48,11 +60,13 @@ function _ordered(sel, seed){
   var out=[]; [1,2,3,4].forEach(function(d){ var t=tiers[d]||[]; out=out.concat(PSY?PSY.shuffle(t, seed+d):t); });
   return out;
 }
+// seletor de uma trilha (estática ou dinâmica); ctx = { answers, weakAxes } para as dinâmicas
+function _pred(def, ctx){ ctx=ctx||{}; return def.dyn ? function(q){ return def.selDyn(q, ctx); } : def.sel; }
 // amostragem por passo (strided) preserva o arco novato→avançado mesmo ao cortar o tamanho
 function buildTrail(items, id, opts){
   opts=opts||{}; var seed=opts.seed||7, length=opts.length||0;
   var def=byId(id); if(!def) return [];
-  var ordered=_ordered(items.filter(def.sel), seed);
+  var ordered=_ordered(items.filter(_pred(def, opts.ctx)), seed);
   if(length>0 && length<ordered.length){
     // amostra por passo cobrindo TODO o arco: i=0 → primeiro (mais fácil), i=L-1 → último (mais difícil)
     var N=ordered.length, out=[];
@@ -61,12 +75,12 @@ function buildTrail(items, id, opts){
   }
   return ordered;
 }
-// quantos itens cada trilha tem disponível + faixa de dificuldade
-function trailStats(items){
+// quantos itens cada trilha tem disponível + faixa de dificuldade (ctx para as dinâmicas)
+function trailStats(items, ctx){
   return TRAILS.map(function(t){
-    var sel=items.filter(t.sel), difs={};
+    var sel=items.filter(_pred(t, ctx)), difs={};
     sel.forEach(function(q){ difs[q.difficulty]=(difs[q.difficulty]||0)+1; });
-    return { id:t.id, nome:t.nome, nivel:t.nivel, foco:t.foco, total:sel.length, difs:difs };
+    return { id:t.id, nome:t.nome, nivel:t.nivel, foco:t.foco, dyn:!!t.dyn, total:sel.length, difs:difs };
   });
 }
 

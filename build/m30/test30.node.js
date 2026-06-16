@@ -65,7 +65,7 @@ const stt=Tr.trailStats(items);
 ok('pelo menos 15 trilhas', Tr.TRAILS.length>=15, Tr.TRAILS.length);
 ok('cobre novato → avançado + temas + inter-braços + formato', ['graduada','tema','interbracos','formato'].every(n=>Tr.TRAILS.some(t=>t.nivel===n)));
 ok('ids de trilha únicos', new Set(Tr.TRAILS.map(t=>t.id)).size===Tr.TRAILS.length);
-ok('toda trilha seleciona ≥1 item dos existentes', stt.every(t=>t.total>0));
+ok('toda trilha ESTÁTICA seleciona ≥1 item dos existentes', stt.filter(t=>!t.dyn).every(t=>t.total>0));
 ok('toda trilha tem nome e descrição', Tr.TRAILS.every(t=>t.nome&&t.nome.length>3&&t.desc&&t.desc.length>10));
 ok('trilhas NÃO criam itens novos (subconjunto do banco)', Tr.TRAILS.every(t=>Tr.buildTrail(items,t.id,{}).every(q=>items.indexOf(q)>=0)));
 ok('"escada" é a progressão completa, em dificuldade crescente', (function(){ var e=Tr.buildTrail(items,'escada',{}); if(e.length!==items.length) return false; for(var i=1;i<e.length;i++) if(e[i].difficulty<e[i-1].difficulty) return false; return true; })());
@@ -76,6 +76,13 @@ ok('pulmão-coração-rim seleciona só inter-braços (E9)', Tr.buildTrail(items
 ok('"três braços" seleciona itens com R, P e F', (function(){ var t=Tr.buildTrail(items,'tres-bracos',{}); return t.length>0 && t.every(q=>q.arms&&q.arms.length===3); })());
 ok('pulmão×coração liga R e P; coração×rim liga P e F', Tr.buildTrail(items,'pulmao-coracao',{}).every(q=>q.arms.indexOf('R')>=0&&q.arms.indexOf('P')>=0) && Tr.buildTrail(items,'coracao-rim',{}).every(q=>q.arms.indexOf('P')>=0&&q.arms.indexOf('F')>=0));
 ok('trilha "prova viva" só engine-grounded', Tr.buildTrail(items,'grounded',{}).every(q=>!!q.grounded));
+ok('níveis incluem pessoal (dinâmicas) e armadilha', ['graduada','tema','interbracos','formato','pessoal','armadilha'].every(n=>Tr.TRAILS.some(t=>t.nivel===n)));
+ok('trilhas por armadilha (≥10) selecionam só o trap-código', (function(){ var traps=Tr.TRAILS.filter(t=>t.nivel==='armadilha'); if(traps.length<10) return false; return traps.every(t=>{ var sel=Tr.buildTrail(items,t.id,{}); return sel.length>0 && sel.every(q=>q.trap===t.foco); }); })());
+(function(){ var ans={}; items.slice(0,10).forEach(q=>{ ans[q.id]=q.a; });
+  ok('dinâmica "o que falta" reflete as respondidas', Tr.buildTrail(items,'nao-respondidas',{ctx:{answers:ans}}).length===items.length-10 && Tr.buildTrail(items,'nao-respondidas',{ctx:{answers:ans}}).every(q=>!(q.id in ans)));
+  ok('dinâmica "remediação" usa eixos fracos (não respondidos)', (function(){ var r=Tr.buildTrail(items,'remediacao',{ctx:{answers:ans,weakAxes:['E5']}}); return r.length>0 && r.every(q=>q.axis==='E5'&&!(q.id in ans)); })());
+  ok('dinâmica "remediação" vazia sem eixo fraco', Tr.buildTrail(items,'remediacao',{ctx:{answers:ans,weakAxes:[]}}).length===0);
+  ok('trailStats aceita contexto (dyn marcado)', Tr.trailStats(items,{answers:ans,weakAxes:[]}).find(s=>s.id==='nao-respondidas').dyn===true); })();
 
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);
