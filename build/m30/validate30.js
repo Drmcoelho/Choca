@@ -42,6 +42,7 @@ ok('embaralhamento por seed é determinístico (replay)', JSON.stringify(P.shuff
 ok('gabaritos estáveis (TG de 150) → item i não desliza ao crescer o banco', Bank.TG.length===150);
 
 (async()=>{
+try {
 const dom=new JSDOM(html,{ runScripts:'dangerously', pretendToBeVisual:true, beforeParse(window){
   window.scrollTo=()=>{}; window.requestAnimationFrame=()=>0; window.cancelAnimationFrame=()=>{};
   window.matchMedia=()=>({matches:true,media:'',addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});
@@ -97,4 +98,5 @@ ok('disclaimer SaMD (mecanismo, nunca conduta)',/nunca/i.test(txt('disclaimer'))
 
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);
+} catch(err){ console.error('FALHA · exceção inesperada no validador:', err && err.message ? err.message : err); process.exit(1); }
 })();
