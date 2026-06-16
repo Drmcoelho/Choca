@@ -30,7 +30,7 @@ Estado curricular atual:
 - **M27** — publicado: os 4 perfis · radar — perfusão (fluxo) × congestão num mapa 2×2 (A/B/L/C); a mesma alavanca tem efeito oposto por canto.
 - **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`.
 - **M29** — publicado: capstone · caso integrado — o braço inteiro num **motor unificado** (cascata CaO₂→DO₂→VO₂→PAM→perfil), com instrumento ao vivo, caso que muda de categoria, 30 MCQ e 120 assertivas V/F.
-- **M30** — publicado: exame global de domínio — **225 itens** (150 do braço + **75 inter-braços**) em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores), **radar de maestria** em 9 eixos (incl. integração inter-braços) e psicometria anti-gaming. Fecha o braço e costura os vizinhos.
+- **M30** — publicado: exame global de domínio — **225 itens** (150 do braço + **75 inter-braços**) em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores), **radar de maestria** em 9 eixos (incl. integração inter-braços), **21 trilhas** (categorias que selecionam e ordenam os itens existentes — do novato ao avançado, ou focando pulmão–coração–rim) e psicometria anti-gaming. Fecha o braço e costura os vizinhos.
 
 ---
 

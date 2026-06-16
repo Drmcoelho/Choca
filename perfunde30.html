@@ -71,6 +71,12 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
 .howli{margin:6px 0;color:var(--ink-dim);font-size:.94rem} .howli b{color:var(--ink)}
 .empty{color:var(--ink-faint);font-style:italic;font-size:.92rem}
 .btn{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:7px 13px;cursor:pointer} .btn:hover{border-color:var(--accent)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:7px 13px;cursor:pointer} .preset:hover{border-color:var(--accent)} .preset.on{border-color:var(--accent);background:rgba(255,207,92,.14);color:#ffe6ab}
+.tgrp{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--art);margin:18px 0 8px;border-top:1px solid var(--line);padding-top:12px}
+.tcard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 14px;margin:8px 0;cursor:pointer;transition:.12s} .tcard:hover{border-color:var(--accent)}
+.tcard .tn2{font-weight:600;color:var(--ink)} .tcard .td{color:var(--ink-dim);font-size:.86rem;margin-top:2px} .tcard .tq{font-family:var(--mono);font-size:.78rem;color:var(--accent);white-space:nowrap}
+.trailhead{background:#0e1320;border:1px solid rgba(255,207,92,.3);border-radius:var(--r-sm);padding:10px 14px;margin:10px 0 4px;font-size:.9rem;color:var(--ink-dim);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap} .trailhead b{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -86,21 +92,32 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
 
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-exame"     aria-controls="panel-exame"     aria-selected="true"><span class="tn">1</span>Exame</button>
-    <button class="tab" role="tab" id="tab-maestria"  aria-controls="panel-maestria"  aria-selected="false"><span class="tn">2</span>Maestria</button>
-    <button class="tab" role="tab" id="tab-revisao"   aria-controls="panel-revisao"   aria-selected="false"><span class="tn">3</span>Revisão</button>
-    <button class="tab" role="tab" id="tab-como"      aria-controls="panel-como"      aria-selected="false"><span class="tn">4</span>Como funciona</button>
+    <button class="tab" role="tab" id="tab-trilhas"   aria-controls="panel-trilhas"   aria-selected="false"><span class="tn">2</span>Trilhas</button>
+    <button class="tab" role="tab" id="tab-maestria"  aria-controls="panel-maestria"  aria-selected="false"><span class="tn">3</span>Maestria</button>
+    <button class="tab" role="tab" id="tab-revisao"   aria-controls="panel-revisao"   aria-selected="false"><span class="tn">4</span>Revisão</button>
+    <button class="tab" role="tab" id="tab-como"      aria-controls="panel-como"      aria-selected="false"><span class="tn">5</span>Como funciona</button>
   </div>
 
   <!-- 1 · EXAME -->
   <section class="panel active" role="tabpanel" id="panel-exame" aria-labelledby="tab-exame">
     <div class="scorebar" id="scorebar">0 / 225 respondidas · 0 corretas<div class="bar"><i id="bar"></i></div></div>
+    <div id="trailhead"></div>
     <p class="lead">Os quartos vão de <b>reconhecimento</b> a <b>exceção/integração</b>. Cada item revela um gabarito de 5 camadas (correta, por que cada alternativa, conceito/módulo, armadilha). A maestria se atualiza a cada resposta.</p>
     <div id="exam"></div>
   </section>
 
-  <!-- 2 · MAESTRIA -->
+  <!-- 2 · TRILHAS -->
+  <section class="panel" role="tabpanel" id="panel-trilhas" aria-labelledby="tab-trilhas">
+    <h2>Trilhas · responda por categoria, na ordem certa</h2>
+    <p class="lead">As trilhas não criam questões novas: <b>selecionam e ordenam</b> as 225 existentes para uma <b>categoria</b> e um <b>tamanho</b> à sua escolha — do novato ao avançado, ou focando o que você quer entender melhor (pulmão–coração–rim, etc.). Cada trilha vai em dificuldade crescente.</p>
+    <h3>Tamanho da trilha</h3>
+    <div class="presets" id="trail-len"></div>
+    <div id="trail-list"></div>
+  </section>
+
+  <!-- 3 · MAESTRIA -->
   <section class="panel" role="tabpanel" id="panel-maestria" aria-labelledby="tab-maestria">
-    <h2>Radar de maestria · 8 eixos</h2>
+    <h2>Radar de maestria · 9 eixos</h2>
     <p class="lead">O domínio é medido por eixo de competência, não só pelo placar. Responda o exame para preencher o radar; os eixos fracos viram remediação ligada ao módulo.</p>
     <div class="plotwrap"><canvas class="radar" id="radar" width="460" height="380"></canvas></div>
     <div class="verdict" id="verdict"><div class="vlabel">veredito de domínio</div><div class="vbig" id="verdict-big">sem dados</div><div class="vtx" id="verdict-tx">Responda o exame para gerar o veredito.</div></div>
@@ -1506,6 +1523,80 @@ function report(items, answers){ var s=score(items, answers);
 
 window.SCORE={ AXES:AXES, score:score, axisVerdict:axisVerdict, domainVerdict:domainVerdict, remediation:remediation, report:report };
 </script>
+<!-- trails30.js · trilhas (categorias) inlined -->
+<script>
+// build/m30/trails30.js — TRILHAS do M30 (puro, determinístico)
+// Não gera questões novas: SELECIONA e ORDENA um subconjunto dos 225 itens
+// existentes (bank30), compatível com a categoria escolhida e com as escolhas
+// do usuário (tamanho 50/100/todas, semente). Cada trilha é um seletor sobre os
+// metadados do item (axis, arms, difficulty, format, grounded, trap, modules).
+var PSY=(typeof require!=='undefined')?require('./psyche30.js'):(typeof window!=='undefined'?window.PSY:null);
+
+// nível: 'graduada' (cresce em dificuldade) · 'tema' (eixo do braço) ·
+//        'interbracos' (pulmão–coração–rim) · 'formato' (tipo de item)
+var TRAILS=[
+  // ---- graduadas: do novato ao avançado ----
+  { id:'novato',        nome:'Novato · reconhecimento',        nivel:'graduada', foco:'fundamentos', desc:'Itens de reconhecimento e decomposição básica (dificuldade 1). O ponto de partida.', sel:function(q){ return q.difficulty===1; } },
+  { id:'aplicacao',     nome:'Aplicação & contraste',          nivel:'graduada', foco:'aplicar', desc:'Aplicar equações e diferenciar fenômenos próximos (dificuldade 2).', sel:function(q){ return q.difficulty===2; } },
+  { id:'integracao',    nome:'Integração & conflito',          nivel:'graduada', foco:'cruzar', desc:'Cruzar módulos, conflitos de variáveis e pegadinhas (dificuldade 3).', sel:function(q){ return q.difficulty===3; } },
+  { id:'avancado',      nome:'Avançado · exceções',            nivel:'graduada', foco:'exceções', desc:'Exceções, simultaneidade e leitura contraintuitiva (dificuldade 4).', sel:function(q){ return q.difficulty===4; } },
+  { id:'escada',        nome:'Escada completa (novato→avançado)', nivel:'graduada', foco:'progressão', desc:'Todas as categorias, em dificuldade crescente: a progressão completa do braço.', sel:function(q){ return true; } },
+
+  // ---- temas (eixos do braço 2) ----
+  { id:'conteudo',      nome:'Conteúdo & transporte',          nivel:'tema', foco:'E1', desc:'CaO₂, curva de O₂, régua quantitativa (eixo E1).', sel:function(q){ return q.axis==='E1'; } },
+  { id:'determinantes', nome:'Determinantes do débito',        nivel:'tema', foco:'E2', desc:'Guyton, Frank-Starling, pós-carga, DO₂/VO₂ (eixo E2).', sel:function(q){ return q.axis==='E2'; } },
+  { id:'inversao',      nome:'A inversão & beira-leito',       nivel:'tema', foco:'E3', desc:'PAM = DC × RVS, monitorização, POCUS (eixo E3).', sel:function(q){ return q.axis==='E3'; } },
+  { id:'micro',         nome:'Microcirculação & lactato',      nivel:'tema', foco:'E4', desc:'Extração, shunt, lactato tipo A/B (eixo E4).', sel:function(q){ return q.axis==='E4'; } },
+  { id:'categorias',    nome:'Categorias de choque',           nivel:'tema', foco:'E5', desc:'Hipo, cardiogênico, VD, obstrutivo, distributivo e subtipos (eixo E5).', sel:function(q){ return q.axis==='E5'; } },
+  { id:'mistos',        nome:'Integração & mistos',            nivel:'tema', foco:'E6', desc:'Misto, coração-pulmão, ressuscitação, críptico, perfis (eixo E6).', sel:function(q){ return q.axis==='E6'; } },
+  { id:'alavancas',     nome:'Vasopressores & alavancas (§11)', nivel:'tema', foco:'E7', desc:'Receptor → termo, referência farmacológica educacional (eixo E7).', sel:function(q){ return q.axis==='E7'; } },
+  { id:'capstone',      nome:'Capstone · síntese',             nivel:'tema', foco:'E8', desc:'A cascata integrada e a regra final do braço (eixo E8).', sel:function(q){ return q.axis==='E8'; } },
+
+  // ---- inter-braços: pulmão–coração–rim ----
+  { id:'pulmao-coracao-rim', nome:'Pulmão–coração–rim (tudo)',  nivel:'interbracos', foco:'R·P·F', desc:'Todas as questões que ligam dois ou três braços do hexápode (eixo E9).', sel:function(q){ return q.axis==='E9'; } },
+  { id:'pulmao-coracao',     nome:'Pulmão × coração',           nivel:'interbracos', foco:'R·P', desc:'Troca gasosa × transporte/hemodinâmica: PEEP, curva, shunt, coração-pulmão.', sel:function(q){ return q.arms && q.arms.indexOf('R')>=0 && q.arms.indexOf('P')>=0; } },
+  { id:'coracao-rim',        nome:'Coração × rim',              nivel:'interbracos', foco:'P·F', desc:'Perfusão × filtração: cardiorrenal, congestão venosa, perfusão renal.', sel:function(q){ return q.arms && q.arms.indexOf('P')>=0 && q.arms.indexOf('F')>=0; } },
+  { id:'tres-bracos',        nome:'Os três braços juntos',      nivel:'interbracos', foco:'R·P·F', desc:'Questões que exigem pulmão, circulação E rim ao mesmo tempo (a tríade).', sel:function(q){ return q.arms && q.arms.length===3; } },
+  { id:'pulmao-rim',         nome:'Pulmão × rim',               nivel:'interbracos', foco:'R·F', desc:'Troca gasosa × filtração: pH partilhado, hipoxemia renal, sobrecarga hídrica.', sel:function(q){ return q.arms && q.arms.indexOf('R')>=0 && q.arms.indexOf('F')>=0; } },
+
+  // ---- formato / meta ----
+  { id:'grounded',      nome:'Prova viva (engine-grounded)',   nivel:'formato', foco:'computado', desc:'Só os itens cujo gabarito é recomputado pelos motores do braço — fisiologia computada.', sel:function(q){ return !!q.grounded; } },
+  { id:'calculo',       nome:'Cálculo & estimativa',           nivel:'formato', foco:'est', desc:'Itens numéricos de estimativa: CaO₂, DO₂, PAM, RVS, conversão dose↔mL/h.', sel:function(q){ return q.format==='est'; } },
+  { id:'pegadinhas',    nome:'Caça às pegadinhas',             nivel:'formato', foco:'trap+ar', desc:'"Ache a pegadinha" e asserção-razão: treinar a identificar armadilhas e nexos.', sel:function(q){ return q.format==='trap' || q.format==='ar'; } }
+];
+
+function byId(id){ for(var i=0;i<TRAILS.length;i++){ if(TRAILS[i].id===id) return TRAILS[i]; } return null; }
+
+// ordena por dificuldade crescente; dentro de cada faixa, embaralha por seed
+function _ordered(sel, seed){
+  var tiers={1:[],2:[],3:[],4:[]};
+  sel.forEach(function(q){ (tiers[q.difficulty]||(tiers[q.difficulty]=[])).push(q); });
+  var out=[]; [1,2,3,4].forEach(function(d){ var t=tiers[d]||[]; out=out.concat(PSY?PSY.shuffle(t, seed+d):t); });
+  return out;
+}
+// amostragem por passo (strided) preserva o arco novato→avançado mesmo ao cortar o tamanho
+function buildTrail(items, id, opts){
+  opts=opts||{}; var seed=opts.seed||7, length=opts.length||0;
+  var def=byId(id); if(!def) return [];
+  var ordered=_ordered(items.filter(def.sel), seed);
+  if(length>0 && length<ordered.length){
+    var step=ordered.length/length, out=[];
+    for(var i=0;i<length;i++){ out.push(ordered[Math.floor(i*step)]); }
+    return out;
+  }
+  return ordered;
+}
+// quantos itens cada trilha tem disponível + faixa de dificuldade
+function trailStats(items){
+  return TRAILS.map(function(t){
+    var sel=items.filter(t.sel), difs={};
+    sel.forEach(function(q){ difs[q.difficulty]=(difs[q.difficulty]||0)+1; });
+    return { id:t.id, nome:t.nome, nivel:t.nivel, foco:t.foco, total:sel.length, difs:difs };
+  });
+}
+
+window.TRAILS30={ TRAILS:TRAILS, byId:byId, buildTrail:buildTrail, trailStats:trailStats };
+</script>
 
 <!-- ===================== UI ===================== -->
 <script>
@@ -1518,11 +1609,34 @@ window.SCORE={ AXES:AXES, score:score, axisVerdict:axisVerdict, domainVerdict:do
   var QNOME={1:'Quarto 1 · reconhecimento & decomposição',2:'Quarto 2 · aplicação & contraste',3:'Quarto 3 · integração & conflito',4:'Quarto 4 · exceção & simultaneidade'};
 
   function order(){ var out=[]; for(var q=1;q<=4;q++){ var inq=ITEMS.filter(function(x){return x.quarter===q;}); out=out.concat(window.PSY.shuffle(inq, 730+q)); } return out; }
-  var ORDER=order();
+  var fullOrder=order();
+  var ORDER=fullOrder, activeTrail=null, trailLen=0;   // trailLen 0 = todas as da categoria
 
   function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ t.setAttribute('aria-selected', t.id===tabId?'true':'false'); });
     document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id===('panel-'+tabId.replace('tab-',''))); });
-    if(tabId==='tab-maestria') renderRadar(); if(tabId==='tab-revisao') renderRevisao(); }
+    if(tabId==='tab-maestria') renderRadar(); if(tabId==='tab-revisao') renderRevisao(); if(tabId==='tab-trilhas') renderTrilhas(); }
+
+  // ---- trilhas: selecionam e ordenam os itens existentes ----
+  var NIVEL_NOME={ graduada:'Do novato ao avançado', tema:'Por tema (eixos do braço)', interbracos:'Pulmão · coração · rim (inter-braços)', formato:'Por formato' };
+  function renderTrailHead(){ var box=$('trailhead'); if(!box) return;
+    if(!activeTrail){ box.innerHTML=''; return; }
+    var def=window.TRAILS30.byId(activeTrail);
+    box.innerHTML='<div><b>Trilha:</b> '+def.nome+' · '+ORDER.length+' questões '+(trailLen?'(tamanho '+trailLen+')':'(todas da categoria)')+'</div>'+
+      '<button class="btn" id="trail-clear">← exame completo</button>';
+    var c=$('trail-clear'); if(c) c.addEventListener('click',function(){ setTrail(null, trailLen); }); }
+  function setTrail(id, len){ activeTrail=id; trailLen=len||0;
+    ORDER = id ? window.TRAILS30.buildTrail(ITEMS, id, {length:trailLen, seed:730}) : fullOrder;
+    renderExam(); renderTrailHead(); activate('tab-exame'); window.scrollTo(0,0); }
+  function renderTrilhas(){ var lenBox=$('trail-len'), list=$('trail-list'); if(!list) return;
+    if(lenBox){ lenBox.innerHTML=''; [['Todas',0],['50',50],['100',100]].forEach(function(p){ var b=document.createElement('button'); b.className='preset'+(trailLen===p[1]?' on':''); b.type='button'; b.textContent=p[0];
+      b.addEventListener('click',function(){ trailLen=p[1]; if(activeTrail) setTrail(activeTrail, trailLen); else renderTrilhas(); }); lenBox.appendChild(b); }); }
+    var stats=window.TRAILS30.trailStats(ITEMS), html='', curN='';
+    stats.forEach(function(s){ if(s.nivel!==curN){ curN=s.nivel; html+='<div class="tgrp">'+(NIVEL_NOME[curN]||curN)+'</div>'; }
+      var def=window.TRAILS30.byId(s.id); var n=(trailLen&&trailLen<s.total)?trailLen:s.total;
+      html+='<div class="tcard" data-id="'+s.id+'"><div><div class="tn2">'+def.nome+'</div><div class="td">'+def.desc+'</div></div><div class="tq">'+n+' questões</div></div>'; });
+    list.innerHTML=html;
+    list.querySelectorAll('.tcard').forEach(function(c){ c.addEventListener('click',function(){ setTrail(c.getAttribute('data-id'), trailLen); }); });
+  }
 
   function optHTML(q, prefix){ var h='<div class="opts">';
     q.o.forEach(function(opt,oi){ h+='<button class="opt" data-id="'+q.id+'" data-o="'+oi+'" data-pfx="'+prefix+'"><span class="ol">'+LET[oi]+'.</span>'+opt+'</button>'; });
@@ -1551,8 +1665,8 @@ window.SCORE={ AXES:AXES, score:score, axisVerdict:axisVerdict, domainVerdict:do
       why+'<span class="fl">conceito</span><span class="grd">'+q.rationale.concept+' · '+q.modules.join(', ')+'</span><span class="fl">armadilha testada</span>'+q.rationale.trap;
   }
   function answer(id, idx, prefix){ if(answers[id]!=null) return; answers[id]=idx; reveal(BYID[id], prefix); updateScore(); renderRadar(); }
-  function updateScore(){ var n=0,cor=0; Object.keys(answers).forEach(function(k){ n++; if(answers[k]===BYID[k].a) cor++; });
-    $('scorebar').firstChild.textContent=n+' / 225 respondidas · '+cor+' corretas'+(n?(' ('+Math.round(cor/n*100)+'%)'):''); $('bar').style.width=(n/225*100)+'%'; }
+  function updateScore(){ var tot=ORDER.length, n=0, cor=0; ORDER.forEach(function(q){ if(q.id in answers){ n++; if(answers[q.id]===q.a) cor++; } });
+    $('scorebar').firstChild.textContent=n+' / '+tot+' respondidas · '+cor+' corretas'+(n?(' ('+Math.round(cor/n*100)+'%)'):''); $('bar').style.width=(tot?(n/tot*100):0)+'%'; }
 
   // ---- radar de maestria ----
   function drawRadar(rep){ var cv=$('radar'); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return;
@@ -1597,6 +1711,7 @@ window.SCORE={ AXES:AXES, score:score, axisVerdict:axisVerdict, domainVerdict:do
     var hs=$('how-stats'); if(hs){ var d=window.PSY.letterCounts(ITEMS); hs.innerHTML='→ <b>Este banco:</b> 225 itens (150 do M30 + 75 inter-braços) · letras A'+d.A+' B'+d.B+' C'+d.C+' D'+d.D+' · '+(ITEMS.filter(function(q){return q.grounded;}).length)+' engine-grounded · 6 formatos · 8 eixos.'; }
     // expor para o validador
     window.M30=ITEMS; window.M30order=ORDER; window.activateTab=activate; window.answerFn=answer; window.M30answers=answers;
+    window.setTrailFn=setTrail; window.renderTrilhasFn=renderTrilhas; window.currentOrderFn=function(){ return ORDER; }; window.TRAILSref=function(){ return window.TRAILS30; };
     window.scoreReportFn=function(){ return window.SCORE.report(ITEMS, answers); }; window.renderRadarFn=renderRadar; window.renderRevisaoFn=renderRevisao;
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }

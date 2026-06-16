@@ -59,5 +59,23 @@ console.log('\n— SCORING30 · maestria —');
   ok('veredito de domínio é gerado', typeof rep.domain.nivel==='string' && rep.domain.texto.length>10, rep.domain.nivel);
 })();
 
+console.log('\n— TRILHAS (trails30 · seleciona e ordena os itens existentes) —');
+const Tr=require('./trails30.js');
+const stt=Tr.trailStats(items);
+ok('pelo menos 15 trilhas', Tr.TRAILS.length>=15, Tr.TRAILS.length);
+ok('cobre novato → avançado + temas + inter-braços + formato', ['graduada','tema','interbracos','formato'].every(n=>Tr.TRAILS.some(t=>t.nivel===n)));
+ok('ids de trilha únicos', new Set(Tr.TRAILS.map(t=>t.id)).size===Tr.TRAILS.length);
+ok('toda trilha seleciona ≥1 item dos existentes', stt.every(t=>t.total>0));
+ok('toda trilha tem nome e descrição', Tr.TRAILS.every(t=>t.nome&&t.nome.length>3&&t.desc&&t.desc.length>10));
+ok('trilhas NÃO criam itens novos (subconjunto do banco)', Tr.TRAILS.every(t=>Tr.buildTrail(items,t.id,{}).every(q=>items.indexOf(q)>=0)));
+ok('"escada" é a progressão completa, em dificuldade crescente', (function(){ var e=Tr.buildTrail(items,'escada',{}); if(e.length!==items.length) return false; for(var i=1;i<e.length;i++) if(e[i].difficulty<e[i-1].difficulty) return false; return true; })());
+ok('embaralhamento por seed é determinístico', JSON.stringify(Tr.buildTrail(items,'categorias',{seed:7}).map(q=>q.id))===JSON.stringify(Tr.buildTrail(items,'categorias',{seed:7}).map(q=>q.id)));
+ok('escolha de tamanho (50) respeitada e preserva o arco', (function(){ var s=Tr.buildTrail(items,'escada',{length:50}); return s.length===50 && s.some(q=>q.difficulty===1) && s.some(q=>q.difficulty===4); })());
+ok('escolha de tamanho (100) respeitada', Tr.buildTrail(items,'escada',{length:100}).length===100);
+ok('pulmão-coração-rim seleciona só inter-braços (E9)', Tr.buildTrail(items,'pulmao-coracao-rim',{}).every(q=>q.axis==='E9'));
+ok('"três braços" seleciona itens com R, P e F', (function(){ var t=Tr.buildTrail(items,'tres-bracos',{}); return t.length>0 && t.every(q=>q.arms&&q.arms.length===3); })());
+ok('pulmão×coração liga R e P; coração×rim liga P e F', Tr.buildTrail(items,'pulmao-coracao',{}).every(q=>q.arms.indexOf('R')>=0&&q.arms.indexOf('P')>=0) && Tr.buildTrail(items,'coracao-rim',{}).every(q=>q.arms.indexOf('P')>=0&&q.arms.indexOf('F')>=0));
+ok('trilha "prova viva" só engine-grounded', Tr.buildTrail(items,'grounded',{}).every(q=>!!q.grounded));
+
 console.log('\n'+oks+' OK · '+falhas+' falhas');
 process.exit(falhas>0?1:0);

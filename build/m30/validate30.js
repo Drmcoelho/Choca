@@ -89,6 +89,26 @@ console.log('\n— REVISÃO —');
 window.activateTab('tab-revisao'); window.renderRevisaoFn();
 ok('revisão lista as erradas para refazer',doc.querySelectorAll('#revisao .q').length>=1 && doc.querySelectorAll('#revisao .opt').length>0);
 
+console.log('\n— TRILHAS (categorias sobre os itens existentes) —');
+ok('aba e painel de trilhas',!!$('tab-trilhas') && !!$('panel-trilhas') && !!$('trail-list'));
+window.activateTab('tab-trilhas'); window.renderTrilhasFn();
+ok('≥15 trilhas listadas como cartões',doc.querySelectorAll('#trail-list .tcard').length>=15, doc.querySelectorAll('#trail-list .tcard').length);
+ok('grupos de nível (novato→avançado, tema, inter-braços, formato)',doc.querySelectorAll('#trail-list .tgrp').length>=4);
+ok('seletor de tamanho (Todas/50/100)',doc.querySelectorAll('#trail-len .preset').length===3);
+ok('motor de trilhas exposto (≥15)',window.TRAILS30 && window.TRAILS30.TRAILS.length>=15, window.TRAILS30?window.TRAILS30.TRAILS.length:'∅');
+(function(){ // escolhe tamanho 50 + trilha pulmão-coração-rim → exame filtra para 50 itens E9, ordenado
+  [].slice.call(doc.querySelectorAll('#trail-len .preset')).filter(function(b){return b.textContent==='50';})[0].dispatchEvent(new window.Event('click',{bubbles:true}));
+  [].slice.call(doc.querySelectorAll('#trail-list .tcard')).filter(function(c){return c.getAttribute('data-id')==='pulmao-coracao-rim';})[0].dispatchEvent(new window.Event('click',{bubbles:true}));
+  ok('escolher trilha+tamanho reordena o exame (50 itens)',doc.querySelectorAll('#exam .q').length===50);
+  ok('itens da trilha são só da categoria (todos E9)',[].slice.call(doc.querySelectorAll('#exam .q .meta')).every(function(m){return /E9/.test(m.textContent);}));
+  ok('cabeçalho da trilha exibido',/Trilha:/.test(txt('trailhead')) && /50 quest/.test(txt('trailhead')));
+  ok('placar passa a ser relativo à trilha (/ 50)',/\/ 50/.test(txt('scorebar')));
+  ok('trilha é ordenada (não cria itens novos: subconjunto de M30)',window.currentOrderFn().every(function(q){return window.M30.indexOf(q)>=0;}) && window.currentOrderFn().length===50);
+  $('trail-clear').dispatchEvent(new window.Event('click',{bubbles:true}));
+  ok('"exame completo" restaura os 225',doc.querySelectorAll('#exam .q').length===225);
+})();
+window.activateTab('tab-exame');
+
 console.log('\n— CROMO / SaMD —');
 ok('backlink',/perfunde\.html/.test(txt('backlink')));
 ok('kicker Módulo 30',/M[óo]dulo\s*30/.test(txt('kicker')));
