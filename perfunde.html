@@ -42,12 +42,24 @@ a.card:hover{border-color:var(--ven);transform:translateY(-1px)}
 .card.jewel .num::after{content:" ◆";color:var(--accent)}
 footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .count{font-family:var(--mono);font-size:.82rem;color:var(--ink-dim);margin-top:6px}
+.armnav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 2px}
+.armnav a{font-family:var(--mono);font-size:.82rem;letter-spacing:.04em;padding:6px 15px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s}
+.armnav a:hover:not(.soon){border-color:var(--ven);color:var(--ven);transform:translateY(-1px)}
+.armnav a.active{border-color:var(--ok);color:var(--ok);background:rgba(62,199,141,.10);font-weight:600}
+.armnav a.soon{opacity:.55;cursor:not-allowed}
+.armnav a.soon::after{content:" · em breve";color:var(--ink-faint);font-size:.72rem;font-weight:400}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="kicker">Hexápode de medicina crítica · braço 2</div>
   <h1>PERFUNDE · CHOCA</h1>
+  <!-- Navegação do braço 2. Choca = este índice. Para ativar o Perfunde quando tiver página,
+       adicione href="URL_DO_PERFUNDE" e remova class="soon" (e o aria-disabled). -->
+  <nav class="armnav" aria-label="Braço 2 · Perfunde e Choca">
+    <a class="soon" aria-disabled="true" title="Perfunde ainda não tem página publicada">Perfunde</a>
+    <a class="active" href="perfunde.html" aria-current="page">Choca</a>
+  </nav>
   <p class="sub">A segunda metade do transporte de oxigênio: como o O₂ chega à célula, vira ATP — e o que acontece quando a entrega falha.</p>
   <svg class="trace" viewBox="0 0 960 48" preserveAspectRatio="none" aria-hidden="true">
     <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,36 120,36 150,36 165,6 180,42 200,26 230,36 480,36 510,36 525,6 540,42 560,26 590,36 840,36 870,36 885,6 900,42 920,26 960,36"/>
