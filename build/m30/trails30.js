@@ -54,8 +54,9 @@ function buildTrail(items, id, opts){
   var def=byId(id); if(!def) return [];
   var ordered=_ordered(items.filter(def.sel), seed);
   if(length>0 && length<ordered.length){
-    var step=ordered.length/length, out=[];
-    for(var i=0;i<length;i++){ out.push(ordered[Math.floor(i*step)]); }
+    // amostra por passo cobrindo TODO o arco: i=0 → primeiro (mais fácil), i=L-1 → último (mais difícil)
+    var N=ordered.length, out=[];
+    for(var i=0;i<length;i++){ var idx=(length===1)?0:Math.round(i*(N-1)/(length-1)); out.push(ordered[idx]); }
     return out;
   }
   return ordered;
