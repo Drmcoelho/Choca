@@ -7,7 +7,7 @@ Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
 publicados: M0…M30 (braço completo)
-fechamento: M30 · exame global de domínio (150 itens) — publicado
+fechamento: M30 · exame global de domínio (225 itens) — publicado
 ```
 
 ---
