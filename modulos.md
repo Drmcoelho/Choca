@@ -6,9 +6,8 @@
 Este arquivo usa a numeração operacional publicada em `perfunde.html`.
 
 ```text
-publicados: M0…M26
-próximo: M27 · os 4 perfis · radar
-planejados: M23…M30
+publicados: M0…M30 (braço completo)
+fechamento: M30 · exame global de domínio (150 itens) — publicado
 ```
 
 ---
@@ -503,39 +502,78 @@ marcadores ocultos (lactato↑, SvO₂↓, enchimento lento, pressão de pulso e
 
 ## 27 · Os 4 perfis · radar
 
-**Status:** planejado.
+**Status:** publicado · `perfunde27.html` + `build/m27/`.
 
-**Tese:** frio/quente × seco/úmido é mapa de hipóteses fisiológicas, não diagnóstico fechado.
+**Tese:** dois eixos — **perfusão** (quente↔frio, que é *fluxo*, não pressão) × **congestão** (seco↔úmido, pressões de enchimento) — resumem o estado em quatro perfis (A/B/L/C de Nohria). É um **mapa de hipóteses**, não diagnóstico fechado.
 
-**Foco:** integração visual dos termos quebrados.
+**Engine (`model27.js`):** `radar()` deriva débito (Frank-Starling × bomba), perfusão (fluxo), congestão (volume acima do que a bomba comporta) e a PA (que pode enganar). `profile()` (A/B/L/C), `hypotheses()`, e `leverEffect()` com `applyVolume`/`applyDiuretic`/`applyInotrope`.
 
-**Pontes:** M9, M14, M16, M20, M23, M30.
+```text
+A quente-seco · B quente-úmido · L frio-seco (hipovol) · C frio-úmido (cardiogênico, o pior)
+a MESMA alavanca tem efeito OPOSTO: volume salva o frio-seco e AFOGA o frio-úmido
+```
+
+**Joias pedagógicas:** o radar 2×2 com o paciente plotado e as **setas das alavancas** (volume/diurético/inotrópico) mostrando para onde cada gesto o move; a armadilha "frio com PA normal" (a RVS segura a pressão sem esquentar a perfusão); o perfil como **hipótese**, não veredito.
+
+**Camada interativa (padrão §2.6):** caso de decisões "classifique e escolha a alavanca" (efeito pelo motor), prever-depois-revelar (o volume ajuda ou afoga?), trilha de 9 passos com pistas e banco de 16 questões.
+
+**Erro cognitivo:** classificar a perfusão pela PA; usar a mesma alavanca em todos os cantos; tratar o perfil como diagnóstico fechado.
+
+**Invariantes provadas:** os 4 perfis alcançáveis, perfusão é fluxo (frio com PA normal), bomba fraca congestiona mais, volume com efeito oposto em L vs C, inotrópico tira o C do canto, hipóteses por perfil, clamps seguros.
+
+**Firewall SaMD:** mapa de hipóteses e alavancas como mecanismo (intervenção→termo), sem diagnóstico fechado, fluido, droga ou dose — guarda automatizada no validador.
+
+**Pontes:** M9 (PAM = DC × RVS), M14 (hipovolêmico/L), M16 (cardiogênico/C), M20 (distributivo), M26 (frio com PA normal), M30 (exame global).
 
 ---
 
 ## 28 · Vasopressores & inotrópicos
 
-**Status:** planejado.
+**Status:** publicado · `perfunde28.html` + `build/m28/` (completo: mecanismo + farmácia + 100 assertivas V/F).
 
-**Tese:** droga deve ser ensinada como receptor → termo da equação.
+**Tese:** a droga vasoativa é um **perfil de receptores** que move **termos** da equação — prevê-se o efeito pelo receptor, não pelo nome; e o agente certo é o que move o **termo quebrado**.
 
-**Exemplos mecanísticos:** α1→RVS; β1→contratilidade/FC; β2→vasodilatação/metabolismo; V1→RVS.
+**Engine (`model28.js`):** `terms()` (α1→RVS, β1→contratilidade/FC, β2→vasodilata/demanda, V1→RVS, PDE→inodilatador), `applyDrug()` (hemodinâmica no paciente), `appropriate()` (move o termo quebrado, sem custo proibitivo).
 
-**Firewall SaMD:** sem dose, sem titulação, sem alvo individualizado.
+**Camada de referência farmacológica (`pharm28.js`, sob `SAFETY.md §11`):** apresentação, **diluições e faixas de dose usuais de referência**, **calculadora** dose↔mL/h (`concentration`/`infusionRate`/`doseFromRate`/`titration`), interações, usos combinados (dobuta+nora), inusitados/exclusivos e iatrogênicos.
 
-**Pontes:** M7, M9, M16, M20, M21, M22, M30.
+```text
+distributivo (RVS↓) → α1/V1 (vasopressor) · cardiogênico (bomba↓) → β1/PDE (inotrópico)
+a MESMA droga: certa num termo, errada no outro (fenilefrina afunda o cardiogênico)
+```
+
+**Camada interativa (§2.6):** caso de decisões receptor↔termo, prever-depois-revelar (apto/inapto/custo), trilha de 9 passos, **6ª aba "Farmácia"** com a calculadora, e **banco de 24 questões** — dificuldade crescente, **gabarito disproporcional** (A4 B7 C6 D7), correta **≠ a mais longa** (38%) e pegadinhas.
+
+**Casos dinâmicos V/F (`cases28.js`, 7ª aba):** 5 casos que evoluem por etapas (séptico→misto, cardiogênico→VD, misto, anafilático×neurogênico, obstrutivo/TEP→síntese), cada um com 4 etapas × 5 assertivas Verdadeiro/Falso = **100 assertivas** (50/50, cada caso 10/10), com gabarito + racional mecanístico. A etapa seguinte só revela depois de respondida a atual (evolução dinâmica). Afirmações educacionais de mecanismo, sob o firewall (`§11`): sem ordem imperativa nem dose individualizada.
+
+**Erro cognitivo:** escolher a droga pelo nome; dar vasopressor na bomba fraca; tratar a referência como prescrição.
+
+**Firewall SaMD:** mecanismo + referência educacional (`§11`); **sem comando imperativo nem alvo individualizado** para paciente real; peso da calculadora hipotético; guarda automatizada no validador.
+
+**Pontes:** M7 (pós-carga), M9 (PAM = DC × RVS), M16 (cardiogênico), M20 (distributivo), M22 (adrenalina/4 termos), M30 (exame global).
 
 ---
 
 ## 29 · Capstone · caso integrado
 
-**Status:** planejado.
+**Status:** publicado · `perfunde29.html` + `build/m29/` (motor unificado + 30 MCQ + 120 V/F).
 
-**Tese:** o aluno precisa ler múltiplas variáveis, reconhecer compensações e identificar termos quebrados simultâneos.
+**Tese:** o braço inteiro num só paciente — a **cascata** do transporte é computada de ponta a ponta e o aluno aprende a **decompor, achar o termo quebrado, escolher a alavanca que o move e pesar o custo.**
 
-**Formato ideal:** caso progressivo + tutor gráfico dinâmico + mapa causal final.
+**Motor unificado (`model29.js`):** costura `m1` (CaO₂/DO₂), `m8` (VO₂/supply-dependence) e `m9` (PAM=DC×RVS) num único `cascade(state)` — CaO₂ → DO₂ → VO₂/SvO₂/lactato → PAM → perfil. Acrescenta **acoplamento de pós-carga** (o ventrículo fraco perde VS com RVS alta), `brokenTerm()` (classificador do termo quebrado por categoria), `PRESETS` (10 categorias), `LEVERS` (receptor→termo + volume/transfusão) e `appropriate()` (a alavanca move o termo quebrado, sem afundar o fluxo nem custo proibitivo).
 
-**Pontes:** todos os módulos de conteúdo; prepara M30.
+```text
+conteúdo (CaO₂) → entrega (DO₂ = DC·CaO₂) → consumo/extração (VO₂, SvO₂, lactato) → pressão (PAM = DC·RVS) → perfil
+mesma PAM, mecânicas opostas · supply-dependence abaixo do DO₂crit · α1 puro afunda a bomba fraca
+```
+
+**Camada interativa (§2.6):** **aba Cascata** (instrumento ao vivo: 8 primitivas → cadeia computada + curva DO₂×VO₂ com o DO₂crit e o ponto do paciente); **caso que evolui de categoria** (distributivo → misto) com decompor→alavanca a cada ato; prever-depois-revelar; trilha de 9; **Lab** categoria×alavanca com veredito pre→post; **30 MCQ integradas** (dificuldade crescente, gabarito disproporcional A5 B9 C8 D8, correta ≠ a mais longa em 37%); **120 assertivas V/F** em 6 casos integrados que evoluem (60/60, cada caso 10/10).
+
+**Erro cognitivo:** perseguir o número da PAM; tratar o misto como categoria única; não reavaliar quando o termo dominante muda.
+
+**Firewall SaMD:** mecanismo integrado + alavancas sob o `SAFETY.md §11` (referência educacional); primitivas são fatores didáticos, não medidas; sem dose, alvo ou conduta individualizada — guarda no teste e no validador.
+
+**Pontes:** M1, M8 (conteúdo/entrega), M9 (inversão), M16/M20/M18 (categorias), M23/M27 (misto/perfis), M28 (alavanca), M30 (exame).
 
 ---
 
@@ -543,9 +581,15 @@ marcadores ocultos (lactato↑, SvO₂↓, enchimento lento, pressão de pulso e
 
 ## 30 · Revisão global · exame de domínio
 
-**Status:** planejado.
+**Status:** publicado · `perfunde30.html` + `build/m30/` · **225 itens** (150 do braço + 75 inter-braços).
 
 **Tese:** domínio real exige reconhecer mecanismos fora da ordem curricular, com dificuldade crescente e sem pistas formais de gabarito.
+
+**Sistema (`build/m30/`):** motor psicométrico (`psyche30.js`: LCG semeado, varreduras anti-padrão, paridade de comprimento, cobertura), recomputação **engine-grounded** (`grounding30.js`: o gabarito de itens computados é recalculado por m1/m9/m28/m29 e conferido), **maestria** (`scoring30.js`: radar de 9 eixos + veredito + remediação) e o banco (`bank30.js`). 6 formatos (SBA, asserção-razão, V/F, estimativa computada, "ache a pegadinha", vinheta de 2 passos).
+
+**Extensão inter-braços (eixo E9, 75 itens):** cada questão liga **2–3 braços do hexápode** — RESPIRA·VENTILA (R, anterior) × PERFUNDE·CHOCA (P, atual) × FILTRA·DIALISA (F, próximo), **nunca um só**. Revê o atual e adianta o próximo (síndrome cardiorrenal, ARDS+choque+LRA, PEEP×retorno×congestão renal, pH partilhado por pulmão e rim, etc.).
+
+**Trilhas (`trails30.js`, 21 categorias):** não criam itens novos — **selecionam e ordenam** os 225 existentes para uma categoria + tamanho à escolha (todas/50/100), em dificuldade crescente. Níveis: graduada (novato→avançado), tema (eixos E1–E8), inter-braços (pulmão×coração, coração×rim, os três juntos) e formato (engine-grounded, cálculo, pegadinhas).
 
 **Estrutura:**
 

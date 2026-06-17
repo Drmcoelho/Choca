@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 28 · Vasopressores & inotrópicos</title>
+<meta name="description" content="A droga vasoativa é um perfil de receptores que move termos da equação: α1→RVS, β1→contratilidade/FC, β2→vasodilatação/demanda, V1→RVS não-adrenérgica, PDE→inodilatador. Prevê-se o efeito pelo receptor, não pelo nome — e o agente certo é o que move o termo quebrado. PERFUNDE·CHOCA, braço 2.">
+<style>
+:root{
+  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
+  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
+  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
+  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
+  --ok:#3ec78d; --warn:#ffb454; --crit:#ff5d6c; --purp:#9b6cff; --cyan:#37c8d8;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-size:16.5px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px}
+a{color:var(--ven);text-decoration:none} a:hover{text-decoration:underline}
+.backlink{display:inline-block;font-size:.86rem;color:var(--ink-dim);margin-bottom:18px;font-family:var(--mono)}
+.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
+h1{font-size:2.05rem;line-height:1.12;margin:.25em 0 .15em;letter-spacing:-.01em}
+.sub{color:var(--ink-dim);font-size:1.04rem;margin:0 0 4px;max-width:64ch}
+.trace{width:100%;height:54px;display:block;margin:14px 0 6px;opacity:.85}
+.tabs{display:flex;gap:4px;margin:22px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);background:transparent;border:1px solid transparent;border-bottom:none;padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--bg-elev);border-color:var(--line);position:relative;top:1px}
+.tab .tn{color:var(--art);margin-right:7px;font-weight:700}
+.panel{display:none;background:var(--bg-elev);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px 22px}
+.panel.active{display:block}
+h2{font-size:1.16rem;letter-spacing:-.01em;margin:0 0 4px}
+h3{font-size:1rem;margin:18px 0 6px}
+.lead{color:var(--ink-dim);margin:.2em 0 1.1em;max-width:66ch}
+.ato{border-left:3px solid var(--art);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 16px;margin:0 0 12px}
+.ato .at{font-family:var(--mono);font-size:.74rem;color:var(--art);letter-spacing:.08em;text-transform:uppercase} .ato p{margin:.3em 0 0}
+.vitais{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;font-family:var(--mono);font-size:.82rem}
+.vitais span{background:#0e1320;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-dim)} .vitais b{color:var(--ink)}
+.reveal{margin-top:12px} .reveal summary{cursor:pointer;font-family:var(--mono);font-size:.84rem;color:var(--accent)}
+.reveal[open] summary{color:var(--ink-dim)} .reveal .body{margin-top:8px;color:var(--ink-dim);font-size:.95rem}
+.trilha{counter-reset:step}
+.step{position:relative;padding:10px 0 14px 30px;border-left:1px dashed var(--line);margin-left:6px}
+.step::before{content:"→";position:absolute;left:-9px;top:8px;color:var(--art);font-family:var(--mono);background:var(--bg-elev);padding:0 2px}
+.step .qq{font-weight:600} .step .aa{color:var(--ink-dim);margin-top:3px}
+.plotwrap{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+canvas.casc{display:block;width:100%;height:260px;border-radius:8px;background:#06070b}
+canvas.plot{display:block;width:100%;height:210px;border-radius:8px;background:#06070b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-family:var(--mono);font-size:.78rem;color:var(--ink-dim)}
+.legend i{display:inline-block;width:14px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.opbox{font-family:var(--mono);font-size:.9rem;color:var(--ink);margin-top:8px} .opbox b{color:var(--accent)}
+.console{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 18px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-family:var(--mono);font-size:.76rem;color:var(--ink-dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label .v{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--art);height:3px}
+.hint{font-size:.74rem;color:var(--ink-faint);font-family:var(--mono);margin-top:10px}
+.pharm{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-family:var(--mono);font-size:.8rem;color:var(--ink-dim)}
+.pharm b{color:var(--accent)} .pharm .fw{color:var(--warn)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.preset{font:inherit;font-family:var(--mono);font-size:.82rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:8px 13px;cursor:pointer}
+.preset:hover{border-color:var(--art)} .preset.on{border-color:var(--art);background:rgba(229,57,78,.14);color:#ffd4da}
+.preset.pac{border-radius:8px} .preset.pac.on{border-color:var(--ven);background:rgba(63,130,230,.16);color:#cfe0ff}
+.veredito{border-radius:var(--r);padding:16px 18px;margin:4px 0 16px;border:1px solid var(--line);background:var(--bg-cell)}
+.veredito .vlabel{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.veredito .vbig{font-size:1.28rem;font-weight:700;font-family:var(--mono);margin-top:3px}
+.veredito .vnum{color:var(--ink-dim);font-family:var(--mono);font-size:.88rem;margin-top:4px}
+.veredito.crit{border-color:var(--crit)} .veredito.crit .vbig{color:var(--crit)}
+.veredito.lim{border-color:var(--warn)} .veredito.lim .vbig{color:var(--warn)}
+.veredito.ok{border-color:var(--ok)} .veredito.ok .vbig{color:var(--ok)}
+.banners{display:grid;gap:8px} .banner{font-size:.88rem;border-radius:var(--r-sm);padding:10px 13px;border:1px solid var(--line);background:#0e1320;color:var(--ink-dim);display:none}
+.banner.show{display:block} .banner b{color:var(--accent)}
+.banner.art{border-color:rgba(229,57,78,.4)} .banner.art b{color:var(--art)}
+.banner.ven{border-color:rgba(63,130,230,.4)} .banner.ven b{color:var(--ven)}
+.banner.crit{border-color:rgba(255,93,108,.45)} .banner.crit b{color:var(--crit)}
+.q{background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:10px} .q .qt .tag{font-family:var(--mono);font-size:.72rem;color:var(--art);margin-right:8px}
+.q canvas.qplot{display:block;width:100%;height:200px;border-radius:8px;background:#06070b;margin-bottom:10px}
+.q .cap{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:8px}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;font:inherit;font-family:var(--mono);font-size:.9rem;color:var(--ink);background:#0e1320;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:var(--ven)} .opt.right{border-color:var(--ok);background:rgba(62,199,141,.12);color:#bdf0d8}
+.opt.wrong{border-color:var(--crit);background:rgba(255,93,108,.10);color:#ffc4cb}
+.fb{font-size:.86rem;margin-top:9px;color:var(--ink-dim);display:none} .fb.show{display:block}
+.fb.ok::before{content:"✓ ";color:var(--ok)} .fb.no::before{content:"✗ ";color:var(--crit)}
+.scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
+.vfhead{margin:6px 0 14px} .vfsub{font-family:var(--mono);font-size:.82rem;color:var(--accent);margin:2px 0} .vfopen{background:#0e1320;border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 13px;margin-top:8px;font-size:.9rem;color:var(--ink-dim)}
+.vfstage{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r-sm);padding:12px 14px;margin:12px 0;background:#0b0f18}
+.vfstage.locked{border-left-color:var(--ink-faint);color:var(--ink-faint);font-size:.86rem;font-style:italic}
+.vffase{font-weight:700;color:var(--ink);font-size:.96rem} .vffase .vfnum{display:inline-block;min-width:1.5em;text-align:center;background:var(--accent);color:#04121a;border-radius:50%;font-family:var(--mono);font-size:.8rem;margin-right:6px}
+.vfevol{color:var(--ink-dim);font-size:.88rem;margin:4px 0 10px}
+.vfas{border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;margin:7px 0;background:#0e1320}
+.vfas.ok{border-color:rgba(62,199,141,.5)} .vfas.no{border-color:rgba(229,57,78,.5)}
+.vfq{font-size:.9rem;color:var(--ink);margin-bottom:7px}
+.vfbtns{display:flex;gap:8px} .vfb{font-family:var(--mono);font-size:.82rem;padding:5px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:#11192a;color:var(--ink-dim);cursor:pointer} .vfb:hover{border-color:var(--accent);color:var(--ink)}
+.vffb{font-size:.84rem;color:var(--ink-dim);line-height:1.45} .vfas.ok .vffb b{color:var(--ok,#3ec78d)} .vfas.no .vffb b{color:var(--crit,#e5394e)}
+.vfprog{font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);margin-top:8px}
+.disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
+.pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
+.sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+.pista{margin-top:7px}
+.pista summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.pista[open] summary{color:var(--ink-faint)}
+.pista .pb{margin-top:5px;color:var(--ink-dim);font-size:.9rem}
+.casebox{background:var(--bg-cell);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.casebox h3{margin:0 0 3px} .casebox .cprog{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);margin-bottom:10px}
+.decision{border-left:3px solid var(--ven);background:#0e1320;border-radius:0 var(--r-sm) var(--r-sm) 0;padding:11px 14px;margin:10px 0}
+.decision .dq{margin-bottom:9px}
+.dopts{display:grid;gap:7px}
+.dfb{display:none;margin-top:9px;font-size:.88rem;color:var(--ink-dim)} .dfb.show{display:block}
+.dfb .cons{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.predict{background:#0e1320;border:1px solid rgba(63,130,230,.4);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.predict .pq{margin-bottom:9px}
+.dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
+.dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="perfunde.html" id="backlink">← perfunde.html · todos os módulos</a>
+
+  <header>
+    <div class="kicker" id="kicker">Perfunde · Módulo 28 · ↳ vasopressores & inotrópicos</div>
+    <h1>A droga é um receptor, o receptor é um termo</h1>
+    <p class="sub">Nenhuma droga vasoativa precisa ser decorada: cada uma é um <b>perfil de receptores</b> que move <b>termos</b> da equação. α1 sobe a RVS; β1 sobe a contratilidade e a FC (e a demanda); β2 vasodilata; V1 sobe a RVS sem adrenérgico; PDE é inodilatador. Previu-se o receptor, previu-se o efeito — e o agente certo é o que move o <em>termo quebrado</em>.</p>
+    <svg class="trace" viewBox="0 0 900 54" preserveAspectRatio="none" aria-hidden="true">
+      <text x="40" y="20" fill="var(--art)" font-size="11" font-family="monospace">α1</text><text x="40" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">→ RVS</text>
+      <text x="150" y="20" fill="var(--ven)" font-size="11" font-family="monospace">β1</text><text x="150" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">→ contratilidade/FC</text>
+      <text x="380" y="20" fill="var(--ok)" font-size="11" font-family="monospace">β2</text><text x="380" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">→ vasodilata/demanda</text>
+      <text x="620" y="20" fill="var(--purp)" font-size="11" font-family="monospace">V1</text><text x="620" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">→ RVS não-adren.</text>
+      <text x="770" y="20" fill="var(--cyan)" font-size="11" font-family="monospace">PDE</text><text x="770" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">→ inodilatador</text>
+    </svg>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
+    <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+    <button class="tab" role="tab" id="tab-farmacologia" aria-controls="panel-farmacologia" aria-selected="false"><span class="tn">6</span>Farmácia</button>
+    <button class="tab" role="tab" id="tab-vf" aria-controls="panel-vf" aria-selected="false"><span class="tn">7</span>Casos V/F</button>
+  </div>
+
+  <!-- 1 · CASO -->
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <h2>A droga certa para o termo errado</h2>
+    <p class="lead">Cinco atos. A variável escondida é qual termo da equação a droga move — e qual está quebrado. (Caso didático; nenhuma conduta é prescrita.)</p>
+    <div class="ato"><span class="at">Ato 1 · a porta</span><p>Dois hipotensos. Um séptico (vasoplégico, RVS↓ com débito alto); outro cardiogênico (bomba falida, débito baixo). A "hipotensão" é a mesma palavra para fisiologias opostas.</p>
+      <div class="vitais"><span>A · RVS↓ / DC↑</span><span>B · bomba↓ / DC↓</span><span>ambos PA baixa</span></div></div>
+    <div class="ato"><span class="at">Ato 2 · a leitura ingênua</span><p>"Hipotenso — vasopressor." Mas vasopressor é a alavanca certa só para o termo <em>RVS</em>; numa bomba fraca, ele sobe a pós-carga e afunda o débito.</p></div>
+    <div class="ato"><span class="at">Ato 3 · a fenda</span><p>Cada droga é um <b>perfil de receptores → termos</b>: a noradrenalina (α1) sobe a RVS — certa para o séptico. A fenilefrina (α1 puro) também sobe a RVS, mas no cardiogênico a pós-carga sobe e o débito <b>cai</b>. A dobutamina (β1) sobe a <em>contratilidade</em> — certa para a bomba.</p></div>
+    <div class="ato"><span class="at">Ato 4 · decompor</span><p>Previa-se pelo <b>receptor</b>, não pelo nome. E há <b>custo</b>: β sobe a demanda miocárdica de O₂; um inodilatador (PDE/β2) pode derrubar a PAM no vasoplégico. O agente certo move o termo quebrado com o menor custo.</p></div>
+    <div class="ato"><span class="at">Ato 5 · a ferramenta</span><p>O mapa receptor→termo e o desfecho no paciente mostram por que a mesma droga ajuda um e afoga o outro — e por que a adrenalina move quatro termos de uma vez. É o Instrumento.</p></div>
+    <details class="reveal"><summary>▸ Revelar a variável escondida</summary><div class="body">A variável é o <b style="color:var(--art)">par receptor→termo × termo quebrado</b>. α1/V1 movem a RVS (vasopressor); β1/PDE movem a contratilidade (inotrópico); β2 vasodilata e custa. O agente certo move o termo quebrado; o errado custa pós-carga ou demanda. Pontes aos módulos 7 (pós-carga), 9 (PAM = DC × RVS), 16 (cardiogênico), 20 (distributivo), 22 (a adrenalina e os 4 termos).</div></details>
+
+    <div class="casebox">
+      <h3>À beira do leito · qual receptor para qual termo?</h3>
+      <div class="cprog" id="caso-prog">0 / 0 decisões</div>
+      <div id="caso-interativo"></div>
+      <p class="hint" style="margin-top:10px">Cada decisão é mecanismo, não conduta: o motor mostra o efeito hemodinâmico do perfil de receptores — sem dose nem titulação.</p>
+    </div>
+  </section>
+
+  <!-- 2 · TRILHA -->
+  <section class="panel" role="tabpanel" id="panel-trilha" aria-labelledby="tab-trilha">
+    <h2>Trilha socrática</h2>
+    <p class="lead">Do receptor ao termo, do termo ao paciente.</p>
+    <div class="trilha">
+      <div class="step"><div class="qq">O que é uma droga vasoativa, em termos da equação?</div><div class="aa">Um <b>perfil de receptores</b> que move <b>termos</b>: PAM = DC × RVS, DC = FC × VS, VS depende da contratilidade e da pré-carga. Cada receptor empurra um desses termos.</div>
+        <details class="pista"><summary>▸ pista: o mapa</summary><div class="pb">α1 → RVS · β1 → contratilidade e FC · β2 → vasodilatação e metabolismo · V1 → RVS não-adrenérgica · PDE → contratilidade + vasodilatação (inodilatador).</div></details></div>
+      <div class="step"><div class="qq">Por que prever pelo receptor e não pelo nome?</div><div class="aa">Porque o <b>nome</b> esconde o mecanismo. "Adrenalina" não diz nada; <b>α+β+β2</b> diz que ela sobe RVS, contratilidade, FC e demanda — quatro termos. O perfil prevê o efeito.</div></div>
+      <div class="step"><div class="qq">Qual agente para o distributivo (RVS↓)?</div><div class="aa">O que move o termo <b>RVS</b>: <b>noradrenalina</b> (α1) ou <b>vasopressina</b> (V1, não-adrenérgica). Eles sobem a RVS e a PAM sem precisar da bomba.</div>
+        <details class="pista"><summary>▸ pista: a vasopressina</summary><div class="pb">V1 sobe a RVS sem β: útil quando se quer pressão sem mais taquicardia/demanda, ou poupando o eixo adrenérgico já saturado.</div></details></div>
+      <div class="step"><div class="qq">Qual agente para o cardiogênico (bomba↓)?</div><div class="aa">O que move a <b>contratilidade</b>: <b>dobutamina</b> (β1) ou <b>milrinona</b> (PDE, inodilatador). Eles sobem o débito anterógrado — sem subir a pós-carga.</div></div>
+      <div class="step"><div class="qq">Por que o vasopressor puro afoga o cardiogênico?</div><div class="aa">Porque sobe a <b>RVS = pós-carga</b> sobre uma bomba que já não ejeta: o VS cai ainda mais e o débito <b>despenca</b>. Sobe a PA no monitor e piora a perfusão.</div>
+        <details class="pista"><summary>▸ pista: pós-carga (módulo 7)</summary><div class="pb">A bomba fraca é sensível à pós-carga: cada mmHg a mais de RVS custa volume sistólico. O vasopressor mira o termo errado.</div></details></div>
+      <div class="step"><div class="qq">E o custo das drogas β?</div><div class="aa">β1/β2 sobem a <b>demanda miocárdica de O₂</b> (FC, contratilidade, metabolismo) e o risco arrítmico. O ganho de débito vem com um custo — que o inodilatador (PDE) paga menos.</div></div>
+      <div class="step"><div class="qq">Por que a adrenalina é especial?</div><div class="aa">Porque move <b>quatro termos</b> de uma vez (α1→RVS, β1→FC/contratilidade, β2→broncodilata/metabolismo). Potente e versátil — e cara em demanda. É o agente da anafilaxia (módulo 22).</div>
+        <details class="pista"><summary>▸ pista: potência tem preço</summary><div class="pb">Os quatro termos vêm com o maior custo metabólico/arrítmico do grupo, e a adrenalina pode elevar o lactato por β2 (tipo B) — mecanismo, não efeito a perseguir.</div></details></div>
+      <div class="step"><div class="qq">O inodilatador pode atrapalhar?</div><div class="aa"><b>Sim.</b> PDE/β2 sobem a contratilidade <em>e</em> vasodilatam: num vasoplégico, a vasodilatação derruba a PAM. O perfil que ajuda a bomba pode tirar a pressão.</div></div>
+      <div class="step"><div class="qq">A regra final, então, é…</div><div class="aa"><b>Escolha o receptor pelo termo quebrado.</b> RVS↓ → α1/V1; bomba↓ → β1/PDE; e pese o custo (demanda, pós-carga, PAM). A droga é mecanismo, não nome — e jamais dose aqui.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 · INSTRUMENTO -->
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <h2>Instrumento · receptor → termo → desfecho</h2>
+    <p class="lead">Monte um agente pelos <b>receptores</b> (ou escolha um pronto) e veja os <b>termos</b> que ele move e o <b>desfecho</b> no paciente selecionado. O agente certo move o termo quebrado.</p>
+    <div class="predict" id="prever">
+      <div class="pq"><b>Preveja antes de revelar.</b> Para o paciente atual, o agente nos sliders abaixo vai:</div>
+      <div class="dopts" id="prever-opts">
+        <button class="opt" type="button" data-v="apto">corrigir o termo quebrado (apto)</button>
+        <button class="opt" type="button" data-v="custo">ajudar, mas com custo</button>
+        <button class="opt" type="button" data-v="inapto">agir no termo errado (inapto)</button>
+      </div>
+      <div class="dfb" id="prever-fb"></div>
+    </div>
+    <div class="plotwrap">
+      <canvas id="receptors" class="casc" width="820" height="260" aria-label="perfil de receptores e termos movidos"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--art)"></i>α1→RVS</span><span><i style="background:var(--ven)"></i>β1→inotropia/FC</span>
+        <span><i style="background:var(--ok)"></i>β2→vasodilata</span><span><i style="background:var(--purp)"></i>V1→RVS</span><span><i style="background:var(--cyan)"></i>PDE→inodilat.</span>
+      </div>
+      <div class="opbox" id="opbox-receptors"></div>
+    </div>
+    <h3>Desfecho no paciente (apto para o termo quebrado?)</h3>
+    <div class="plotwrap">
+      <canvas id="outcome" class="plot" width="820" height="210" aria-label="desfecho hemodinâmico no paciente"></canvas>
+      <div class="opbox" id="opbox-outcome"></div>
+      <div class="pharm">
+        <b>Receptor → termo (mecanismo, SEM dose/titulação/alvo):</b><br>
+        <b>α1</b> → RVS↑ (pós-carga) · <b>β1</b> → contratilidade↑ + FC↑ + demanda O₂↑ · <b>β2</b> → vasodilatação + metabolismo · <b>V1</b> → RVS↑ não-adrenérgica · <b>PDE</b> → inodilatador (contratilidade↑ + vasodilata).
+        <span class="fw">O agente certo move o termo quebrado; o errado custa pós-carga (no cardiogênico) ou PAM (no vasoplégico).</span>
+      </div>
+    </div>
+    <div class="console">
+      <div class="presets" id="pacientes">
+        <button class="preset pac" type="button" data-patient="rvs">Paciente: distributivo (RVS↓)</button>
+        <button class="preset pac" type="button" data-patient="pump">Paciente: cardiogênico (bomba↓)</button>
+        <button class="preset pac" type="button" data-patient="none">Paciente: normal</button>
+      </div>
+      <div class="ctrls">
+        <div class="ctrl"><label>α1 (RVS) <span class="v"><span id="vA1">90</span> %</span></label><input id="iA1" type="range" min="0" max="100" step="5" value="90"></div>
+        <div class="ctrl"><label>β1 (contratil./FC) <span class="v"><span id="vB1">30</span> %</span></label><input id="iB1" type="range" min="0" max="100" step="5" value="30"></div>
+        <div class="ctrl"><label>β2 (vasodilata) <span class="v"><span id="vB2">0</span> %</span></label><input id="iB2" type="range" min="0" max="100" step="5" value="0"></div>
+        <div class="ctrl"><label>V1 (RVS não-adren.) <span class="v"><span id="vV1">0</span> %</span></label><input id="iV1" type="range" min="0" max="100" step="5" value="0"></div>
+        <div class="ctrl"><label>PDE (inodilatador) <span class="v"><span id="vPDE">0</span> %</span></label><input id="iPDE" type="range" min="0" max="100" step="5" value="0"></div>
+      </div>
+      <div class="hint">Distributivo: suba α1 ou V1. Cardiogênico: suba β1 ou PDE; veja a fenilefrina (α1 puro) afundar o débito.</div>
+    </div>
+  </section>
+
+  <!-- 4 · LAB -->
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <h2>Lab · case o receptor com o termo</h2>
+    <p class="lead">Escolha o <b>paciente</b> e o <b>agente</b>. O <b>veredito</b> diz se o perfil move o termo quebrado; os banners explicam vasopressor × inotrópico, o termo errado, o custo de O₂ e a adrenalina dos 4 termos.</p>
+    <div class="presets" id="pacientes2">
+      <button class="preset pac" type="button" data-patient="rvs">Distributivo (RVS↓)</button>
+      <button class="preset pac" type="button" data-patient="pump">Cardiogênico (bomba↓)</button>
+      <button class="preset pac" type="button" data-patient="none">Normal</button>
+    </div>
+    <div class="presets" id="presets">
+      <button class="preset" type="button" data-preset="noradrenalina">Noradrenalina (α1)</button>
+      <button class="preset" type="button" data-preset="vasopressina">Vasopressina (V1)</button>
+      <button class="preset" type="button" data-preset="fenilefrina">Fenilefrina (α1 puro)</button>
+      <button class="preset" type="button" data-preset="dobutamina">Dobutamina (β1)</button>
+      <button class="preset" type="button" data-preset="milrinona">Milrinona (PDE)</button>
+      <button class="preset" type="button" data-preset="adrenalina">Adrenalina (α+β)</button>
+    </div>
+    <div class="plotwrap">
+      <canvas id="outcomeLab" class="plot" width="820" height="210" aria-label="desfecho no Lab"></canvas>
+      <div class="opbox" id="opbox-lab"></div>
+    </div>
+    <div class="veredito" id="lab-veredito">
+      <div class="vlabel">Receptor × termo quebrado</div>
+      <div class="vbig" id="lab-vbig">—</div>
+      <div class="vnum" id="lab-vnum"></div>
+    </div>
+    <div class="banners" id="lab-banners">
+      <div class="banner ven" id="ban-vasopressor"><b>Vasopressor (α1/V1 → RVS).</b> Move o termo RVS — a alavanca do distributivo. No cardiogênico, porém, sobe a pós-carga sobre uma bomba fraca.</div>
+      <div class="banner ven" id="ban-inotropo"><b>Inotrópico (β1/PDE → contratilidade).</b> Move o termo da bomba — a alavanca do cardiogênico. No vasoplégico, não sobe a RVS que falta.</div>
+      <div class="banner ok" id="ban-certo"><b>Termo certo.</b> Este perfil move o termo quebrado e alcança a meta de mecanismo. <span id="certo-txt"></span></div>
+      <div class="banner crit" id="ban-errado"><b>Termo errado.</b> <span id="errado-txt">—</span></div>
+      <div class="banner art" id="ban-custo"><b>Custo de O₂.</b> O componente β eleva a demanda miocárdica e o risco arrítmico: o ganho de débito tem preço (o inodilatador paga menos).</div>
+      <div class="banner art" id="ban-adrenalina"><b>Adrenalina · quatro termos.</b> α1 (RVS) + β1 (FC/contratilidade) + β2 (vasodilata/metabolismo): potente e versátil, mas cara em demanda. Mecanismo, não dose.</div>
+    </div>
+  </section>
+
+  <!-- 5 · AVALIAÇÃO -->
+  <section class="panel" role="tabpanel" id="panel-avaliacao" aria-labelledby="tab-avaliacao">
+    <h2>Avaliação · tutor gráfico</h2>
+    <p class="lead">Cada questão desenha o perfil receptor→termo (ou o desfecho no paciente) ao vivo. Leia qual termo a droga move e se é o quebrado — feedback persistente.</p>
+    <div id="tutor"></div>
+    <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <!-- 6 · FARMACOLOGIA -->
+  <section class="panel" role="tabpanel" id="panel-farmacologia" aria-labelledby="tab-farmacologia">
+    <h2>Farmácia · referência &amp; calculadora</h2>
+    <div class="disc" id="farm-aviso" style="margin:0 0 16px"><b>Referência educacional.</b> As diluições e faixas de dose abaixo são <b>valores usuais de referência</b> (variam por fonte e instituição). <b>Confira o protocolo da sua instituição.</b> A calculadora é uma <b>ferramenta de conversão de unidade</b> (dose ↔ mL/h) com peso <b>hipotético</b> — <b>não é prescrição individualizada</b> nem substitui dupla checagem e julgamento clínico.</div>
+
+    <h3>Calculadora de infusão (dose ↔ mL/h)</h3>
+    <div class="presets" id="farm-agentes"></div>
+    <div class="console">
+      <div class="ctrls">
+        <div class="ctrl"><label>Peso (hipotético) <span class="v"><span id="vWeight">70</span> kg</span></label><input id="iWeight" type="range" min="40" max="150" step="1" value="70"></div>
+        <div class="ctrl"><label>Dose <span class="v"><span id="vDose">0,10</span> <span id="vDoseU">mcg/kg/min</span></span></label><input id="iDose" type="range" min="0" max="100" step="1" value="20"></div>
+      </div>
+      <div class="opbox" id="farm-out" style="margin-top:12px"></div>
+      <div class="hint" id="farm-faixa"></div>
+    </div>
+
+    <h3>Tabela de titulação (faixa usual → mL/h)</h3>
+    <div class="plotwrap"><div class="opbox" id="farm-titulacao" style="margin:0"></div></div>
+
+    <h3>Diluições de referência</h3>
+    <div class="plotwrap"><div class="opbox" id="farm-diluicoes" style="margin:0"></div></div>
+
+    <h3>Usos combinados (mecanismo)</h3>
+    <div class="banners" id="farm-combos"></div>
+
+    <h3>Interações relevantes</h3>
+    <div class="plotwrap"><div class="opbox" id="farm-interacoes" style="margin:0"></div></div>
+
+    <h3>Usos inusitados, exclusivos &amp; efeitos iatrogênicos</h3>
+    <div class="banners" id="farm-usos"></div>
+    <div class="plotwrap" style="margin-top:8px"><div class="opbox" id="farm-iatro" style="margin:0"></div></div>
+
+    <div class="pharm" style="margin-top:16px"><b>Como o cálculo funciona (aritmética de unidade):</b> mL/h = dose × (peso, se mcg/kg/min) × 60 ÷ concentração da diluição. <span class="fw">Sempre confirme a diluição e faça dupla checagem; este é um demonstrador, não uma ordem.</span></div>
+  </section>
+
+  <!-- 7 · CASOS DINÂMICOS V/F -->
+  <section class="panel" role="tabpanel" id="panel-vf" aria-labelledby="tab-vf">
+    <h2>Casos dinâmicos · Verdadeiro / Falso</h2>
+    <p class="lead">Casos que <b>evoluem por etapas</b>. A cada interação, julgue as assertivas sobre o caso, a condução (mecanismo) e os aspectos correlatos. <b>100 assertivas</b> no total, com gabarito e racional. São afirmações <b>educacionais de mecanismo</b> — não conduta para paciente real.</p>
+    <div class="presets" id="vf-navcasos"></div>
+    <div id="vf-caso"></div>
+    <div class="scorebar" id="vf-score">0 / 0 assertivas · 0 corretas</div>
+  </section>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Ensina-se o mapa receptor→termo (α1, β1, β2, V1, PDE) e o casamento com o termo quebrado. A aba <b>Farmácia</b> traz <b>diluições e faixas de dose usuais de REFERÊNCIA</b> e uma <b>calculadora de conversão</b> (peso hipotético) sob o <b>SAFETY.md §11</b>: é <b>referência educacional</b>, <b>não</b> prescrição individualizada — confira o protocolo da sua instituição e faça dupla checagem. <b>Nunca</b> há comando para iniciar/titular droga em um paciente real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ As atividades de receptor são <b>fatores normalizados</b>, não potências reais; cada droga real tem perfil dose-dependente (a dopamina é o exemplo clássico) que o modelo NÃO representa. → "α1/β1/β2/V1/PDE" são eixos didáticos; receptores secundários e efeitos regionais ficam de fora. → O custo de O₂ é um <b>proxy</b> de demanda/oferta miocárdica. → A "adequação" é do mecanismo (move o termo quebrado), não uma recomendação. → A PAM = DC × RVS pode subir com perfusão pior. → A aba <b>Farmácia</b> opera sob o <b>SAFETY.md §11</b>: as doses/diluições são <b>faixas usuais de referência</b> (variam por fonte/instituição) e o peso da calculadora é <b>hipotético</b> — é referência educacional, não prescrição. Os números são exatos <em>dentro</em> do modelo.</p>
+  </div>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div class="ponte">→ <a href="perfunde7.html">Módulo 7 · Pós-carga &amp; alça PV</a> — por que o vasopressor afoga a bomba fraca.</div>
+    <div class="ponte">→ <a href="perfunde9.html">Módulo 9 · PAM = DC × RVS</a> — os termos que as drogas movem.</div>
+    <div class="ponte">→ <a href="perfunde16.html">Módulo 16 · Cardiogênico</a> — o termo contratilidade e o inotrópico.</div>
+    <div class="ponte">→ <a href="perfunde20.html">Módulo 20 · Distributivo</a> — o termo RVS e o vasopressor.</div>
+    <div class="ponte">→ <a href="perfunde22.html">Módulo 22 · ↳ anafilático</a> — a adrenalina e os quatro termos.</div>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 28
+  </footer>
+</div>
+
+<!-- ===================== ENGINE (model28.js inlined) ===================== -->
+<script>
+var BASE={ PVC:5, HR0:75, SVbase:70, kA1_rvs:9.0, kV1_rvs:8.0, kB2_rvs:5.0, kPDE_rvs:5.5,
+  kB1_ino:0.55, kPDE_ino:0.5, kB1_hr:34, kA1_hr:-10, kB1_met:0.55, kB2_met:0.35, RVS0:14, RVSfloor:4, RVSceil:30, demand0:1.0 };
+function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }
+function clamp01(v){ return clampv(v,0,1); }
+function terms(drug){ drug=drug||{}; var B=BASE;
+  var a1=clamp01(drug.a1), b1=clamp01(drug.b1), b2=clamp01(drug.b2), v1=clamp01(drug.v1), pde=clamp01(drug.pde);
+  return { dRVS:B.kA1_rvs*a1 + B.kV1_rvs*v1 - B.kB2_rvs*b2 - B.kPDE_rvs*pde, dInotropy:B.kB1_ino*b1 + B.kPDE_ino*pde,
+    dHR:B.kB1_hr*b1 + B.kA1_hr*a1, metabolic:B.kB1_met*b1 + B.kB2_met*b2, a1:a1,b1:b1,b2:b2,v1:v1,pde:pde }; }
+function applyDrug(patient, drug){ patient=patient||{}; var B=BASE;
+  var rvs0=clampv(patient.rvs==null?14:patient.rvs, B.RVSfloor, B.RVSceil), pump0=(patient.pump==null?0.7:clamp01(patient.pump)), preload=clampv(patient.preload==null?0.9:patient.preload, 0.1, 1.4);
+  var t=terms(drug);
+  var rvs=clampv(rvs0 + t.dRVS, B.RVSfloor, B.RVSceil), inotropy=clamp01(pump0 + t.dInotropy), HR=clampv(B.HR0 + t.dHR, 40, 170);
+  var SV=B.SVbase*inotropy/0.7*(preload*preload)/(preload*preload+0.2);
+  var CO=HR*SV/1000, PAM=clampv(B.PVC + CO*rvs, 35, 140);
+  var demand=B.demand0*(HR/75)*(0.6 + 0.4*(inotropy/0.7))*(1 + 0.6*t.metabolic), supply=clampv(PAM/72, 0.3, 1.6), o2balance=supply-demand;
+  return { rvs0:rvs0,pump0:pump0,preload:preload, dRVS:t.dRVS,dInotropy:t.dInotropy,dHR:t.dHR,metabolic:t.metabolic,
+    rvs:rvs,inotropy:inotropy,HR:HR,SV:SV,CO:CO,PAM:PAM,demand:demand,supply:supply,o2balance:o2balance }; }
+var AGENTS={ noradrenalina:{a1:0.9,b1:0.3,b2:0,v1:0,pde:0}, adrenalina:{a1:0.8,b1:0.9,b2:0.4,v1:0,pde:0}, dobutamina:{a1:0.1,b1:0.9,b2:0.5,v1:0,pde:0},
+  vasopressina:{a1:0,b1:0,b2:0,v1:1,pde:0}, fenilefrina:{a1:1,b1:0,b2:0,v1:0,pde:0}, milrinona:{a1:0,b1:0,b2:0,v1:0,pde:1} };
+var AGENT_NAME={ noradrenalina:'noradrenalina', adrenalina:'adrenalina', dobutamina:'dobutamina', vasopressina:'vasopressina', fenilefrina:'fenilefrina', milrinona:'milrinona' };
+function dominantTerm(drug){ var t=terms(drug); var vaso=Math.abs(t.dRVS)/9, ino=t.dInotropy/0.55;
+  if(vaso>=0.5 && ino>=0.5) return 'misto'; if(vaso>=ino) return t.dRVS>=0?'rvs':'vasodilata'; return 'inotropy'; }
+function appropriate(patient, drug){ patient=patient||{}; var R=applyDrug(patient, drug); var baseCO=applyDrug(patient, {}).CO;
+  var ok=true, why=[];
+  if(patient.broken==='rvs'){ if(R.dRVS<=1){ ok=false; why.push('não sobe a RVS (o termo quebrado)'); } if(R.PAM<65){ ok=false; why.push('não alcança a PAM de perfusão'); } }
+  if(patient.broken==='pump'){ if(R.dInotropy<=0.05){ ok=false; why.push('não sobe a contratilidade (o termo quebrado)'); } if(R.dRVS>5){ ok=false; why.push('sobe demais a pós-carga sobre uma bomba fraca'); } if(R.CO<=baseCO+0.1){ ok=false; why.push('não melhora o débito'); } }
+  var highCost=R.o2balance < -0.45; if(highCost) why.push('atenção: custo miocárdico de O₂ elevado');
+  return { ok:ok, highCost:highCost, why:why, PAM:R.PAM, CO:R.CO, o2balance:R.o2balance }; }
+</script>
+
+<!-- ===================== FARMÁCIA (pharm28.js inlined · referência educacional · SAFETY.md §11) ===================== -->
+<script>
+var PH_DRUGS={
+  noradrenalina:{ nome:'Noradrenalina', receptor:'α1 > β1', classe:'vasopressor', apresentacao:'ampola 4 mg / 4 mL (1 mg/mL)', diluicao:{massa:16,massaU:'mg',volume:250,solvente:'SG 5%'}, massaMcg:16000, weightBased:true, unidade:'mcg/kg/min', doseMin:0.01, doseMax:3.0, nota:'titular pela resposta; dose alta → isquemia periférica/mesentérica' },
+  adrenalina:{ nome:'Adrenalina', receptor:'α1 + β1 + β2', classe:'vaso-inotrópico', apresentacao:'ampola 1 mg / 1 mL (1:1000)', diluicao:{massa:4,massaU:'mg',volume:250,solvente:'SG 5%'}, massaMcg:4000, weightBased:true, unidade:'mcg/kg/min', doseMin:0.01, doseMax:0.5, nota:'move 4 termos; hiperlactatemia tipo B' },
+  dobutamina:{ nome:'Dobutamina', receptor:'β1 > β2', classe:'inotrópico', apresentacao:'ampola 250 mg / 20 mL', diluicao:{massa:250,massaU:'mg',volume:250,solvente:'SG 5%'}, massaMcg:250000, weightBased:true, unidade:'mcg/kg/min', doseMin:2.5, doseMax:20, nota:'pode baixar a PA (β2); taquicardia/arritmia' },
+  dopamina:{ nome:'Dopamina', receptor:'DA/β1/α1 (dose-dependente)', classe:'misto', apresentacao:'ampola 50 mg / 10 mL', diluicao:{massa:400,massaU:'mg',volume:250,solvente:'SG 5%'}, massaMcg:400000, weightBased:true, unidade:'mcg/kg/min', doseMin:2, doseMax:20, nota:'efeito muda com a dose; mais arritmia que a noradrenalina' },
+  vasopressina:{ nome:'Vasopressina', receptor:'V1 (não-adrenérgico)', classe:'vasopressor', apresentacao:'ampola 20 U / 1 mL', diluicao:{massa:20,massaU:'U',volume:100,solvente:'SG 5%'}, massaU_total:20, weightBased:false, unidade:'U/min', doseMin:0.01, doseMax:0.04, nota:'dose FIXA (não por peso); poupadora de catecolamina' },
+  milrinona:{ nome:'Milrinona', receptor:'inibidor da PDE-3', classe:'inodilatador', apresentacao:'ampola 20 mg / 20 mL', diluicao:{massa:20,massaU:'mg',volume:100,solvente:'SG 5%'}, massaMcg:20000, weightBased:true, unidade:'mcg/kg/min', doseMin:0.125, doseMax:0.75, nota:'inotropia sem β; vasodilata → pode baixar a PA' },
+  fenilefrina:{ nome:'Fenilefrina', receptor:'α1 puro', classe:'vasopressor', apresentacao:'ampola 10 mg / 1 mL', diluicao:{massa:10,massaU:'mg',volume:100,solvente:'SG 5%'}, massaMcg:10000, weightBased:true, unidade:'mcg/kg/min', doseMin:0.1, doseMax:1.4, nota:'α1 puro → bradicardia reflexa; sobe a pós-carga' }
+};
+function ph_conc(k){ var d=PH_DRUGS[k]; if(!d) return {value:0,unit:''}; if(d.weightBased||d.massaMcg!=null){ return {value:d.massaMcg/d.diluicao.volume,unit:'mcg/mL'}; } return {value:d.massaU_total/d.diluicao.volume,unit:'U/mL'}; }
+function ph_rate(k,dose,w){ var d=PH_DRUGS[k]; if(!d) return 0; var c=ph_conc(k).value; if(c<=0) return 0; dose=clampv(dose,0,1e6); var ww=clampv(w==null?70:w,1,400); var perMin=d.weightBased?dose*ww:dose; return (perMin*60)/c; }
+function ph_dose(k,mlh,w){ var d=PH_DRUGS[k]; if(!d) return 0; var c=ph_conc(k).value; if(c<=0) return 0; var ww=clampv(w==null?70:w,1,400); var perMin=(clampv(mlh,0,1e6)*c)/60; return d.weightBased?perMin/ww:perMin; }
+function ph_titration(k,w,n){ var d=PH_DRUGS[k]; if(!d) return []; n=n||5; var out=[], denom=(n>1)?(n-1):1; for(var i=0;i<n;i++){ var dose=d.doseMin+(d.doseMax-d.doseMin)*(i/denom); out.push({dose:dose,mLh:ph_rate(k,dose,w)}); } return out; }
+var PH_COMBOS=[
+  {a:'dobutamina',b:'noradrenalina',mecanismo:'cardiogênico: a dobutamina (inodilatador) sobe o débito mas pode baixar a RVS/PA; a noradrenalina (α1) sustenta a RVS — somam fluxo + pressão.'},
+  {a:'milrinona',b:'noradrenalina',mecanismo:'inodilatador + vasopressor: a milrinona melhora a bomba e baixa a RVP (útil no VD); a noradrenalina segura a PAM que a vasodilatação tira.'},
+  {a:'vasopressina',b:'noradrenalina',mecanismo:'séptico: a vasopressina (V1) é poupadora de catecolamina; somada à noradrenalina, sobe a PAM por duas vias com menos dose adrenérgica.'},
+  {a:'adrenalina',b:'—',mecanismo:'move 4 termos sozinha (α/β); usada quando se quer potência ampla (anafilaxia, PCR, baixo débito refratário), aceitando o custo metabólico.'}
+];
+var PH_INTERACOES=[
+  'β-agonista + β-bloqueador prévio → resposta inotrópica/cronotrópica atenuada (a milrinona, por não-β, contorna).',
+  'simpaticomimético + IMAO/cocaína/antidepressivo → resposta pressórica exagerada.',
+  'vasopressores em meio ácido (lactato alto) → resposta α reduzida; corrigir o pH melhora a responsividade.',
+  'dois β (adrenalina + dobutamina) → soma de demanda de O₂ e risco arrítmico.'
+];
+var PH_USOS=[
+  {droga:'vasopressina',tipo:'exclusivo',uso:'pressão NÃO-adrenérgica (V1) — poupadora de catecolamina e na vasoplegia pós-CEC.'},
+  {droga:'azul de metileno',tipo:'inusitado',uso:'vasoplegia refratária: inibe a via NO/guanilato-ciclase (não é catecolamina).'},
+  {droga:'milrinona',tipo:'exclusivo',uso:'disfunção de VD/hipertensão pulmonar: inodilatador que baixa a RVP.'},
+  {droga:'adrenalina',tipo:'exclusivo',uso:'anafilaxia (os 4 termos) e parada cardíaca.'},
+  {droga:'fenilefrina',tipo:'inusitado',uso:'bólus para hipotensão com taquicardia (α1 puro + bradicardia reflexa), p.ex. peri-indução.'}
+];
+var PH_IATRO=[
+  'vasoconstrição excessiva → isquemia digital/mesentérica/renal (α1/V1 em dose alta).',
+  'taquiarritmia e isquemia miocárdica por demanda (β1).',
+  'hiperlactatemia tipo B pela adrenalina (estímulo β2/glicólise) — pode simular piora da perfusão.',
+  'extravasamento de vasopressor periférico → necrose tecidual.',
+  'hipotensão paradoxal: inodilatador (milrinona/dobutamina) num paciente já vasoplégico.',
+  'isquemia esplâncnica e poliúria com vasopressina em dose alta.'
+];
+</script>
+
+<!-- ============ CASOS DINÂMICOS V/F (cases28.js inlined · 100 assertivas · educacional) ============ -->
+<script>
+// build/m28/cases28.js — Casos clínicos dinâmicos V/F do Módulo 28 (PERFUNDE · CHOCA)
+// Motor de DADOS puro e testável: casos que evoluem em etapas; cada etapa traz
+// assertivas Verdadeiro/Falso sobre o caso, a condução (mecanismo) e correlatos.
+// Total fixo: 5 casos × 4 etapas × 5 assertivas = 100 assertivas (50 V / 50 F).
+// Firewall SaMD: são afirmações EDUCACIONAIS de mecanismo/fisiologia, em V/F —
+// nunca ordem imperativa nem alvo individualizado para paciente real.
+var CASES_VF = [
+  { id:'septico', titulo:'Choque séptico → cardiomiopatia séptica', sub:'distributivo quente que ganha um componente de bomba',
+    abertura:'Mulher, 64 anos, pielonefrite. PA 78/40, FC 124, lactato 4,2, extremidades aquecidas, TEC inicial < 2 s.',
+    etapas:[
+      { fase:'Apresentação', evol:'Quente, hipotensa, taquicárdica, lactato alto. Débito estimado alto.', asser:[
+        { t:'O perfil quente (extremidades aquecidas) com PA baixa e débito alto aponta para choque distributivo, com a RVS como termo quebrado.', v:true, r:'Vasoplegia: DC alto + RVS baixa = distributivo.' },
+        { t:'A taquicardia compensatória eleva o débito cardíaco para tentar defender a PAM.', v:true, r:'FC↑ → DC↑ (DC = FC × VS), sustentando PAM = PVC + DC·RVS.' },
+        { t:'O lactato elevado, na sepse, pode refletir tanto hipoperfusão quanto desacoplamento metabólico.', v:true, r:'Lactato tipo A (hipoperfusão) e tipo B (metabólico/β-adrenérgico) coexistem.' },
+        { t:'A hipotensão deste quadro prova que a contratilidade (bomba) é o mecanismo primário.', v:false, r:'O débito está alto; o termo quebrado é a RVS, não a bomba.' },
+        { t:'Uma PAM nos limites normais excluiria, com segurança, hipoperfusão tecidual.', v:false, r:'Choque críptico: PAM normal pode mascarar tecido faminto (lactato alto).' }
+      ]},
+      { fase:'Ressuscitação volêmica', evol:'Após volume adequado, segue hipotensa (PA 84/46), lactato 3,8.', asser:[
+        { t:'Persistir hipotensa após volume adequado desloca o raciocínio para o termo RVS (suporte vasopressor, por mecanismo).', v:true, r:'Esgotada a responsividade a volume, o termo quebrado segue sendo a RVS.' },
+        { t:'A responsividade a volume é mais bem avaliada por índices dinâmicos do que pela PVC isolada.', v:true, r:'PVC estática prediz mal; testes dinâmicos (elevação de pernas, ΔPP) são superiores.' },
+        { t:'Volume pode ser reposto indefinidamente, pois não tem custo enquanto a PA estiver baixa.', v:false, r:'Volume é droga com janela: além do ponto responsivo, acumula congestão sem ganho de débito.' },
+        { t:'Como o problema é a RVS, um inotrópico isolado normalizaria a PAM.', v:false, r:'Inotrópico move a bomba, não a RVS quebrada; não corrige a vasoplegia.' },
+        { t:'A meta correta é o número da PAM, independentemente do mecanismo que a produziu.', v:false, r:'PAM = DC × RVS; perseguir só o número pode piorar a perfusão.' }
+      ]},
+      { fase:'Vasopressor + segundo agente', evol:'Em suporte vasopressor: ScvO₂ 68%, lactato cai a 2,5, mas a dose sobe.', asser:[
+        { t:'A vasopressina atua pelo receptor V1, por via NÃO-adrenérgica, poupando catecolamina.', v:true, r:'V1 sobe a RVS fora do eixo adrenérgico.' },
+        { t:'A vasopressina é administrada em dose fixa (U/min), não titulada por peso como a noradrenalina.', v:true, r:'Dose fixa; a calculadora não usa o peso.' },
+        { t:'A queda do lactato com ScvO₂ adequada sugere melhora da relação oferta/demanda de O₂.', v:true, r:'Marcadores de perfusão melhorando = oferta acompanhando a demanda.' },
+        { t:'Em acidemia intensa, a resposta α aos vasopressores tende a aumentar.', v:false, r:'A acidose REDUZ a responsividade α; corrigir o pH melhora a resposta.' },
+        { t:'A noradrenalina é desprovida de qualquer efeito β1.', v:false, r:'Tem α1 dominante, mas também algum β1 (inotrópico).' }
+      ]},
+      { fase:'Cardiomiopatia séptica', evol:'ECO: FE 30%. Surge um componente de bomba sobre o distributivo.', asser:[
+        { t:'A sepse pode cursar com disfunção miocárdica, somando um termo de bomba ao distributivo.', v:true, r:'Cardiomiopatia séptica: agora RVS E bomba quebradas.' },
+        { t:'A milrinona, inibidor da PDE-3, gera inotropia sem passar pelo receptor β.', v:true, r:'PDE-3 contorna o β: inotropia com menos demanda/arritmia (mas vasodilata).' },
+        { t:'Com o componente de bomba, o quadro deixa de ser misto e volta a ser puramente distributivo.', v:false, r:'Ao contrário: passa a MISTO (dois termos quebrados).' },
+        { t:'Um inodilatador nunca reduz a PA, por isso dispensa o vasopressor concomitante.', v:false, r:'Inodilatador vasodilata e pode baixar a PA — daí a combinação com vasopressor.' },
+        { t:'Atingida uma PAM normal, está descartada a necessidade de reavaliar a perfusão.', v:false, r:'PAM normal não garante perfusão; reavaliar lactato/ScvO₂/clínica.' }
+      ]}
+    ]},
+
+  { id:'cardiogenico', titulo:'Choque cardiogênico (IAM) → ventrículo direito', sub:'bomba fria-úmida que evolui com falência de VD',
+    abertura:'Homem, 68 anos, IAM anterior extenso. PA 82/60, FC 110, extremidades frias, TEC 4 s, congestão pulmonar, lactato 3,0.',
+    etapas:[
+      { fase:'Apresentação', evol:'Frio, úmido, hipotenso. Baixo débito com congestão.', asser:[
+        { t:'Extremidades frias, TEC lento e congestão com PA baixa configuram perfil frio-úmido: a bomba é o termo quebrado.', v:true, r:'Baixo débito + congestão = falência de VE.' },
+        { t:'A RVS, neste quadro, tende a estar ELEVADA por vasoconstrição compensatória.', v:true, r:'O organismo eleva a RVS para defender a PAM apesar do débito baixo.' },
+        { t:'Uma PAM "normalizada" pela vasoconstrição pode coexistir com débito e perfusão ruins.', v:true, r:'PAM = DC × RVS: RVS alta compensa DC baixo e mascara.' },
+        { t:'Neste cenário, a RVS baixa por vasoplegia é o mecanismo dominante.', v:false, r:'É o oposto: a RVS está alta; o termo quebrado é a contratilidade.' },
+        { t:'Acelerar ainda mais a FC sempre melhora o débito no coração isquêmico.', v:false, r:'Taquicardia encurta a diástole e eleva a demanda de O₂ — pode agravar a isquemia.' }
+      ]},
+      { fase:'Condução (mecanismo)', evol:'Decide-se o agente pelo termo quebrado.', asser:[
+        { t:'Um inotrópico de perfil β1 ataca o termo quebrado — a contratilidade — aceitando custo de O₂.', v:true, r:'β1 sobe a contratilidade; o preço é a demanda miocárdica.' },
+        { t:'No cardiogênico hipotenso, combinar inotrópico com vasopressor soma fluxo e pressão.', v:true, r:'Inotrópico (débito) + vasopressor (RVS/PA) = fluxo + pressão.' },
+        { t:'Um vasopressor α1 puro (fenilefrina) é a melhor escolha mecânica, pois alivia a bomba.', v:false, r:'α1 eleva a pós-carga sobre bomba fraca → afunda o débito.' },
+        { t:'A dobutamina jamais reduz a pressão arterial.', v:false, r:'Pode baixar a PA por vasodilatação β2.' },
+        { t:'Reposição volêmica agressiva é o pilar mecânico do cardiogênico já congesto.', v:false, r:'Já há congestão; volume agrava o edema sem corrigir a bomba.' }
+      ]},
+      { fase:'Evolução para VD', evol:'Surge falência de ventrículo direito (extensão do IAM).', asser:[
+        { t:'O IAM pode comprometer o VD; sua sobrecarga reduz o enchimento do VE por interdependência ventricular.', v:true, r:'Septo desviado + pericárdio: o VD dilatado limita o VE.' },
+        { t:'A pressão intratorácica e a PEEP modulam pré- e pós-carga do VD.', v:true, r:'Coração-pulmão: a pressão pleural afeta retorno e pós-carga (M24).' },
+        { t:'No VD que falha, vasodilatar a circulação pulmonar pode ajudar a descarregá-lo.', v:true, r:'Reduzir a pós-carga do VD (RVP↓) melhora seu acoplamento.' },
+        { t:'Encher de volume, sem limite, o VD que falha melhora o débito.', v:false, r:'A sobredistensão do VD piora a interdependência e o débito.' },
+        { t:'A milrinona é contraindicada aqui por ser um β-bloqueador.', v:false, r:'Não é β-bloqueador: é inibidor da PDE-3 (inodilatador).' }
+      ]},
+      { fase:'Refratário / síntese', evol:'Bomba refratária à droga; reavalia-se o alvo.', asser:[
+        { t:'Em bomba refratária ao fármaco, o suporte mecânico circulatório atua onde a droga não basta.', v:true, r:'Esgotada a inotropia farmacológica, entra o suporte mecânico.' },
+        { t:'O objetivo mecânico é restaurar fluxo (débito), não apenas elevar o número da pressão.', v:true, r:'Perfusão é fluxo; a PAM é número resultante.' },
+        { t:'O custo de O₂ do suporte inotrópico β é desprezível.', v:false, r:'O β eleva a demanda miocárdica de O₂ — custo central.' },
+        { t:'Subir isoladamente a RVS é a forma mais segura de tratar a bomba.', v:false, r:'Mais pós-carga sobre bomba fraca pode reduzir o débito.' },
+        { t:'Atingida a PAM-alvo, a perfusão tecidual está garantida.', v:false, r:'PAM normal não garante perfusão (lactato/TEC continuam mandando).' }
+      ]}
+    ]},
+
+  { id:'misto', titulo:'Choque misto (séptico + cardiogênico)', sub:'mais de um termo quebrado ao mesmo tempo',
+    abertura:'Idoso com pneumonia grave e cardiopatia prévia. PA 80/45, lactato 5,0, ECO com FE reduzida e sinais de vasoplegia.',
+    etapas:[
+      { fase:'Reconhecimento', evol:'Coexistem RVS baixa e bomba fraca.', asser:[
+        { t:'Um paciente pode ter mais de um termo quebrado ao mesmo tempo (RVS baixa + bomba fraca).', v:true, r:'Choque misto: termos somados.' },
+        { t:'No misto, a PAM pode estar enganosamente normal enquanto o tecido segue faminto.', v:true, r:'Compensações cruzadas mascaram o déficit.' },
+        { t:'Lactato persistente apesar de PAM adequada sugere déficit de perfusão/extração oculto.', v:true, r:'O marcador denuncia o que a PAM esconde.' },
+        { t:'No misto, atribuir todo o déficit a um único mecanismo é sempre o correto.', v:false, r:'Há mais de um termo; reduzir a um só engana.' },
+        { t:'O perfil hemodinâmico do misto é sempre idêntico ao do distributivo puro.', v:false, r:'Depende dos pesos relativos dos termos quebrados.' }
+      ]},
+      { fase:'Condução combinada', evol:'Endereçam-se os dois termos.', asser:[
+        { t:'Combinar vasopressor (RVS) com inotrópico (bomba) endereça os dois termos quebrados.', v:true, r:'Cada agente move o seu termo.' },
+        { t:'ScvO₂ e lactato ajudam a julgar se a oferta acompanha a demanda.', v:true, r:'Marcadores de adequação oferta/demanda.' },
+        { t:'A dobutamina isolada, havendo componente vasoplégico, tende a corrigir a PA.', v:false, r:'β2 vasodilata: pode AGRAVAR a hipotensão do componente distributivo.' },
+        { t:'Em mistos, a conduta correta é mirar o número da PAM, ignorando o mecanismo.', v:false, r:'Decompor a PAM em DC e RVS é obrigatório.' },
+        { t:'A noradrenalina não tem nenhum efeito inotrópico.', v:false, r:'α1 dominante, mas com algum β1.' }
+      ]},
+      { fase:'Agente de amplo espectro', evol:'Discute-se um agente que move vários termos.', asser:[
+        { t:'A adrenalina move quatro termos (α1, β1, β2) e pode cobrir RVS e bomba de uma vez.', v:true, r:'Perfil amplo: potência com custo.' },
+        { t:'A hiperlactatemia induzida pela adrenalina (β2) pode simular piora da perfusão.', v:true, r:'Lactato tipo B: metabólico, não hipoperfusão.' },
+        { t:'A dopamina tem efeito dose-dependente e costuma causar mais arritmia que a noradrenalina.', v:true, r:'O perfil muda com a dose; mais taquiarritmia.' },
+        { t:'A adrenalina praticamente não tem custo metabólico ou arrítmico.', v:false, r:'É o agente de maior custo do grupo.' },
+        { t:'A vasopressina, por ser adrenérgica, soma taquicardia à adrenalina.', v:false, r:'V1 é NÃO-adrenérgica; não acrescenta taquicardia.' }
+      ]},
+      { fase:'Reavaliação dinâmica', evol:'O termo dominante muda ao longo das horas.', asser:[
+        { t:'Reavaliar dinamicamente é essencial: o termo dominante pode mudar ao longo do tempo.', v:true, r:'O misto é móvel.' },
+        { t:'O desmame dos agentes acompanha a recuperação do termo que estava quebrado.', v:true, r:'Retira-se o suporte do termo que se recupera.' },
+        { t:'Uma vez instalado o misto, o quadro nunca regride a um único mecanismo.', v:false, r:'Pode regredir conforme um componente se resolve.' },
+        { t:'O POCUS não acrescenta nada na discriminação dos componentes do misto.', v:false, r:'POCUS avalia VE, VD, volemia e pulmão — discrimina.' },
+        { t:'Ler a PAM isolada basta para conduzir o choque misto.', v:false, r:'É preciso decompor em DC e RVS.' }
+      ]}
+    ]},
+
+  { id:'anafilatico', titulo:'Choque anafilático (e o diferencial neurogênico)', sub:'distributivo de instalação rápida; FC como discriminador',
+    abertura:'Adulto, minutos após antibiótico EV: urticária, sibilos, PA 70/38, FC 130, sensação de morte iminente.',
+    etapas:[
+      { fase:'Apresentação', evol:'Vasodilatação + leak + componente respiratório, rápido.', asser:[
+        { t:'Vasodilatação, extravasamento capilar e possível broncoespasmo de instalação rápida configuram distributivo anafilático.', v:true, r:'Mecanismo: vasoplegia + leak + via respiratória.' },
+        { t:'A FC costuma estar elevada (compensatória) no anafilático.', v:true, r:'Resposta adrenérgica à hipotensão.' },
+        { t:'O edema de via aérea é um componente possível que extrapola a hemodinâmica.', v:true, r:'Risco respiratório associado ao quadro.' },
+        { t:'No anafilático, a RVS está tipicamente elevada.', v:false, r:'Está REDUZIDA (vasoplegia) — é distributivo.' },
+        { t:'A ausência de taquicardia descarta anafilaxia em qualquer cenário.', v:false, r:'Nem sempre; β-bloqueio e outros fatores podem alterar a FC.' }
+      ]},
+      { fase:'Condução (mecanismo)', evol:'Trata-se vasoplegia, leak e via aérea.', asser:[
+        { t:'A reposição volêmica importa porque há extravasamento e hipovolemia relativa.', v:true, r:'Leak capilar → volume intravascular cai.' },
+        { t:'Pacientes em uso de β-bloqueador podem ter resposta atenuada à adrenalina.', v:true, r:'O β bloqueado reduz a resposta β-adrenérgica.' },
+        { t:'Um vasopressor α1 puro corrige todos os componentes da anafilaxia, inclusive o broncoespasmo.', v:false, r:'α1 puro não broncodilata; é o β2 (da adrenalina) que atua na via aérea.' },
+        { t:'O efeito β2 não tem qualquer papel no manejo mecanístico da anafilaxia.', v:false, r:'β2 broncodilata — componente relevante.' },
+        { t:'A anafilaxia nunca recorre depois da melhora inicial.', v:false, r:'Reação bifásica: pode recorrer horas depois.' }
+      ]},
+      { fase:'Diferencial neurogênico', evol:'Compara-se com o outro distributivo: o neurogênico.', asser:[
+        { t:'O neurogênico é distributivo por perda do tônus simpático, com bradicardia relativa ou absoluta.', v:true, r:'Sem simpático: vasodilata e não taquicardiza.' },
+        { t:'A FC é um bom discriminador: alta favorece anafilático; baixa/normal favorece neurogênico.', v:true, r:'Assinatura de FC × RVS (M22).' },
+        { t:'No neurogênico há aumento da capacitância venosa, reduzindo o retorno.', v:true, r:'Venodilatação → pré-carga cai.' },
+        { t:'Anafilático e neurogênico quebram a RVS pelo mesmo mecanismo.', v:false, r:'Vias diferentes: imuno-vasoativa × perda simpática.' },
+        { t:'Ambos são, por definição, choques cardiogênicos.', v:false, r:'São distributivos, não cardiogênicos.' }
+      ]},
+      { fase:'Evolução', evol:'Resposta e vigilância.', asser:[
+        { t:'A persistência da hipotensão pode exigir suporte vasopressor adicional, por mecanismo (RVS).', v:true, r:'Vasoplegia mantida = termo RVS ainda quebrado.' },
+        { t:'Resolvidos a vasoplegia e o leak, o suporte vasopressor pode ser desmamado.', v:true, r:'Recuperado o termo, retira-se o suporte.' },
+        { t:'Lactato e perfusão periférica não ajudam a julgar a resposta na anafilaxia.', v:false, r:'São marcadores úteis de perfusão.' },
+        { t:'A anafilaxia jamais evolui com comprometimento respiratório.', v:false, r:'Pode haver broncoespasmo/edema de via aérea.' },
+        { t:'No neurogênico, a taquicardia intensa é a regra esperada.', v:false, r:'O esperado é FC baixa/normal (perda simpática).' }
+      ]}
+    ]},
+
+  { id:'obstrutivo', titulo:'Choque obstrutivo (TEP) — contrastes e síntese', sub:'barreira mecânica ao enchimento/ejeção; a síntese do braço',
+    abertura:'Pós-operatório, dispneia súbita, PA 84/52, FC 128, hipoxemia, VD dilatado ao ECO.',
+    etapas:[
+      { fase:'Apresentação (TEP)', evol:'Sobrecarga aguda de VD por aumento da pós-carga pulmonar.', asser:[
+        { t:'O TEP maciço gera choque obstrutivo por aumento agudo da pós-carga do VD.', v:true, r:'Obstrução do leito pulmonar → sobrecarga aguda do VD.' },
+        { t:'O VD dilatado pode desviar o septo e reduzir o enchimento do VE (interdependência).', v:true, r:'Mecânica do VD que limita o VE.' },
+        { t:'A taquicardia é uma resposta esperada nesse cenário.', v:true, r:'Compensação à queda do débito.' },
+        { t:'O termo quebrado primário no TEP é a RVS sistêmica baixa.', v:false, r:'O problema é obstrutivo (pós-carga do VD), não vasoplegia.' },
+        { t:'A hipotensão do TEP só ocorre se o VE estiver intrinsecamente doente.', v:false, r:'O VE pode ser normal; a falência é do VD/obstrução.' }
+      ]},
+      { fase:'Condução (mecanismo)', evol:'Sustenta-se a pressão enquanto se trata a causa.', asser:[
+        { t:'O suporte vasopressor mantém a pressão de perfusão coronária do VD enquanto se trata a causa.', v:true, r:'A perfusão do VD depende da PA sistêmica.' },
+        { t:'O tratamento mecânico definitivo é remover ou reduzir a obstrução (a causa).', v:true, r:'Resolver a obstrução é o pilar.' },
+        { t:'Administrar volume sem limite melhora sempre o VD sobrecarregado no TEP.', v:false, r:'A sobredistensão do VD piora a interdependência.' },
+        { t:'O choque obstrutivo se resolve apenas com inotrópico, sem tratar a obstrução.', v:false, r:'Sem desobstruir, o mecanismo persiste.' },
+        { t:'Reduzir a pós-carga do VD nunca tem papel no manejo do TEP.', v:false, r:'Em casos selecionados, reduzir a RVP ajuda.' }
+      ]},
+      { fase:'Contrastes obstrutivos', evol:'Tamponamento e pneumotórax hipertensivo entram no diferencial.', asser:[
+        { t:'Tamponamento e pneumotórax hipertensivo também são obstrutivos, por restrição ao enchimento/retorno.', v:true, r:'Obstrutivo = barreira mecânica ao enchimento/ejeção.' },
+        { t:'No tamponamento, o tratamento mecânico é drenar (pericardiocentese), não apenas pressóricos.', v:true, r:'Remover a restrição é o pilar.' },
+        { t:'Turgência jugular + hipotensão + bulhas abafadas evocam tamponamento (tríade de Beck).', v:true, r:'Sinais clássicos do tamponamento.' },
+        { t:'O pneumotórax hipertensivo melhora com volume isolado, sem descompressão.', v:false, r:'Exige descompressão; volume não resolve.' },
+        { t:'Esses quadros são, na verdade, distributivos por vasoplegia.', v:false, r:'São obstrutivos, não distributivos.' }
+      ]},
+      { fase:'Hemorrágico + síntese', evol:'Fecha-se com o contraste hipovolêmico e a regra do braço.', asser:[
+        { t:'No choque hemorrágico, o termo quebrado é o retorno venoso/pré-carga por perda de volume.', v:true, r:'Volume perdido → pré-carga cai.' },
+        { t:'A síntese do braço: achar o termo quebrado → escolher a alavanca que o move → pesar o custo.', v:true, r:'A regra final do M28.' },
+        { t:'O vasopressor corrige a causa do choque hemorrágico.', v:false, r:'A causa é a perda de volume/sangramento; o pilar é hemostasia + reposição.' },
+        { t:'Um mesmo valor de PAM nunca pode nascer de mecânicas hemodinâmicas opostas.', v:false, r:'Pode: DC alto/RVS baixa vs DC baixo/RVS alta dão a mesma PAM.' },
+        { t:'Ler a PAM isolada, sem decompô-la, basta para classificar o choque.', v:false, r:'Decompor antes de interpretar (PAM = DC × RVS).' }
+      ]}
+    ]}
+];
+
+function flatAssertions(){ var out=[]; CASES_VF.forEach(function(c){ c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ out.push({caso:c.id, etapa:ei, idx:ai, t:a.t, v:a.v, r:a.r}); }); }); }); return out; }
+function vfStats(){ var f=flatAssertions(), v=0; f.forEach(function(a){ if(a.v) v++; }); return { total:f.length, v:v, f:f.length-v, casos:CASES_VF.length, etapas:CASES_VF.reduce(function(s,c){return s+c.etapas.length;},0) }; }
+</script>
+
+<!-- ===================== UI ===================== -->
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var br=function(x,n){return (typeof x==='number'&&!isNaN(x))?x.toLocaleString('pt-BR',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';};
+  var state={ a1:0.9, b1:0.3, b2:0, v1:0, pde:0, patient:'rvs' };
+  var PATIENTS={ rvs:{rvs:7,pump:0.78,preload:0.95,broken:'rvs',nome:'distributivo (RVS↓)'},
+    pump:{rvs:17,pump:0.32,preload:1.05,broken:'pump',nome:'cardiogênico (bomba↓)'},
+    none:{rvs:14,pump:0.7,preload:0.95,broken:'none',nome:'normal'} };
+  function drug(){ return { a1:state.a1, b1:state.b1, b2:state.b2, v1:state.v1, pde:state.pde }; }
+  function pat(){ return PATIENTS[state.patient]||PATIENTS.none; }
+
+  // ---- receptores → termos ----
+  function drawReceptors(ctx,W,H,d){
+    try{
+      d=d||{};
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var t=terms(d), padT=18;
+      var recs=[ ['α1',d.a1,'#e5394e'], ['β1',d.b1,'#3f82e6'], ['β2',d.b2,'#3ec78d'], ['V1',d.v1,'#9b6cff'], ['PDE',d.pde,'#37c8d8'] ];
+      var ters=[ ['ΔRVS', t.dRVS/9, '#ffcf5c'], ['Δinotropia', t.dInotropy/0.55, '#3ec78d'], ['ΔFC', t.dHR/34, '#3f82e6'], ['demanda O₂', t.metabolic/0.9, '#ff5d6c'] ];
+      // coluna esquerda: receptores
+      ctx.fillStyle='#97a3ba'; ctx.font='11px monospace'; ctx.fillText('RECEPTORES', 30, padT);
+      var lx=30, lw=150, rh=30, gap=10, y0=padT+10;
+      recs.forEach(function(rw,i){ var y=y0+i*(rh+gap); ctx.fillStyle='#11151f'; ctx.fillRect(lx,y,lw,rh*0.7);
+        ctx.fillStyle=rw[2]; ctx.fillRect(lx,y,Math.max(2,clampv(rw[1],0,1)*lw),rh*0.7);
+        ctx.fillStyle='#e9eef7'; ctx.font='10px monospace'; ctx.fillText(rw[0]+' '+Math.round(rw[1]*100)+'%', lx+4, y+rh*0.7+10); });
+      // seta
+      ctx.strokeStyle='#5e6c87'; ctx.fillStyle='#5e6c87'; ctx.lineWidth=2; var ay=H/2;
+      ctx.beginPath(); ctx.moveTo(lx+lw+18,ay); ctx.lineTo(lx+lw+70,ay); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(lx+lw+70,ay); ctx.lineTo(lx+lw+62,ay-6); ctx.lineTo(lx+lw+62,ay+6); ctx.closePath(); ctx.fill();
+      ctx.font='10px monospace'; ctx.fillText('termo', lx+lw+24, ay-8);
+      // coluna direita: termos
+      var tx=lx+lw+90, tw=W-tx-20;
+      ctx.fillStyle='#97a3ba'; ctx.font='11px monospace'; ctx.fillText('TERMOS MOVIDOS', tx, padT);
+      var mid=tx+tw*0.5;
+      ters.forEach(function(rw,i){ var y=y0+i*(rh+gap); var v=clampv(rw[1],-1,1);
+        ctx.strokeStyle='#26314a'; ctx.beginPath(); ctx.moveTo(mid,y); ctx.lineTo(mid,y+rh*0.7); ctx.stroke();
+        ctx.fillStyle=rw[2]; ctx.fillRect(mid, y, v*(tw*0.5), rh*0.7);
+        ctx.fillStyle='#e9eef7'; ctx.font='10px monospace'; ctx.fillText(rw[0], tx, y+rh*0.7+10); });
+      return t;
+    }catch(e){ return {}; }
+  }
+  // ---- desfecho no paciente ----
+  function drawOutcome(ctx,W,H,st){
+    try{
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var P=pat(), R=applyDrug(P, drug()), base=applyDrug(P,{}), ap=appropriate(P, drug());
+      var rows=[ {label:'PAM', v:R.PAM, b:base.PAM, max:140, good:R.PAM>=65, unit:''},
+        {label:'débito (CO)', v:R.CO, b:base.CO, max:9, good:R.CO>=base.CO, unit:''},
+        {label:'RVS', v:R.rvs, b:base.rvs, max:30, good:true, unit:''},
+        {label:'contratilidade', v:R.inotropy*100, b:base.inotropy*100, max:100, good:true, unit:'%'},
+        {label:'balanço O₂', v:(R.o2balance+1)*50, b:(base.o2balance+1)*50, max:100, good:R.o2balance>-0.45, unit:''} ];
+      var padL=120,padR=16,padT=10,padB=14, pw=W-padL-padR, n=rows.length, gap=6, rh=(H-padT-padB-gap*(n-1))/n;
+      rows.forEach(function(rw,i){ var y=padT+i*(rh+gap); ctx.fillStyle='#11151f'; ctx.fillRect(padL,y,pw,rh);
+        ctx.fillStyle=rw.good?'#3ec78d':'#ff5d6c'; ctx.globalAlpha=0.85; ctx.fillRect(padL,y,Math.max(2,clampv(rw.v/rw.max,0,1)*pw),rh); ctx.globalAlpha=1;
+        // marca do baseline
+        ctx.strokeStyle='#97a3ba'; ctx.beginPath(); var bx=padL+clampv(rw.b/rw.max,0,1)*pw; ctx.moveTo(bx,y); ctx.lineTo(bx,y+rh); ctx.stroke();
+        ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.textAlign='right'; ctx.fillText(rw.label, padL-8, y+rh/2+3); ctx.textAlign='left'; });
+      ctx.fillStyle=ap.ok?'#3ec78d':'#ff5d6c'; ctx.font='11px monospace';
+      ctx.fillText((ap.ok?'APTO':'INAPTO')+' para '+P.nome+(ap.highCost?' · custo O₂↑':'')+'  (linha = sem droga)', padL, H-2);
+      return R;
+    }catch(e){ return {}; }
+  }
+  function drawOn(id,fn,P){ var cv=$(id); if(!cv) return {}; var c; try{c=cv.getContext('2d');}catch(e){return {};} if(!c) return {}; return fn(c,cv.width||820,cv.height||260,P); }
+  function show(el,on){ if(el) el.classList.toggle('show',!!on); }
+  function agentLabel(){ var d=drug(); var best=null,bd=1e9; Object.keys(AGENTS).forEach(function(k){ var a=AGENTS[k],dd=Math.abs(a.a1-d.a1)+Math.abs(a.b1-d.b1)+Math.abs(a.b2-d.b2)+Math.abs(a.v1-d.v1)+Math.abs(a.pde-d.pde); if(dd<bd){bd=dd;best=k;} }); return bd<0.12?AGENT_NAME[best]:'agente personalizado'; }
+
+  function recompute(){
+    $('vA1').textContent=Math.round(state.a1*100); $('vB1').textContent=Math.round(state.b1*100); $('vB2').textContent=Math.round(state.b2*100); $('vV1').textContent=Math.round(state.v1*100); $('vPDE').textContent=Math.round(state.pde*100);
+    var t=drawOn('receptors', drawReceptors, drug()); if(!t.dRVS&&t.dRVS!==0) t=terms(drug());
+    $('opbox-receptors').innerHTML='termos: ΔRVS <b>'+br(t.dRVS,1)+'</b> · Δinotropia <b>'+br(t.dInotropy,2)+'</b> · ΔFC '+br(t.dHR,0)+' · demanda '+br(t.metabolic,2)+' · dominante <b>'+dominantTerm(drug())+'</b>';
+    drawOn('outcome', drawOutcome, state);
+    var P=pat(), R=applyDrug(P,drug()), ap=appropriate(P,drug());
+    $('opbox-outcome').innerHTML=agentLabel()+' no '+P.nome+': PAM '+br(R.PAM,0)+' · CO '+br(R.CO,1)+' · '+(ap.ok?'<span style="color:var(--ok)">apto</span>':'<span style="color:var(--crit)">inapto</span>')+(ap.highCost?' · custo O₂↑':'');
+    resetPredict();
+    renderLab();
+  }
+  function renderLab(){
+    var P=pat(), R=drawOn('outcomeLab', drawOutcome, state); if(!R.PAM) R=applyDrug(P,drug());
+    var ap=appropriate(P,drug()), t=terms(drug()), dom=dominantTerm(drug());
+    $('opbox-lab').innerHTML=agentLabel()+' · '+P.nome+' · PAM '+br(R.PAM,0)+' · CO '+br(R.CO,1)+' · RVS '+br(R.rvs,0)+' · O₂bal '+br(R.o2balance,2);
+    var vEl=$('lab-veredito'), klass, label;
+    if(P.broken==='none'){ klass='lim'; label='PACIENTE NORMAL'; }
+    else if(ap.ok){ klass=ap.highCost?'lim':'ok'; label='TERMO CERTO'+(ap.highCost?' (com custo)':''); }
+    else { klass='crit'; label='TERMO ERRADO'; }
+    vEl.className='veredito '+klass; $('lab-vbig').textContent=label;
+    $('lab-vnum').textContent=(P.broken==='rvs'?'termo quebrado: RVS':P.broken==='pump'?'termo quebrado: contratilidade':'sem termo dominante quebrado')+' · agente move: '+dom+(ap.why.length?' · '+ap.why.join('; '):'');
+    var isVaso=(t.dRVS>3), isIno=(t.dInotropy>0.1);
+    show($('ban-vasopressor'), isVaso);
+    show($('ban-inotropo'), isIno);
+    show($('ban-certo'), P.broken!=='none' && ap.ok);
+    show($('ban-errado'), P.broken!=='none' && !ap.ok);
+    show($('ban-custo'), ap.highCost || t.metabolic>0.4);
+    show($('ban-adrenalina'), t.a1>0.5 && t.b1>0.5);
+    if(ap.ok) $('certo-txt').textContent='Move '+(P.broken==='rvs'?'a RVS':'a contratilidade')+' — a alavanca deste paciente.';
+    if(!ap.ok && P.broken!=='none') $('errado-txt').textContent=ap.why.join('; ')+'.';
+  }
+  function syncSliders(){ $('iA1').value=state.a1*100; $('iB1').value=state.b1*100; $('iB2').value=state.b2*100; $('iV1').value=state.v1*100; $('iPDE').value=state.pde*100; }
+  function syncPatients(){ document.querySelectorAll('.preset.pac').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-patient')===state.patient); }); }
+  function setState(p){ p=p||{}; for(var k in p){ if(p.hasOwnProperty(k)) state[k]=p[k]; } syncSliders(); syncPatients(); recompute(); }
+  function setAgent(name){ var a=AGENTS[name]; if(!a) return; state.a1=a.a1;state.b1=a.b1;state.b2=a.b2;state.v1=a.v1;state.pde=a.pde; syncSliders(); document.querySelectorAll('#presets .preset').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-preset')===name);}); recompute(); }
+  function activate(tabId){ document.querySelectorAll('.tab').forEach(function(t){ var sel=(t.id===tabId); t.setAttribute('aria-selected',sel?'true':'false');
+    var pn=$(t.getAttribute('aria-controls')); if(pn) pn.classList.toggle('active',sel); }); recompute(); renderTutorPlots(); }
+
+  // ---- caso progressivo ----
+  var CASO=[
+    { txt:'Séptico vasoplégico: RVS baixa, débito alto, PA baixa. Qual perfil de receptor corrige o termo quebrado?', drug:AGENTS.noradrenalina, P:PATIENTS.rvs,
+      opts:[ {t:'β1 puro (contratilidade)', ok:false}, {t:'α1/V1 (sobe a RVS — o termo quebrado)', ok:true} ],
+      fb:'O termo quebrado é a RVS: α1 (noradrenalina) ou V1 (vasopressina) a corrigem.' },
+    { txt:'Cardiogênico: bomba falida, débito baixo, congesto. E agora?', drug:AGENTS.dobutamina, P:PATIENTS.pump,
+      opts:[ {t:'Vasopressor puro (α1) — está hipotenso', ok:false}, {t:'Inotrópico (β1/PDE) — sobe a contratilidade', ok:true} ],
+      fb:'O termo quebrado é a contratilidade: β1 (dobutamina) ou PDE (milrinona). O vasopressor afundaria o débito.' },
+    { txt:'Neste cardiogênico, deram fenilefrina (α1 puro). O que acontece com o débito?', drug:AGENTS.fenilefrina, P:PATIENTS.pump,
+      opts:[ {t:'Melhora — subiu a PA', ok:false}, {t:'Cai — a pós-carga subiu sobre uma bomba fraca', ok:true} ],
+      fb:'α1 sobe a RVS = pós-carga; o VS cai e o débito despenca. PA no monitor sobe, perfusão piora.' },
+    { txt:'A regra que organiza a escolha do agente é:', drug:AGENTS.adrenalina, P:PATIENTS.rvs,
+      opts:[ {t:'escolher pelo nome conhecido', ok:false}, {t:'escolher o receptor que move o termo quebrado, pesando o custo', ok:true} ],
+      fb:'Receptor → termo → casar com o termo quebrado, com o menor custo (demanda, pós-carga, PAM).' }
+  ];
+  function renderCaso(){
+    var box=$('caso-interativo'); if(!box) return; box.innerHTML=''; var nodes=[]; var done=0, total=CASO.length;
+    if($('caso-prog')) $('caso-prog').textContent='0 / '+total+' decisões';
+    CASO.forEach(function(nd,i){
+      var card=document.createElement('div'); card.className='decision'; if(i>0) card.style.display='none';
+      var q=document.createElement('div'); q.className='dq'; q.innerHTML='<b>Decisão '+(i+1)+'.</b> '+nd.txt; card.appendChild(q);
+      var opts=document.createElement('div'); opts.className='dopts'; var fb=document.createElement('div'); fb.className='dfb';
+      nd.opts.forEach(function(op,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=op.t;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          b.classList.add(op.ok?'right':'wrong'); if(!op.ok){ for(var k=0;k<nd.opts.length;k++){ if(nd.opts[k].ok) opts.children[k].classList.add('right'); } }
+          var R=applyDrug(nd.P,nd.drug), base=applyDrug(nd.P,{}), ap=appropriate(nd.P,nd.drug);
+          fb.className='dfb show'; fb.innerHTML=(op.ok?'✓ ':'✗ ')+nd.fb+'<br><span class="cons">no motor ('+(AGENT_NAME[Object.keys(AGENTS).filter(function(k){return AGENTS[k]===nd.drug;})[0]]||'agente')+'): PAM '+br(base.PAM,0)+'→'+br(R.PAM,0)+' · CO '+br(base.CO,1)+'→'+br(R.CO,1)+' · '+(ap.ok?'apto':'inapto')+'</span>';
+          if(nodes[i+1]) nodes[i+1].style.display='block';
+          if($('caso-prog')) $('caso-prog').textContent=done+' / '+total+' decisões'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card); nodes.push(card);
+    });
+  }
+  // ---- prever-depois-revelar ----
+  function resetPredict(){ var box=$('prever-opts'); if(!box) return; delete box.dataset.answered; var fb=$('prever-fb'); if(fb){ fb.className='dfb'; fb.textContent=''; }
+    box.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); }); }
+  function predictAnswer(choice){
+    var box=$('prever-opts'); if(!box||box.dataset.answered) return; box.dataset.answered='1';
+    var P=pat(), ap=appropriate(P,drug());
+    var truth=(P.broken==='none')?'custo':(ap.ok?(ap.highCost?'custo':'apto'):'inapto'), okc=(choice===truth);
+    box.querySelectorAll('.opt').forEach(function(b){ var v=b.getAttribute('data-v'); if(v===truth) b.classList.add('right'); if(v===choice&&!okc) b.classList.add('wrong'); });
+    var R=applyDrug(P,drug());
+    var fb=$('prever-fb'); if(fb){ fb.className='dfb show'; fb.innerHTML=(okc?'✓ ':'✗ ')+'neste '+P.nome+': PAM '+br(R.PAM,0)+' · CO '+br(R.CO,1)+' · '+(ap.ok?'<b>apto</b>':'<b>inapto</b>')+(ap.highCost?' (custo O₂↑)':'')+'. '+(ap.why.length?ap.why.join('; ')+'.':'move o termo certo.'); }
+  }
+
+  // ---- tutor ----
+  var TUTOR=[];
+  function buildTutor(){
+    var T=[]; var D=PATIENTS.rvs, C=PATIENTS.pump;
+    T.push({kind:'rec',P:AGENTS.noradrenalina, cap:'Perfil α1 dominante.',
+      q:'A noradrenalina (α1, pouco β1) move primariamente o termo:',
+      o:['contratilidade','RVS (vasopressor)','frequência só','pré-carga'], a:1,
+      fb:'α1 → RVS↑. É um vasopressor: a alavanca do termo RVS.', hint:'α1 → RVS.'});
+    T.push({kind:'rec',P:AGENTS.dobutamina, cap:'Perfil β1 dominante.',
+      q:'A dobutamina (β1, algum β2) move primariamente o termo:',
+      o:['RVS','contratilidade (inotrópico)','vasoconstrição pura','nenhum'], a:1,
+      fb:'β1 → contratilidade↑ e FC↑. É um inotrópico (com leve vasodilatação β2).', hint:'β1 → bomba.'});
+    T.push({kind:'out',P:AGENTS.noradrenalina, pat:'rvs', cap:'Distributivo (RVS↓) + noradrenalina.',
+      q:'No distributivo, a noradrenalina é:',
+      o:['inapta (termo errado)','apta — sobe a RVS, o termo quebrado','perigosa sempre','igual à dobutamina'], a:1,
+      fb:'Move o termo RVS, que é o quebrado no distributivo: sobe a PAM.', hint:'Termo certo.'});
+    T.push({kind:'out',P:AGENTS.fenilefrina, pat:'pump', cap:'Cardiogênico + fenilefrina (α1 puro).',
+      q:'A fenilefrina num cardiogênico tende a:',
+      o:['melhorar o débito por elevar a pressão de perfusão coronária e, com ela, a contratilidade de forma reflexa','afundar o débito — sobe a pós-carga sobre bomba fraca','ser inerte','curar a bomba'], a:1,
+      fb:'α1 sobe a RVS = pós-carga; o VS e o débito caem. Termo errado.', hint:'Pós-carga na bomba fraca.'});
+    T.push({kind:'rec',P:AGENTS.vasopressina, cap:'Perfil V1.',
+      q:'A vasopressina (V1) é especial porque:',
+      o:['sobe a contratilidade do miocárdio por estímulo direto e seletivo dos receptores V1 cardíacos','sobe a RVS SEM via adrenérgica (sem taquicardia)','vasodilata','não faz nada'], a:1,
+      fb:'V1 → RVS↑ não-adrenérgica: pressão sem mais β/taquicardia/demanda.', hint:'RVS sem β.'});
+    T.push({kind:'rec',P:AGENTS.milrinona, cap:'Perfil PDE.',
+      q:'A milrinona (PDE) é um:',
+      o:['vasopressor puro de ação α1 predominante, indicado quando se quer pressão sem efeito sobre a bomba','inodilatador (contratilidade↑ + vasodilata)','β-bloqueador','diurético'], a:1,
+      fb:'PDE sobe a contratilidade E vasodilata: inodilatador, com pouco custo de O₂.', hint:'Inotrópico que vasodilata.'});
+    T.push({kind:'out',P:AGENTS.dobutamina, pat:'pump', cap:'Cardiogênico + dobutamina.',
+      q:'A dobutamina no cardiogênico é apta, mas com qual ressalva?',
+      o:['nenhuma','custo miocárdico de O₂ (β eleva a demanda)','sobe a RVS de forma acentuada por ação α1 associada, exigindo um vasodilatador concomitante para compensar','baixa a contratilidade'], a:1,
+      fb:'Sobe a contratilidade (apta), mas β sobe a demanda de O₂ — o inodilatador paga menos.', hint:'β custa O₂.'});
+    T.push({kind:'rec',P:AGENTS.adrenalina, cap:'Perfil α+β.',
+      q:'A adrenalina é potente porque move:',
+      o:['só a RVS','quatro termos (RVS, contratilidade, FC, demanda)','apenas a contratilidade, sem qualquer efeito sobre a resistência vascular ou a frequência cardíaca','nenhum termo'], a:1,
+      fb:'α1+β1+β2: RVS, contratilidade, FC e demanda — quatro termos de uma vez (e custo alto).', hint:'Os 4 termos.'});
+    T.push({kind:'out',P:AGENTS.milrinona, pat:'rvs', cap:'Distributivo + milrinona.',
+      q:'Um inodilatador (milrinona) num vasoplégico tende a:',
+      o:['corrigir a RVS','derrubar a PAM (vasodilata o que já está dilatado)','ser ideal','subir a RVS o suficiente para compensar a vasoplegia e normalizar a pressão arterial média'], a:1,
+      fb:'PDE/β2 vasodilatam: no vasoplégico, tiram ainda mais a pressão. Termo errado.', hint:'Vasodilata o vasoplégico.'});
+    T.push({kind:'out',P:AGENTS.vasopressina, pat:'rvs', cap:'Distributivo + vasopressina.',
+      q:'A vasopressina no distributivo é apta porque:',
+      o:['sobe a contratilidade','sobe a RVS (o termo quebrado) por via não-adrenérgica','vasodilata','baixa a FC'], a:1,
+      fb:'V1 corrige o termo RVS sem somar β — útil para poupar demanda/eixo adrenérgico.', hint:'RVS não-adrenérgica.'});
+    T.push({kind:'rec',P:AGENTS.fenilefrina, cap:'Perfil α1 puro.',
+      q:'A fenilefrina (α1 puro), além de subir a RVS, costuma:',
+      o:['subir a FC por estímulo cronotrópico β1 intenso, somando-se ao efeito vasopressor','baixar a FC (bradicardia reflexa)','subir a contratilidade','vasodilatar'], a:1,
+      fb:'Sem β, a PA alta dispara reflexo → FC cai. α1 puro: RVS↑ e bradi reflexa.', hint:'Reflexo barorreceptor.'});
+    T.push({kind:'out',P:AGENTS.noradrenalina, pat:'pump', cap:'Cardiogênico + noradrenalina.',
+      q:'A noradrenalina num cardiogênico puro:',
+      o:['é a 1ª escolha sempre','sobe a pós-carga sobre bomba fraca (termo errado para o problema central)','baixa a RVS','não muda nada'], a:1,
+      fb:'Move a RVS, não a contratilidade que falta; a pós-carga extra custa débito. Termo errado para o problema.', hint:'RVS não é o termo quebrado aqui.'});
+    T.push({kind:'rec',P:AGENTS.adrenalina, cap:'Receptor vs nome.',
+      q:'Por que prever o efeito pelo RECEPTOR e não pelo nome?',
+      o:['o nome basta','o perfil de receptores prevê os termos e o efeito; o nome esconde o mecanismo','os nomes são iguais','o receptor é irrelevante'], a:1,
+      fb:'O perfil (α/β/V1/PDE) diz quais termos a droga move — o nome, não. Mecanismo antes do rótulo.', hint:'Mecanismo, não rótulo.'});
+    T.push({kind:'out',P:AGENTS.dobutamina, pat:'rvs', cap:'Distributivo + dobutamina.',
+      q:'A dobutamina num vasoplégico (RVS↓) tende a:',
+      o:['corrigir a RVS','não subir a RVS (e até vasodilatar) — termo errado','ser ideal','subir a pós-carga'], a:1,
+      fb:'β1/β2 não sobem a RVS que falta; pode até baixá-la. O termo quebrado fica sem alavanca.', hint:'Termo quebrado é a RVS.'});
+    T.push({kind:'rec',P:AGENTS.milrinona, cap:'O custo.',
+      q:'Comparada à dobutamina, a milrinona tem como vantagem:',
+      o:['mais taquicardia','menor custo miocárdico de O₂ (não-adrenérgica)','sobe a RVS','mais arritmia'], a:1,
+      fb:'PDE não passa pelo β-adrenérgico: sobe a contratilidade com menos demanda/arritmia (mas vasodilata).', hint:'Inotropia sem β.'});
+    T.push({kind:'out',P:AGENTS.noradrenalina, pat:'rvs', cap:'A regra final.',
+      q:'A sequência correta para escolher um agente é:',
+      o:['pelo nome mais usado','identificar o termo quebrado → escolher o receptor que o move → pesar o custo','sempre vasopressor','sempre inotrópico'], a:1,
+      fb:'Termo quebrado → receptor → custo. A droga é mecanismo casado ao problema, não um nome.', hint:'Termo → receptor → custo.'});
+    // — farmacologia prática (referência educacional · correta NÃO é a mais longa · pegadinhas) —
+    T.push({kind:'rec',P:AGENTS.noradrenalina, cap:'Diluição de referência.',
+      q:'Numa diluição usual de noradrenalina 16 mg em 250 mL, a concentração de referência é:',
+      o:['16 mcg/mL, porque a massa do frasco é 16 mg e isso já está em mcg por convenção clínica','64 mcg/mL','250 mcg/mL, somando massa e volume','1 mg/mL, igual à ampola pura'], a:1,
+      fb:'16 mg = 16000 mcg; 16000/250 = 64 mcg/mL. A correta é a curta; as longas são pegadinhas.', hint:'massa(mcg) ÷ volume.'});
+    T.push({kind:'rec',P:AGENTS.vasopressina, cap:'Unidade da dose.',
+      q:'A vasopressina difere dos demais vasopressores na calculadora porque sua dose:',
+      o:['é em mcg/kg/min como a noradrenalina, exigindo o peso do paciente para o cálculo','é fixa, em U/min (não usa o peso)','dobra automaticamente a cada hora de infusão contínua','depende do clearance hepático medido em tempo real'], a:1,
+      fb:'V1 → dose FIXA em U/min; a calculadora não usa o peso. A correta é a mais curta.', hint:'U/min, sem peso.'});
+    T.push({kind:'out',P:AGENTS.dobutamina, pat:'pump', cap:'Uso combinado.',
+      q:'No cardiogênico hipotenso, por que se combina frequentemente dobutamina com um vasopressor (ex.: noradrenalina)?',
+      o:['porque a dobutamina sozinha sobe demais a RVS e precisa de um antagonista para equilibrar a pós-carga','porque a dobutamina sobe o débito mas pode baixar a PA (β2); o vasopressor sustenta a RVS/pressão','porque o vasopressor sozinho já trata a bomba e a dobutamina só previne arritmia','porque juntos reduzem a demanda de O₂ a quase zero'], a:1,
+      fb:'Inodilatador (fluxo↑, PA↓) + vasopressor (RVS↑): somam débito e pressão. As longas são distratoras.', hint:'Fluxo + pressão.'});
+    T.push({kind:'rec',P:AGENTS.milrinona, cap:'Vantagem mecanística.',
+      q:'A principal vantagem da milrinona sobre a dobutamina, no mesmo objetivo inotrópico, é:',
+      o:['atravessar a barreira hematoencefálica e sedar, reduzindo a demanda cerebral concomitante','não passar pelo receptor β, gerando menos demanda de O₂ e arritmia','ser dose-fixa e dispensar diluição, simplificando o preparo à beira-leito','elevar a RVS ao mesmo tempo, corrigindo a hipotensão associada'], a:1,
+      fb:'PDE-3 contorna o β: inotropia com menos custo adrenérgico (mas vasodilata). A correta é a curta.', hint:'Inotropia sem β.'});
+    T.push({kind:'out',P:AGENTS.fenilefrina, pat:'pump', cap:'Iatrogenia.',
+      q:'Dar fenilefrina (α1 puro) a um cardiogênico configura qual erro de mecanismo?',
+      o:['acelerar perigosamente a frequência cardíaca e precipitar fibrilação atrial de alta resposta','elevar a pós-carga sobre uma bomba fraca, reduzindo o débito (droga no termo errado)','vasodilatar e derrubar a pressão de perfusão coronária de forma abrupta','induzir hiperlactatemia tipo B por estímulo glicolítico maciço'], a:1,
+      fb:'α1 sobe a RVS=pós-carga; o VS cai. A FC até cai (reflexo). A correta não é a mais longa.', hint:'Pós-carga, não FC.'});
+    T.push({kind:'rec',P:AGENTS.adrenalina, cap:'Efeito inusitado.',
+      q:'A hiperlactatemia que pode surgir com adrenalina, sem piora da perfusão, deve-se a:',
+      o:['hipoperfusão tecidual global causada pela vasoconstrição α1 excessiva e mantida','estímulo β2 da glicólise (lactato tipo B), e não a déficit de O₂','contaminação da amostra arterial por glicose da própria diluição em SG 5%','falência hepática aguda induzida pelo primeiro bólus da droga'], a:1,
+      fb:'β2 acelera a glicólise → lactato tipo B; pode enganar como "piora". A correta é a curta.', hint:'Tipo B, não tipo A.'});
+    T.push({kind:'rec',P:AGENTS.vasopressina, cap:'Uso exclusivo.',
+      q:'Um uso característico da vasopressina, que nenhuma catecolamina replica, é:',
+      o:['fornecer suporte inotrópico potente e seletivo ao ventrículo direito sobrecarregado','sustentar a pressão por via NÃO-adrenérgica (V1), poupando catecolamina','broncodilatar intensamente na crise asmática refratária a β2-agonistas','reduzir a pós-carga e descongestionar o edema agudo de pulmão'], a:1,
+      fb:'V1 age fora do eixo adrenérgico: pressão poupadora de catecolamina. As longas são pegadinhas.', hint:'Não-adrenérgica.'});
+    T.push({kind:'rec',P:AGENTS.dobutamina, cap:'Calculadora.',
+      q:'Dobutamina 250 mg/250 mL (1000 mcg/mL), 5 mcg/kg/min num adulto hipotético de 70 kg, corre a aproximadamente:',
+      o:['cerca de 350 mL/h, multiplicando dose por peso e por sessenta sem dividir pela concentração','cerca de 21 mL/h','cerca de 5 mL/h, lendo a dose direto como volume horário','cerca de 84 mL/h, usando quatro vezes a dose por engano de unidade'], a:1,
+      fb:'5×70×60 = 21000 mcg/h ÷ 1000 = 21 mL/h. A correta é a curta; as longas erram a conta de propósito.', hint:'×peso×60÷conc.'});
+    // gabarito DISPROPORCIONAL e não-óbvio (24 questões → A4 B7 C6 D7 ≈ 17/29/25/29%) — nunca round-robin
+    var __tg=[1,3,2,1,3,0,2,1,3,1,2,3,0,1,2,3,1,2,3,0,1,3,2,0];
+    T.forEach(function(it,qi){ var tg=__tg[qi%__tg.length]; var sh=((tg-it.a)%4+4)%4; for(var s=0;s<sh;s++){ it.o.unshift(it.o.pop()); } it.a=tg; });
+    return T;
+  }
+  function renderTutor(){
+    var box=$('tutor'); if(!box) return; box.innerHTML=''; var total=TUTOR.length, done=0;
+    TUTOR.forEach(function(item,qi){
+      var card=document.createElement('div'); card.className='q';
+      var dif=(qi<8)?['b','básico']:(qi<16)?['i','intermediário']:['a','avançado'];
+      var t=document.createElement('div'); t.className='qt'; t.innerHTML='<span class="tag">Q'+(qi+1)+'</span><span class="dif dif-'+dif[0]+'">'+dif[1]+'</span>'+item.q; card.appendChild(t);
+      var cv=document.createElement('canvas'); cv.className='qplot'; cv.width=760; cv.height=200; cv.id='qcanvas-'+qi; card.appendChild(cv);
+      var cap=document.createElement('div'); cap.className='cap'; cap.textContent=item.cap; card.appendChild(cap);
+      var opts=document.createElement('div'); opts.className='opts'; var fb=document.createElement('div'); fb.className='fb';
+      item.o.forEach(function(txt,oi){ var b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=txt;
+        b.addEventListener('click',function(){ if(card.dataset.answered) return; card.dataset.answered='1'; done++;
+          var correct=(oi===item.a); b.classList.add(correct?'right':'wrong'); if(!correct) opts.children[item.a].classList.add('right');
+          fb.className='fb show '+(correct?'ok':'no'); fb.textContent=item.fb; $('score').textContent=done+' / '+total+' respondidas'; });
+        opts.appendChild(b); });
+      card.appendChild(opts); card.appendChild(fb); box.appendChild(card);
+      item.draw=function(ctx,W,H){ if(item.kind==='out'){ var pv=state.patient; state.patient=item.pat; var r=drawOutcomeStatic(ctx,W||760,H||200,item.P,item.pat); state.patient=pv; return r; } return drawReceptors(ctx,W||760,H||200,item.P); };
+    });
+    $('score').textContent='0 / '+total+' respondidas'; renderTutorPlots();
+  }
+  function drawOutcomeStatic(ctx,W,H,d,patientKey){ var P=PATIENTS[patientKey]||PATIENTS.none;
+    try{ var sv=drug; // reuse drawOutcome logic with explicit drug/patient
+      // temporary: emulate by computing here
+      ctx.clearRect(0,0,W,H); ctx.fillStyle='#06070b'; ctx.fillRect(0,0,W,H);
+      var R=applyDrug(P,d), base=applyDrug(P,{}), ap=appropriate(P,d);
+      var rows=[ {label:'PAM',v:R.PAM,b:base.PAM,max:140,good:R.PAM>=65},{label:'CO',v:R.CO,b:base.CO,max:9,good:R.CO>=base.CO},
+        {label:'RVS',v:R.rvs,b:base.rvs,max:30,good:true},{label:'contratil.',v:R.inotropy*100,b:base.inotropy*100,max:100,good:true},{label:'O₂ bal',v:(R.o2balance+1)*50,b:(base.o2balance+1)*50,max:100,good:R.o2balance>-0.45} ];
+      var padL=110,padR=16,padT=10,padB=14,pw=W-padL-padR,n=rows.length,gap=6,rh=(H-padT-padB-gap*(n-1))/n;
+      rows.forEach(function(rw,i){ var y=padT+i*(rh+gap); ctx.fillStyle='#11151f'; ctx.fillRect(padL,y,pw,rh);
+        ctx.fillStyle=rw.good?'#3ec78d':'#ff5d6c'; ctx.globalAlpha=0.85; ctx.fillRect(padL,y,Math.max(2,clampv(rw.v/rw.max,0,1)*pw),rh); ctx.globalAlpha=1;
+        ctx.strokeStyle='#97a3ba'; var bx=padL+clampv(rw.b/rw.max,0,1)*pw; ctx.beginPath(); ctx.moveTo(bx,y); ctx.lineTo(bx,y+rh); ctx.stroke();
+        ctx.fillStyle='#97a3ba'; ctx.font='10px monospace'; ctx.textAlign='right'; ctx.fillText(rw.label,padL-8,y+rh/2+3); ctx.textAlign='left'; });
+      ctx.fillStyle=ap.ok?'#3ec78d':'#ff5d6c'; ctx.font='11px monospace'; ctx.fillText((ap.ok?'APTO':'INAPTO')+' · '+P.nome,padL,H-2);
+      return R;
+    }catch(e){ return {}; }
+  }
+  function renderTutorPlots(){ TUTOR.forEach(function(item,qi){ var cv=$('qcanvas-'+qi); if(!cv) return; var ctx; try{ctx=cv.getContext('2d');}catch(e){return;} if(!ctx) return; try{ item.draw(ctx,cv.width||760,cv.height||200); }catch(e){} }); }
+
+  // ---- FARMÁCIA · calculadora + referência (SAFETY.md §11) ----
+  var farm={ agent:'noradrenalina', weight:70, dosePct:0.2 };
+  function farmDose(){ var d=PH_DRUGS[farm.agent]; return d.doseMin + (d.doseMax-d.doseMin)*clampv(farm.dosePct,0,1); }
+  function renderFarmAgentes(){ var box=$('farm-agentes'); if(!box) return; box.innerHTML='';
+    Object.keys(PH_DRUGS).forEach(function(k){ var b=document.createElement('button'); b.className='preset'+(k===farm.agent?' on':''); b.type='button'; b.setAttribute('data-agent',k); b.textContent=PH_DRUGS[k].nome;
+      b.addEventListener('click',function(){ farm.agent=k; box.querySelectorAll('.preset').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); renderFarm(); }); box.appendChild(b); }); }
+  function renderFarm(){
+    var d=PH_DRUGS[farm.agent]; if(!d) return; var c=ph_conc(farm.agent), dose=farmDose(), rate=ph_rate(farm.agent,dose,farm.weight);
+    if($('vWeight')) $('vWeight').textContent=Math.round(farm.weight);
+    if($('vDose')) $('vDose').textContent=br(dose, d.doseMax<1?3:(d.doseMax<10?2:1));
+    if($('vDoseU')) $('vDoseU').textContent=d.unidade;
+    $('farm-out').innerHTML='<b>'+d.nome+'</b> ('+d.receptor+') · '+d.apresentacao+'<br>diluição de referência: <b>'+d.diluicao.massa+' '+d.diluicao.massaU+' / '+d.diluicao.volume+' mL '+d.solvente+'</b> = <b>'+br(c.value,2)+' '+c.unit+'</b><br>dose <b>'+br(dose,d.doseMax<1?3:2)+' '+d.unidade+'</b>'+(d.weightBased?(' · peso '+Math.round(farm.weight)+' kg (hipotético)'):' (dose fixa, sem peso)')+' → <b style="color:var(--accent)">'+br(rate,1)+' mL/h</b>';
+    $('farm-faixa').textContent='faixa usual de referência: '+br(d.doseMin,d.doseMax<1?3:2)+'–'+br(d.doseMax,d.doseMax<1?3:1)+' '+d.unidade+' · '+d.nota;
+    // titulação
+    var tt=ph_titration(farm.agent,farm.weight,6), html='<table style="width:100%;border-collapse:collapse;font-size:.82rem"><tr style="color:var(--ink-faint)"><td>dose ('+d.unidade+')</td><td>mL/h</td></tr>';
+    tt.forEach(function(p){ html+='<tr><td>'+br(p.dose,d.doseMax<1?3:2)+'</td><td><b>'+br(p.mLh,1)+'</b></td></tr>'; });
+    html+='</table>'; $('farm-titulacao').innerHTML=html;
+    // diluições (todas)
+    var dh='<table style="width:100%;border-collapse:collapse;font-size:.8rem"><tr style="color:var(--ink-faint)"><td>agente</td><td>receptor</td><td>diluição ref.</td><td>concentração</td><td>faixa usual</td></tr>';
+    Object.keys(PH_DRUGS).forEach(function(k){ var x=PH_DRUGS[k], cc=ph_conc(k); dh+='<tr'+(k===farm.agent?' style="color:var(--accent)"':'')+'><td>'+x.nome+'</td><td>'+x.receptor+'</td><td>'+x.diluicao.massa+' '+x.diluicao.massaU+'/'+x.diluicao.volume+'mL</td><td>'+br(cc.value,2)+' '+cc.unit+'</td><td>'+br(x.doseMin,x.doseMax<1?3:2)+'–'+br(x.doseMax,x.doseMax<1?3:1)+' '+x.unidade+'</td></tr>'; });
+    dh+='</table>'; $('farm-diluicoes').innerHTML=dh;
+    // combos
+    var cb=$('farm-combos'); if(cb){ cb.innerHTML=''; PH_COMBOS.forEach(function(co){ var div=document.createElement('div'); div.className='banner ven show'; div.innerHTML='<b>'+co.a+(co.b!=='—'?' + '+co.b:'')+'.</b> '+co.mecanismo; cb.appendChild(div); }); }
+    // interações
+    $('farm-interacoes').innerHTML='<ul style="margin:0;padding-left:18px">'+PH_INTERACOES.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>';
+    // usos
+    var us=$('farm-usos'); if(us){ us.innerHTML=''; PH_USOS.forEach(function(u){ var div=document.createElement('div'); div.className='banner '+(u.tipo==='iatrogênico'?'crit':'art')+' show'; div.innerHTML='<b>'+u.droga+' · '+u.tipo+'.</b> '+u.uso; us.appendChild(div); }); }
+    $('farm-iatro').innerHTML='<b style="color:var(--crit)">Efeitos iatrogênicos (mecanismo):</b><ul style="margin:6px 0 0;padding-left:18px">'+PH_IATRO.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>';
+  }
+
+  // ---- CASOS DINÂMICOS V/F (evolução por etapas · 100 assertivas) ----
+  var vf={ caso:0, ans:{} };   // ans['casoIdx-etapaIdx-asserIdx'] = booleano escolhido
+  function vfKey(ci,ei,ai){ return ci+'-'+ei+'-'+ai; }
+  function vfStageDone(ci,ei){ var c=CASES_VF[ci]; if(!c||!c.etapas[ei]) return false; for(var ai=0;ai<c.etapas[ei].asser.length;ai++){ if(!(vfKey(ci,ei,ai) in vf.ans)) return false; } return true; }
+  function vfScore(){ var tot=0,ans=0,cor=0; CASES_VF.forEach(function(c,ci){ c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; var k=vfKey(ci,ei,ai); if(k in vf.ans){ ans++; if(vf.ans[k]===a.v) cor++; } }); }); }); return {tot:tot,ans:ans,cor:cor}; }
+  function vfAnswer(ci,ei,ai,val){ var k=vfKey(ci,ei,ai); if(k in vf.ans) return; vf.ans[k]=val; renderVF(); }
+  function renderVFNav(){ var box=$('vf-navcasos'); if(!box) return; box.innerHTML='';
+    CASES_VF.forEach(function(c,ci){ var b=document.createElement('button'); b.className='preset'+(ci===vf.caso?' on':''); b.type='button'; var s=vfScore_case(ci); var curto=c.titulo.split(/ [—–→(]/)[0]; b.innerHTML=(ci+1)+'. '+curto+' <span style="opacity:.6">'+s.ans+'/'+s.tot+'</span>';
+      b.addEventListener('click',function(){ vf.caso=ci; renderVF(); }); box.appendChild(b); }); }
+  function vfScore_case(ci){ var c=CASES_VF[ci]; if(!c) return {tot:0,ans:0,cor:0}; var tot=0,ans=0,cor=0; c.etapas.forEach(function(e,ei){ e.asser.forEach(function(a,ai){ tot++; var k=vfKey(ci,ei,ai); if(k in vf.ans){ ans++; if(vf.ans[k]===a.v) cor++; } }); }); return {tot:tot,ans:ans,cor:cor}; }
+  function renderVF(){
+    renderVFNav();
+    var ci=vf.caso; if(!CASES_VF[ci]){ vf.caso=ci=0; } var c=CASES_VF[ci], box=$('vf-caso'); if(!c||!box) return;
+    var html='<div class="vfhead"><h3 style="margin:.2em 0">'+c.titulo+'</h3><div class="vfsub">'+c.sub+'</div><div class="vfopen">'+c.abertura+'</div></div>';
+    for(var ei=0;ei<c.etapas.length;ei++){
+      var revelar=(ei===0)||vfStageDone(ci,ei-1);
+      var et=c.etapas[ei];
+      if(!revelar){ html+='<div class="vfstage locked">▢ <b>Etapa '+(ei+1)+'</b> — responda a etapa anterior para revelar a evolução.</div>'; break; }
+      html+='<div class="vfstage"><div class="vffase"><span class="vfnum">'+(ei+1)+'</span> '+et.fase+'</div><div class="vfevol">'+et.evol+'</div>';
+      for(var ai=0;ai<et.asser.length;ai++){
+        var a=et.asser[ai], k=vfKey(ci,ei,ai), answered=(k in vf.ans), chosen=vf.ans[k], correct=answered&&(chosen===a.v);
+        html+='<div class="vfas'+(answered?(correct?' ok':' no'):'')+'">';
+        html+='<div class="vfq">'+a.t+'</div>';
+        if(!answered){
+          html+='<div class="vfbtns"><button class="vfb" data-c="'+ci+'" data-e="'+ei+'" data-a="'+ai+'" data-v="1">Verdadeiro</button><button class="vfb" data-c="'+ci+'" data-e="'+ei+'" data-a="'+ai+'" data-v="0">Falso</button></div>';
+        } else {
+          html+='<div class="vffb"><b>'+(correct?'✓ Correto':'✗ Incorreto')+'</b> · gabarito: <b>'+(a.v?'Verdadeiro':'Falso')+'</b> — '+a.r+'</div>';
+        }
+        html+='</div>';
+      }
+      var sd=vfStageDone(ci,ei);
+      html+='<div class="vfprog">'+(sd?'✓ etapa completa — evolução liberada':'responda as 5 assertivas desta etapa')+'</div></div>';
+    }
+    box.innerHTML=html;
+    box.querySelectorAll('.vfb').forEach(function(b){ b.addEventListener('click',function(){ vfAnswer(+b.getAttribute('data-c'),+b.getAttribute('data-e'),+b.getAttribute('data-a'),b.getAttribute('data-v')==='1'); }); });
+    var s=vfScore(); $('vf-score').textContent=s.ans+' / '+s.tot+' assertivas · '+s.cor+' corretas'+(s.ans?(' ('+Math.round(s.cor/s.ans*100)+'%)'):'');
+  }
+
+  function init(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click',function(){ activate(t.id); }); });
+    [['iA1','a1'],['iB1','b1'],['iB2','b2'],['iV1','v1'],['iPDE','pde']].forEach(function(p){ var el=$(p[0]); if(el) el.addEventListener('input',function(){ state[p[1]]=parseFloat(el.value)/100; document.querySelectorAll('#presets .preset').forEach(function(x){x.classList.remove('on');}); recompute(); }); });
+    document.querySelectorAll('.preset.pac').forEach(function(b){ b.addEventListener('click',function(){ setState({patient:b.getAttribute('data-patient')}); }); });
+    document.querySelectorAll('#presets .preset').forEach(function(b){ b.addEventListener('click',function(){ setAgent(b.getAttribute('data-preset')); }); });
+    var pbox=$('prever-opts'); if(pbox){ pbox.querySelectorAll('.opt').forEach(function(b){ b.addEventListener('click',function(){ predictAnswer(b.getAttribute('data-v')); }); }); }
+    var iw=$('iWeight'); if(iw) iw.addEventListener('input',function(){ farm.weight=parseFloat(iw.value); renderFarm(); });
+    var idd=$('iDose'); if(idd) idd.addEventListener('input',function(){ farm.dosePct=parseFloat(idd.value)/100; renderFarm(); });
+    renderFarmAgentes(); renderFarm(); renderVF();
+    TUTOR=buildTutor(); syncSliders(); syncPatients(); recompute(); renderTutor(); renderCaso();
+    window.recompute=recompute; window.drawReceptors=drawReceptors; window.drawOutcome=drawOutcome; window.activateTab=activate; window.setLabState=setState;
+    window.termsFn=terms; window.applyDrugFn=applyDrug; window.appropriateFn=appropriate; window.dominantTermFn=dominantTerm; window.AGENTSref=AGENTS; window.AGENT_NAMEref=AGENT_NAME;
+    window.predictAnswerFn=predictAnswer; window.CASO=CASO; window.setAgentFn=setAgent;
+    window.phConcFn=ph_conc; window.phRateFn=ph_rate; window.phDoseFn=ph_dose; window.phTitrationFn=ph_titration; window.PH_DRUGSref=PH_DRUGS;
+    window.CASES_VFref=CASES_VF; window.vfScoreFn=vfScore; window.vfAnswerFn=vfAnswer; window.renderVFfn=renderVF; window.vfStateRef=vf;
+    window.TUTOR=TUTOR; window.__state=state;
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+</body>
+</html>
