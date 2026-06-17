@@ -42,29 +42,32 @@ a.card:hover{border-color:var(--ven);transform:translateY(-1px)}
 .card.jewel .num::after{content:" ◆";color:var(--accent)}
 footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .count{font-family:var(--mono);font-size:.82rem;color:var(--ink-dim);margin-top:6px}
-.armnav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 2px}
-.armnav a{font-family:var(--mono);font-size:.82rem;letter-spacing:.04em;padding:6px 15px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s}
-.armnav a:hover:not(.soon){border-color:var(--ven);color:var(--ven);transform:translateY(-1px)}
-.armnav a.active{border-color:var(--ok);color:var(--ok);background:rgba(62,199,141,.10);font-weight:600}
-.armnav a.soon{opacity:.55;cursor:not-allowed}
-.armnav a.soon::after{content:" · em breve";color:var(--ink-faint);font-size:.72rem;font-weight:400}
+.hexnav{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0 4px}
+.hexnav a{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s;white-space:nowrap}
+.hexnav a:hover:not(.soon):not(.active){border-color:var(--ven);color:var(--ink);transform:translateY(-1px)}
+.hexnav a.active{border-color:#2bb6c4;color:#04121a;background:#39c6d6;font-weight:700}
+.hexnav a.soon{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="kicker">Hexápode de medicina crítica · braço 2</div>
   <h1>PERFUNDE · CHOCA</h1>
-  <!-- Navegação do braço 2. Choca = este índice. Para ativar o Perfunde quando tiver página,
-       adicione href="URL_DO_PERFUNDE" e remova class="soon" (e o aria-disabled). -->
-  <nav class="armnav" aria-label="Braço 2 · Perfunde e Choca">
-    <a class="soon" aria-disabled="true" title="Perfunde ainda não tem página publicada">Perfunde</a>
-    <a class="active" href="perfunde.html" aria-current="page">Choca</a>
-  </nav>
   <p class="sub">A segunda metade do transporte de oxigênio: como o O₂ chega à célula, vira ATP — e o que acontece quando a entrega falha.</p>
   <svg class="trace" viewBox="0 0 960 48" preserveAspectRatio="none" aria-hidden="true">
     <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,36 120,36 150,36 165,6 180,42 200,26 230,36 480,36 510,36 525,6 540,42 560,26 590,36 840,36 870,36 885,6 900,42 920,26 960,36"/>
   </svg>
   <div class="tese">Choque não é pressão arterial baixa. É falência da entrega de oxigênio (DO₂). A mesma <b>PAM = DC × RVS</b> emerge de mecânicas opostas — e cada tipo de choque é a quebra de <b>um termo</b> da cadeia do transporte.</div>
+  <!-- Navegação do hexápode (braços do projeto). CHOCA = este braço (ativo). Links absolutos para os
+       GitHub Pages dos braços publicados; os ainda sem página ficam "em breve" (sem link). -->
+  <nav class="hexnav" aria-label="Hexápode de medicina crítica">
+    <a href="https://drmcoelho.github.io/Respira/">Respira</a>
+    <a class="active" href="perfunde.html" aria-current="page">Choca</a>
+    <a href="https://drmcoelho.github.io/Filtra/">Filtra</a>
+    <a class="soon" aria-disabled="true" title="Em breve">Alimenta</a>
+    <a class="soon" aria-disabled="true" title="Em breve">Metaboliza</a>
+    <a class="soon" aria-disabled="true" title="Em breve">Consciência</a>
+  </nav>
   <div class="count" id="count"></div>
 
   <div class="bloco">
