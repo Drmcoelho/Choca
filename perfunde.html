@@ -47,6 +47,11 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
 .hexnav a:hover:not(.soon):not(.active){border-color:var(--ven);color:var(--ink);transform:translateY(-1px)}
 .hexnav a.active{border-color:#2bb6c4;color:#04121a;background:#39c6d6;font-weight:700}
 .hexnav a.soon{opacity:.45;cursor:not-allowed}
+.subnav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:8px 0 2px}
+.subnav .lbl{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.subnav button{font-family:var(--mono);font-size:.74rem;letter-spacing:.04em;padding:5px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);cursor:pointer;transition:.12s}
+.subnav button:hover{border-color:var(--ven);color:var(--ink)}
+.subnav button.active{border-color:var(--accent);color:#1a1606;background:var(--accent);font-weight:700}
 </style>
 </head>
 <body>
@@ -68,9 +73,16 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <a class="soon" aria-disabled="true" title="Em breve">Metaboliza</a>
     <a class="soon" aria-disabled="true" title="Em breve">Consciência</a>
   </nav>
+  <!-- Antebraço · as duas metades do braço 2. Filtra os módulos: Perfunde (transporte, M0–13) × Choca (choques, M14–30). -->
+  <nav class="subnav" aria-label="Metades do braço · Perfunde e Choca">
+    <span class="lbl">Metades</span>
+    <button type="button" data-half="tudo" class="active" aria-pressed="true">Tudo</button>
+    <button type="button" data-half="perfunde" aria-pressed="false">Perfunde</button>
+    <button type="button" data-half="choca" aria-pressed="false">Choca</button>
+  </nav>
   <div class="count" id="count"></div>
 
-  <div class="bloco">
+  <div class="bloco" data-half="perfunde">
     <h2>Bloco 0 · Fundamentos do transporte</h2>
     <div class="bd">a régua quantitativa — CaO₂, DO₂, Fick, extração</div>
     <div class="grid">
@@ -80,7 +92,7 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     </div>
   </div>
 
-  <div class="bloco">
+  <div class="bloco" data-half="perfunde">
     <h2>Bloco I · Os determinantes</h2>
     <div class="bd">engines-jóia (◆) — débito, pré-carga, Starling, pós-carga, supply-dependence</div>
     <div class="grid">
@@ -93,7 +105,7 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     </div>
   </div>
 
-  <div class="bloco">
+  <div class="bloco" data-half="perfunde">
     <h2>Bloco II · A inversão e a leitura</h2>
     <div class="bd">PAM = DC × RVS, monitorização, POCUS/acessos, microcirculação, lactato</div>
     <div class="grid">
@@ -105,7 +117,7 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     </div>
   </div>
 
-  <div class="bloco">
+  <div class="bloco" data-half="choca">
     <h2>Bloco III · Os choques</h2>
     <div class="bd">categoria + capstones de subtipo</div>
     <div class="grid">
@@ -121,7 +133,7 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     </div>
   </div>
 
-  <div class="bloco">
+  <div class="bloco" data-half="choca">
     <h2>Bloco IV · Integração &amp; resgate</h2>
     <div class="bd">choque misto, coração-pulmão, ressuscitação, críptico, radar, drogas, capstone</div>
     <div class="grid">
@@ -135,7 +147,7 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     </div>
   </div>
 
-  <div class="bloco">
+  <div class="bloco" data-half="choca">
     <h2>Bloco V · Avaliação global</h2>
     <div class="bd">revisão holística, 100 questões, dificuldade crescente, gabarito robusto</div>
     <div class="grid">
@@ -150,9 +162,26 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
 </div>
 <script>
 (function(){
-  var live=document.querySelectorAll('.card.live').length;
-  var total=document.querySelectorAll('.card').length;
-  var el=document.getElementById('count'); if(el) el.textContent=live+' de '+total+' módulos disponíveis · '+(total-live)+' em construção';
+  var blocos=[].slice.call(document.querySelectorAll('.bloco'));
+  var btns=[].slice.call(document.querySelectorAll('.subnav button'));
+  var countEl=document.getElementById('count');
+  function updateCount(){
+    var liveVis=0,totVis=0;
+    blocos.forEach(function(b){ if(b.style.display==='none') return;
+      totVis+=b.querySelectorAll('.card').length;
+      liveVis+=b.querySelectorAll('.card.live').length; });
+    if(countEl) countEl.textContent=liveVis+' de '+totVis+' módulos disponíveis · '+(totVis-liveVis)+' em construção';
+  }
+  function apply(half){
+    blocos.forEach(function(b){
+      var show=(half==='tudo')||(b.getAttribute('data-half')===half);
+      b.style.display=show?'':'none'; });
+    btns.forEach(function(x){ var on=x.getAttribute('data-half')===half;
+      x.classList.toggle('active',on); x.setAttribute('aria-pressed',on?'true':'false'); });
+    updateCount();
+  }
+  btns.forEach(function(x){ x.addEventListener('click',function(){ apply(x.getAttribute('data-half')); }); });
+  updateCount(); // estado inicial: "Tudo"
 })();
 </script>
 </body>
