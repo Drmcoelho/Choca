@@ -107,6 +107,32 @@ ok('motor de trilhas exposto (≥15)',window.TRAILS30 && window.TRAILS30.TRAILS.
   $('trail-clear').dispatchEvent(new window.Event('click',{bubbles:true}));
   ok('"exame completo" restaura os 225',doc.querySelectorAll('#exam .q').length===225);
 })();
+
+console.log('\n— TRILHAS EVOLUÍDAS (pessoais + por armadilha) —');
+window.activateTab('tab-trilhas'); window.renderTrilhasFn();
+ok('grupos incluem "Pessoais" e "Por armadilha"',/Pessoais/.test($('trail-list').textContent) && /armadilha/i.test($('trail-list').textContent));
+ok('≥30 trilhas no total (com armadilhas e dinâmicas)',window.TRAILS30.TRAILS.length>=30, window.TRAILS30.TRAILS.length);
+ok('trilha dinâmica sem dados aparece desabilitada (remediação)',doc.querySelectorAll('#trail-list .tcard.off').length>=1);
+(function(){ // trilha por armadilha filtra só aquele trap-código
+  var arm=[].slice.call(doc.querySelectorAll('#trail-list .tcard[data-id]')).filter(function(c){return c.getAttribute('data-id')==='armadilha-T02';})[0];
+  arm.dispatchEvent(new window.Event('click',{bubbles:true}));
+  var ord=window.currentOrderFn();
+  ok('"Armadilha · PAM ≠ perfusão" seleciona só itens com trap T02',ord.length>0 && ord.every(function(q){return q.trap==='T02';}));
+  ok('cabeçalho nomeia a armadilha',/Armadilha/.test(txt('trailhead')));
+})();
+(function(){ // dinâmica "o que falta": responde alguns e confere que some da contagem
+  window.answerFn(window.M30[0].id, (window.M30[0].a+1)%4, 'exam'); // marca 1
+  window.renderTrilhasFn();
+  var nao=window.TRAILS30.trailStats(window.M30,{answers:window.M30answers,weakAxes:[]}).filter(function(s){return s.id==='nao-respondidas';})[0];
+  ok('dinâmica "o que falta" reflete o que já foi respondido (<225)',nao.total<225 && nao.dyn===true, nao.total);
+})();
+(function(){ // ao trocar de trilha, as já respondidas mantêm o gabarito revelado e travado
+  var firstId=window.M30order[0].id; if(!(firstId in window.M30answers)) window.answerFn(firstId, (window.currentOrderFn()[0].a), 'exam');
+  window.setTrailFn('escada', 0);
+  var card=$('q-'+firstId);
+  ok('estado revelado preservado ao trocar de trilha',!!card && !!card.querySelector('.opt.right, .opt.wrong') && !!card.querySelector('.fb.show') && card.querySelector('.opt').disabled);
+  window.setTrailFn(null, 0);
+})();
 window.activateTab('tab-exame');
 
 console.log('\n— CROMO / SaMD —');
