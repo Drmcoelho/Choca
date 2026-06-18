@@ -3,69 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PERFUNDE · CHOCA — índice do braço</title>
-<meta name="description" content="PERFUNDE·CHOCA: transporte de oxigênio e falência circulatória. Braço 2 do hexápode de medicina crítica. Índice dos módulos.">
+<title>PERFUNDE — índice do antebraço</title>
+<meta name="description" content="PERFUNDE: transporte de oxigênio, CaO₂, DO₂, débito cardíaco, Guyton, Frank-Starling, microcirculação e lactato. Antebraço do braço Choca no Hexápode de medicina crítica.">
 <style>
-:root{
-  --bg:#0c0e13; --bg-elev:#141926; --bg-cell:#11151f;
-  --ink:#e9eef7; --ink-dim:#97a3ba; --ink-faint:#5e6c87;
-  --art:#e5394e; --art-deep:#9d1226; --ven:#3f82e6; --ven-deep:#1d4f9c;
-  --accent:#ffcf5c; --grid:#1c2436; --line:#26314a; --line-soft:#1a2233;
-  --ok:#3ec78d; --warn:#ffb454;
-  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
-  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  --r:14px; --r-sm:9px;
-}
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;font-size:16.5px}
-.wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}
-a{color:var(--ven);text-decoration:none}
-.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}
-h1{font-size:2.3rem;line-height:1.1;margin:.25em 0 .15em;letter-spacing:-.01em}
-.sub{color:var(--ink-dim);font-size:1.06rem;margin:0 0 6px;max-width:70ch}
-.tese{background:var(--bg-elev);border:1px solid var(--line);border-left:3px solid var(--art);border-radius:var(--r);padding:14px 18px;margin:20px 0;color:var(--ink-dim)}
-.tese b{color:var(--accent)}
-.trace{width:100%;height:48px;display:block;margin:14px 0 4px;opacity:.85}
-.bloco{margin:30px 0 8px}
-.bloco h2{font-size:1.05rem;font-family:var(--mono);letter-spacing:.04em;color:var(--art);margin:0 0 2px}
-.bloco .bd{color:var(--ink-faint);font-size:.86rem;font-family:var(--mono);margin-bottom:12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.card{display:block;background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:13px 15px;position:relative;transition:.12s}
-a.card:hover{border-color:var(--ven);transform:translateY(-1px)}
-.card .num{font-family:var(--mono);font-size:.72rem;color:var(--art);font-weight:700}
-.card .nm{font-weight:600;margin-top:3px;line-height:1.3}
-.card .st{font-family:var(--mono);font-size:.68rem;margin-top:8px;display:inline-block;padding:2px 7px;border-radius:6px}
-.card.live{border-left:3px solid var(--ok)}
-.card.live .st{color:var(--ok);background:rgba(62,199,141,.12)}
-.card.soon{opacity:.62;cursor:default}
-.card.soon .st{color:var(--ink-faint);background:#0e1320}
-.card.jewel .num::after{content:" ◆";color:var(--accent)}
-footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
-.count{font-family:var(--mono);font-size:.82rem;color:var(--ink-dim);margin-top:6px}
-.hexnav{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0 4px}
-.hexnav a,.hexnav span{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s;white-space:nowrap}
-.hexnav a:hover:not(.soon):not(.active){border-color:var(--ven);color:var(--ink);transform:translateY(-1px)}
-.hexnav .active{border-color:#2bb6c4;color:#04121a;background:#39c6d6;font-weight:700}
-.hexnav .soon{opacity:.45;cursor:not-allowed}
-.subnav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:8px 0 2px}
-.subnav .lbl{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
-.subnav button{font-family:var(--mono);font-size:.74rem;letter-spacing:.04em;padding:5px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);cursor:pointer;transition:.12s}
-.subnav button:hover{border-color:var(--ven);color:var(--ink)}
-.subnav button.active{border-color:var(--accent);color:#1a1606;background:var(--accent);font-weight:700}
-.direct-toggle{display:inline-flex;align-items:center;gap:7px;margin:10px 0 0;font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;color:var(--ink-faint);user-select:none}
-.direct-toggle input{accent-color:var(--accent)}
-@media(max-width:640px){.wrap{padding:24px 14px 64px}.hexnav a,.hexnav span,.subnav button{font-size:.68rem;padding:5px 10px}h1{font-size:2rem}}
+:root{--bg:#0c0e13;--bg-elev:#141926;--bg-cell:#11151f;--ink:#e9eef7;--ink-dim:#97a3ba;--ink-faint:#5e6c87;--art:#e5394e;--ven:#3f82e6;--accent:#ffcf5c;--line:#26314a;--line-soft:#1a2233;--ok:#3ec78d;--mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;--sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--r:14px;--r-sm:9px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#161c2b 0,var(--bg) 60%);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;font-size:16.5px}.wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}a{color:var(--ven);text-decoration:none}.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--art);font-weight:600}h1{font-size:2.3rem;line-height:1.1;margin:.25em 0 .15em;letter-spacing:-.01em}.sub{color:var(--ink-dim);font-size:1.06rem;margin:0 0 6px;max-width:70ch}.tese{background:var(--bg-elev);border:1px solid var(--line);border-left:3px solid var(--art);border-radius:var(--r);padding:14px 18px;margin:20px 0;color:var(--ink-dim)}.tese b{color:var(--accent)}.trace{width:100%;height:48px;display:block;margin:14px 0 4px;opacity:.85}.bloco{margin:30px 0 8px}.bloco h2{font-size:1.05rem;font-family:var(--mono);letter-spacing:.04em;color:var(--art);margin:0 0 2px}.bloco .bd{color:var(--ink-faint);font-size:.86rem;font-family:var(--mono);margin-bottom:12px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}.card{display:block;background:var(--bg-cell);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:13px 15px;position:relative;transition:.12s}a.card:hover{border-color:var(--ven);transform:translateY(-1px)}.card .num{font-family:var(--mono);font-size:.72rem;color:var(--art);font-weight:700}.card .nm{font-weight:600;margin-top:3px;line-height:1.3}.card .st{font-family:var(--mono);font-size:.68rem;margin-top:8px;display:inline-block;padding:2px 7px;border-radius:6px}.card.live{border-left:3px solid var(--ok)}.card.live .st{color:var(--ok);background:rgba(62,199,141,.12)}.card.jewel .num::after{content:" ◆";color:var(--accent)}footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}.count{font-family:var(--mono);font-size:.82rem;color:var(--ink-dim);margin-top:6px}.hexnav,.subnav{display:flex;gap:7px;flex-wrap:wrap}.hexnav{margin:18px 0 4px}.subnav{align-items:center;margin:8px 0 2px}.hexnav a,.hexnav span,.subnav a,.subnav span{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s;white-space:nowrap}.hexnav a:hover:not(.soon):not(.active),.subnav a:hover:not(.active){border-color:var(--ven);color:var(--ink);transform:translateY(-1px)}.hexnav .active{border-color:#2bb6c4;color:#04121a;background:#39c6d6;font-weight:700}.hexnav .soon{opacity:.45;cursor:not-allowed}.subnav .lbl{border:0;background:transparent;padding-left:0;color:var(--ink-faint)}.subnav .active{border-color:var(--accent);color:#1a1606;background:var(--accent);font-weight:700}.direct-toggle{display:inline-flex;align-items:center;gap:7px;margin:10px 0 0;font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;color:var(--ink-faint);user-select:none}.direct-toggle input{accent-color:var(--accent)}@media(max-width:640px){.wrap{padding:24px 14px 64px}.hexnav a,.hexnav span,.subnav a,.subnav span{font-size:.68rem;padding:5px 10px}h1{font-size:2rem}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="kicker">Hexápode de medicina crítica · braço 2</div>
-  <h1>PERFUNDE · CHOCA</h1>
-  <p class="sub">A segunda metade do transporte de oxigênio: como o O₂ chega à célula, vira ATP — e o que acontece quando a entrega falha.</p>
-  <svg class="trace" viewBox="0 0 960 48" preserveAspectRatio="none" aria-hidden="true">
-    <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,36 120,36 150,36 165,6 180,42 200,26 230,36 480,36 510,36 525,6 540,42 560,26 590,36 840,36 870,36 885,6 900,42 920,26 960,36"/>
-  </svg>
-  <div class="tese">Choque não é pressão arterial baixa. É falência da entrega de oxigênio (DO₂). A mesma <b>PAM = DC × RVS</b> emerge de mecânicas opostas — e cada tipo de choque é a quebra de <b>um termo</b> da cadeia do transporte.</div>
+  <div class="kicker">Hexápode de medicina crítica · braço 2 · antebraço A</div>
+  <h1>PERFUNDE</h1>
+  <p class="sub">A matemática da entrega: conteúdo arterial de O₂, débito cardíaco, extração, microcirculação e lactato antes de chamar tudo de choque.</p>
+  <svg class="trace" viewBox="0 0 960 48" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,36 120,36 150,36 165,6 180,42 200,26 230,36 480,36 510,36 525,6 540,42 560,26 590,36 840,36 870,36 885,6 900,42 920,26 960,36"/></svg>
+  <div class="tese">Antes do choque há a régua da perfusão: <b>DO₂ = DC × CaO₂</b>. Perfunde é o antebraço quantitativo; Choca é a falência clínica organizada por mecanismo.</div>
 
   <nav class="hexnav" aria-label="Hexápode de medicina crítica">
     <a href="https://drmcoelho.github.io/Respira/">Respira</a>
@@ -75,131 +26,39 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <span class="soon" aria-disabled="true" title="Em construção">Metaboliza</span>
     <span class="soon" aria-disabled="true" title="Em construção">Consciência</span>
   </nav>
-
   <label class="direct-toggle"><input type="checkbox" id="directArm"> entrar direto neste braço na próxima visita</label>
-
-  <nav class="subnav" aria-label="Metades do braço · Perfunde e Choca">
-    <span class="lbl">Metades</span>
-    <button type="button" data-half="tudo" class="active" aria-pressed="true">Tudo</button>
-    <button type="button" data-half="perfunde" aria-pressed="false">Perfunde</button>
-    <button type="button" data-half="choca" aria-pressed="false">Choca</button>
+  <nav class="subnav" aria-label="Antebraços de Choca">
+    <span class="lbl">Antebraços</span>
+    <span class="active" aria-current="page">Perfunde</span>
+    <a href="choca.html">Choca</a>
   </nav>
-  <div class="count" id="count"></div>
+  <div class="count">14 de 14 módulos disponíveis · 0 em construção</div>
 
-  <div class="bloco" data-half="perfunde">
-    <h2>Bloco 0 · Fundamentos do transporte</h2>
-    <div class="bd">a régua quantitativa — CaO₂, DO₂, Fick, extração</div>
-    <div class="grid">
-      <a class="card live jewel" href="perfunde0.html"><div class="num">Módulo 0</div><div class="nm">Matemática do transporte</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde1.html"><div class="num">Módulo 1</div><div class="nm">Conteúdo de O₂ (CaO₂)</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde2.html"><div class="num">Módulo 2</div><div class="nm">A curva como entrega</div><div class="st">disponível</div></a>
-    </div>
-  </div>
+  <div class="bloco"><h2>Bloco 0 · Fundamentos do transporte</h2><div class="bd">a régua quantitativa — CaO₂, DO₂, Fick, extração</div><div class="grid">
+    <a class="card live jewel" href="perfunde0.html"><div class="num">Módulo 0</div><div class="nm">Matemática do transporte</div><div class="st">disponível</div></a>
+    <a class="card live" href="perfunde1.html"><div class="num">Módulo 1</div><div class="nm">Conteúdo de O₂ (CaO₂)</div><div class="st">disponível</div></a>
+    <a class="card live" href="perfunde2.html"><div class="num">Módulo 2</div><div class="nm">A curva como entrega</div><div class="st">disponível</div></a>
+  </div></div>
 
-  <div class="bloco" data-half="perfunde">
-    <h2>Bloco I · Os determinantes</h2>
-    <div class="bd">engines-jóia (◆) — débito, pré-carga, Starling, pós-carga, supply-dependence</div>
-    <div class="grid">
-      <a class="card live jewel" href="perfunde3.html"><div class="num">Módulo 3</div><div class="nm">Débito cardíaco</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde4.html"><div class="num">Módulo 4</div><div class="nm">Interseção de Guyton</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde5.html"><div class="num">Módulo 5</div><div class="nm">Guyton aplicado · responsivo ≠ tolerante</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde6.html"><div class="num">Módulo 6</div><div class="nm">Frank-Starling</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde7.html"><div class="num">Módulo 7</div><div class="nm">Pós-carga &amp; a alça PV</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde8.html"><div class="num">Módulo 8</div><div class="nm">DO₂/VO₂ &amp; supply-dependence</div><div class="st">disponível</div></a>
-    </div>
-  </div>
+  <div class="bloco"><h2>Bloco I · Os determinantes</h2><div class="bd">débito, pré-carga, Starling, pós-carga, supply-dependence</div><div class="grid">
+    <a class="card live jewel" href="perfunde3.html"><div class="num">Módulo 3</div><div class="nm">Débito cardíaco</div><div class="st">disponível</div></a>
+    <a class="card live jewel" href="perfunde4.html"><div class="num">Módulo 4</div><div class="nm">Interseção de Guyton</div><div class="st">disponível</div></a>
+    <a class="card live jewel" href="perfunde5.html"><div class="num">Módulo 5</div><div class="nm">Guyton aplicado · responsivo ≠ tolerante</div><div class="st">disponível</div></a>
+    <a class="card live jewel" href="perfunde6.html"><div class="num">Módulo 6</div><div class="nm">Frank-Starling</div><div class="st">disponível</div></a>
+    <a class="card live jewel" href="perfunde7.html"><div class="num">Módulo 7</div><div class="nm">Pós-carga &amp; a alça PV</div><div class="st">disponível</div></a>
+    <a class="card live jewel" href="perfunde8.html"><div class="num">Módulo 8</div><div class="nm">DO₂/VO₂ &amp; supply-dependence</div><div class="st">disponível</div></a>
+  </div></div>
 
-  <div class="bloco" data-half="perfunde">
-    <h2>Bloco II · A inversão e a leitura</h2>
-    <div class="bd">PAM = DC × RVS, monitorização, POCUS/acessos, microcirculação, lactato</div>
-    <div class="grid">
-      <a class="card live jewel" href="perfunde9.html"><div class="num">Módulo 9</div><div class="nm">PAM = DC × RVS · a inversão</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde10.html"><div class="num">Módulo 10</div><div class="nm">Monitorização hemodinâmica</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde11.html"><div class="num">Módulo 11</div><div class="nm">POCUS &amp; acessos vasculares</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde12.html"><div class="num">Módulo 12</div><div class="nm">A microcirculação</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde13.html"><div class="num">Módulo 13</div><div class="nm">Lactato &amp; depuração</div><div class="st">disponível</div></a>
-    </div>
-  </div>
+  <div class="bloco"><h2>Bloco II · A inversão e a leitura</h2><div class="bd">PAM = DC × RVS, monitorização, POCUS/acessos, microcirculação, lactato</div><div class="grid">
+    <a class="card live jewel" href="perfunde9.html"><div class="num">Módulo 9</div><div class="nm">PAM = DC × RVS · a inversão</div><div class="st">disponível</div></a>
+    <a class="card live" href="perfunde10.html"><div class="num">Módulo 10</div><div class="nm">Monitorização hemodinâmica</div><div class="st">disponível</div></a>
+    <a class="card live" href="perfunde11.html"><div class="num">Módulo 11</div><div class="nm">POCUS &amp; acessos vasculares</div><div class="st">disponível</div></a>
+    <a class="card live" href="perfunde12.html"><div class="num">Módulo 12</div><div class="nm">A microcirculação</div><div class="st">disponível</div></a>
+    <a class="card live" href="perfunde13.html"><div class="num">Módulo 13</div><div class="nm">Lactato &amp; depuração</div><div class="st">disponível</div></a>
+  </div></div>
 
-  <div class="bloco" data-half="choca">
-    <h2>Bloco III · Os choques</h2>
-    <div class="bd">categoria + capstones de subtipo</div>
-    <div class="grid">
-      <a class="card live" href="perfunde14.html"><div class="num">Módulo 14</div><div class="nm">Hipovolêmico</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde15.html"><div class="num">Módulo 15</div><div class="nm">↳ hemorrágico × não-hemorrágico</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde16.html"><div class="num">Módulo 16</div><div class="nm">Cardiogênico</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde17.html"><div class="num">Módulo 17</div><div class="nm">↳ o ventrículo direito</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde18.html"><div class="num">Módulo 18</div><div class="nm">Obstrutivo</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde19.html"><div class="num">Módulo 19</div><div class="nm">↳ tamponamento · TEP · pneumotórax</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde20.html"><div class="num">Módulo 20</div><div class="nm">Distributivo</div><div class="st">disponível</div></a>
-      <a class="card live" href="perfunde21.html"><div class="num">Módulo 21</div><div class="nm">↳ séptico</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde22.html"><div class="num">Módulo 22</div><div class="nm">↳ anafilático × neurogênico</div><div class="st">disponível</div></a>
-    </div>
-  </div>
-
-  <div class="bloco" data-half="choca">
-    <h2>Bloco IV · Integração &amp; resgate</h2>
-    <div class="bd">choque misto, coração-pulmão, ressuscitação, críptico, radar, drogas, capstone</div>
-    <div class="grid">
-      <a class="card live jewel" href="perfunde23.html"><div class="num">Módulo 23</div><div class="nm">Choque misto</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde24.html"><div class="num">Módulo 24</div><div class="nm">O coração-pulmão</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde25.html"><div class="num">Módulo 25</div><div class="nm">Ressuscitação volêmica</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde26.html"><div class="num">Módulo 26</div><div class="nm">Choque críptico/compensado</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde27.html"><div class="num">Módulo 27</div><div class="nm">Os 4 perfis · o radar</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde28.html"><div class="num">Módulo 28</div><div class="nm">Vasopressores &amp; inotrópicos</div><div class="st">disponível</div></a>
-      <a class="card live jewel" href="perfunde29.html"><div class="num">Módulo 29</div><div class="nm">Capstone · caso integrado</div><div class="st">disponível</div></a>
-    </div>
-  </div>
-
-  <div class="bloco" data-half="choca">
-    <h2>Bloco V · Avaliação global</h2>
-    <div class="bd">revisão holística, 100 questões, dificuldade crescente, gabarito robusto</div>
-    <div class="grid">
-      <a class="card live jewel" href="perfunde30.html"><div class="num">Módulo 30</div><div class="nm">Revisão global · exame de domínio</div><div class="st">disponível</div></a>
-    </div>
-  </div>
-
-  <footer>
-    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
-    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica
-  </footer>
+  <footer>CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>PERFUNDE — antebraço quantitativo do braço CHOCA</footer>
 </div>
-<script>
-(function(){
-  var blocos=[].slice.call(document.querySelectorAll('.bloco'));
-  var btns=[].slice.call(document.querySelectorAll('.subnav button'));
-  var countEl=document.getElementById('count');
-  var direct=document.getElementById('directArm');
-  var directKey='hexapode.direct.choca';
-
-  function halfFromHash(){
-    var h=(location.hash||'').replace('#','').toLowerCase();
-    return /^(perfunde|choca|tudo)$/.test(h)?h:'tudo';
-  }
-  function updateCount(){
-    var liveVis=0,totVis=0;
-    blocos.forEach(function(b){ if(b.style.display==='none') return;
-      totVis+=b.querySelectorAll('.card').length;
-      liveVis+=b.querySelectorAll('.card.live').length; });
-    if(countEl) countEl.textContent=liveVis+' de '+totVis+' módulos disponíveis · '+(totVis-liveVis)+' em construção';
-  }
-  function apply(half,writeHash){
-    blocos.forEach(function(b){
-      var show=(half==='tudo')||(b.getAttribute('data-half')===half);
-      b.style.display=show?'':'none'; });
-    btns.forEach(function(x){ var on=x.getAttribute('data-half')===half;
-      x.classList.toggle('active',on); x.setAttribute('aria-pressed',on?'true':'false'); });
-    if(writeHash){ history.replaceState(null,'', half==='tudo' ? location.pathname : '#'+half); }
-    updateCount();
-  }
-  btns.forEach(function(x){ x.addEventListener('click',function(){ apply(x.getAttribute('data-half'),true); }); });
-  window.addEventListener('hashchange',function(){ apply(halfFromHash(),false); });
-  if(direct){
-    direct.checked=localStorage.getItem(directKey)==='1';
-    direct.addEventListener('change',function(){ localStorage.setItem(directKey,direct.checked?'1':'0'); });
-  }
-  apply(halfFromHash(),false);
-})();
-</script>
+<script>(function(){var direct=document.getElementById('directArm');var key='hexapode.direct.choca';if(direct){direct.checked=localStorage.getItem(key)==='1';direct.addEventListener('change',function(){localStorage.setItem(key,direct.checked?'1':'0')})}})();</script>
 </body>
 </html>
