@@ -14,7 +14,7 @@ A pressão arterial é um número resultante. A fisiologia mora nos termos que p
 
 ## Estado atual
 
-O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde30.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js` e portão automatizado via `npm run check`.
+O repositório contém o índice `perfunde.html`, módulos `perfunde0.html` a `perfunde30.html`, engines puros em `build/mN/modelN.js`, testes Node em `build/mN/testN.node.js`, validadores jsdom em `build/mN/validateN.js`, um núcleo fisiológico compartilhado em `source/core/` (fórmulas canônicas + teste de conformância contra os engines), o guardião transversal em `build/qa/qa.js` e portão automatizado via `npm run check`.
 
 Estado curricular atual:
 
@@ -68,6 +68,7 @@ A regra é binária: **0 falhas ou não entra**.
 - `DOCUMENTATION_STATUS.md` — estado documental reconciliado.
 - `curriculum.json` — manifesto curricular legível por máquina.
 - `M30_ASSESSMENT_SPEC.md` — especificação do exame global (publicado com 225 itens: 150 do braço + 75 inter-braços).
+- `source/core/README.md` — núcleo fisiológico compartilhado (fonte modular das fórmulas) e seu teste de conformância contra os engines.
 
 ---
 
