@@ -43,15 +43,18 @@ a.card:hover{border-color:var(--ven);transform:translateY(-1px)}
 footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .count{font-family:var(--mono);font-size:.82rem;color:var(--ink-dim);margin-top:6px}
 .hexnav{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0 4px}
-.hexnav a{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s;white-space:nowrap}
+.hexnav a,.hexnav span{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);transition:.12s;white-space:nowrap}
 .hexnav a:hover:not(.soon):not(.active){border-color:var(--ven);color:var(--ink);transform:translateY(-1px)}
-.hexnav a.active{border-color:#2bb6c4;color:#04121a;background:#39c6d6;font-weight:700}
-.hexnav a.soon{opacity:.45;cursor:not-allowed}
+.hexnav .active{border-color:#2bb6c4;color:#04121a;background:#39c6d6;font-weight:700}
+.hexnav .soon{opacity:.45;cursor:not-allowed}
 .subnav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:8px 0 2px}
 .subnav .lbl{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
 .subnav button{font-family:var(--mono);font-size:.74rem;letter-spacing:.04em;padding:5px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);background:var(--bg-cell);cursor:pointer;transition:.12s}
 .subnav button:hover{border-color:var(--ven);color:var(--ink)}
 .subnav button.active{border-color:var(--accent);color:#1a1606;background:var(--accent);font-weight:700}
+.direct-toggle{display:inline-flex;align-items:center;gap:7px;margin:10px 0 0;font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;color:var(--ink-faint);user-select:none}
+.direct-toggle input{accent-color:var(--accent)}
+@media(max-width:640px){.wrap{padding:24px 14px 64px}.hexnav a,.hexnav span,.subnav button{font-size:.68rem;padding:5px 10px}h1{font-size:2rem}}
 </style>
 </head>
 <body>
@@ -63,17 +66,18 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <polyline fill="none" stroke="var(--art)" stroke-width="2" points="0,36 120,36 150,36 165,6 180,42 200,26 230,36 480,36 510,36 525,6 540,42 560,26 590,36 840,36 870,36 885,6 900,42 920,26 960,36"/>
   </svg>
   <div class="tese">Choque não é pressão arterial baixa. É falência da entrega de oxigênio (DO₂). A mesma <b>PAM = DC × RVS</b> emerge de mecânicas opostas — e cada tipo de choque é a quebra de <b>um termo</b> da cadeia do transporte.</div>
-  <!-- Navegação do hexápode (braços do projeto). CHOCA = este braço (ativo). Links absolutos para os
-       GitHub Pages dos braços publicados; os ainda sem página ficam "em breve" (sem link). -->
+
   <nav class="hexnav" aria-label="Hexápode de medicina crítica">
     <a href="https://drmcoelho.github.io/Respira/">Respira</a>
-    <a class="active" href="perfunde.html" aria-current="page">Choca</a>
-    <a href="https://drmcoelho.github.io/Filtra/">Filtra</a>
-    <a class="soon" aria-disabled="true" title="Em breve">Alimenta</a>
-    <a class="soon" aria-disabled="true" title="Em breve">Metaboliza</a>
-    <a class="soon" aria-disabled="true" title="Em breve">Consciência</a>
+    <span class="active" aria-current="page">Choca</span>
+    <a href="https://drmcoelho.github.io/Filtra/filtra.html">Filtra</a>
+    <span class="soon" aria-disabled="true" title="Em construção">Alimenta</span>
+    <span class="soon" aria-disabled="true" title="Em construção">Metaboliza</span>
+    <span class="soon" aria-disabled="true" title="Em construção">Consciência</span>
   </nav>
-  <!-- Antebraço · as duas metades do braço 2. Filtra os módulos: Perfunde (transporte, M0–13) × Choca (choques, M14–30). -->
+
+  <label class="direct-toggle"><input type="checkbox" id="directArm"> entrar direto neste braço na próxima visita</label>
+
   <nav class="subnav" aria-label="Metades do braço · Perfunde e Choca">
     <span class="lbl">Metades</span>
     <button type="button" data-half="tudo" class="active" aria-pressed="true">Tudo</button>
@@ -165,6 +169,13 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
   var blocos=[].slice.call(document.querySelectorAll('.bloco'));
   var btns=[].slice.call(document.querySelectorAll('.subnav button'));
   var countEl=document.getElementById('count');
+  var direct=document.getElementById('directArm');
+  var directKey='hexapode.direct.choca';
+
+  function halfFromHash(){
+    var h=(location.hash||'').replace('#','').toLowerCase();
+    return /^(perfunde|choca|tudo)$/.test(h)?h:'tudo';
+  }
   function updateCount(){
     var liveVis=0,totVis=0;
     blocos.forEach(function(b){ if(b.style.display==='none') return;
@@ -172,16 +183,22 @@ footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-fa
       liveVis+=b.querySelectorAll('.card.live').length; });
     if(countEl) countEl.textContent=liveVis+' de '+totVis+' módulos disponíveis · '+(totVis-liveVis)+' em construção';
   }
-  function apply(half){
+  function apply(half,writeHash){
     blocos.forEach(function(b){
       var show=(half==='tudo')||(b.getAttribute('data-half')===half);
       b.style.display=show?'':'none'; });
     btns.forEach(function(x){ var on=x.getAttribute('data-half')===half;
       x.classList.toggle('active',on); x.setAttribute('aria-pressed',on?'true':'false'); });
+    if(writeHash){ history.replaceState(null,'', half==='tudo' ? location.pathname : '#'+half); }
     updateCount();
   }
-  btns.forEach(function(x){ x.addEventListener('click',function(){ apply(x.getAttribute('data-half')); }); });
-  updateCount(); // estado inicial: "Tudo"
+  btns.forEach(function(x){ x.addEventListener('click',function(){ apply(x.getAttribute('data-half'),true); }); });
+  window.addEventListener('hashchange',function(){ apply(halfFromHash(),false); });
+  if(direct){
+    direct.checked=localStorage.getItem(directKey)==='1';
+    direct.addEventListener('change',function(){ localStorage.setItem(directKey,direct.checked?'1':'0'); });
+  }
+  apply(halfFromHash(),false);
 })();
 </script>
 </body>
