@@ -9,11 +9,17 @@
 const ox = require('./oxygen.js');
 const hemo = require('./hemodynamics.js');
 const guards = require('./guards.js');
+const guyton = require('./guyton.js');
+const ventricle = require('./ventricle.js');
+const microcirc = require('./microcirculation.js');
 const m0 = require('../../build/m0/model0.js');
 const m1 = require('../../build/m1/model1.js');
 const m3 = require('../../build/m3/model3.js');
+const m4 = require('../../build/m4/model4.js');
+const m7 = require('../../build/m7/model7.js');
 const m8 = require('../../build/m8/model8.js');
 const m9 = require('../../build/m9/model9.js');
+const m12 = require('../../build/m12/model12.js');
 
 let oks=0, falhas=0; const fails=[];
 const ok=(n,c)=>{ if(c){oks++;} else {falhas++; if(fails.length<14) fails.push(n);} };
@@ -111,6 +117,73 @@ ok('conformância O₂ER supply-dep: núcleo === m8.o2er', dO2ersup===0);
 ok('conformância SvO₂: núcleo === m8.svo2', dSvo2===0);
 ok('conformância déficit de O₂: núcleo === m8.o2deficit', dDef===0);
 ok('conformância lactato: núcleo === m8.lactate', dLact===0);
+
+// ---------- (2b) conformância Guyton · núcleo × m4 ----------
+(function(){
+  // âncoras
+  ok('âncora Guyton: VR zera quando Pra ≥ Pmsf', eq(guyton.venousReturn(8,7,1.2), 0));
+  ok('âncora Guyton: CO=0 abaixo de pra0', eq(guyton.cardiacOutput(-3,5), 0));
+  let dVR=0, dCO=0, dInt=0;
+  const PMSF=[6,7,9], RVR=[1.0,1.2,1.5], COMAX=[4,6,8], PRA=[-6,-2,0,3,6];
+  PMSF.forEach(Pmsf=>RVR.forEach(Rvr=>PRA.forEach(pra=>{
+    if(!eq(guyton.venousReturn(pra,Pmsf,Rvr), m4.venousReturn(pra,Pmsf,Rvr))) dVR++;
+  })));
+  COMAX.forEach(COmax=>PRA.forEach(pra=>{ if(!eq(guyton.cardiacOutput(pra,COmax), m4.cardiacOutput(pra,COmax))) dCO++; }));
+  PMSF.forEach(Pmsf=>RVR.forEach(Rvr=>COMAX.forEach(COmax=>{
+    const P={Pmsf:Pmsf,Rvr:Rvr,COmax:COmax};
+    const a=guyton.intersecao(P), b=m4.intersecao(P);
+    if(!eq(a.pra,b.pra) || !eq(a.co,b.co)) dInt++;
+  })));
+  ok('conformância retorno venoso: núcleo === m4.venousReturn', dVR===0);
+  ok('conformância função cardíaca: núcleo === m4.cardiacOutput', dCO===0);
+  ok('conformância interseção (bisseção): núcleo === m4.intersecao', dInt===0);
+})();
+
+// ---------- (2c) conformância ventrículo (Sunagawa) · núcleo × m7 ----------
+(function(){
+  ok('âncora ventrículo: EF ≈ 1/(1+Ea/Ees)', eq(ventricle.ef(120,2.5,2.5), ventricle.strokeVolume(120,2.5,2.5)/120));
+  let dVes=0,dSV=0,dPes=0,dEF=0,dCpl=0,dPed=0,dSW=0,dPE=0,dEff=0;
+  const EDV=[90,120,150,180], EES=[1.2,2.5,4], EA=[1,2,3.5];
+  EDV.forEach(edv=>EES.forEach(Ees=>EA.forEach(Ea=>{
+    if(!eq(ventricle.ves(edv,Ees,Ea), m7.ves(edv,Ees,Ea))) dVes++;
+    if(!eq(ventricle.strokeVolume(edv,Ees,Ea), m7.strokeVolume(edv,Ees,Ea))) dSV++;
+    if(!eq(ventricle.pes(edv,Ees,Ea), m7.pes(edv,Ees,Ea))) dPes++;
+    if(!eq(ventricle.ef(edv,Ees,Ea), m7.ef(edv,Ees,Ea))) dEF++;
+    if(!eq(ventricle.coupling(Ees,Ea), m7.coupling(Ees,Ea))) dCpl++;
+    if(!eq(ventricle.ped(edv), m7.ped(edv))) dPed++;
+    if(!eq(ventricle.strokeWork(edv,Ees,Ea), m7.strokeWork(edv,Ees,Ea))) dSW++;
+    if(!eq(ventricle.potentialEnergy(edv,Ees,Ea), m7.potentialEnergy(edv,Ees,Ea))) dPE++;
+    if(!eq(ventricle.efficiency(edv,Ees,Ea), m7.efficiency(edv,Ees,Ea))) dEff++;
+  })));
+  ok('conformância Ves: núcleo === m7', dVes===0);
+  ok('conformância SV: núcleo === m7', dSV===0);
+  ok('conformância Pes: núcleo === m7', dPes===0);
+  ok('conformância EF (acoplamento): núcleo === m7', dEF===0);
+  ok('conformância coupling Ea/Ees: núcleo === m7', dCpl===0);
+  ok('conformância EDPVR (Ped): núcleo === m7', dPed===0);
+  ok('conformância trabalho/energia/eficiência: núcleo === m7', dSW===0 && dPE===0 && dEff===0);
+})();
+
+// ---------- (2d) conformância microcirculação · núcleo × m12 ----------
+(function(){
+  ok('âncora micro: extração máxima E0 com gly=1 het=0', eq(microcirc.effExtraction(1,0), microcirc.E0));
+  let dE=0,dMicro=0,dVer=0,dPar=0;
+  const GLY=[0.4,0.7,1.0], HET=[0,0.4,0.8], FS=[0,0.3,0.6], DO2=[600,900,1200], DEM=[200,300];
+  GLY.forEach(gly=>HET.forEach(het=>{
+    if(!eq(microcirc.effExtraction(gly,het), m12.effExtraction(gly,het))) dE++;
+    FS.forEach(fs=>DO2.forEach(DO2v=>DEM.forEach(demand=>{
+      const p={DO2:DO2v, fs:fs, gly:gly, het:het, demand:demand};
+      const a=microcirc.micro(p), b=m12.micro(p);
+      ['E','nutritive','ceiling','VO2','deficit','O2ER','ScvO2','lactate'].forEach(k=>{ if(!eq(a[k],b[k])) dMicro++; });
+      if(microcirc.vereditoMicro(a)!==m12.vereditoMicro(b)) dVer++;
+      if(microcirc.isParadoxo(a)!==m12.isParadoxo(b)) dPar++;
+    })));
+  }));
+  ok('conformância extração efetiva: núcleo === m12.effExtraction', dE===0);
+  ok('conformância micro (todos os campos): núcleo === m12.micro', dMicro===0);
+  ok('conformância veredito micro: núcleo === m12', dVer===0);
+  ok('conformância paradoxo: núcleo === m12.isParadoxo', dPar===0);
+})();
 
 // ---------- (3) colisão de nome documentada ----------
 (function(){

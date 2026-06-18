@@ -11,15 +11,18 @@ ROADMAP Fase 4. Prata do par "guardião (ouro) + núcleo (prata)".
 | Arquivo | Conteúdo |
 |---|---|
 | `units.js` | Fatores de unidade: `DL_PER_L` (×10 dL→L), `DYNE_FACTOR` (×80), `asFrac` (normaliza % ↔ fração). |
-| `oxygen.js` | Cadeia do O₂: `caO2`, `ca`, `do2`, `vo2Fick`, `o2er`/`o2erConteudos`, curva bifásica (`do2crit`, `vo2Supply`, `o2erSupply`, `svo2`, `o2deficit`, `lactate`). |
+| `oxygen.js` | Cadeia do O₂: `caO2`, `ca`, `do2`, `vo2Fick`, `o2er`/`o2erConteudos`, curva bifásica (`do2crit`, `vo2Supply`, `o2erSupply`, `svo2`, `o2deficit`, `lactate` macro). |
 | `hemodynamics.js` | Macro-hemodinâmica: `co`, `pamCuff`, `rvsDyn`, `rvsWoodFromPressures`, `woodFromDyn`/`dynFromWood`, `pamFromDyn`/`pamFromWood`, `rvsForPam`. |
+| `guyton.js` | Interseção de Guyton [m4]: `venousReturn`, `cardiacOutput`, `intersecao` (bisseção reproduzida byte-a-byte). |
+| `ventricle.js` | Alça PV / Sunagawa [m7]: `ves`, `strokeVolume`, `pes`, `ef`, `coupling`, `ped` (EDPVR), `loopCorners`, `strokeWork`, `potentialEnergy`, `efficiency`. |
+| `microcirculation.js` | Micro [m12]: `effExtraction`, `micro` (shunt·glicocálice·heterogeneidade), `vereditoMicro`, `isParadoxo`. Lactato tecidual (`K_LAC=0,02`) — sub-modelo distinto do lactato macro de `oxygen.js` (`LACT_K=0,03`); por isso as constantes vivem separadas. |
 | `guards.js` | Guardas numéricas (`clamp`, `clamp01`, `isFiniteNum`, `requirePositive`) + fronteira SaMD (`IMPERATIVE_RE`, `hasImperativeOrder`). |
-| `test-core.node.js` | Auto-teste por âncoras **+ conformância** núcleo × engines. Roda no `npm run test:core` (e dentro de `npm test`). |
+| `test-core.node.js` | Auto-teste por âncoras **+ conformância** núcleo × engines (m0/m1/m3/m4/m7/m8/m9/m12). Roda no `npm run test:core` (e dentro de `npm test`). |
 
 ## Por que é *load-bearing*
 
 `test-core.node.js` não testa só o núcleo: recomputa cada fórmula compartilhada
-**pelo núcleo e pelos engines** (`m0`, `m1`, `m3`, `m8`, `m9`) sobre uma bateria
+**pelo núcleo e pelos engines** (`m0`, `m1`, `m3`, `m4`, `m7`, `m8`, `m9`, `m12`) sobre uma bateria
 determinística e exige **igualdade numérica**. Se um engine divergir do núcleo numa
 fórmula compartilhada, o CI acusa — o critério de pronto da **Fase 3** ("as mesmas
 fórmulas não aparecem com semântica divergente entre módulos").

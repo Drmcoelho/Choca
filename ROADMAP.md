@@ -218,23 +218,23 @@ as mesmas fórmulas não aparecem com semântica divergente entre M9, M20 e M21
 
 Criar fonte modular sem abandonar HTML final autossuficiente.
 
-Primeiro núcleo (entregue · `source/core/`):
+Núcleos entregues (`source/core/`):
 
 ```text
-source/core/units.js          fatores de unidade (×10 dL→L, ×80 dyne, asFrac)
-source/core/oxygen.js         CaO₂, DO₂, VO₂, O₂ER, SvO₂, DO₂crítico, lactato
-source/core/hemodynamics.js   PAM=DC×RVS e inversas; CO=FC×VS; colisão rvsWood desambiguada
-source/core/guards.js         clamp/finitude/positividade + fronteira SaMD (regex IMPERATIVE_RE)
-source/core/test-core.node.js auto-teste + CONFORMÂNCIA núcleo × engines (test:core)
+source/core/units.js            fatores de unidade (×10 dL→L, ×80 dyne, asFrac)
+source/core/oxygen.js           CaO₂, DO₂, VO₂, O₂ER, SvO₂, DO₂crítico, lactato (macro)
+source/core/hemodynamics.js     PAM=DC×RVS e inversas; CO=FC×VS; colisão rvsWood desambiguada
+source/core/guyton.js           retorno venoso × função cardíaca; interseção (bisseção) [m4]
+source/core/ventricle.js        Sunagawa: Ves/SV/Pes/EF/coupling, EDPVR, trabalho/eficiência [m7]
+source/core/microcirculation.js shunt·glicocálice·heterogeneidade; paradoxo; lactato tecidual [m12]
+source/core/guards.js           clamp/finitude/positividade + fronteira SaMD (regex IMPERATIVE_RE)
+source/core/test-core.node.js   auto-teste + CONFORMÂNCIA núcleo × engines (test:core)
 ```
 
 Núcleos seguintes (planejados):
 
 ```text
-source/core/guyton.js
-source/core/ventricle.js
-source/core/microcirculation.js
-source/core/shock.js
+source/core/shock.js            séptico 3-compartimentos [m21] + choque misto/atribuição [m23]
 ```
 
 Regra:
