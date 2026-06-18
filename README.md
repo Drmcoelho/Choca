@@ -49,7 +49,7 @@ npm run validate  # HTML + UI + jsdom + bancos de questões
 npm run qa        # guardião transversal: audita TODOS os módulos de uma vez
 ```
 
-O guardião (`build/qa/qa.js`) é o portão de coerência do braço inteiro: confere inventário × `curriculum.json`, índice sem órfãos, links intra-braço, cromo de série (rodapé/backlink/disclaimer), firewall SaMD transversal, fiação do `package.json`, arquivos de build por módulo e coerência de contagens/ranges na documentação.
+O guardião (`build/qa/qa.js`) é o portão de coerência do braço inteiro: confere inventário × `curriculum.json`, índice sem órfãos, links intra-braço, cromo de série (rodapé/backlink/disclaimer), firewall SaMD transversal, fiação do `package.json`, arquivos de build por módulo, presença/fiação do núcleo `source/core`, acessibilidade básica (lang/charset/viewport/título), andaime de UI (abas/painéis ARIA pareados), tutor socrático nos módulos de conteúdo, psicometria do banco do M30 (letras 15–35%, correta≠mais-longa) e coerência de contagens/ranges na documentação.
 
 A regra é binária: **0 falhas ou não entra**.
 
