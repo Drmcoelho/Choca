@@ -227,15 +227,16 @@ source/core/hemodynamics.js     PAM=DC×RVS e inversas; CO=FC×VS; colisão rvsW
 source/core/guyton.js           retorno venoso × função cardíaca; interseção (bisseção) [m4]
 source/core/ventricle.js        Sunagawa: Ves/SV/Pes/EF/coupling, EDPVR, trabalho/eficiência [m7]
 source/core/microcirculation.js shunt·glicocálice·heterogeneidade; paradoxo; lactato tecidual [m12]
+source/core/shock.js            séptico 3-compartimentos [m21] + choque misto/atribuição [m23]
 source/core/guards.js           clamp/finitude/positividade + fronteira SaMD (regex IMPERATIVE_RE)
 source/core/test-core.node.js   auto-teste + CONFORMÂNCIA núcleo × engines (test:core)
 ```
 
-Núcleos seguintes (planejados):
-
-```text
-source/core/shock.js            séptico 3-compartimentos [m21] + choque misto/atribuição [m23]
-```
+Primeira passada do núcleo **completa**: cadeia do O₂, macro-hemodinâmica, Guyton,
+ventrículo (Sunagawa), microcirculação e choque (séptico + misto) — toda travada por
+conformância (69 OK). Evolução futura: extrair a aritmética inline dos HTML para
+consumir o núcleo no build (sem quebrar o single-file) e cobrir os engines restantes
+(m5/m6/m16/m24/m25/m29) à medida que compartilharem fórmulas.
 
 Regra:
 

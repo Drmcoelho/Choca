@@ -12,6 +12,7 @@ const guards = require('./guards.js');
 const guyton = require('./guyton.js');
 const ventricle = require('./ventricle.js');
 const microcirc = require('./microcirculation.js');
+const shock = require('./shock.js');
 const m0 = require('../../build/m0/model0.js');
 const m1 = require('../../build/m1/model1.js');
 const m3 = require('../../build/m3/model3.js');
@@ -20,6 +21,8 @@ const m7 = require('../../build/m7/model7.js');
 const m8 = require('../../build/m8/model8.js');
 const m9 = require('../../build/m9/model9.js');
 const m12 = require('../../build/m12/model12.js');
+const m21 = require('../../build/m21/model21.js');
+const m23 = require('../../build/m23/model23.js');
 
 let oks=0, falhas=0; const fails=[];
 const ok=(n,c)=>{ if(c){oks++;} else {falhas++; if(fails.length<14) fails.push(n);} };
@@ -183,6 +186,74 @@ ok('conformância lactato: núcleo === m8.lactate', dLact===0);
   ok('conformância micro (todos os campos): núcleo === m12.micro', dMicro===0);
   ok('conformância veredito micro: núcleo === m12', dVer===0);
   ok('conformância paradoxo: núcleo === m12.isParadoxo', dPar===0);
+})();
+
+// ---------- (2e) conformância choque séptico (3 compartimentos) · núcleo × m21 ----------
+(function(){
+  const S=shock.septic;
+  ok('âncora séptico: paradoxo SvO₂ alta + déficit', S.paradoxo({co:6,hb:13,shunt:0.6,glyco:0.4,mito:0.5,demand:300}));
+  let dMacro=0,dAvail=0,dUse=0,dVo2=0,dDef=0,dLac=0,dO2er=0,dSvo2=0,dPar=0,dMap=0,dInt=0;
+  const CO=[3,5,7], HB=[9,13,16], SHUNT=[0.1,0.5,0.8], GLY=[0.3,0.7,1], MITO=[0.3,0.6,1], DEM=[250,320];
+  CO.forEach(co=>HB.forEach(hb=>SHUNT.forEach(shunt=>GLY.forEach(glyco=>MITO.forEach(mito=>DEM.forEach(demand=>{
+    const P={co:co,hb:hb,shunt:shunt,glyco:glyco,mito:mito,demand:demand,rvsWood:9};
+    if(!eq(S.macroDO2(co,hb), m21.macroDO2(co,hb))) dMacro++;
+    if(!eq(S.tissueAvailable(P), m21.tissueAvailable(P))) dAvail++;
+    if(!eq(S.usable(P), m21.usable(P))) dUse++;
+    if(!eq(S.vo2Actual(P), m21.vo2Actual(P))) dVo2++;
+    if(!eq(S.deficit(P), m21.deficit(P))) dDef++;
+    if(!eq(S.lactate(P), m21.lactate(P))) dLac++;
+    if(!eq(S.o2er(P), m21.o2er(P))) dO2er++;
+    if(!eq(S.svo2(P), m21.svo2(P))) dSvo2++;
+    if(S.paradoxo(P)!==m21.paradoxo(P)) dPar++;
+    if(!eq(S.map(co,9,5), m21.map(co,9,5))) dMap++;
+    // intervenções (mecanismo): o estado resultante reproduz o do engine
+    const a=S.applyPressor(P), b=m21.applyPressor(P); if(!eq(a.rvsWood,b.rvsWood)) dInt++;
+    const a2=S.applyMicro(P), b2=m21.applyMicro(P); if(!eq(a2.shunt,b2.shunt)||!eq(a2.glyco,b2.glyco)) dInt++;
+    const a3=S.applyMito(P), b3=m21.applyMito(P); if(!eq(a3.mito,b3.mito)) dInt++;
+  }))))));
+  ok('conformância séptico DO₂/disponível/utilizável: núcleo === m21', dMacro===0 && dAvail===0 && dUse===0);
+  ok('conformância séptico VO₂/déficit/lactato: núcleo === m21', dVo2===0 && dDef===0 && dLac===0);
+  ok('conformância séptico O₂ER/SvO₂/paradoxo/MAP: núcleo === m21', dO2er===0 && dSvo2===0 && dPar===0 && dMap===0);
+  ok('conformância séptico intervenções (pressor/micro/mito): núcleo === m21', dInt===0);
+})();
+
+// ---------- (2f) conformância choque misto (composição) · núcleo × m23 ----------
+(function(){
+  const C=shock.composite;
+  ok('âncora misto: composição quebra mais de um termo', C.activeTerms({hypo:0.5,septic:0.4}).length===2);
+  let dFields=0,dAttr=0,dDom=0,dActive=0,dMask=0,dInt=0;
+  const SEV=[0,0.3,0.7], EIXOS=['hypo','cardio','obstr','distr','septic','hypox'], states=[];
+  // vetores de severidade variando dois eixos por vez (bateria determinística e enxuta)
+  EIXOS.forEach((k1,i)=>{
+    EIXOS.slice(i+1).forEach(k2=>{
+      SEV.forEach(v1=>{
+        SEV.forEach(v2=>{
+          const p={}; p[k1]=v1; p[k2]=v2;
+          states.push(p);
+          states.push(Object.assign({comp:0.3}, p));
+          states.push(Object.assign({pressor:0.5}, p));
+        });
+      });
+    });
+  });
+  const FIELDS=['preloadF','contract','SaO2','CaO2','rvsOpen','rvs','SV','HR','DC','PAM','DO2','extrCap','available','VO2','deficit','lactate','congestion','threat'];
+  states.forEach(p=>{
+    const a=C.mixed(p), b=m23.mixed(p);
+    FIELDS.forEach(f=>{ if(!eq(a[f],b[f])) dFields++; });
+    const aa=C.attribution(p), ba=m23.attribution(p);
+    C.TERMS.forEach(k=>{ if(!eq(aa[k],ba[k])) dAttr++; });
+    if(C.dominantTerm(p)!==m23.dominantTerm(p)) dDom++;
+    if(C.activeTerms(p).join(',')!==m23.activeTerms(p).join(',')) dActive++;
+    if(C.masking(a)!==m23.masking(b)) dMask++;
+    const av=C.applyVolume(p), bv=m23.applyVolume(p); if(!eq(av.hypo||0,bv.hypo||0)) dInt++;
+    const ap=C.applyPressor(p), bp=m23.applyPressor(p); if(!eq(ap.pressor||0,bp.pressor||0)) dInt++;
+    const ai=C.applyInotrope(p), bi=m23.applyInotrope(p); if(!eq(ai.cardio||0,bi.cardio||0)) dInt++;
+  });
+  ok('conformância misto mixed() (18 campos): núcleo === m23', dFields===0);
+  ok('conformância misto atribuição marginal: núcleo === m23', dAttr===0);
+  ok('conformância misto termo dominante / ativos: núcleo === m23', dDom===0 && dActive===0);
+  ok('conformância misto mascaramento: núcleo === m23', dMask===0);
+  ok('conformância misto alavancas (volume/pressor/inotrópico): núcleo === m23', dInt===0);
 })();
 
 // ---------- (3) colisão de nome documentada ----------
