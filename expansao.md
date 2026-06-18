@@ -1,8 +1,13 @@
 # expansao.md — O atlas farmacológico do Choque · PERFUNDE · CHOCA
 
-**Status:** proposta em maturação (planejamento · pré-construção).
+**Status:** **aprovado · em construção** (decisões fechadas em 2026-06-18).
 **Origem:** consolidação da expansão do M28 em hub farmacológico + abas Surviving no M21.
 **Fronteira:** tudo aqui obedece ao `SAFETY.md §11` (referência farmacológica educacional) e ao `PERFUNDA.md` (engine antes de UI; física viva; single-file).
+
+**Decisões fechadas:**
+- **Identidade:** submódulos como **sub-IDs `28A…28H`** aninhados no hub M28 (`published_range` segue `[0,30]`; não renumera o braço).
+- **Execução:** construir **a expansão inteira**, em fases verdes (PR-0…PR-7), começando pela fundação (o motor).
+- **28C (1ª passada):** **só vasopressina**. Angiotensina II e azul de metileno/hidroxocobalamina ficam como **stubs planejados** (rotulados excepcional-resgate), não entram agora.
 
 ---
 
@@ -102,8 +107,8 @@ Cada submódulo segue o contrato (`MODULE_CONTRACT.md`): caso/abertura, trilha s
 **Armadilha-chave:** fenilefrina (α1 puro) sobe pós-carga e pode afundar a bomba fraca; dopamina = mais arritmia.
 
 ### 28C — Vasopressores não catecolaminérgicos
-**Drogas:** vasopressina (V1), terlipressina (onde fizer sentido), angiotensina II (2ª linha conceitual), azul de metileno / hidroxocobalamina (resgate de vasoplegia refratária).
-**Enquadramento de papel obrigatório:** rotular cada um como **rotina / UTI sofisticada / excepcional-resgate** (ver §10). Vasopressina = adjuvante poupador de catecolamina; azul de metileno = excepcional.
+**1ª passada (fechada): só vasopressina (V1)** — adjuvante poupador de catecolamina, dose fixa (não por peso).
+**Stubs planejados (excepcional-resgate, não entram agora):** terlipressina, angiotensina II (2ª linha conceitual), azul de metileno / hidroxocobalamina (vasoplegia refratária). Quando entrarem, com enquadramento de papel obrigatório (§10).
 
 ### 28D — Inotrópicos
 **Drogas:** dobutamina, milrinona, levosimendana, adrenalina (dose inotrópica), dopamina (histórica/evitável).
@@ -188,7 +193,7 @@ Casos            — quente/vasoplégico, frio/baixo débito, idoso cardiopata, 
 Cada fase é um PR com portão verde (`npm run check`), respeitando o rito de build.
 
 ```text
-PR-0  este expansao.md + source/core/pharmacodynamics.js (motor + conformância × pharm28)   [fundação]
+PR-0  [ENTREGUE] expansao.md + source/core/pharmacodynamics.js (motor + conformância × pharm28)
 PR-1  perfunde28.html vira HUB + 28A (gramática) — estabelece o padrão do submódulo
 PR-2  28D (inotrópicos) + 28E (dobutamina, a joia integradora)
 PR-3  28B + 28C (vasopressores catecolaminérgicos e não-catecolaminérgicos)

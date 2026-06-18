@@ -13,6 +13,7 @@ const guyton = require('./guyton.js');
 const ventricle = require('./ventricle.js');
 const microcirc = require('./microcirculation.js');
 const shock = require('./shock.js');
+const pd = require('./pharmacodynamics.js');
 const m0 = require('../../build/m0/model0.js');
 const m1 = require('../../build/m1/model1.js');
 const m3 = require('../../build/m3/model3.js');
@@ -23,6 +24,7 @@ const m9 = require('../../build/m9/model9.js');
 const m12 = require('../../build/m12/model12.js');
 const m21 = require('../../build/m21/model21.js');
 const m23 = require('../../build/m23/model23.js');
+const pharm28 = require('../../build/m28/pharm28.js');
 
 let oks=0, falhas=0; const fails=[];
 const ok=(n,c)=>{ if(c){oks++;} else {falhas++; if(fails.length<14) fails.push(n);} };
@@ -254,6 +256,48 @@ ok('conformância lactato: núcleo === m8.lactate', dLact===0);
   ok('conformância misto termo dominante / ativos: núcleo === m23', dDom===0 && dActive===0);
   ok('conformância misto mascaramento: núcleo === m23', dMask===0);
   ok('conformância misto alavancas (volume/pressor/inotrópico): núcleo === m23', dInt===0);
+})();
+
+// ---------- (2g) farmacodinâmica · física do efeito (anchors) + conformância × pharm28 ----------
+(function(){
+  // sinais do efeito = a fisiologia (receptor → termo). Dose máxima da faixa para amplificar.
+  const eff=(k)=>pd.effect(k, pd.RX[k].ranges[1]);
+  const nora=eff('noradrenalina'), feni=eff('fenilefrina'), dobu=eff('dobutamina'),
+        milr=eff('milrinona'), vaso=eff('vasopressina'), adre=eff('adrenalina'), dopa=eff('dopamina');
+  ok('PD anchor: noradrenalina sobe RVS, mexe pouco na FC', nora.RVS>0 && nora.FC < nora.RVS);
+  ok('PD anchor: fenilefrina (α1 puro) → RVS↑ e FC↓ (reflexo)', feni.RVS>0 && feni.FC<0 && Math.abs(feni.contr)<1e-9);
+  ok('PD anchor: dobutamina → contratilidade↑, FC↑, RVS↓ (β2)', dobu.contr>0 && dobu.FC>0 && dobu.RVS<0);
+  ok('PD anchor: milrinona (PDE-3) → contratilidade↑ e RVS↓ e PVR↓', milr.contr>0 && milr.RVS<0 && milr.PVR<0);
+  ok('PD anchor: vasopressina (V1) → RVS↑ sem contratilidade nem FC', vaso.RVS>0 && Math.abs(vaso.contr)<1e-9 && Math.abs(vaso.FC)<1e-9);
+  ok('PD anchor: adrenalina move 4 termos (RVS,contr,FC,lactato B)', adre.RVS>0 && adre.contr>0 && adre.FC>0 && adre.lacB>0);
+  ok('PD anchor: dopamina em dose alta vira α1 (RVS↑)', dopa.RVS>0);
+  // sem dose → sem efeito
+  const zero=pd.effect('noradrenalina', pd.RX.noradrenalina.ranges[0]);
+  ok('PD anchor: na dose mínima o efeito é ~nulo (escala com a dose)', pd.TERMS.every(t=>Math.abs(zero[t])<1e-9));
+
+  // A LIÇÃO DO 28E (dobutamina), computada e à prova de coeficiente: comparadas na MESMA
+  // fração de dose, a noradrenalina ganha PRESSÃO (RVS) e a dobutamina ganha FLUXO (DC).
+  // E somar noradrenalina ("chão vascular") à dobutamina recupera a PAM.
+  const doseAt=(k,f)=>pd.RX[k].ranges[0] + f*(pd.RX[k].ranges[1]-pd.RX[k].ranges[0]);
+  const baseVaso={ dc:5.0, rvs:600, pvc:5 };
+  const pNora = pd.profile(pd.compose([{drug:'noradrenalina', dose:doseAt('noradrenalina',0.5)}]), baseVaso);
+  const pDobu = pd.profile(pd.compose([{drug:'dobutamina',    dose:doseAt('dobutamina',0.5)}]), baseVaso);
+  const pBoth = pd.profile(pd.compose([{drug:'dobutamina', dose:doseAt('dobutamina',0.5)},{drug:'noradrenalina', dose:doseAt('noradrenalina',0.5)}]), baseVaso);
+  ok('PD 28E: noradrenalina ganha PRESSÃO — PAM(nora) > PAM(dobu) à mesma fração', pNora.PAM > pDobu.PAM);
+  ok('PD 28E: dobutamina ganha FLUXO — DC(dobu) > DC(nora) à mesma fração', pDobu.DC > pNora.DC);
+  ok('PD 28E: somar noradrenalina à dobutamina recupera a PAM (chão vascular)', pBoth.PAM > pDobu.PAM);
+  ok('PD 28E: a PAM resultante é computada pela equação m9', eq(pBoth.PAM, m9.pam(pBoth.DC, pBoth.RVS, 5)));
+
+  // CONFORMÂNCIA × pharm28 (M28 publicado): as drogas do motor são um subconjunto das
+  // drogas publicadas, com a MESMA faixa de dose de referência (sem drift do §11).
+  let dFaixa=0, faltam=[];
+  Object.keys(pd.RX).forEach(k=>{ const D=pharm28.DRUGS[k];
+    if(!D){ faltam.push(k); return; }
+    if(!eq(pd.RX[k].ranges[0], D.doseMin) || !eq(pd.RX[k].ranges[1], D.doseMax)) dFaixa++;
+    if(pd.RX[k].weightBased!==!!D.weightBased) dFaixa++;
+  });
+  ok('conformância PD × pharm28: toda droga do motor existe no M28 publicado', faltam.length===0, faltam.join(',')||'todas');
+  ok('conformância PD × pharm28: faixas de dose e weightBased batem', dFaixa===0);
 })();
 
 // ---------- (3) colisão de nome documentada ----------

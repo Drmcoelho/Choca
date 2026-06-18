@@ -17,13 +17,14 @@ ROADMAP Fase 4. Prata do par "guardião (ouro) + núcleo (prata)".
 | `ventricle.js` | Alça PV / Sunagawa [m7]: `ves`, `strokeVolume`, `pes`, `ef`, `coupling`, `ped` (EDPVR), `loopCorners`, `strokeWork`, `potentialEnergy`, `efficiency`. |
 | `microcirculation.js` | Micro [m12]: `effExtraction`, `micro` (shunt·glicocálice·heterogeneidade), `vereditoMicro`, `isParadoxo`. Lactato tecidual (`K_LAC=0,02`) — sub-modelo distinto do lactato macro de `oxygen.js` (`LACT_K=0,03`); por isso as constantes vivem separadas. |
 | `shock.js` | Choque, em dois namespaces: `septic` [m21] (cascata convectivo→difusivo→utilização, paradoxo, intervenções) e `composite` [m23] (`mixed`, `attribution`, `dominantTerm`, `activeTerms`, `masking`, alavancas). Separados porque colidem: `septic.applyPressor` sobe a RVS, `composite.applyPressor` soma tônus exógeno — mesmo nome, semântica divergente. |
+| `pharmacodynamics.js` | Motor do atlas farmacológico (`expansao.md`): receptor → termo da equação. `effect(droga,dose)` (vetor sobre RVS/contr/FC/lacB/postLV/PVR), `compose(combo)` (soma dos vetores), `profile(net,base)` (PAM via m9). Conforma com `pharm28` (M28) nas faixas de dose. |
 | `guards.js` | Guardas numéricas (`clamp`, `clamp01`, `isFiniteNum`, `requirePositive`) + fronteira SaMD (`IMPERATIVE_RE`, `hasImperativeOrder`). |
 | `test-core.node.js` | Auto-teste por âncoras **+ conformância** núcleo × engines (m0/m1/m3/m4/m7/m8/m9/m12/m21/m23). Roda no `npm run test:core` (e dentro de `npm test`). |
 
 ## Por que é *load-bearing*
 
 `test-core.node.js` não testa só o núcleo: recomputa cada fórmula compartilhada
-**pelo núcleo e pelos engines** (`m0`, `m1`, `m3`, `m4`, `m7`, `m8`, `m9`, `m12`, `m21`, `m23`) sobre uma bateria
+**pelo núcleo e pelos engines** (`m0`, `m1`, `m3`, `m4`, `m7`, `m8`, `m9`, `m12`, `m21`, `m23`, `m28`) sobre uma bateria
 determinística e exige **igualdade numérica**. Se um engine divergir do núcleo numa
 fórmula compartilhada, o CI acusa — o critério de pronto da **Fase 3** ("as mesmas
 fórmulas não aparecem com semântica divergente entre módulos").

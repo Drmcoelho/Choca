@@ -80,7 +80,7 @@ ok('todo módulo tem build/mN/testN.node.js', IDS.every(i=>exists('build/m'+i+'/
 ok('todo módulo tem build/mN/validateN.js', IDS.every(i=>exists('build/m'+i+'/validate'+i+'.js')), IDS.filter(i=>!exists('build/m'+i+'/validate'+i+'.js')).map(i=>'M'+i).join(',')||'todos');
 
 console.log('\n— NÚCLEO FISIOLÓGICO COMPARTILHADO (source/core) —');
-(function(){ const coreFiles=['units.js','oxygen.js','hemodynamics.js','guyton.js','ventricle.js','microcirculation.js','shock.js','guards.js','test-core.node.js'];
+(function(){ const coreFiles=['units.js','oxygen.js','hemodynamics.js','guyton.js','ventricle.js','microcirculation.js','shock.js','pharmacodynamics.js','guards.js','test-core.node.js'];
   ok('source/core tem os arquivos do primeiro núcleo', coreFiles.every(f=>exists('source/core/'+f)), coreFiles.filter(f=>!exists('source/core/'+f)).join(',')||'todos');
   ok('test:core existe e está na cadeia agregada "test"', !!sc['test:core'] && ((sc.test||'').indexOf('run test:core ')>=0 || (sc.test||'').endsWith('run test:core')));
   ok('test:core aponta para source/core/test-core.node.js existente', (function(){ const m=(sc['test:core']||'').match(/source\/core\/\S+\.js/); return !!m && exists(m[0]); })());
