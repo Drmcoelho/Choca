@@ -3,10 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CHOCA</title>
-<meta http-equiv="refresh" content="0; url=choca.html">
-<link rel="canonical" href="choca.html">
-<style>body{background:#0c0e13;color:#97a3ba;font-family:system-ui,sans-serif;display:grid;place-items:center;height:100vh;margin:0}a{color:#3f82e6}</style>
+<title>CHOCA · PERFUNDE — hub do braço</title>
+<meta name="description" content="Hub do braço Choca no Hexápode de medicina crítica: escolha entre Perfunde, a régua quantitativa da entrega de oxigênio, e Choca, a falência circulatória por mecanismo.">
+<style>
+:root{--bg:#0c0e13;--panel:#141926;--cell:#11151f;--line:#26314a;--soft:#97a3ba;--faint:#5e6c87;--ink:#e9eef7;--red:#e5394e;--cyan:#39c6d6;--gold:#ffcf5c;--blue:#3f82e6;--mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;--sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(1100px 600px at 72% -12%,#182033 0,var(--bg) 62%);color:var(--ink);font-family:var(--sans);line-height:1.55}.wrap{max-width:980px;margin:0 auto;padding:40px 20px 80px}.kicker{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:700}h1{font-size:clamp(2.4rem,7vw,4.1rem);line-height:1;margin:.18em 0 .16em}.sub{color:var(--soft);font-size:1.08rem;max-width:72ch}.trace{width:100%;height:48px;margin:18px 0 4px;opacity:.85}.tese{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:14px;padding:15px 18px;margin:20px 0;color:var(--soft)}.tese b{color:var(--gold)}a{color:var(--blue);text-decoration:none}.hexnav{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0 4px}.hexnav a,.hexnav span{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line);color:var(--soft);background:var(--cell);transition:.12s;white-space:nowrap}.hexnav a:hover{border-color:var(--blue);color:var(--ink);transform:translateY(-1px)}.hexnav .active{border-color:var(--cyan);color:#04121a;background:var(--cyan);font-weight:800}.hexnav .soon{opacity:.45;cursor:not-allowed}.direct-toggle{display:inline-flex;align-items:center;gap:7px;margin:10px 0 24px;font-family:var(--mono);font-size:.7rem;color:var(--faint);user-select:none}.direct-toggle input{accent-color:var(--gold)}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}.choice{display:block;background:var(--cell);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:0 20px 60px -42px #000;transition:.14s}.choice:hover{border-color:var(--blue);transform:translateY(-2px)}.label{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:800}.choice h2{margin:.25em 0 .15em;font-size:1.6rem}.choice p{margin:0;color:var(--soft)}.meta{margin-top:13px;font-family:var(--mono);font-size:.78rem;color:var(--gold)}footer{margin-top:48px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--faint);text-align:center}@media(max-width:680px){.wrap{padding:30px 14px 64px}.choices{grid-template-columns:1fr}.hexnav a,.hexnav span{font-size:.68rem;padding:5px 10px}}
+</style>
 </head>
-<body><p>Redirecionando para <a href="choca.html">CHOCA</a>…</p></body>
+<body>
+<div class="wrap">
+  <div class="kicker">Hexápode de medicina crítica · braço 2</div>
+  <h1>PERFUNDE · CHOCA</h1>
+  <p class="sub">O braço circulatório em duas metades: primeiro a régua quantitativa da entrega de oxigênio; depois a falência circulatória organizada por mecanismo.</p>
+  <svg class="trace" viewBox="0 0 960 48" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="var(--red)" stroke-width="2" points="0,36 120,36 150,36 165,6 180,42 200,26 230,36 480,36 510,36 525,6 540,42 560,26 590,36 840,36 870,36 885,6 900,42 920,26 960,36"/></svg>
+  <div class="tese"><b>Perfunde</b> mede a entrega. <b>Choca</b> interpreta a falência. A ponte entre os dois é DO₂, extração, microcirculação, lactato e mecanismo hemodinâmico.</div>
+  <nav class="hexnav" aria-label="Hexápode de medicina crítica">
+    <a href="https://drmcoelho.github.io/Respira/">Respira</a>
+    <span class="active" aria-current="page">Choca</span>
+    <a href="https://drmcoelho.github.io/Filtra/">Filtra</a>
+    <span class="soon" aria-disabled="true" title="Em construção">Alimenta</span>
+    <span class="soon" aria-disabled="true" title="Em construção">Metaboliza</span>
+    <span class="soon" aria-disabled="true" title="Em construção">Consciência</span>
+  </nav>
+  <label class="direct-toggle"><input type="checkbox" id="directArm"> entrar direto neste braço na próxima visita</label>
+  <section class="choices" aria-label="Escolher antebraço">
+    <a class="choice" href="perfunde.html" data-arm="perfunde"><div class="label">Antebraço A</div><h2>Perfunde</h2><p>CaO₂, DO₂, débito cardíaco, Guyton, Starling, microcirculação e lactato.</p><div class="meta">14 módulos · M0–M13</div></a>
+    <a class="choice" href="choca.html" data-arm="choca"><div class="label">Antebraço B</div><h2>Choca</h2><p>Choque hipovolêmico, cardiogênico, obstrutivo, distributivo, misto, críptico e ressuscitação.</p><div class="meta">17 módulos · M14–M30</div></a>
+  </section>
+  <footer>CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira</footer>
+</div>
+<script>(function(){var d=document.getElementById('directArm');var k='hexapode.direct.choca';var last='hexapode.last.choca';if(localStorage.getItem(k)==='1'&&!new URLSearchParams(location.search).has('hub')){location.replace(localStorage.getItem(last)||'choca.html');return}if(d){d.checked=localStorage.getItem(k)==='1';d.addEventListener('change',function(){localStorage.setItem(k,d.checked?'1':'0')})}document.querySelectorAll('[data-arm]').forEach(function(a){a.addEventListener('click',function(){localStorage.setItem(last,a.getAttribute('href'))})})})();</script>
+</body>
 </html>
