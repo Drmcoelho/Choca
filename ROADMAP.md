@@ -214,26 +214,27 @@ as mesmas fórmulas não aparecem com semântica divergente entre M9, M20 e M21
 
 ## 5. Fase 4 — Core fisiológico compartilhado
 
-**Status:** planejada.
+**Status:** primeiro núcleo entregue.
 
 Criar fonte modular sem abandonar HTML final autossuficiente.
 
-Primeiro núcleo recomendado:
+Primeiro núcleo (entregue · `source/core/`):
 
 ```text
-source/core/oxygen.js
-source/core/hemodynamics.js
+source/core/units.js          fatores de unidade (×10 dL→L, ×80 dyne, asFrac)
+source/core/oxygen.js         CaO₂, DO₂, VO₂, O₂ER, SvO₂, DO₂crítico, lactato
+source/core/hemodynamics.js   PAM=DC×RVS e inversas; CO=FC×VS; colisão rvsWood desambiguada
+source/core/guards.js         clamp/finitude/positividade + fronteira SaMD (regex IMPERATIVE_RE)
+source/core/test-core.node.js auto-teste + CONFORMÂNCIA núcleo × engines (test:core)
 ```
 
-Depois:
+Núcleos seguintes (planejados):
 
 ```text
 source/core/guyton.js
 source/core/ventricle.js
 source/core/microcirculation.js
 source/core/shock.js
-source/core/units.js
-source/core/guards.js
 ```
 
 Regra:
@@ -242,25 +243,43 @@ Regra:
 fonte modular pode existir; saída publicada continua single-file
 ```
 
+O que torna o núcleo *load-bearing* (não código paralelo morto): `test:core` recomputa
+cada fórmula compartilhada pelo núcleo E pelos engines `build/mN/modelN.js` sobre uma
+bateria determinística e exige igualdade numérica. Se M9 divergir de M29/do núcleo numa
+fórmula, o CI acusa — o critério de pronto da Fase 3 (semântica não pode divergir). A
+colisão real `rvsWood` (model0: de pressões; model9: dyne→Wood) está desambiguada e
+travada por teste. O guardião (`build/qa/qa.js`) importa a fronteira SaMD de
+`source/core/guards.js`, eliminando a duplicação da regra do `SAFETY.md §11`.
+
 ---
 
 ## 6. Fase 5 — QA transversal
 
-**Status:** planejada.
+**Status:** entregue — guardião `build/qa/qa.js` no `npm run qa` (dentro do `npm run check`).
 
-Adicionar checadores de plataforma:
+Checadores de plataforma já no portão (`build/qa/qa.js`):
 
 ```text
-checador de links relativos
-checador de módulos órfãos
-checador de numeração contra curriculum.json
-checador de disclaimers
-checador de rodapé
-checador de ausência de doses proibidas
-checador de IDs mínimos
-checador de tutor
-checador de acessibilidade básica
-checador M30: 100 questões, 4 quartos, letras 15–35, gabarito robusto
+[x] links relativos intra-braço (perfundeN.html) resolvem
+[x] sem módulos órfãos (perfundeN.html além do published_range)
+[x] numeração contra curriculum.json (inventário × published_range)
+[x] disclaimers educacionais (SaMD) por módulo
+[x] rodapé de série (CRM-SP 151.318 · Coelho · Limeira) por módulo
+[x] ausência de ordem imperativa individualizada (firewall SaMD transversal)
+[x] índice sem órfãos / sem cards "em breve" / todos linkados
+[x] fiação do package.json (test:N/validate:N/test:core, cadeias, check)
+[x] arquivos de build por módulo (testN.node.js / validateN.js)
+[x] núcleo source/core presente e wired (test:core)
+[x] coerência documental (ranges perfunde0…N, M0…N, build/m0…N; contagem do M30)
+```
+
+Checadores ainda planejados (próxima evolução do guardião):
+
+```text
+[ ] IDs mínimos de UI por módulo
+[ ] presença de tutor socrático
+[ ] acessibilidade básica
+[ ] checador M30 fino: letras 15–35%, gabarito robusto direto no banco
 ```
 
 Critério de pronto:

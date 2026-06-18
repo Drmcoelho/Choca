@@ -58,7 +58,9 @@ console.log('\n— CROMO DE SÉRIE (por módulo publicado) —');
 })();
 
 console.log('\n— FIREWALL SaMD TRANSVERSAL (sem ordem imperativa individualizada) —');
-const IMPER=/\b(inicie|administre|titule|prescreva|comece|faça|dê|infunda|ministre|aplique)\b[^<>\n]{0,60}?\b(neste|no|na|para o|para a|para este|para esta|deste|desta|nesta|nele|nela|ao|à|em|do|da)\s+paciente\b/i;
+// Fonte ÚNICA da regra: o núcleo compartilhado (source/core/guards.js). Evita que a
+// fronteira do SAFETY.md §11 viva duplicada e divirja entre o guardião e o produto.
+const IMPER=require('../../source/core/guards.js').IMPERATIVE_RE;
 (function(){ let viol=[];
   IDS.forEach(i=>{ const h=read('perfunde'+i+'.html')||''; h.split('\n').forEach((ln,k)=>{ if(IMPER.test(ln)) viol.push('M'+i+':'+(k+1)); }); });
   ok('nenhum módulo emite ordem imperativa para "o paciente"', viol.length===0, viol.slice(0,6).join(' ')||'limpo');
@@ -76,6 +78,13 @@ ok('"check" roda test, validate e qa', /test/.test(sc.check||'') && /validate/.t
 console.log('\n— ARQUIVOS DE BUILD POR MÓDULO —');
 ok('todo módulo tem build/mN/testN.node.js', IDS.every(i=>exists('build/m'+i+'/test'+i+'.node.js')), IDS.filter(i=>!exists('build/m'+i+'/test'+i+'.node.js')).map(i=>'M'+i).join(',')||'todos');
 ok('todo módulo tem build/mN/validateN.js', IDS.every(i=>exists('build/m'+i+'/validate'+i+'.js')), IDS.filter(i=>!exists('build/m'+i+'/validate'+i+'.js')).map(i=>'M'+i).join(',')||'todos');
+
+console.log('\n— NÚCLEO FISIOLÓGICO COMPARTILHADO (source/core) —');
+(function(){ const coreFiles=['units.js','oxygen.js','hemodynamics.js','guards.js','test-core.node.js'];
+  ok('source/core tem os arquivos do primeiro núcleo', coreFiles.every(f=>exists('source/core/'+f)), coreFiles.filter(f=>!exists('source/core/'+f)).join(',')||'todos');
+  ok('test:core existe e está na cadeia agregada "test"', !!sc['test:core'] && ((sc.test||'').indexOf('run test:core ')>=0 || (sc.test||'').endsWith('run test:core')));
+  ok('test:core aponta para source/core/test-core.node.js existente', (function(){ const m=(sc['test:core']||'').match(/source\/core\/\S+\.js/); return !!m && exists(m[0]); })());
+})();
 
 console.log('\n— COERÊNCIA DA DOCUMENTAÇÃO (range × contagem) —');
 (function(){ // "perfunde0.html … perfundeK.html" deve ter K === N
