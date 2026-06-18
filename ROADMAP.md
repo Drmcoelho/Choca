@@ -11,8 +11,8 @@ O critério de maturidade não é quantidade de páginas. É coerência entre fi
 O repositório contém:
 
 - índice `perfunde.html`;
-- módulos publicados `perfunde0.html` até `perfunde29.html`;
-- engines `build/m0` até `build/m29`;
+- módulos publicados `perfunde0.html` até `perfunde30.html`;
+- engines `build/m0` até `build/m30`;
 - testes Node por módulo;
 - validadores jsdom por módulo;
 - `package.json` com `npm run check`;

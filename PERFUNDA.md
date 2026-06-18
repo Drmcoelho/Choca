@@ -66,7 +66,7 @@ O estado publicado do repositório é a fonte operacional de verdade.
 publicados: perfunde0.html … perfunde30.html
 engines: build/m0 … build/m30
 portão: npm run check
-fechamento: M30 · exame global de domínio (150 itens) — publicado · braço completo
+fechamento: M30 · exame global de domínio (225 itens) — publicado · braço completo
 fechamento avaliativo planejado: M30 · revisão global / exame de domínio
 ```
 
@@ -172,7 +172,7 @@ utilização ↓        → falência citopática
 ### Bloco V · Avaliação global
 
 ```text
-30  Revisão global · exame de domínio · 100 questões
+30  Revisão global · exame de domínio · 225 itens (150 do braço + 75 inter-braços)
 ```
 
 M30 não é módulo de conteúdo novo. É avaliação global, holística, randomizada por módulo e crescente em dificuldade. Sua especificação está em `M30_ASSESSMENT_SPEC.md`.
@@ -202,7 +202,7 @@ M30 não é módulo de conteúdo novo. É avaliação global, holística, random
 - 0 falhas é obrigatório.
 - Teste Node valida fisiologia.
 - Validador jsdom valida HTML, UI, tutor, gráficos, cromo e segurança.
-- M30 exige validador psicométrico adicional: 100 questões, quatro quartos, distribuição de alternativas, progressão de dificuldade, cobertura e gabaritos robustos.
+- M30 exige validador psicométrico adicional: 225 itens, quatro quartos, distribuição de alternativas, progressão de dificuldade, cobertura e gabaritos robustos.
 
 ### 7.4 Antifragilidade
 
@@ -273,4 +273,4 @@ qual módulo anterior é necessário?
 qual módulo posterior fica preparado?
 ```
 
-E quando M30 prova o domínio global com 100 questões sem padrão explorável, dificuldade crescente e gabarito explicativo completo.
+E quando M30 prova o domínio global com 225 itens sem padrão explorável, dificuldade crescente e gabarito explicativo completo.

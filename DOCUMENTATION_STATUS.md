@@ -101,37 +101,27 @@ M26 = choque críptico/compensado
 M27 = os 4 perfis · radar
 M28 = vasopressores & inotrópicos
 M29 = capstone integrado
-M30 = revisão global · exame de domínio · 100 questões
+M30 = revisão global · exame de domínio · 225 itens (150 do braço + 75 inter-braços)
 ```
 
-A expansão para M30 é decisão curricular nova e intencional: M29 fecha a narrativa integrada; M30 testa o domínio global.
+A expansão para M30 foi decisão curricular intencional: M29 fechou a narrativa integrada; M30 testa o domínio global — publicado e validado, fecha o braço.
 
 ---
 
 ## 5. Próxima ação recomendada
 
-**M22…M29** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`); M24…M29 já trazem a camada interativa do `MODULE_CONTRACT.md §2.6`; o M28 inaugurou a camada de referência farmacológica do `SAFETY.md §11` e o M29 fechou o conteúdo com o motor unificado (cascata integrada). A próxima ação é construir **M30 · revisão global / exame de domínio** (100 questões, validador psicométrico):
+**M0…M30** estão publicados e validados (engine + teste + HTML + validador + wiring + `curriculum.json` em `published`); M24…M29 trazem a camada interativa do `MODULE_CONTRACT.md §2.6`; o M28 inaugurou a camada de referência farmacológica do `SAFETY.md §11`; o M29 fechou o conteúdo com o motor unificado (cascata integrada); e o **M30** fechou o braço como exame global de domínio (225 itens · validador psicométrico · engine-grounded · radar de 9 eixos). O braço está completo.
+
+O M30 foi entregue em quatro quartos, com 225 itens (150 do braço + 75 inter-braços):
 
 ```text
-1. especificar variáveis de estado
-2. escrever build/m30 (banco de 100 questões em 4 partes)
-3. escrever o validador psicométrico (distribuição A/B/C/D, dificuldade por quarto, sem padrão explorável)
-4. escrever perfunde30.html
-5. validar e rodar o portão
-6. atualizar package.json
-7. atualizar perfunde.html
-8. atualizar curriculum.json (M30 → published)
-9. rodar npm run check
+Quarto 1 → fundamentos do transporte e determinantes
+Quarto 2 → inversão causal, monitorização, micro/lactato
+Quarto 3 → taxonomia dos choques e choque misto
+Quarto 4 → integração, ressuscitação e inter-braços (eixo E9)
 ```
 
-A ação avaliativa futura é construir M30 em quatro partes:
-
-```text
-Parte 1 → questões 1–25
-Parte 2 → questões 26–50
-Parte 3 → questões 51–75
-Parte 4 → questões 76–100
-```
+A próxima evolução é transversal, não mais um módulo de conteúdo: o guardião de QA (`build/qa/qa.js`, no `npm run check`) que audita todos os módulos de uma vez, e o núcleo fisiológico compartilhado (`source/core/`, `ROADMAP.md` Fase 4).
 
 ---
 

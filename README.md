@@ -41,12 +41,15 @@ npm install
 npm run check
 ```
 
-`npm run check` executa dois portões:
+`npm run check` executa três portões:
 
 ```bash
 npm test          # engines fisiológicos em Node
 npm run validate  # HTML + UI + jsdom + bancos de questões
+npm run qa        # guardião transversal: audita TODOS os módulos de uma vez
 ```
+
+O guardião (`build/qa/qa.js`) é o portão de coerência do braço inteiro: confere inventário × `curriculum.json`, índice sem órfãos, links intra-braço, cromo de série (rodapé/backlink/disclaimer), firewall SaMD transversal, fiação do `package.json`, arquivos de build por módulo e coerência de contagens/ranges na documentação.
 
 A regra é binária: **0 falhas ou não entra**.
 
@@ -64,7 +67,7 @@ A regra é binária: **0 falhas ou não entra**.
 - `ROADMAP.md` — plano de evolução para plataforma fisiológica verificável.
 - `DOCUMENTATION_STATUS.md` — estado documental reconciliado.
 - `curriculum.json` — manifesto curricular legível por máquina.
-- `M30_ASSESSMENT_SPEC.md` — especificação do exame global de 100 questões.
+- `M30_ASSESSMENT_SPEC.md` — especificação do exame global (publicado com 225 itens: 150 do braço + 75 inter-braços).
 
 ---
 
@@ -91,7 +94,7 @@ O padrão mínimo de um módulo é:
 9. engine determinístico;
 10. teste e validador com 0 falhas.
 
-M30 é exceção: ele é avaliação global, não conteúdo novo. Seu padrão é psicométrico: 100 questões, quatro quartos, dificuldade crescente, módulos embaralhados, distribuição A/B/C/D controlada e gabarito ultra-robusto.
+M30 é exceção: ele é avaliação global, não conteúdo novo. Seu padrão é psicométrico: 225 itens (150 do braço + 75 inter-braços), quatro quartos, dificuldade crescente, módulos embaralhados, distribuição A/B/C/D controlada e gabarito ultra-robusto.
 
 ---
 
