@@ -149,9 +149,14 @@ misto pós-intubação          → sedação + pressão positiva + retorno veno
 anafilaxia/neurogênico       → adrenalina/fenilefrina/nora conforme mecanismo (fisiologia explícita)
 ```
 
-### 28H — Segurança operacional (referência §11)
-**Cobre (como REFERÊNCIA educacional):** diluições e faixas usuais, acesso periférico/central, extravasamento, compatibilidade, titulação como **faixa**, metas, lactato falso por β2, arritmia, isquemia periférica, taquicardia, desmame de vasopressor, quando **considerar** adicionar vasopressina, quando **considerar** parar dobutamina.
-**Enquadramento §11.3 obrigatório** em toda exibição (rotulada referência; "confira o protocolo da sua instituição"; não é prescrição; peso hipotético; dose como faixa). Sem imperativo individualizado.
+### 28H — Segurança operacional (referência §11) · **ENTREGUE** (`perfunde28h.html`)
+**Cobre (como REFERÊNCIA educacional):** calculadora de conversão dose↔mL/h (peso hipotético), diluições e faixas usuais (tabela dos 7 agentes), e segurança operacional (acesso, extravasamento, metas, lactato falso por β2, arritmia, isquemia, desmame, compatibilidade).
+**Engine** `build/m28h/model28h.js` — **conforma `pharm28`** (concentração/infusão/dose/faixas). 8 MCQ (A2·B3·C1·D2).
+**Enquadramento §11.3 obrigatório** (banner de referência educacional; "confira o protocolo da sua instituição"; não é prescrição; peso hipotético; dose como faixa). É o ÚNICO submódulo que exibe números de dose — o validador o permite (§11.1) e exige o enquadramento, proibindo apenas a ordem imperativa individualizada (§11.2).
+
+---
+
+**Atlas completo (em links):** o hub `perfunde28.html` acende os 8 submódulos 28A–28H. Cada um: engine puro conforme ao publicado → teste Node → HTML single-file → validador jsdom → wiring. Falta a costura final (PR-7 M21+Surviving; PR-8 guardião entende hub/submódulos + curriculum).
 
 ---
 
@@ -218,7 +223,8 @@ PR-4  [ENTREGUE] 28B (catecolaminérgicos · matriz computada) + 28C (só vasopr
                  ambos conformam model28; hub linka os dois; stubs de resgate rotulados em 28C
 PR-5  [ENTREGUE] 28F (inodilatadores · alça PV/m7) + 28G (combinações por fenótipo · a joia)
                  28F conforma model7; 28G conforma pharmacodynamics; hub linka os dois
-PR-6  28H (segurança operacional · §11)
+PR-6  [ENTREGUE] 28H (segurança operacional · §11) — calculadora dose↔mL/h (conforma pharm28),
+                 diluições/faixas de referência, segurança operacional; hub acende os 8 submódulos
 PR-7  M21 abas + Surviving Sepsis
 PR-8  guardião entende hub/submódulos + curriculum.json + docs (reconciliação final)
 ```
