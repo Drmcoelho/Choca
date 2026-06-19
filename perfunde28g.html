@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 28G · Combinações por fenótipo</title>
+<meta name="description" content="A pergunta deixa de ser qual droga e vira qual geometria hemodinâmica. Cada fenótipo é um leito de base mais um combo; o motor compõe os vetores de efeito e lê o perfil resultante. Submódulo do hub de farmacologia hemodinâmica. PERFUNDE·CHOCA.">
+<style>
+:root{ --bg:#0c0e13; --elev:#141926; --cell:#11151f; --ink:#e9eef7; --dim:#97a3ba; --faint:#5e6c87;
+  --art:#e5394e; --ven:#3f82e6; --ok:#2ecc71; --warn:#e0a106; --gold:#e0b106; --line:#222a3a;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 60px}
+.backlink{display:inline-block;font-size:.86rem;color:var(--dim);margin-bottom:6px;font-family:var(--mono);text-decoration:none} .backlink:hover{color:var(--ink)}
+.crumbs{font-family:var(--mono);font-size:.8rem;color:var(--faint);margin-bottom:16px} .crumbs a{color:var(--dim);text-decoration:none} .crumbs a:hover{color:var(--ink)}
+.kicker{font-family:var(--mono);font-size:.82rem;color:var(--gold);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:1.7rem;margin:.15em 0 .1em} .lead{color:var(--dim);max-width:64ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;border-bottom:1px solid var(--line)}
+.tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:var(--mono);font-size:.86rem;padding:9px 13px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)} .tab .tn{display:inline-block;width:1.4em;color:var(--faint)}
+.panel{display:none;padding:20px 2px} .panel.active{display:block}
+.card{background:var(--elev);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+.sechead{font-family:var(--mono);font-size:.78rem;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px}
+.ato{margin:10px 0;padding-left:14px;border-left:2px solid var(--gold)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.preset{background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;padding:8px 11px;border-radius:8px;cursor:pointer;text-align:left} .preset:hover{border-color:var(--gold)} .preset[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.geo{font-family:var(--mono)} .geo .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}
+.geo .k{color:var(--dim)} .up{color:var(--ok)} .down{color:var(--art)}
+.combo{display:inline-block;font-family:var(--mono);font-size:.78rem;padding:2px 8px;border-radius:20px;border:1px solid var(--gold);color:var(--gold);margin:2px}
+.verdict{font-family:var(--mono);margin-top:12px;padding:12px;border-radius:8px;background:var(--cell);border:1px solid var(--line)}
+.q{margin:16px 0;padding:14px;background:var(--cell);border:1px solid var(--line);border-radius:10px} .q .stem{font-weight:600;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--elev);border:1px solid var(--line);color:var(--ink);padding:9px 11px;border-radius:8px;margin:6px 0;cursor:pointer;font-size:.92rem} .opt:hover{border-color:var(--gold)}
+.opt.ok{border-color:var(--ok);background:#11231a} .opt.no{border-color:var(--art);background:#241115}
+.fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
+.disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
+footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)} .pontes a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="perfunde28.html" id="backlink">← perfunde28.html · hub de farmacologia hemodinâmica</a>
+  <div class="crumbs"><a href="perfunde.html">perfunde</a> · <a href="choca.html">choca</a> · <a href="perfunde28.html">M28 · atlas</a> · <b>28G</b></div>
+  <div class="kicker" id="kicker">Módulo 28G · combinações por fenótipo</div>
+  <h1>Qual geometria hemodinâmica?</h1>
+  <p class="lead">A pergunta deixa de ser "<b>qual droga?</b>" e vira "<b>qual geometria?</b>". Cada fenótipo é um leito de
+    base (DC, RVS) mais um combo — e o motor <b>compõe</b> os vetores de efeito e lê o perfil resultante pela equação
+    PAM = DC × RVS. Escolha o fenótipo e veja a geometria se mover. <span class="badge">composição = soma dos vetores</span></p>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">2</span>Fenótipos</button>
+    <button class="tab" role="tab" id="tab-lab" aria-controls="panel-lab" aria-selected="false"><span class="tn">3</span>Lab</button>
+    <button class="tab" role="tab" id="tab-aval" aria-controls="panel-aval" aria-selected="false"><span class="tn">4</span>Avaliação</button>
+  </div>
+
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <div class="card">
+      <div class="ato"><b>O mesmo nome, geometrias diferentes.</b> "Choque séptico" pode ser quente/vasoplégico (RVS no chão,
+        débito alto) ou com baixo débito (miocardiopatia). A geometria — não o rótulo — decide qual termo mover.</div>
+      <div class="ato"><b>Combo = composição.</b> Cada agente é um vetor sobre os termos; o combo é a soma. Nora + dobutamina
+        soma RVS (pressão) e contratilidade (fluxo); nora + vasopressina soma RVS por duas vias com menos catecolamina.</div>
+      <div class="ato"><b>Pensar por geometria evita o erro de droga.</b> Inodilatador no vasoplégico derruba a PAM;
+        vasoconstritor puro no cardiogênico afunda o débito. A geometria diz qual vetor falta.</div>
+      <p class="lead" style="margin-top:12px">Vá aos <b>Fenótipos</b>: escolha um e leia a geometria base → tratada.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <div class="card">
+      <div class="sechead">Escolha o fenótipo (geometria de base + combo)</div>
+      <div class="presets" id="presets"></div>
+      <div class="sechead" style="margin-top:14px">Geometria computada</div>
+      <div class="geo" id="ggeo"></div>
+      <div class="verdict" id="gVerdict"></div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <div class="card">
+      <div class="sechead">A leitura por geometria</div>
+      <p class="lead">A coluna <b>RVS</b> e a coluna <b>DC</b> dizem onde está o buraco. Vasoplégico: RVS no chão → subir RVS
+        (α1/V1). Baixo débito: DC no chão → subir contratilidade (β1). Cardiogênico frio: RVS alta + DC baixo → inodilatador.
+        O combo é a soma dos vetores que tampam os buracos certos — e o instrumento mostra a PAM e o DC resultantes.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-aval" aria-labelledby="tab-aval"><div id="quiz"></div></section>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div>→ <a href="perfunde28.html">M28 · atlas</a> · <a href="perfunde28e.html">28E · dobutamina</a> · <a href="perfunde28b.html">28B · catecolaminérgicos</a></div>
+    <div>→ <a href="perfunde23.html">M23 · choque misto</a> — a composição dos termos quebrados.</div>
+    <div>→ <a href="perfunde27.html">M27 · os 4 perfis</a> — fluxo × congestão num mapa 2×2.</div>
+  </div>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> O instrumento computa a <b>geometria</b>
+      (perfil hemodinâmico de um combo). <b>Nunca</b> exibe dose, titulação ou conduta para um paciente real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Os fenótipos são <b>arquétipos didáticos</b>; o leito de base e o combo são ilustrativos, não a conduta de
+      ninguém. → As combinações são <b>mecanismo</b> (quais vetores somam); diluições/doses são <b>referência educacional</b> no hub (M28) sob o
+      <code>SAFETY.md §11</code>; o peso é hipotético. → "Qual geometria" é raciocínio, não prescrição individualizada. → <b>Confira o protocolo da sua instituição.</b></p>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 28G (atlas farmacológico)
+  </footer>
+</div>
+
+<script>
+window.G28 = (function(){
+  var RECEPTOR_TERMS={ a1:{RVS:1.0,postLV:0.5}, b1:{contr:1.0,FC:0.6}, b2:{RVS:-0.6,FC:0.3,lacB:1.0}, D1:{splanch:1.0}, V1:{RVS:1.0}, PDE3:{contr:0.8,RVS:-0.6,PVR:-0.5}, NOcGMP:{RVS:-1.0,PVR:-0.4} };
+  var TERMS=['RVS','contr','FC','lacB','postLV','PVR','splanch'];
+  var RX={ noradrenalina:{ranges:[0.01,3.0],recep:function(){return{a1:0.9,b1:0.3};},direct:function(){return{};}},
+    adrenalina:{ranges:[0.01,0.5],recep:function(){return{a1:0.6,b1:0.8,b2:0.5};},direct:function(){return{};}},
+    dobutamina:{ranges:[2.5,20],recep:function(){return{b1:1.0,b2:0.4};},direct:function(){return{};}},
+    vasopressina:{ranges:[0.01,0.04],recep:function(){return{V1:1.0};},direct:function(){return{};}},
+    milrinona:{ranges:[0.125,0.75],recep:function(){return{PDE3:1.0};},direct:function(){return{};}} };
+  function clampv(v,a,b){var n=Number(v);return isNaN(n)?a:(n<a?a:(n>b?b:n));}
+  function doseFrac(k,d){var x=RX[k];if(!x)return 0;var lo=x.ranges[0],hi=x.ranges[1];return hi>lo?clampv((clampv(d,lo,hi)-lo)/(hi-lo),0,1):0;}
+  function effect(k,d){var x=RX[k];var o={};TERMS.forEach(function(t){o[t]=0;});if(!x)return o;var f=doseFrac(k,d),rec=x.recep(f);
+    Object.keys(rec).forEach(function(r){var w=rec[r],tm=RECEPTOR_TERMS[r];if(!tm)return;Object.keys(tm).forEach(function(t){o[t]+=w*tm[t];});});
+    var dir=x.direct(f);Object.keys(dir).forEach(function(t){if(o[t]!=null)o[t]+=dir[t];});TERMS.forEach(function(t){o[t]*=f;});return o;}
+  function compose(list){var net={};TERMS.forEach(function(t){net[t]=0;});(list||[]).forEach(function(it){var e=effect(it.drug,it.dose);TERMS.forEach(function(t){net[t]+=e[t];});});return net;}
+  var K_RVS=0.35,K_CONTR=0.30,K_FC=0.10;
+  function profile(net,base){base=base||{};var DCb=(base.dc==null?5.0:base.dc),RVSb=(base.rvs==null?1100:base.rvs),PVC=(base.pvc==null?5:base.pvc);
+    var RVS=Math.max(100,RVSb*(1+K_RVS*net.RVS)),DC=Math.max(0.5,DCb*(1+K_CONTR*net.contr+K_FC*net.FC));return{DC:DC,RVS:RVS,PAM:PVC+DC*RVS/80};}
+  function doseAt(k,f){var x=RX[k];return x?x.ranges[0]+f*(x.ranges[1]-x.ranges[0]):0;}
+  var PHENOTYPES={
+    septico_quente:{label:'séptico quente / vasoplégico',base:{dc:6.0,rvs:520},combo:['noradrenalina','vasopressina'],nota:'RVS muito baixa, débito alto → subir a RVS (α1 + V1 poupador de catecolamina).'},
+    septico_baixo_debito:{label:'séptico com baixo débito (miocardiopatia)',base:{dc:3.4,rvs:760},combo:['noradrenalina','dobutamina'],nota:'RVS baixa + bomba fraca → α1 para a PAM + β1 para o débito.'},
+    cardiogenico_frio:{label:'cardiogênico frio / congesto',base:{dc:3.0,rvs:1500},combo:['dobutamina'],nota:'RVS alta compensatória + bomba fraca → inodilatador (sobe débito, baixa pós-carga).'},
+    vd_afterload:{label:'VD / TEP / hipertensão pulmonar',base:{dc:3.6,rvs:1000},combo:['noradrenalina','dobutamina'],nota:'α1 para a perfusão coronária do VD; inotrópico com cautela; evitar colapso de RVS.'},
+    misto_pos_intubacao:{label:'misto pós-intubação',base:{dc:4.0,rvs:700},combo:['noradrenalina'],nota:'pressão positiva + sedação + retorno venoso caem → α1 sustenta a PAM.'},
+    anafilaxia:{label:'anafilaxia / distributivo agudo',base:{dc:4.0,rvs:500},combo:['adrenalina'],nota:'adrenalina move os 4 termos — a geometria ampla do distributivo agudo.'}
+  };
+  var PHENO_ORDER=['septico_quente','septico_baixo_debito','cardiogenico_frio','vd_afterload','misto_pos_intubacao','anafilaxia'];
+  function geometry(key){var ph=PHENOTYPES[key];if(!ph)return null;
+    var list=ph.combo.map(function(d){return{drug:d,dose:doseAt(d,0.5)};});
+    var base=profile(compose([]),ph.base), treated=profile(compose(list),ph.base);
+    return{label:ph.label,combo:ph.combo,nota:ph.nota,base:base,treated:treated,dPAM:treated.PAM-base.PAM,dDC:treated.DC-base.DC};}
+  return { PHENOTYPES:PHENOTYPES, PHENO_ORDER:PHENO_ORDER, geometry:geometry };
+})();
+
+(function(){
+  var byId=function(i){return document.getElementById(i);};
+  function arrow(d){ return d>0.05?'<span class="up">↑</span>':(d<-0.05?'<span class="down">↓</span>':'·'); }
+  function show(key){
+    var G=window.G28.geometry(key); window.GGEO=G;
+    Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'),function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-ph')===key?'true':'false'); });
+    var html='<div class="row"><span class="k">combo</span><span>'+G.combo.map(function(c){return '<span class="combo">'+c+'</span>';}).join('')+'</span></div>'
+      +'<div class="row"><span class="k">RVS (dyn·s·cm⁻⁵)</span><span>'+G.base.RVS.toFixed(0)+' → <b>'+G.treated.RVS.toFixed(0)+'</b> '+arrow(G.treated.RVS-G.base.RVS)+'</span></div>'
+      +'<div class="row"><span class="k">débito · DC (L/min)</span><span>'+G.base.DC.toFixed(2)+' → <b>'+G.treated.DC.toFixed(2)+'</b> '+arrow(G.dDC)+'</span></div>'
+      +'<div class="row"><span class="k">PAM (mmHg)</span><span>'+G.base.PAM.toFixed(0)+' → <b>'+G.treated.PAM.toFixed(0)+'</b> '+arrow(G.dPAM)+'</span></div>';
+    byId('ggeo').innerHTML=html;
+    byId('gVerdict').innerHTML='<b>'+G.label+'</b> — '+G.nota+'<br>A geometria move PAM '+(G.dPAM>=0?'+':'')+G.dPAM.toFixed(0)
+      +' e débito '+(G.dDC>=0?'+':'')+G.dDC.toFixed(2)+'. O combo é a <b>soma dos vetores</b> que tampam os buracos da geometria.';
+  }
+  window.showPheno=show;
+  (function buildPresets(){ var box=byId('presets');
+    window.G28.PHENO_ORDER.forEach(function(k){ var ph=window.G28.PHENOTYPES[k]; var b=document.createElement('button');
+      b.className='preset'; b.setAttribute('data-ph',k); b.setAttribute('aria-pressed','false'); b.textContent=ph.label;
+      b.addEventListener('click',function(){ show(k); }); box.appendChild(b); });
+  })();
+
+  window.activateTab=function(tabId){ Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){var on=t.id===tabId;t.setAttribute('aria-selected',on?'true':'false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.classList.toggle('active',on);}); };
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){ t.addEventListener('click',function(){ window.activateTab(t.id); }); });
+
+  // ===== Avaliação ===== A1·B2·C3·D2, correta nunca a mais longa, sem dose.
+  window.QUIZ=[
+    { q:'A pergunta central deste submódulo é:',
+      o:['qual o nome comercial mais barato disponível na farmácia hospitalar naquele turno de plantão','qual geometria hemodinâmica o fenótipo exige','qual a dose máxima','qual a via de acesso'], a:1,
+      fb:'Pensar por geometria (quais termos faltam) em vez de decorar nomes.' },
+    { q:'No séptico quente/vasoplégico, o combo soma:',
+      o:['inotrópicos puros','vasodilatadores','RVS por α1 e V1 (poupando catecolamina)','betabloqueadores e antiarrítmicos administrados de forma combinada para controle de frequência'], a:2,
+      fb:'RVS no chão é o buraco; nora (α1) + vasopressina (V1) o tampam por duas vias.' },
+    { q:'No séptico com baixo débito (miocardiopatia), falta:',
+      o:['só RVS','só pré-carga','RVS (pela PAM) e contratilidade (pelo débito) — nora + dobutamina','nada, pois a geometria já está corrigida espontaneamente sem qualquer intervenção farmacológica'], a:2,
+      fb:'Dois buracos (pressão e fluxo) → dois vetores: α1 + β1.' },
+    { q:'No cardiogênico frio/congesto, a geometria é:',
+      o:['RVS baixa e débito alto','RVS normal e débito normal','saturação baixa com resistência vascular pulmonar normal e função biventricular preservada','RVS alta compensatória e débito baixo → inodilatador'], a:3,
+      fb:'RVS alta + bomba fraca: subir contratilidade e descarregar pós-carga (inodilatador).' },
+    { q:'"Combo = composição" significa que:',
+      o:['cada agente é um vetor de efeito, e o combo é a soma desses vetores sobre os termos','as drogas se anulam','só a primeira droga importa','a ordem alfabética dos nomes das drogas define todo o resultado hemodinâmico final observado no paciente'], a:0,
+      fb:'O motor soma os vetores receptor→termo; a geometria resultante é a leitura.' },
+    { q:'Dar um inodilatador a um leito vasoplégico tende a:',
+      o:['corrigir a vasoplegia','derrubar a PAM (vasodilatação sobre RVS já baixa)','subir muito a RVS','restaurar instantaneamente a perfusão de todos os órgãos nobres do organismo'], a:1,
+      fb:'A geometria errada: falta RVS, e o inodilatador a baixa ainda mais.' },
+    { q:'Na geometria do VD/TEP, a noradrenalina é usada sobretudo para:',
+      o:['vasodilatar a circulação pulmonar','baixar a frequência cardíaca','sustentar a perfusão coronária do VD (e evitar colapso de RVS)','aumentar a pré-carga com grandes volumes de cristaloide infundidos rapidamente'], a:2,
+      fb:'O VD perfunde-se na diástole pela PAM; manter a RVS protege essa perfusão.' },
+    { q:'O erro que "pensar por geometria" evita é:',
+      o:['usar qualquer vasopressor','medir a PAM','calcular o débito cardíaco e a resistência vascular sistêmica à beira do leito do paciente','escolher a droga pelo rótulo do choque em vez do termo que falta'], a:3,
+      fb:'O rótulo engana (o mesmo "séptico" tem geometrias opostas); o termo que falta, não.' }
+  ];
+  (function renderQuiz(){
+    var box=byId('quiz');
+    window.QUIZ.forEach(function(item,qi){
+      var d=document.createElement('div'); d.className='q';
+      var s=document.createElement('div'); s.className='stem'; s.textContent=(qi+1)+'. '+item.q; d.appendChild(s);
+      item.o.forEach(function(opt,oi){ var b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+        b.addEventListener('click',function(){ if(d.getAttribute('data-done'))return; d.setAttribute('data-done','1');
+          var btns=d.querySelectorAll('.opt'); btns[item.a].classList.add('ok'); if(oi!==item.a)b.classList.add('no');
+          var fb=d.querySelector('.fb'); fb.classList.add('show'); fb.textContent=(oi===item.a?'✓ ':'✗ ')+item.fb;
+        }); d.appendChild(b); });
+      var fb=document.createElement('div'); fb.className='fb'; d.appendChild(fb); box.appendChild(d);
+    });
+  })();
+
+  show('septico_quente');
+})();
+</script>
+</body>
+</html>

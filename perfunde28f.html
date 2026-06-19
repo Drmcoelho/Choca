@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 28F · Inodilatadores & vasodilatadores</title>
+<meta name="description" content="Quando o problema é pós-carga ou congestão, combina-se inotrópico com vaso/venodilatador. A mecânica é a alça PV: baixar a elastância arterial (Ea) sobe o volume sistólico do ventrículo fraco. Submódulo do hub de farmacologia hemodinâmica. PERFUNDE·CHOCA.">
+<style>
+:root{ --bg:#0c0e13; --elev:#141926; --cell:#11151f; --ink:#e9eef7; --dim:#97a3ba; --faint:#5e6c87;
+  --art:#e5394e; --ven:#3f82e6; --ok:#2ecc71; --warn:#e0a106; --cyan:#36cfd1; --line:#222a3a;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 60px}
+.backlink{display:inline-block;font-size:.86rem;color:var(--dim);margin-bottom:6px;font-family:var(--mono);text-decoration:none} .backlink:hover{color:var(--ink)}
+.crumbs{font-family:var(--mono);font-size:.8rem;color:var(--faint);margin-bottom:16px} .crumbs a{color:var(--dim);text-decoration:none} .crumbs a:hover{color:var(--ink)}
+.kicker{font-family:var(--mono);font-size:.82rem;color:var(--cyan);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:1.7rem;margin:.15em 0 .1em} .lead{color:var(--dim);max-width:64ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;border-bottom:1px solid var(--line)}
+.tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:var(--mono);font-size:.86rem;padding:9px 13px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--cyan)} .tab .tn{display:inline-block;width:1.4em;color:var(--faint)}
+.panel{display:none;padding:20px 2px} .panel.active{display:block}
+.card{background:var(--elev);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+.sechead{font-family:var(--mono);font-size:.78rem;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px}
+label.sl{display:block;font-size:.86rem;margin:10px 0 2px;color:var(--dim)} label.sl b{color:var(--ink)} input[type=range]{width:100%}
+.ato{margin:10px 0;padding-left:14px;border-left:2px solid var(--cyan)}
+.out{font-family:var(--mono)} .term{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)} .term .k{color:var(--dim)} .term .n{font-weight:700}
+.up{color:var(--ok)} .down{color:var(--art)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.preset{background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;padding:7px 11px;border-radius:8px;cursor:pointer} .preset:hover{border-color:var(--cyan)}
+.verdict{font-family:var(--mono);margin-top:12px;padding:12px;border-radius:8px;background:var(--cell);border:1px solid var(--line)}
+.badge{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.q{margin:16px 0;padding:14px;background:var(--cell);border:1px solid var(--line);border-radius:10px} .q .stem{font-weight:600;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--elev);border:1px solid var(--line);color:var(--ink);padding:9px 11px;border-radius:8px;margin:6px 0;cursor:pointer;font-size:.92rem} .opt:hover{border-color:var(--cyan)}
+.opt.ok{border-color:var(--ok);background:#11231a} .opt.no{border-color:var(--art);background:#241115}
+.fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
+.disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
+footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)} .pontes a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="perfunde28.html" id="backlink">← perfunde28.html · hub de farmacologia hemodinâmica</a>
+  <div class="crumbs"><a href="perfunde.html">perfunde</a> · <a href="choca.html">choca</a> · <a href="perfunde28.html">M28 · atlas</a> · <b>28F</b></div>
+  <div class="kicker" id="kicker">Módulo 28F · inodilatadores & vasodilatadores</div>
+  <h1>Baixar a pós-carga ajuda a bomba fraca</h1>
+  <p class="lead">Quando o problema é <b>pós-carga</b> ou <b>congestão</b>, combina-se inotrópico com vaso/venodilatador.
+    A mecânica é a alça PV: <b>baixar a elastância arterial Ea</b> (vasodilatador) <b>sobe o volume sistólico</b> do
+    ventrículo fraco; <b>subir a Ees</b> (inotrópico) soma. <span class="badge">Ea ↓ → SV ↑</span> <span class="badge">PDE-3 = inodilatador</span></p>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">2</span>Alça PV</button>
+    <button class="tab" role="tab" id="tab-lab" aria-controls="panel-lab" aria-selected="false"><span class="tn">3</span>Lab</button>
+    <button class="tab" role="tab" id="tab-aval" aria-controls="panel-aval" aria-selected="false"><span class="tn">4</span>Avaliação</button>
+  </div>
+
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <div class="card">
+      <div class="ato"><b>A pós-carga é uma elastância, não a PA.</b> O ventrículo ejeta contra a Ea (carga arterial efetiva).
+        Numa bomba fraca, baixar a Ea (vasodilatador) desloca o ponto sístole-final e <b>aumenta o volume ejetado</b>.</div>
+      <div class="ato"><b>Inodilatador = os dois ao mesmo tempo.</b> Milrinona (PDE-3) sobe a Ees E baixa a Ea: inotropia
+        sem β, com descarga de pós-carga. Útil no VE que falha e na hipertensão pulmonar (baixa a RVP).</div>
+      <div class="ato"><b>Venodilatador ataca a congestão.</b> Nitroglicerina reduz a pré-carga (enchimento) e a pressão
+        de enchimento — alivia o edema sem necessariamente subir o débito. Pós-carga ≠ pré-carga.</div>
+      <p class="lead" style="margin-top:12px">Vá à <b>Alça PV</b>: deslize a pós-carga (Ea) num ventrículo fraco e veja o SV responder.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <div class="card">
+      <div class="sechead">Ventrículo (Sunagawa: SV = Ees·(VDF−V0)/(Ea+Ees))</div>
+      <label class="sl">pós-carga · Ea (mmHg/mL) — <b><span id="vea">3.0</span></b><input id="fea" type="range" min="1" max="4" step="0.1" value="3.0"></label>
+      <label class="sl">contratilidade · Ees (mmHg/mL) — <b><span id="vees">1.2</span></b><input id="fees" type="range" min="0.8" max="3" step="0.1" value="1.2"></label>
+      <div class="sechead" style="margin-top:14px">Resultado computado</div>
+      <div class="out">
+        <div class="term"><span class="k">volume sistólico · SV (mL)</span><span class="n" id="fSV">—</span></div>
+        <div class="term"><span class="k">fração de ejeção · EF</span><span class="n" id="fEF">—</span></div>
+        <div class="term"><span class="k">acoplamento · Ea/Ees</span><span class="n" id="fCoupling">—</span></div>
+      </div>
+      <div class="sechead" style="margin-top:14px">Aplicar agente (mecanismo, sem dose)</div>
+      <div class="presets" id="presets">
+        <button class="preset" data-ag="milrinona">milrinona (inodilatador)</button>
+        <button class="preset" data-ag="nitroprussiato">nitroprussiato (vasodilatador)</button>
+        <button class="preset" data-ag="nitroglicerina">nitroglicerina (venodilatador)</button>
+        <button class="preset" data-ag="dobutamina">dobutamina (inodilatador β)</button>
+      </div>
+      <div class="verdict" id="fVerdict"></div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <div class="card">
+      <div class="sechead">Pós-carga × pré-carga</div>
+      <p class="lead">O <b>vasodilatador arterial</b> (nitroprussiato, milrinona) baixa a <b>Ea</b> → mais SV na bomba fraca.
+        O <b>venodilatador</b> (nitroglicerina) baixa a <b>pré-carga</b> → menos congestão/edema. São alavancas diferentes:
+        pós-carga melhora o débito; pré-carga alivia a pressão de enchimento. O <b>inodilatador</b> faz inotropia + descarga
+        de pós-carga de uma vez — daí seu lugar no VE que falha e no VD com afterload pulmonar.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-aval" aria-labelledby="tab-aval"><div id="quiz"></div></section>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div>→ <a href="perfunde28.html">M28 · atlas</a> · <a href="perfunde28d.html">28D · inotrópicos</a> · <a href="perfunde28g.html">28G · combinações</a></div>
+    <div>→ <a href="perfunde7.html">M7 · pós-carga & alça PV</a> — a mecânica de Sunagawa.</div>
+    <div>→ <a href="perfunde24.html">M24 · coração-pulmão</a> — a pressão intratorácica descarrega o VE.</div>
+  </div>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> A alça PV computa o <b>mecanismo</b>
+      (Sunagawa). <b>Nunca</b> exibe dose, titulação ou conduta para um paciente real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Ea e Ees são <b>elastâncias didáticas</b>; o modelo isola a mecânica da alça, não simula um paciente. → Diluições,
+      faixas de dose e conversão dose↔mL/h são <b>referência educacional</b> no hub (M28) sob o <code>SAFETY.md §11</code>; o peso é hipotético. → A escolha entre
+      descarregar pós-carga ou pré-carga é <b>mecânica</b>, não prescrição individualizada. → <b>Confira o protocolo da sua instituição.</b></p>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 28F (atlas farmacológico)
+  </footer>
+</div>
+
+<script>
+window.F28 = (function(){
+  var V0=10, V0D=5, EDPVR_P0=1.4, EDPVR_BETA=0.018;
+  function strokeVolume(edv,Ees,Ea){ return Ees*(edv-V0)/(Ea+Ees); }
+  function ef(edv,Ees,Ea){ return edv>0?strokeVolume(edv,Ees,Ea)/edv:0; }
+  function coupling(Ees,Ea){ return Ea/Ees; }
+  function ped(edv){ return EDPVR_P0*(Math.exp(EDPVR_BETA*Math.max(0,edv-V0D))-1); }
+  var AGENTS={ milrinona:{dEes:1.0,dEa:-0.6,dEDV:0}, dobutamina:{dEes:1.2,dEa:-0.3,dEDV:0},
+    nitroprussiato:{dEes:0,dEa:-1.0,dEDV:-8}, nitroglicerina:{dEes:0,dEa:-0.2,dEDV:-18} };
+  return { V0:V0, strokeVolume:strokeVolume, ef:ef, coupling:coupling, ped:ped, AGENTS:AGENTS };
+})();
+
+(function(){
+  var byId=function(i){return document.getElementById(i);};
+  var EDV=150;
+  function render(){
+    var Ea=+byId('fea').value, Ees=+byId('fees').value;
+    byId('vea').textContent=Ea.toFixed(1); byId('vees').textContent=Ees.toFixed(1);
+    var SV=window.F28.strokeVolume(EDV,Ees,Ea), EF=window.F28.ef(EDV,Ees,Ea), cpl=window.F28.coupling(Ees,Ea);
+    window.FSTATE={ edv:EDV, Ees:Ees, Ea:Ea, SV:SV, EF:EF, coupling:cpl };
+    byId('fSV').textContent=SV.toFixed(1); byId('fEF').textContent=(EF*100).toFixed(0)+'%'; byId('fCoupling').textContent=cpl.toFixed(2);
+    byId('fVerdict').innerHTML='Com Ees '+Ees.toFixed(1)+' e Ea '+Ea.toFixed(1)+': SV '+SV.toFixed(1)+' mL, EF '+(EF*100).toFixed(0)+'%. '
+      +'<b>Baixar a Ea</b> (vasodilatador) sobe o SV; <b>subir a Ees</b> (inotrópico) também. O acoplamento Ea/Ees '
+      +(cpl<=1?'<span class="up">bom (≤1)</span>':'<span class="down">desfavorável (&gt;1)</span>')+'.';
+  }
+  window.applyAgentF=function(name){ var a=window.F28.AGENTS[name]; if(!a) return;
+    var Ea=Math.max(1, Math.min(4, (+byId('fea').value)+(a.dEa||0)));
+    var Ees=Math.max(0.8, Math.min(3, (+byId('fees').value)+(a.dEes||0)));
+    byId('fea').value=Ea.toFixed(1); byId('fees').value=Ees.toFixed(1); render();
+  };
+  ['fea','fees'].forEach(function(id){ byId(id).addEventListener('input',render); });
+  Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'),function(b){ b.addEventListener('click',function(){ window.applyAgentF(b.getAttribute('data-ag')); }); });
+  window.activateTab=function(tabId){ Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){var on=t.id===tabId;t.setAttribute('aria-selected',on?'true':'false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.classList.toggle('active',on);}); };
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){ t.addEventListener('click',function(){ window.activateTab(t.id); }); });
+
+  // ===== Avaliação ===== A2·B3·C1·D2, correta nunca a mais longa, sem dose.
+  window.QUIZ=[
+    { q:'No ventrículo fraco, baixar a pós-carga (Ea) tende a:',
+      o:['reduzir o volume sistólico','aumentar o volume sistólico ejetado','não ter efeito sobre a alça pressão-volume nem sobre o débito do ventrículo','parar a contração'], a:1,
+      fb:'SV = Ees·(VDF−V0)/(Ea+Ees): Ea menor → denominador menor → SV maior.' },
+    { q:'O que torna a milrinona um "inodilatador"?',
+      o:['ela sobe a Ees (inotropia) e baixa a Ea (vasodilatação) ao mesmo tempo','ela apenas vasoconstringe','ela só reduz a frequência cardíaca de modo reflexo e sustentado ao longo do tempo','ela bloqueia o β1'], a:0,
+      fb:'PDE-3: contratilidade↑ e RVS/Ea↓ — inotropia com descarga de pós-carga.' },
+    { q:'A nitroglicerina, como venodilatador, atua sobretudo sobre:',
+      o:['a contratilidade miocárdica intrínseca','a pós-carga arterial efetiva do ventrículo esquerdo durante toda a fase de ejeção sistólica','a pré-carga (enchimento) e a pressão de enchimento','a frequência cardíaca'], a:2,
+      fb:'Venodilatador: baixa a pré-carga e a pressão de enchimento — alivia congestão/edema.' },
+    { q:'"Pós-carga ≠ pré-carga" porque:',
+      o:['são exatamente a mesma variável hemodinâmica medida de duas formas diferentes na prática clínica','a pré-carga é a Ea','nenhuma afeta o volume sistólico','a pós-carga é a carga contra a ejeção (Ea); a pré-carga é o enchimento'], a:3,
+      fb:'Vasodilatador arterial baixa a Ea (débito); venodilatador baixa a pré-carga (congestão).' },
+    { q:'Por que o inodilatador é útil no VE que falha?',
+      o:['porque vasoconstringe e sobe a PA','porque faz inotropia e descarga de pós-carga ao mesmo tempo','porque reduz a contratilidade para poupar O₂','porque eleva fortemente a pré-carga represando volume no território venoso sistêmico'], a:1,
+      fb:'Sobe a Ees e baixa a Ea: ajuda a ejeção por dois caminhos.' },
+    { q:'A pós-carga, em termos de mecânica da alça PV, é melhor descrita como:',
+      o:['a elastância arterial efetiva (Ea) contra a qual o ventrículo ejeta','a pressão arterial sistólica medida no manguito','a frequência cardíaca multiplicada pelo volume sistólico naquele instante do ciclo','a pré-carga'], a:0,
+      fb:'Ea (mmHg/mL) é a carga efetiva; não é a PA isolada.' },
+    { q:'Subir a Ees (inotrópico) num ventrículo, mantida a Ea, faz o SV:',
+      o:['cair a zero','subir','permanecer rigorosamente constante independentemente de qualquer alteração da contratilidade','oscilar de forma aleatória'], a:1,
+      fb:'Mais contratilidade → mais SV (numerador Ees·(VDF−V0) cresce).' },
+    { q:'O nitroprussiato, vasodilatador arterial e venoso, num VE que falha:',
+      o:['piora sempre o débito ao reduzir a pressão','não altera a mecânica da alça pressão-volume em nenhuma circunstância fisiológica relevante','aumenta a Ea','baixa a Ea e tende a aumentar o volume sistólico'], a:3,
+      fb:'Baixa a Ea (e a pré-carga): no VE que falha, descarregar a pós-carga sobe o SV.' }
+  ];
+  (function renderQuiz(){
+    var box=byId('quiz');
+    window.QUIZ.forEach(function(item,qi){
+      var d=document.createElement('div'); d.className='q';
+      var s=document.createElement('div'); s.className='stem'; s.textContent=(qi+1)+'. '+item.q; d.appendChild(s);
+      item.o.forEach(function(opt,oi){ var b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+        b.addEventListener('click',function(){ if(d.getAttribute('data-done'))return; d.setAttribute('data-done','1');
+          var btns=d.querySelectorAll('.opt'); btns[item.a].classList.add('ok'); if(oi!==item.a)b.classList.add('no');
+          var fb=d.querySelector('.fb'); fb.classList.add('show'); fb.textContent=(oi===item.a?'✓ ':'✗ ')+item.fb;
+        }); d.appendChild(b); });
+      var fb=document.createElement('div'); fb.className='fb'; d.appendChild(fb); box.appendChild(d);
+    });
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
