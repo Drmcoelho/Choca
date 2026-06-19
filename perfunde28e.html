@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 28E · Dobutamina · fluxo × pressão</title>
+<meta name="description" content="A dobutamina ensina a diferença entre ganhar fluxo e perder pressão: β1 sobe o débito, β2 baixa a RVS e pode derrubar a PAM no leito vasoplégico — daí o chão vascular da noradrenalina. Submódulo do hub de farmacologia hemodinâmica. PERFUNDE·CHOCA.">
+<style>
+:root{ --bg:#0c0e13; --elev:#141926; --cell:#11151f; --ink:#e9eef7; --dim:#97a3ba; --faint:#5e6c87;
+  --art:#e5394e; --ven:#3f82e6; --ok:#2ecc71; --warn:#e0a106; --line:#222a3a;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 60px}
+.backlink{display:inline-block;font-size:.86rem;color:var(--dim);margin-bottom:6px;font-family:var(--mono);text-decoration:none}
+.backlink:hover{color:var(--ink)}
+.crumbs{font-family:var(--mono);font-size:.8rem;color:var(--faint);margin-bottom:16px}
+.crumbs a{color:var(--dim);text-decoration:none} .crumbs a:hover{color:var(--ink)}
+.kicker{font-family:var(--mono);font-size:.82rem;color:var(--art);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:1.7rem;margin:.15em 0 .1em}
+.lead{color:var(--dim);max-width:64ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;border-bottom:1px solid var(--line)}
+.tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:var(--mono);font-size:.86rem;padding:9px 13px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--art)}
+.tab .tn{display:inline-block;width:1.4em;color:var(--faint)}
+.panel{display:none;padding:20px 2px} .panel.active{display:block}
+.card{background:var(--elev);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+.sechead{font-family:var(--mono);font-size:.78rem;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px}
+label.sl{display:block;font-size:.86rem;margin:10px 0 2px;color:var(--dim)} label.sl b{color:var(--ink)} input[type=range]{width:100%}
+.ato{margin:10px 0;padding-left:14px;border-left:2px solid var(--art)}
+table.cmp{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.9rem;margin-top:6px}
+table.cmp th,table.cmp td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left;color:var(--dim)}
+table.cmp .hi{color:var(--ok);font-weight:700} table.cmp .lo{color:var(--art)}
+.verdict{font-family:var(--mono);margin-top:12px;padding:12px;border-radius:8px;background:var(--cell);border:1px solid var(--line)}
+.bigp{font-size:1.05rem}
+.badge{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.preset{background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;padding:7px 11px;border-radius:8px;cursor:pointer} .preset:hover{border-color:var(--art)}
+.q{margin:16px 0;padding:14px;background:var(--cell);border:1px solid var(--line);border-radius:10px}
+.q .stem{font-weight:600;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--elev);border:1px solid var(--line);color:var(--ink);padding:9px 11px;border-radius:8px;margin:6px 0;cursor:pointer;font-size:.92rem} .opt:hover{border-color:var(--art)}
+.opt.ok{border-color:var(--ok);background:#11231a} .opt.no{border-color:var(--art);background:#241115}
+.fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
+.disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
+footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)}
+.pontes a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="perfunde28.html" id="backlink">← perfunde28.html · hub de farmacologia hemodinâmica</a>
+  <div class="crumbs"><a href="perfunde.html">perfunde</a> · <a href="choca.html">choca</a> · <a href="perfunde28.html">M28 · atlas</a> · <b>28E</b></div>
+  <div class="kicker" id="kicker">Módulo 28E · dobutamina · droga-mestra de integração</div>
+  <h1>Ganhar fluxo não é ganhar pressão</h1>
+  <p class="lead">A dobutamina é β1>β2: sobe a <b>contratilidade</b> (e o débito) — mas o β2 <b>baixa a RVS</b>.
+    Num leito vasoplégico, ela pode <b>ganhar fluxo e perder pressão</b>. É a droga que ensina por que
+    <b>débito</b> e <b>PAM</b> não são a mesma coisa — e por que tantas vezes ela precisa do
+    <b>chão vascular</b> da noradrenalina. <span class="badge">β1 → DC</span> <span class="badge">β2 → RVS↓</span></p>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">2</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab" aria-controls="panel-lab" aria-selected="false"><span class="tn">3</span>Lab · fenótipos</button>
+    <button class="tab" role="tab" id="tab-aval" aria-controls="panel-aval" aria-selected="false"><span class="tn">4</span>Avaliação</button>
+  </div>
+
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <div class="card">
+      <div class="ato"><b>Débito baixo com pressão baixa.</b> Um paciente com bomba fraca tem débito insuficiente.
+        A tentação é "dar dobutamina para subir o débito". Mas se o leito já está vasoplégico, o β2 da dobutamina
+        baixa ainda mais a RVS — e a PAM, que é DC × RVS, pode não subir (ou cair).</div>
+      <div class="ato"><b>O termo que falta.</b> A dobutamina move o termo <em>contratilidade</em> (fluxo). Quando a
+        pressão também está baixa por RVS baixa, falta mover o termo <em>RVS</em> — o trabalho da noradrenalina.</div>
+      <div class="ato"><b>A síntese.</b> Dobutamina + noradrenalina = fluxo (β1) sobre um chão de pressão (α1). É a
+        gramática do choque misto, do cardiogênico+séptico, do baixo débito pós-IAM, da miocardiopatia séptica.</div>
+      <p class="lead" style="margin-top:12px">Vá ao <b>Instrumento</b>: deslize a vasoplegia de base e veja a PAM e o débito de cada escolha.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <div class="card">
+      <div class="sechead">Leito de base</div>
+      <label class="sl">vasoplegia (RVS basal) — <b><span id="vrvs">600</span> dyn·s·cm⁻⁵</b><input id="evrs" type="range" min="400" max="1300" step="25" value="600"></label>
+      <label class="sl">intensidade da dose (fração da faixa usual) — <b><span id="vdose">0.50</span></b><input id="edose" type="range" min="0.1" max="1" step="0.05" value="0.5"></label>
+      <div class="sechead" style="margin-top:14px">PAM e débito computados (PAM = PVC + DC·RVS/80)</div>
+      <table class="cmp" id="cmp">
+        <thead><tr><th>cenário</th><th>RVS</th><th>DC (L/min)</th><th>PAM (mmHg)</th></tr></thead>
+        <tbody id="cmp-body"></tbody>
+      </table>
+      <div class="verdict" id="eVerdict"></div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <div class="card">
+      <div class="sechead">Fenótipos onde a dobutamina entra (mecanismo, sem dose)</div>
+      <div class="presets" id="presets">
+        <button class="preset" data-rvs="600">séptico + miocardiopatia (vasoplégico)</button>
+        <button class="preset" data-rvs="1100">cardiogênico frio (RVS alta)</button>
+        <button class="preset" data-rvs="800">misto pós-intubação</button>
+      </div>
+      <div id="lab-note" class="lead" style="margin-top:10px">Escolha um fenótipo: o instrumento ajusta a RVS de base e mostra por que o débito sobe, mas a pressão depende do chão vascular.</div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-aval" aria-labelledby="tab-aval">
+    <div id="quiz"></div>
+  </section>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div>→ <a href="perfunde28.html">M28 · atlas</a> e <a href="perfunde28a.html">28A · gramática</a> — o receptor→termo que está por trás.</div>
+    <div>→ <a href="perfunde9.html">M9 · PAM = DC × RVS</a> — a equação que o instrumento resolve.</div>
+    <div>→ <a href="perfunde23.html">M23 · choque misto</a> — onde fluxo e pressão quebram juntos.</div>
+  </div>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> O instrumento computa o <b>mecanismo</b>
+      (DC, RVS, PAM) de perfis de receptores. <b>Nunca</b> exibe dose, titulação ou conduta para um paciente real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Os coeficientes são <b>didáticos</b>; o que importa é a <b>direção</b> — dobutamina sobe
+      o débito e tende a baixar a RVS; a PAM resulta de DC × RVS. → A "intensidade da dose" é uma <b>fração da faixa usual</b>
+      (referência educacional, <code>SAFETY.md §11</code>), <b>não</b> uma prescrição; o peso é hipotético. → A escolha de associar
+      noradrenalina é apresentada como <b>mecanismo</b> (chão de RVS), não como ordem individualizada. → <b>Confira o protocolo da sua instituição.</b></p>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 28E (atlas farmacológico)
+  </footer>
+</div>
+
+<script>
+// ===== E28 — fluxo×pressão (inline; espelha build/m28e/model28e.js / source/core/pharmacodynamics) =====
+window.E28 = (function(){
+  var RECEPTOR_TERMS={ a1:{RVS:1.0,postLV:0.5}, b1:{contr:1.0,FC:0.6}, b2:{RVS:-0.6,FC:0.3,lacB:1.0},
+    D1:{splanch:1.0}, V1:{RVS:1.0}, PDE3:{contr:0.8,RVS:-0.6,PVR:-0.5}, NOcGMP:{RVS:-1.0,PVR:-0.4} };
+  var TERMS=['RVS','contr','FC','lacB','postLV','PVR','splanch'];
+  var RX={ noradrenalina:{ranges:[0.01,3.0],recep:function(){return{a1:0.9,b1:0.3};},direct:function(){return{};}},
+    dobutamina:{ranges:[2.5,20],recep:function(){return{b1:1.0,b2:0.4};},direct:function(){return{};}},
+    adrenalina:{ranges:[0.01,0.5],recep:function(){return{a1:0.6,b1:0.8,b2:0.5};},direct:function(){return{};}},
+    milrinona:{ranges:[0.125,0.75],recep:function(){return{PDE3:1.0};},direct:function(){return{};}} };
+  function clampv(v,a,b){var n=Number(v);return isNaN(n)?a:(n<a?a:(n>b?b:n));}
+  function doseFrac(k,d){var x=RX[k];if(!x)return 0;var lo=x.ranges[0],hi=x.ranges[1];return hi>lo?clampv((clampv(d,lo,hi)-lo)/(hi-lo),0,1):0;}
+  function effect(k,d){var x=RX[k];var o={};TERMS.forEach(function(t){o[t]=0;});if(!x)return o;
+    var f=doseFrac(k,d),rec=x.recep(f);Object.keys(rec).forEach(function(r){var w=rec[r],tm=RECEPTOR_TERMS[r];if(!tm)return;Object.keys(tm).forEach(function(t){o[t]+=w*tm[t];});});
+    var dir=x.direct(f);Object.keys(dir).forEach(function(t){if(o[t]!=null)o[t]+=dir[t];});TERMS.forEach(function(t){o[t]*=f;});return o;}
+  function compose(list){var net={};TERMS.forEach(function(t){net[t]=0;});(list||[]).forEach(function(it){var e=effect(it.drug,it.dose);TERMS.forEach(function(t){net[t]+=e[t];});});return net;}
+  var K_RVS=0.35,K_CONTR=0.30,K_FC=0.10;
+  function profile(net,base){base=base||{};var DCb=(base.dc==null?5.0:base.dc),RVSb=(base.rvs==null?1100:base.rvs),PVC=(base.pvc==null?5:base.pvc);
+    var RVS=Math.max(100,RVSb*(1+K_RVS*net.RVS)),DC=Math.max(0.5,DCb*(1+K_CONTR*net.contr+K_FC*net.FC));return{DC:DC,RVS:RVS,PAM:PVC+DC*RVS/80};}
+  function doseAt(k,f){var x=RX[k];return x?x.ranges[0]+f*(x.ranges[1]-x.ranges[0]):0;}
+  return { effect:effect, compose:compose, profile:profile, doseAt:doseAt };
+})();
+
+(function(){
+  var byId=function(i){return document.getElementById(i);};
+  function scenarios(rvsBase, f){
+    var base={ dc:5.0, rvs:rvsBase, pvc:5 };
+    return {
+      base: window.E28.profile(window.E28.compose([]), base),
+      dobu: window.E28.profile(window.E28.compose([{drug:'dobutamina',dose:window.E28.doseAt('dobutamina',f)}]), base),
+      nora: window.E28.profile(window.E28.compose([{drug:'noradrenalina',dose:window.E28.doseAt('noradrenalina',f)}]), base),
+      both: window.E28.profile(window.E28.compose([{drug:'dobutamina',dose:window.E28.doseAt('dobutamina',f)},{drug:'noradrenalina',dose:window.E28.doseAt('noradrenalina',f)}]), base)
+    };
+  }
+  function row(name, p, hiPAM, hiDC){
+    return '<tr><td>'+name+'</td><td>'+p.RVS.toFixed(0)+'</td><td class="'+(hiDC?'hi':'')+'">'+p.DC.toFixed(2)+'</td><td class="'+(hiPAM?'hi':'')+'">'+p.PAM.toFixed(0)+'</td></tr>';
+  }
+  function render(){
+    var rvsBase=+byId('evrs').value, f=+byId('edose').value;
+    byId('vrvs').textContent=rvsBase; byId('vdose').textContent=f.toFixed(2);
+    var S=scenarios(rvsBase, f); window.SCEN=S;
+    var bestPAM=Math.max(S.dobu.PAM,S.nora.PAM,S.both.PAM);
+    var bestDC=Math.max(S.dobu.DC,S.nora.DC,S.both.DC);
+    var html='';
+    html+=row('base (sem droga)', S.base, false, false);
+    html+=row('+ dobutamina', S.dobu, S.dobu.PAM===bestPAM, S.dobu.DC===bestDC);
+    html+=row('+ noradrenalina', S.nora, S.nora.PAM===bestPAM, S.nora.DC===bestDC);
+    html+=row('+ dobuta + nora', S.both, S.both.PAM===bestPAM, S.both.DC===bestDC);
+    byId('cmp-body').innerHTML=html;
+    var v=byId('eVerdict');
+    var floxo = S.dobu.DC > S.nora.DC, pressao = S.nora.PAM > S.dobu.PAM;
+    var msg='<span class="bigp">';
+    if(floxo && pressao){
+      msg+='A dobutamina ganha <b>fluxo</b> (DC '+S.dobu.DC.toFixed(2)+' > nora '+S.nora.DC.toFixed(2)+'); a noradrenalina ganha <b>pressão</b> (PAM '+S.nora.PAM.toFixed(0)+' > dobuta '+S.dobu.PAM.toFixed(0)+').';
+    } else {
+      msg+='Compare as colunas: o débito segue a dobutamina; a PAM segue a noradrenalina.';
+    }
+    msg+='</span><br>Associadas, somam fluxo sobre o chão de pressão (PAM '+S.both.PAM.toFixed(0)+', DC '+S.both.DC.toFixed(2)+'). '
+      +(rvsBase<=750?'<b>Leito vasoplégico:</b> aqui a dobutamina sozinha decepciona na pressão — o chão vascular é decisivo.':'Com a RVS mais alta, a dobutamina já sustenta melhor a PAM, mas o débito ainda é o seu forte.');
+    v.innerHTML=msg;
+  }
+  window.E28render=render;
+  ['evrs','edose'].forEach(function(id){ byId(id).addEventListener('input',render); });
+
+  window.activateTab=function(tabId){
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){
+      var on=t.id===tabId; t.setAttribute('aria-selected',on?'true':'false');
+      var p=document.getElementById(t.getAttribute('aria-controls')); if(p) p.classList.toggle('active',on); });
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){ t.addEventListener('click',function(){ window.activateTab(t.id); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'),function(b){
+    b.addEventListener('click',function(){ window.activateTab('tab-instrumento'); byId('evrs').value=b.getAttribute('data-rvs'); render(); }); });
+
+  // ===== Avaliação ===== gabarito A1·B3·C2·D2 (disproporcional), correta nunca a mais longa, sem dose.
+  window.QUIZ=[
+    { q:'Num leito vasoplégico, dar dobutamina isolada frequentemente decepciona na pressão porque:',
+      o:['ela reduz a contratilidade do miocárdio','o β2 baixa a RVS e a PAM não acompanha o débito','ela bloqueia a noradrenalina e a vasopressina endógenas do paciente em questão','não tem efeito sobre o débito'], a:1,
+      fb:'β1 sobe o DC, mas o β2 derruba a RVS; como PAM = DC×RVS, a pressão pode não subir.' },
+    { q:'A dobutamina move predominantemente qual termo da equação?',
+      o:['a contratilidade (e o débito)','a resistência vascular sistêmica, que ela eleva fortemente por estímulo α1 direto','a pré-carga, por venoconstrição','a saturação arterial'], a:0,
+      fb:'β1>β2: domina a contratilidade. O componente de RVS é negativo (β2).' },
+    { q:'Por que se associa noradrenalina à dobutamina no baixo débito com hipotensão?',
+      o:['para reduzir o débito a um nível mais seguro e controlado ao longo do tempo','para bloquear o efeito β1 da dobutamina','para diminuir a FC de forma reflexa','para dar um chão de RVS (α1) sob o fluxo'], a:3,
+      fb:'A noradrenalina sustenta a RVS (pressão); a dobutamina sustenta o débito (fluxo). Somam-se.' },
+    { q:'"Débito" e "PAM" não são a mesma coisa porque:',
+      o:['são exatamente sinônimos na prática clínica diária dos plantões e enfermarias','a PAM independe do débito','a PAM é DC×RVS; subir um e o outro cair deixa a PAM parada','o débito depende só da FC'], a:2,
+      fb:'PAM = PVC + DC·RVS/80. Subir o DC com a RVS caindo pode deixar a PAM parada ou em queda.' },
+    { q:'No cardiogênico frio (RVS já alta), comparada ao leito vasoplégico, a dobutamina:',
+      o:['perde completamente o efeito inotrópico','sustenta melhor a PAM, embora o débito siga sendo o seu forte','passa a vasoconstringir intensamente todos os leitos periféricos do organismo','para de aumentar o débito'], a:1,
+      fb:'Com RVS de base alta, a queda relativa de RVS pesa menos; a PAM se sustenta melhor.' },
+    { q:'A hiperlactatemia que pode acompanhar agentes β deve-se sobretudo a:',
+      o:['hipoperfusão tecidual sempre, de modo obrigatório e sem exceções possíveis','contaminação da amostra','queda isolada do débito','estímulo β2 (glicólise) — lactato tipo B, sem hipoperfusão'], a:3,
+      fb:'β2 acelera a glicólise: lactato tipo B — pode subir sem queda de perfusão (cuidado ao interpretar).' },
+    { q:'A dobutamina é a "droga-mestra de integração" porque:',
+      o:['é a mais potente para elevar isoladamente a pressão arterial sistêmica média','é a única que age por PDE-3','articula fluxo (β1) e pressão (RVS) e expõe o choque misto','nunca precisa de associação'], a:2,
+      fb:'Ela força distinguir fluxo de pressão — a lição central do choque misto.' },
+    { q:'O instrumento mostra que, ao associar dobutamina + noradrenalina no leito vasoplégico:',
+      o:['a PAM desaba a níveis perigosos para a perfusão dos órgãos nobres do corpo','soma fluxo (DC) sobre um chão de pressão (RVS), com a melhor PAM','o débito cai abaixo do basal','nada muda'], a:1,
+      fb:'É a síntese: β1 dá fluxo, α1 dá o chão de pressão; a PAM combinada é a melhor.' }
+  ];
+  (function renderQuiz(){
+    var box=byId('quiz');
+    window.QUIZ.forEach(function(item,qi){
+      var d=document.createElement('div'); d.className='q';
+      var s=document.createElement('div'); s.className='stem'; s.textContent=(qi+1)+'. '+item.q; d.appendChild(s);
+      item.o.forEach(function(opt,oi){ var b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+        b.addEventListener('click',function(){ if(d.getAttribute('data-done'))return; d.setAttribute('data-done','1');
+          var btns=d.querySelectorAll('.opt'); btns[item.a].classList.add('ok'); if(oi!==item.a)b.classList.add('no');
+          var fb=d.querySelector('.fb'); fb.classList.add('show'); fb.textContent=(oi===item.a?'✓ ':'✗ ')+item.fb;
+        }); d.appendChild(b); });
+      var fb=document.createElement('div'); fb.className='fb'; d.appendChild(fb); box.appendChild(d);
+    });
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>

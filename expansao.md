@@ -124,14 +124,14 @@ Cada submódulo segue o contrato (`MODULE_CONTRACT.md`): caso/abertura, trilha s
 **1ª passada (fechada): só vasopressina (V1)** — adjuvante poupador de catecolamina, dose fixa (não por peso).
 **Stubs planejados (excepcional-resgate, não entram agora):** terlipressina, angiotensina II (2ª linha conceitual), azul de metileno / hidroxocobalamina (vasoplegia refratária). Quando entrarem, com enquadramento de papel obrigatório (§10).
 
-### 28D — Inotrópicos
-**Drogas:** dobutamina, milrinona, levosimendana, adrenalina (dose inotrópica), dopamina (histórica/evitável).
-**Tese:** aqui mora o erro mais comum — tratar débito baixo como se todo choque fosse vasoplegia. Submódulo grande.
+### 28D — Inotrópicos · **ENTREGUE** (`perfunde28d.html`)
+**Drogas:** dobutamina, milrinona, adrenalina (dopamina/levosimendana entram em iteração futura).
+**Tese:** o erro mais comum — tratar débito baixo como se todo choque fosse vasoplegia.
+**Instrumento:** num cardiogênico (sliders de contratilidade e RVS basais), compara os inotrópicos por **ganho de débito × custo de O₂** (⚠ balanço negativo) e marca a milrinona como **inodilatador**. Engine `build/m28d/model28d.js` **conforma `model28.applyDrug`** (CO/PAM/o2balance). 8 MCQ (A2·B3·C2·D1).
 
-### 28E — Dobutamina · droga-mestra de integração
-**Por que submódulo próprio:** é a droga que ensina a diferença entre **aumentar fluxo** e **perder pressão**. β1 (contratilidade↑, DC↑, FC↑) + β2 (RVS↓ → PA pode cair no leito vasoplégico) → frequentemente precisa de "chão vascular" (noradrenalina/vasopressina).
-**Instrumento:** vasoplegia de base como slider → PAM computada cai com dobutamina sozinha, recupera com noradrenalina. A síntese do choque misto.
-**Casos:** cardiogênico+séptico, baixo débito pós-IAM, miocardiopatia séptica, VD, hipertensão pulmonar, pós-intubação.
+### 28E — Dobutamina · droga-mestra de integração · **ENTREGUE** (`perfunde28e.html`)
+**Por que submódulo próprio:** é a droga que ensina a diferença entre **aumentar fluxo** e **perder pressão**.
+**Instrumento:** slider de vasoplegia (RVS basal) + intensidade de dose → tabela computada (base / +dobuta / +nora / +ambos) com PAM e DC: **nora ganha pressão, dobuta ganha fluxo**, e associadas somam fluxo sobre o chão de pressão. Engine `build/m28e/model28e.js` **conforma `source/core/pharmacodynamics`** (effect + profile via m9). 8 MCQ (A1·B3·C2·D2).
 
 ### 28F — Inodilatadores & vasodilatadores
 **Drogas:** milrinona, nitroglicerina, nitroprussiato, (clevidipina/nicardipina como contexto).
@@ -212,7 +212,8 @@ PR-1  [ENTREGUE] reconciliação do modelo receptor→termo (PD × model28) + í
                  antebraços no guardião (perfunde.html + choca.html)
 PR-2  [ENTREGUE] perfunde28.html vira HUB (atlas-nav) + 28A (gramática) — padrão do submódulo
                  estabelecido: engine build/m28a (conforma model28) + jsdom + test:28a/validate:28a
-PR-3  28D (inotrópicos) + 28E (dobutamina, a joia integradora)
+PR-3  [ENTREGUE] 28D (inotrópicos · build/m28d) + 28E (dobutamina, a joia · build/m28e)
+                 ambos conformam o modelo publicado (model28/pharmacodynamics); hub linka os dois
 PR-4  28B + 28C (só vasopressina)
 PR-5  28F (inodilatadores) + 28G (combinações por fenótipo)
 PR-6  28H (segurança operacional · §11)
