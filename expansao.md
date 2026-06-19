@@ -1,6 +1,6 @@
 # expansao.md — O atlas farmacológico do Choque · PERFUNDE · CHOCA
 
-**Status:** **aprovado · em construção** (decisões fechadas em 2026-06-18).
+**Status:** **CONCLUÍDA** (PR-0…PR-8 entregues). O hub M28 acende os 8 submódulos 28A–28H; o M21 tem a aba Surviving Sepsis; o guardião audita hub/submódulos; `curriculum.json` registra os submódulos.
 **Origem:** consolidação da expansão do M28 em hub farmacológico + abas Surviving no M21.
 **Fronteira:** tudo aqui obedece ao `SAFETY.md §11` (referência farmacológica educacional) e ao `PERFUNDA.md` (engine antes de UI; física viva; single-file).
 
@@ -229,7 +229,8 @@ PR-6  [ENTREGUE] 28H (segurança operacional · §11) — calculadora dose↔mL/
                  diluições/faixas de referência, segurança operacional; hub acende os 8 submódulos
 PR-7  [ENTREGUE] M21 ganha a aba Surviving Sepsis (diretriz sobre o motor · SSC 2021),
                  ancorada ao termo de cada item e ligada ao atlas (28B/28C/28E); validate21 cobre
-PR-8  guardião entende hub/submódulos + curriculum.json + docs (reconciliação final)
+PR-8  [ENTREGUE] guardião entende hub/submódulos (links hub↔28X, cromo/a11y/UI/firewall por
+                 submódulo, §11 onde há dose) + curriculum.json (M28 com submodules) + docs
 ```
 
 Racional da ordem: **motor primeiro** (sem ele tudo vira lista); depois a **fundação pedagógica** (28A) e a **joia** (28E) que prova o valor; vasopressores e combinações na sequência; segurança e Surviving por último, já sobre uma base engine-grounded e com o guardião de rede.

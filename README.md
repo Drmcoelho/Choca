@@ -28,7 +28,7 @@ Estado curricular atual:
 - **M25** — publicado: ressuscitação volêmica — volume como droga com janela terapêutica (benefício decai, custo acumula); o 2×2 responsivo × tolerante.
 - **M26** — publicado: choque críptico/compensado — a PAM normal mente; a compensação tem reserva finita e há um precipício; marcadores ocultos denunciam.
 - **M27** — publicado: os 4 perfis · radar — perfusão (fluxo) × congestão num mapa 2×2 (A/B/L/C); a mesma alavanca tem efeito oposto por canto.
-- **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`.
+- **M28** — publicado: vasopressores & inotrópicos — receptor → termo da equação; inaugura a **camada de referência farmacológica** (diluições/doses usuais, calculadora dose↔mL/h) sob o `SAFETY.md §11`. Evoluído em **hub do atlas farmacológico** (`expansao.md`), com 8 submódulos: **28A** gramática · **28B** catecolaminérgicos · **28C** vasopressina · **28D** inotrópicos · **28E** dobutamina (fluxo × pressão) · **28F** inodilatadores · **28G** combinações por fenótipo · **28H** segurança operacional §11. Cada submódulo conforma o engine publicado (motor `source/core/pharmacodynamics.js`).
 - **M29** — publicado: capstone · caso integrado — o braço inteiro num **motor unificado** (cascata CaO₂→DO₂→VO₂→PAM→perfil), com instrumento ao vivo, caso que muda de categoria, 30 MCQ e 120 assertivas V/F.
 - **M30** — publicado: exame global de domínio — **225 itens** (150 do braço + **75 inter-braços**) em 4 quartos, 6 formatos, **engine-grounded** (gabarito recomputado pelos motores), **radar de maestria** em 9 eixos (incl. integração inter-braços), **21 trilhas** (categorias que selecionam e ordenam os itens existentes — do novato ao avançado, ou focando pulmão–coração–rim) e psicometria anti-gaming. Fecha o braço e costura os vizinhos.
 
@@ -49,7 +49,7 @@ npm run validate  # HTML + UI + jsdom + bancos de questões
 npm run qa        # guardião transversal: audita TODOS os módulos de uma vez
 ```
 
-O guardião (`build/qa/qa.js`) é o portão de coerência do braço inteiro: confere inventário × `curriculum.json`, índice sem órfãos, links intra-braço, cromo de série (rodapé/backlink/disclaimer), firewall SaMD transversal, fiação do `package.json`, arquivos de build por módulo, presença/fiação do núcleo `source/core`, acessibilidade básica (lang/charset/viewport/título), andaime de UI (abas/painéis ARIA pareados), tutor socrático nos módulos de conteúdo, psicometria do banco do M30 (letras 15–35%, correta≠mais-longa) e coerência de contagens/ranges na documentação.
+O guardião (`build/qa/qa.js`) é o portão de coerência do braço inteiro: confere inventário × `curriculum.json`, índice sem órfãos, links intra-braço, cromo de série (rodapé/backlink/disclaimer), firewall SaMD transversal, fiação do `package.json`, arquivos de build por módulo, presença/fiação do núcleo `source/core`, acessibilidade básica (lang/charset/viewport/título), andaime de UI (abas/painéis ARIA pareados), tutor socrático nos módulos de conteúdo, psicometria do banco do M30 (letras 15–35%, correta≠mais-longa), o **atlas farmacológico** (hub M28 + submódulos 28A–28H: links hub↔submódulo, cromo/a11y/UI/firewall por submódulo, enquadramento §11 onde há dose) e coerência de contagens/ranges na documentação.
 
 A regra é binária: **0 falhas ou não entra**.
 
@@ -69,6 +69,7 @@ A regra é binária: **0 falhas ou não entra**.
 - `curriculum.json` — manifesto curricular legível por máquina.
 - `M30_ASSESSMENT_SPEC.md` — especificação do exame global (publicado com 225 itens: 150 do braço + 75 inter-braços).
 - `source/core/README.md` — núcleo fisiológico compartilhado (fonte modular das fórmulas) e seu teste de conformância contra os engines.
+- `expansao.md` — o atlas farmacológico: M28 como hub, os submódulos 28A–28H, a aba Surviving do M21 e a fronteira §11 (concluído).
 
 ---
 

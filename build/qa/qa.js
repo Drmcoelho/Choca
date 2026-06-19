@@ -90,6 +90,49 @@ console.log('\n— NÚCLEO FISIOLÓGICO COMPARTILHADO (source/core) —');
   ok('test:core aponta para source/core/test-core.node.js existente', (function(){ const m=(sc['test:core']||'').match(/source\/core\/\S+\.js/); return !!m && exists(m[0]); })());
 })();
 
+console.log('\n— ATLAS FARMACOLÓGICO (hub M28 + submódulos 28A–28H) —');
+(function(){
+  const m28=(curriculum.modules||[]).find(m=>m.id===28);
+  const subs=(m28 && m28.submodules) || [];
+  ok('curriculum: M28 é hub com submódulos registrados', !!m28 && m28.role==='hub' && subs.length>=1, subs.length+' submódulos');
+  const hub=read('perfunde28.html')||'';
+  // arquivos e engines existem
+  let semFile=[], semEng=[], semHubLink=[], semScripts=[];
+  subs.forEach(s=>{ const f=s.file, eng=s.engine, low=String(s.id).toLowerCase();
+    if(!f || !exists(f)) semFile.push(s.id);
+    if(!eng || !exists(eng)) semEng.push(s.id);
+    if(f && hub.indexOf('href="'+f+'"')<0) semHubLink.push(s.id);
+    if(!(sc['test:'+low] && sc['validate:'+low])) semScripts.push(s.id);
+  });
+  ok('todo submódulo tem perfunde28X.html', semFile.length===0, semFile.join(',')||'todos');
+  ok('todo submódulo tem diretório de engine (build/m28X)', semEng.length===0, semEng.join(',')||'todos');
+  ok('o hub perfunde28.html linka todos os submódulos', semHubLink.length===0, semHubLink.join(',')||'todos');
+  ok('todo submódulo tem test:28X e validate:28X', semScripts.length===0, semScripts.join(',')||'todos');
+  ok('test:28X/validate:28X estão nas cadeias agregadas', subs.every(s=>{ const low=String(s.id).toLowerCase();
+    return (sc.test||'').indexOf('run test:'+low+' ')>=0 && (sc.validate||'').indexOf('run validate:'+low+' ')>=0; }));
+  // cromo, a11y, andaime e firewall por submódulo
+  let semBacklink=[], semRodape=[], semDisc=[], semA11y=[], semUI=[], viol=[], semSamd=[];
+  const DOSE=/\b\d+([.,]\d+)?\s*(mcg|µg|mg|U)\s*\/\s*(kg\/)?min\b/i;
+  subs.forEach(s=>{ const h=read(s.file)||'';
+    if(h.indexOf('href="perfunde28.html"')<0) semBacklink.push(s.id);
+    if(!(/CRM-?SP\s*151\.?318/.test(h) && /Matheus M\. Coelho/.test(h) && /Limeira/.test(h))) semRodape.push(s.id);
+    if(!(/educacional/i.test(h) && /(disclaimer|class="disc")/.test(h))) semDisc.push(s.id);
+    if(!(/<html[^>]*\blang="pt-BR"/i.test(h) && /<meta[^>]*charset=["']?utf-8/i.test(h) && /<meta[^>]*name="viewport"/i.test(h) && /<title>[^<]+<\/title>/i.test(h))) semA11y.push(s.id);
+    const tablist=(h.match(/role="tablist"/g)||[]).length, tabs=(h.match(/role="tab"/g)||[]).length, panels=(h.match(/role="tabpanel"/g)||[]).length;
+    if(!(tablist===1 && tabs>=4 && tabs===panels)) semUI.push(s.id);
+    h.split('\n').forEach((ln,k)=>{ if(IMPER.test(ln)) viol.push(s.id+':'+(k+1)); });
+    // §11: se EXIBE dose de referência, precisa do enquadramento (referência educacional + protocolo)
+    if(DOSE.test(h) && !(/refer[êe]ncia educacional/i.test(h) && /protocolo da sua institui/i.test(h))) semSamd.push(s.id);
+  });
+  ok('todo submódulo tem backlink ao hub (perfunde28.html)', semBacklink.length===0, semBacklink.join(',')||'todos');
+  ok('todo submódulo tem rodapé CRM-SP 151.318 · Coelho · Limeira', semRodape.length===0, semRodape.join(',')||'todos');
+  ok('todo submódulo tem disclaimer educacional', semDisc.length===0, semDisc.join(',')||'todos');
+  ok('todo submódulo passa na acessibilidade básica', semA11y.length===0, semA11y.join(',')||'todos');
+  ok('todo submódulo tem andaime de UI (tablist + abas↔painéis)', semUI.length===0, semUI.join(',')||'todos');
+  ok('nenhum submódulo emite ordem imperativa individualizada', viol.length===0, viol.slice(0,6).join(' ')||'limpo');
+  ok('submódulo que exibe dose tem enquadramento §11 (referência + protocolo)', semSamd.length===0, semSamd.join(',')||'ok');
+})();
+
 console.log('\n— ACESSIBILIDADE BÁSICA (todo módulo) —');
 (function(){ let semLang=[], semCharset=[], semViewport=[], semTitle=[];
   IDS.forEach(i=>{ const h=read('perfunde'+i+'.html')||'';
