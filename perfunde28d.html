@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 28D · Inotrópicos</title>
+<meta name="description" content="O termo quebrado do cardiogênico é a contratilidade. Os inotrópicos a sobem, mas diferem: β1 (dobutamina/adrenalina) custam O₂ e arritmia; PDE-3 (milrinona) é inodilatador. O erro comum é tratar débito baixo como vasoplegia. Submódulo do hub de farmacologia hemodinâmica. PERFUNDE·CHOCA.">
+<style>
+:root{ --bg:#0c0e13; --elev:#141926; --cell:#11151f; --ink:#e9eef7; --dim:#97a3ba; --faint:#5e6c87;
+  --art:#e5394e; --ven:#3f82e6; --ok:#2ecc71; --warn:#e0a106; --line:#222a3a;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 60px}
+.backlink{display:inline-block;font-size:.86rem;color:var(--dim);margin-bottom:6px;font-family:var(--mono);text-decoration:none}
+.backlink:hover{color:var(--ink)}
+.crumbs{font-family:var(--mono);font-size:.8rem;color:var(--faint);margin-bottom:16px}
+.crumbs a{color:var(--dim);text-decoration:none} .crumbs a:hover{color:var(--ink)}
+.kicker{font-family:var(--mono);font-size:.82rem;color:var(--art);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:1.7rem;margin:.15em 0 .1em} .lead{color:var(--dim);max-width:64ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;border-bottom:1px solid var(--line)}
+.tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:var(--mono);font-size:.86rem;padding:9px 13px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--art)} .tab .tn{display:inline-block;width:1.4em;color:var(--faint)}
+.panel{display:none;padding:20px 2px} .panel.active{display:block}
+.card{background:var(--elev);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+.sechead{font-family:var(--mono);font-size:.78rem;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px}
+label.sl{display:block;font-size:.86rem;margin:10px 0 2px;color:var(--dim)} label.sl b{color:var(--ink)} input[type=range]{width:100%}
+.ato{margin:10px 0;padding-left:14px;border-left:2px solid var(--art)}
+table.cmp{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.9rem;margin-top:6px}
+table.cmp th,table.cmp td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left;color:var(--dim)}
+table.cmp .hi{color:var(--ok);font-weight:700} table.cmp .warn{color:var(--warn)}
+.verdict{font-family:var(--mono);margin-top:12px;padding:12px;border-radius:8px;background:var(--cell);border:1px solid var(--line)}
+.badge{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.q{margin:16px 0;padding:14px;background:var(--cell);border:1px solid var(--line);border-radius:10px} .q .stem{font-weight:600;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--elev);border:1px solid var(--line);color:var(--ink);padding:9px 11px;border-radius:8px;margin:6px 0;cursor:pointer;font-size:.92rem} .opt:hover{border-color:var(--art)}
+.opt.ok{border-color:var(--ok);background:#11231a} .opt.no{border-color:var(--art);background:#241115}
+.fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
+.disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
+footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)}
+.pontes a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="perfunde28.html" id="backlink">← perfunde28.html · hub de farmacologia hemodinâmica</a>
+  <div class="crumbs"><a href="perfunde.html">perfunde</a> · <a href="choca.html">choca</a> · <a href="perfunde28.html">M28 · atlas</a> · <b>28D</b></div>
+  <div class="kicker" id="kicker">Módulo 28D · inotrópicos</div>
+  <h1>O termo quebrado é a contratilidade</h1>
+  <p class="lead">No cardiogênico, o débito caiu porque a <b>bomba</b> falhou. Os inotrópicos sobem a contratilidade —
+    mas não são iguais: <b>β1</b> (dobutamina, adrenalina) custam <b>O₂</b> e arritmia; a <b>PDE-3</b> (milrinona) é
+    <b>inodilatador</b> (inotropia sem β, mas vasodilata). O erro mais comum é tratar débito baixo como se fosse
+    vasoplegia. <span class="badge">β1 → contratilidade + O₂</span> <span class="badge">PDE-3 → inotropia + RVS↓</span></p>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">2</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab" aria-controls="panel-lab" aria-selected="false"><span class="tn">3</span>Lab</button>
+    <button class="tab" role="tab" id="tab-aval" aria-controls="panel-aval" aria-selected="false"><span class="tn">4</span>Avaliação</button>
+  </div>
+
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <div class="card">
+      <div class="ato"><b>Débito baixo é um termo, não um diagnóstico.</b> O cardiogênico tem contratilidade baixa e,
+        em compensação, RVS alta (frio). Subir a RVS aqui (vasoconstritor puro) piora — aumenta a pós-carga sobre a
+        bomba que já não ejeta. O que falta é mover a <em>contratilidade</em>.</div>
+      <div class="ato"><b>Nem todo inotrópico é igual.</b> Dobutamina e adrenalina são β1 (custam O₂ e arritmia);
+        milrinona é PDE-3 (inotropia sem β, mas vasodilata e depende de função renal). O custo é parte da escolha.</div>
+      <div class="ato"><b>O custo de O₂.</b> Subir contratilidade e FC sobe a demanda miocárdica; se a perfusão coronária
+        (PAM) não acompanha, o balanço de O₂ fica negativo. O inotrópico ajuda o débito e cobra do miocárdio.</div>
+      <p class="lead" style="margin-top:12px">Vá ao <b>Instrumento</b>: num cardiogênico, compare os inotrópicos por ganho de débito e custo de O₂.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <div class="card">
+      <div class="sechead">Paciente cardiogênico</div>
+      <label class="sl">contratilidade basal — <b><span id="vpump">0.32</span></b><input id="dpump" type="range" min="0.2" max="0.6" step="0.02" value="0.32"></label>
+      <label class="sl">RVS basal (compensatória) — <b><span id="vrvs">17</span> Wood</b><input id="drvs" type="range" min="10" max="24" step="0.5" value="17"></label>
+      <div class="sechead" style="margin-top:14px">Inotrópicos comparados (ganho de débito × custo de O₂)</div>
+      <table class="cmp" id="dcmp">
+        <thead><tr><th>agente</th><th>ΔDC (L/min)</th><th>balanço O₂</th><th>ΔRVS</th></tr></thead>
+        <tbody id="dcmp-body"></tbody>
+      </table>
+      <div class="verdict" id="dVerdict"></div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <div class="card">
+      <div class="sechead">Gravidade da bomba (mecanismo, sem dose)</div>
+      <div class="presets" id="presets" style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="preset" data-pump="0.45" style="background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;padding:7px 11px;border-radius:8px;cursor:pointer">disfunção leve</button>
+        <button class="preset" data-pump="0.32" style="background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;padding:7px 11px;border-radius:8px;cursor:pointer">cardiogênico</button>
+        <button class="preset" data-pump="0.24" style="background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;padding:7px 11px;border-radius:8px;cursor:pointer">bomba muito fraca</button>
+      </div>
+      <div id="lab-note" class="lead" style="margin-top:10px">Quanto mais fraca a bomba, mais o débito depende do inotrópico — e maior o custo de O₂ a vigiar.</div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-aval" aria-labelledby="tab-aval"><div id="quiz"></div></section>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div>→ <a href="perfunde28.html">M28 · atlas</a> · <a href="perfunde28e.html">28E · dobutamina</a> — fluxo × pressão a fundo.</div>
+    <div>→ <a href="perfunde16.html">M16 · cardiogênico</a> — o espiral isquêmico e a bomba que falha.</div>
+    <div>→ <a href="perfunde7.html">M7 · pós-carga & alça PV</a> — por que baixar a pós-carga ajuda a bomba fraca.</div>
+  </div>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> O instrumento computa o <b>mecanismo</b>
+      (débito, RVS, balanço de O₂) de perfis de receptores. <b>Nunca</b> exibe dose, titulação ou conduta para um paciente real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ O "balanço de O₂" é um <b>índice didático</b> (oferta − demanda), não uma medida clínica. → As diluições, faixas
+      de dose e a conversão dose↔mL/h são <b>referência educacional</b> e vivem no hub (M28) sob o <code>SAFETY.md §11</code>; o peso é hipotético. →
+      A escolha do inotrópico depende do <b>termo quebrado</b> e do custo — apresentada como mecanismo, sem prescrição individualizada. → <b>Confira o protocolo da sua instituição.</b></p>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 28D (atlas farmacológico)
+  </footer>
+</div>
+
+<script>
+window.D28 = (function(){
+  var BASE={ PVC:5,HR0:75,SVbase:70, kA1_rvs:9.0,kV1_rvs:8.0,kB2_rvs:5.0,kPDE_rvs:5.5, kB1_ino:0.55,kPDE_ino:0.5,kB1_hr:34,kA1_hr:-10,
+    kB1_met:0.55,kB2_met:0.35,RVS0:14,RVSfloor:4,RVSceil:30,demand0:1.0 };
+  function clampv(v,a,b){var n=Number(v);return isNaN(n)?a:(n<a?a:(n>b?b:n));}
+  function clamp01(v){return clampv(v,0,1);}
+  function terms(drug){drug=drug||{};var B=BASE;var a1=clamp01(drug.a1),b1=clamp01(drug.b1),b2=clamp01(drug.b2),v1=clamp01(drug.v1),pde=clamp01(drug.pde);
+    return{dRVS:B.kA1_rvs*a1+B.kV1_rvs*v1-B.kB2_rvs*b2-B.kPDE_rvs*pde,dInotropy:B.kB1_ino*b1+B.kPDE_ino*pde,dHR:B.kB1_hr*b1+B.kA1_hr*a1,metabolic:B.kB1_met*b1+B.kB2_met*b2,a1:a1,b1:b1,b2:b2,v1:v1,pde:pde};}
+  function applyDrug(patient,drug){patient=patient||{};var B=BASE;
+    var rvs0=clampv(patient.rvs==null?14:patient.rvs,B.RVSfloor,B.RVSceil),pump0=(patient.pump==null?0.7:clamp01(patient.pump)),preload=clampv(patient.preload==null?0.9:patient.preload,0.1,1.4);
+    var t=terms(drug);var rvs=clampv(rvs0+t.dRVS,B.RVSfloor,B.RVSceil);var inotropy=clamp01(pump0+t.dInotropy);var HR=clampv(B.HR0+t.dHR,40,170);
+    var SV=B.SVbase*inotropy/0.7*(preload*preload)/(preload*preload+0.2);var CO=HR*SV/1000;var PAM=clampv(B.PVC+CO*rvs,35,140);
+    var demand=B.demand0*(HR/75)*(0.6+0.4*(inotropy/0.7))*(1+0.6*t.metabolic);var supply=clampv(PAM/72,0.3,1.6);
+    return{rvs:rvs,inotropy:inotropy,HR:HR,SV:SV,CO:CO,PAM:PAM,demand:demand,supply:supply,o2balance:supply-demand,dRVS:t.dRVS,dInotropy:t.dInotropy,dHR:t.dHR,metabolic:t.metabolic};}
+  var AGENTS={ dobutamina:{a1:0.1,b1:0.9,b2:0.5,v1:0,pde:0}, milrinona:{a1:0,b1:0,b2:0,v1:0,pde:1}, adrenalina:{a1:0.8,b1:0.9,b2:0.4,v1:0,pde:0} };
+  var INOTROPES=['dobutamina','milrinona','adrenalina'];
+  function compareInotropes(patient){var base=applyDrug(patient,{}).CO;
+    return INOTROPES.map(function(k){var R=applyDrug(patient,AGENTS[k]);return{agent:k,CO:R.CO,dCO:R.CO-base,o2balance:R.o2balance,PAM:R.PAM,dRVS:R.dRVS,highCost:R.o2balance<-0.45,inodilator:AGENTS[k].pde>0};});}
+  return { applyDrug:applyDrug, terms:terms, AGENTS:AGENTS, INOTROPES:INOTROPES, compareInotropes:compareInotropes };
+})();
+
+(function(){
+  var byId=function(i){return document.getElementById(i);};
+  function render(){
+    var pump=+byId('dpump').value, rvs=+byId('drvs').value;
+    byId('vpump').textContent=pump.toFixed(2); byId('vrvs').textContent=rvs;
+    var patient={ rvs:rvs, pump:pump, preload:1.05 };
+    var C=window.D28.compareInotropes(patient); window.DSCEN=C;
+    var bestDC=Math.max.apply(null,C.map(function(x){return x.dCO;}));
+    var html='';
+    C.forEach(function(x){
+      html+='<tr><td>'+x.agent+(x.inodilator?' <span class="badge">inodilatador</span>':'')+'</td>'
+        +'<td class="'+(x.dCO===bestDC?'hi':'')+'">+'+x.dCO.toFixed(2)+'</td>'
+        +'<td class="'+(x.highCost?'warn':'')+'">'+x.o2balance.toFixed(2)+(x.highCost?' ⚠':'')+'</td>'
+        +'<td>'+(x.dRVS>=0?'+':'')+x.dRVS.toFixed(1)+'</td></tr>';
+    });
+    byId('dcmp-body').innerHTML=html;
+    var milr=C.find(function(x){return x.agent==='milrinona';});
+    var v=byId('dVerdict');
+    v.innerHTML='Todos sobem o débito (o termo quebrado é a contratilidade). A <b>milrinona</b> é inodilatadora '
+      +'(ΔRVS '+milr.dRVS.toFixed(1)+'): some inotropia, mas <b>baixa a RVS</b> — pode pedir um chão de pressão. '
+      +'Os β1 (dobutamina, adrenalina) custam <b>O₂</b> e arritmia; vigie o balanço (⚠ = custo elevado). '
+      +'<b>Subir a RVS com vasoconstritor puro NÃO é inotropia</b> — piora a pós-carga sobre a bomba fraca.';
+  }
+  window.D28render=render;
+  ['dpump','drvs'].forEach(function(id){ byId(id).addEventListener('input',render); });
+
+  window.activateTab=function(tabId){
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){var on=t.id===tabId;t.setAttribute('aria-selected',on?'true':'false');
+      var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.classList.toggle('active',on);});
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){ t.addEventListener('click',function(){ window.activateTab(t.id); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'),function(b){
+    b.addEventListener('click',function(){ window.activateTab('tab-instrumento'); byId('dpump').value=b.getAttribute('data-pump'); render(); }); });
+
+  // ===== Avaliação ===== A2·B3·C2·D1 (disproporcional), correta nunca a mais longa, sem dose.
+  window.QUIZ=[
+    { q:'No cardiogênico frio, dar um vasoconstritor puro (α1) como "tratamento do débito baixo":',
+      o:['corrige a contratilidade diretamente','piora: sobe a pós-carga sobre uma bomba que já não ejeta','é a conduta de escolha em todos os casos de hipotensão, sem exceção','não altera a hemodinâmica'], a:1,
+      fb:'α1 puro não move a contratilidade (o termo quebrado) e ainda sobe a pós-carga — afunda mais o débito.' },
+    { q:'A milrinona difere da dobutamina porque:',
+      o:['é um agonista β1 mais potente que qualquer outro inotrópico disponível na prática','reduz a contratilidade','aumenta a RVS fortemente','dá inotropia por PDE-3 (sem β) e vasodilata'], a:3,
+      fb:'PDE-3: inotropia sem estímulo β (menos demanda direta), mas inodilatadora — baixa a RVS.' },
+    { q:'O "custo de O₂" de um inotrópico β1 vem sobretudo de:',
+      o:['subir a contratilidade e a FC, elevando a demanda miocárdica','reduzir a pré-carga','vasodilatar o leito esplâncnico','baixar a frequência cardíaca de modo reflexo e sustentado ao longo do tempo'], a:0,
+      fb:'Mais força e mais frequência = mais demanda; se a PAM (perfusão coronária) não acompanha, o balanço cai.' },
+    { q:'"Débito baixo" deve ser tratado como vasoplegia?',
+      o:['sim, sempre, pois todo estado de choque é distributivo na sua origem fisiopatológica profunda','sim, com vasoconstritor','não: o termo quebrado pode ser a contratilidade, e aí o inotrópico é que age','tanto faz a abordagem'], a:2,
+      fb:'O erro comum. Débito baixo por bomba fraca pede inotrópico, não vasoconstrição.' },
+    { q:'Por que a milrinona pode precisar de um vasopressor associado?',
+      o:['porque sobe demais a RVS','porque vasodilata (RVS↓) e pode baixar a PAM, exigindo um chão de pressão','porque reduz o débito cardíaco que ela, em tese, deveria aumentar de forma consistente','porque causa bradicardia profunda'], a:1,
+      fb:'Inodilatador: a vasodilatação pode derrubar a PAM; o vasopressor sustenta a pressão.' },
+    { q:'A adrenalina, como inotrópico, distingue-se por:',
+      o:['ser puramente β2','não ter qualquer efeito inotrópico mensurável em situações de baixo débito','mover vários termos (α e β), com mais arritmia e lactato','baixar a RVS como a milrinona'], a:2,
+      fb:'α+β: potente e ampla, ao custo de arritmia e hiperlactatemia tipo B (β2).' },
+    { q:'O balanço de O₂ miocárdico fica negativo quando:',
+      o:['a perfusão coronária (PAM) não acompanha a demanda imposta pelo inotrópico','a contratilidade cai a zero','a RVS sobe isoladamente','o paciente está em repouso completo, sedado profundamente e sem qualquer estímulo adrenérgico'], a:0,
+      fb:'Demanda (FC·inotropia·custo β) acima da oferta (≈PAM) → balanço negativo, risco isquêmico.' },
+    { q:'A mensagem central do submódulo é:',
+      o:['todo inotrópico é igual','inotrópico move a contratilidade, mas o tipo e o custo importam','vasoconstritor é inotrópico','débito baixo nunca precisa de droga, bastando repor volume em qualquer circunstância'], a:1,
+      fb:'Sobem a contratilidade; β1 vs PDE-3, e o custo de O₂, definem a escolha — não o nome.' }
+  ];
+  (function renderQuiz(){
+    var box=byId('quiz');
+    window.QUIZ.forEach(function(item,qi){
+      var d=document.createElement('div'); d.className='q';
+      var s=document.createElement('div'); s.className='stem'; s.textContent=(qi+1)+'. '+item.q; d.appendChild(s);
+      item.o.forEach(function(opt,oi){ var b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+        b.addEventListener('click',function(){ if(d.getAttribute('data-done'))return; d.setAttribute('data-done','1');
+          var btns=d.querySelectorAll('.opt'); btns[item.a].classList.add('ok'); if(oi!==item.a)b.classList.add('no');
+          var fb=d.querySelector('.fb'); fb.classList.add('show'); fb.textContent=(oi===item.a?'✓ ':'✗ ')+item.fb;
+        }); d.appendChild(b); });
+      var fb=document.createElement('div'); fb.className='fb'; d.appendChild(fb); box.appendChild(d);
+    });
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
