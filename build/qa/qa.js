@@ -15,7 +15,10 @@ const curriculum=JSON.parse(read('curriculum.json'));
 const pub=curriculum.published_range;                       // [0, N]
 const N=pub[1];
 const IDS=[]; for(let i=0;i<=N;i++) IDS.push(i);
-const indexHtml=read('perfunde.html')||'';
+// O índice é uma DUPLA de antebraços: perfunde.html (quantitativo · M0–M13) e
+// choca.html (clínico · M14–M30). Cobertura e órfãos avaliam a UNIÃO dos dois.
+const INDEX_FILES=['perfunde.html','choca.html'].filter(f=>exists(f));
+const indexHtml=INDEX_FILES.map(f=>read(f)||'').join('\n');
 
 console.log('— INVENTÁRIO × CURRICULUM —');
 ok('published_range bate com os módulos "published" do curriculum', (function(){
@@ -30,9 +33,10 @@ ok('todo módulo 0…'+N+' tem perfundeN.html', IDS.every(i=>exists('perfunde'+i
 })();
 ok('assessment_spec aponta para o módulo terminal (M30)', !curriculum.assessment_spec || curriculum.assessment_spec.module===N || curriculum.assessment_spec.module===30);
 
-console.log('\n— ÍNDICE (perfunde.html) SEM ÓRFÃOS —');
+console.log('\n— ÍNDICE (perfunde.html + choca.html) SEM ÓRFÃOS —');
 const indexLinks=(indexHtml.match(/href="(perfunde\d+\.html)"/g)||[]).map(s=>s.match(/perfunde\d+\.html/)[0]);
-ok('todo módulo publicado está linkado no índice', IDS.every(i=>indexLinks.indexOf('perfunde'+i+'.html')>=0), IDS.filter(i=>indexLinks.indexOf('perfunde'+i+'.html')<0).map(i=>'M'+i).join(',')||'todos');
+ok('os dois antebraços do índice existem', INDEX_FILES.length===2, INDEX_FILES.join('+')||'nenhum');
+ok('todo módulo publicado está linkado em algum antebraço do índice', IDS.every(i=>indexLinks.indexOf('perfunde'+i+'.html')>=0), IDS.filter(i=>indexLinks.indexOf('perfunde'+i+'.html')<0).map(i=>'M'+i).join(',')||'todos');
 ok('todo link de módulo no índice aponta para um arquivo existente', indexLinks.every(l=>exists(l)), indexLinks.filter(l=>!exists(l)).join(',')||'todos ok');
 ok('índice não tem mais cards "em breve" (tudo publicado)', !/class="card soon"/.test(indexHtml));
 

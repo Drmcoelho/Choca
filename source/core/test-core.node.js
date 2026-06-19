@@ -25,6 +25,7 @@ const m12 = require('../../build/m12/model12.js');
 const m21 = require('../../build/m21/model21.js');
 const m23 = require('../../build/m23/model23.js');
 const pharm28 = require('../../build/m28/pharm28.js');
+const model28 = require('../../build/m28/model28.js');
 
 let oks=0, falhas=0; const fails=[];
 const ok=(n,c)=>{ if(c){oks++;} else {falhas++; if(fails.length<14) fails.push(n);} };
@@ -298,6 +299,28 @@ ok('conformância lactato: núcleo === m8.lactate', dLact===0);
   });
   ok('conformância PD × pharm28: toda droga do motor existe no M28 publicado', faltam.length===0, faltam.join(',')||'todas');
   ok('conformância PD × pharm28: faixas de dose e weightBased batem', dFaixa===0);
+
+  // CONFORMÂNCIA DIRECIONAL × model28 (o engine receptor→termo já publicado no M28).
+  // Os dois modelos usam coeficientes diferentes (Wood-ish vs adimensional), então NÃO se
+  // exige igualdade numérica — exige-se que CONCORDEM NO SINAL de cada termo movido e em
+  // qual termo cada agente domina. É o que impede DOIS modelos receptor→termo divergentes.
+  const sgn=x=>x>1e-9?1:(x<-1e-9?-1:0);
+  const agentes=['noradrenalina','adrenalina','dobutamina','vasopressina','fenilefrina','milrinona'];
+  let dSinal=0, dDom=0;
+  agentes.forEach(k=>{
+    const e=pd.effect(k, pd.RX[k].ranges[1]);          // efeito do motor (sinais)
+    const t=model28.terms(model28.AGENTS[k]);          // termos do M28 publicado
+    if(sgn(e.RVS)!==sgn(t.dRVS)) dSinal++;             // RVS
+    if(sgn(e.contr)!==sgn(t.dInotropy)) dSinal++;      // contratilidade
+    if(sgn(e.FC)!==sgn(t.dHR)) dSinal++;               // FC
+    const m28raw = model28.dominantTerm(model28.AGENTS[k]);
+    if(m28raw==='misto') return;                       // agente que move os dois termos: fora do teste de domínio
+    const pdDom = Math.abs(e.RVS)>=Math.abs(e.contr) ? 'rvs' : 'ino';
+    const m28Dom = (m28raw==='inotropy') ? 'ino' : 'rvs';   // 'rvs'/'vasodilata' → eixo RVS
+    if(pdDom!==m28Dom) dDom++;
+  });
+  ok('conformância PD × model28: sinais de RVS/contr/FC concordam (6 agentes)', dSinal===0);
+  ok('conformância PD × model28: termo dominante concorda (vasopressor × inotrópico)', dDom===0);
 })();
 
 // ---------- (3) colisão de nome documentada ----------
