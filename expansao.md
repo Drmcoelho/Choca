@@ -216,7 +216,8 @@ PR-3  [ENTREGUE] 28D (inotrópicos · build/m28d) + 28E (dobutamina, a joia · b
                  ambos conformam o modelo publicado (model28/pharmacodynamics); hub linka os dois
 PR-4  [ENTREGUE] 28B (catecolaminérgicos · matriz computada) + 28C (só vasopressina · contraste V1)
                  ambos conformam model28; hub linka os dois; stubs de resgate rotulados em 28C
-PR-5  28F (inodilatadores) + 28G (combinações por fenótipo)
+PR-5  [ENTREGUE] 28F (inodilatadores · alça PV/m7) + 28G (combinações por fenótipo · a joia)
+                 28F conforma model7; 28G conforma pharmacodynamics; hub linka os dois
 PR-6  28H (segurança operacional · §11)
 PR-7  M21 abas + Surviving Sepsis
 PR-8  guardião entende hub/submódulos + curriculum.json + docs (reconciliação final)
