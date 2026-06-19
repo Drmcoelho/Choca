@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfunde · Módulo 28A · Gramática farmacodinâmica</title>
+<meta name="description" content="Uma droga vasoativa é um perfil de receptores que move TERMOS da equação: α1→RVS, β1→contratilidade/FC, β2→vasodilatação, V1→RVS não-adrenérgica, PDE-3→inodilatador. Prevê-se pelo receptor, não pelo nome. Submódulo do hub de farmacologia hemodinâmica. PERFUNDE·CHOCA.">
+<style>
+:root{ --bg:#0c0e13; --elev:#141926; --cell:#11151f; --ink:#e9eef7; --dim:#97a3ba; --faint:#5e6c87;
+  --art:#e5394e; --ven:#3f82e6; --ok:#2ecc71; --warn:#e0a106; --line:#222a3a;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 60px}
+.backlink{display:inline-block;font-size:.86rem;color:var(--dim);margin-bottom:6px;font-family:var(--mono);text-decoration:none}
+.backlink:hover{color:var(--ink)}
+.crumbs{font-family:var(--mono);font-size:.8rem;color:var(--faint);margin-bottom:16px}
+.crumbs a{color:var(--dim);text-decoration:none} .crumbs a:hover{color:var(--ink)}
+.kicker{font-family:var(--mono);font-size:.82rem;color:var(--art);letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:1.7rem;margin:.15em 0 .1em}
+.lead{color:var(--dim);max-width:62ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;border-bottom:1px solid var(--line)}
+.tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:var(--mono);
+  font-size:.86rem;padding:9px 13px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--art)}
+.tab .tn{display:inline-block;width:1.4em;color:var(--faint)}
+.panel{display:none;padding:20px 2px} .panel.active{display:block}
+.card{background:var(--elev);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+.sechead{font-family:var(--mono);font-size:.78rem;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+label.sl{display:block;font-size:.86rem;margin:10px 0 2px;color:var(--dim)}
+label.sl b{color:var(--ink)} input[type=range]{width:100%}
+.out{font-family:var(--mono)} .out .v{font-size:1.5rem;font-weight:700}
+.term{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}
+.term .k{color:var(--dim)} .term .n{font-family:var(--mono);font-weight:700}
+.up{color:var(--art)} .down{color:var(--ven)} .flat{color:var(--faint)}
+.dom{font-family:var(--mono);font-size:1.1rem;margin-top:8px}
+.badge{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.preset{background:var(--cell);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:.82rem;
+  padding:7px 11px;border-radius:8px;cursor:pointer} .preset:hover{border-color:var(--art)}
+.gloss{font-size:.9rem;color:var(--dim);margin:4px 0;padding-left:14px;border-left:2px solid var(--line)}
+.ato{margin:10px 0;padding-left:14px;border-left:2px solid var(--art)}
+.q{margin:16px 0;padding:14px;background:var(--cell);border:1px solid var(--line);border-radius:10px}
+.q .stem{font-weight:600;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--elev);border:1px solid var(--line);color:var(--ink);
+  padding:9px 11px;border-radius:8px;margin:6px 0;cursor:pointer;font-size:.92rem} .opt:hover{border-color:var(--art)}
+.opt.ok{border-color:var(--ok);background:#11231a} .opt.no{border-color:var(--art);background:#241115}
+.fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
+.disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
+footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)}
+.pontes a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="perfunde28.html" id="backlink">← perfunde28.html · hub de farmacologia hemodinâmica</a>
+  <div class="crumbs"><a href="perfunde.html">perfunde</a> · <a href="choca.html">choca</a> · <a href="perfunde28.html">M28 · atlas</a> · <b>28A</b></div>
+  <div class="kicker" id="kicker">Módulo 28A · gramática farmacodinâmica</div>
+  <h1>Droga é um perfil de receptores</h1>
+  <p class="lead">Uma droga vasoativa não é um nome a decorar — é um <b>perfil de receptores</b> que move
+    <b>termos da equação</b>. Você prevê o efeito pelo receptor, não pelo nome. Esta é a gramática que
+    todo o atlas usa: <span class="badge">α1</span> <span class="badge">β1</span> <span class="badge">β2</span>
+    <span class="badge">V1</span> <span class="badge">PDE-3</span>.</p>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
+    <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">2</span>Instrumento</button>
+    <button class="tab" role="tab" id="tab-lab" aria-controls="panel-lab" aria-selected="false"><span class="tn">3</span>Lab · agentes</button>
+    <button class="tab" role="tab" id="tab-aval" aria-controls="panel-aval" aria-selected="false"><span class="tn">4</span>Avaliação</button>
+  </div>
+
+  <section class="panel active" role="tabpanel" id="panel-caso" aria-labelledby="tab-caso">
+    <div class="card">
+      <div class="ato"><b>O erro que a gramática evita.</b> Diante de um choque, a pergunta não é "qual droga?", mas
+        "<b>qual termo está quebrado</b> e quem o move na direção certa?". A RVS caiu (distributivo)? Quem a sobe é
+        α1/V1. A bomba caiu (cardiogênico)? Quem a sobe é β1/PDE-3.</div>
+      <div class="ato"><b>Mesmo termo, nomes diferentes.</b> Noradrenalina e fenilefrina sobem a RVS por α1; vasopressina
+        a sobe por V1 (não-adrenérgica, sem taquicardia). Três nomes, um termo.</div>
+      <div class="ato"><b>O custo do agente errado.</b> Um vasoconstritor puro numa bomba fraca sobe a pós-carga e
+        afunda o débito; um inodilatador num leito vasoplégico derruba a PAM. A gramática prevê o custo.</div>
+      <p class="lead" style="margin-top:12px">Vá ao <b>Instrumento</b>: monte um perfil de receptores e veja os termos se moverem.</p>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-instrumento" aria-labelledby="tab-instrumento">
+    <div class="grid2">
+      <div class="card">
+        <div class="sechead">Perfil de receptores (0–1)</div>
+        <label class="sl">α1 <b><span id="va1">0.0</span></b><input id="ga1" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <label class="sl">β1 <b><span id="vb1">0.0</span></b><input id="gb1" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <label class="sl">β2 <b><span id="vb2">0.0</span></b><input id="gb2" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <label class="sl">V1 <b><span id="vv1">0.0</span></b><input id="gv1" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <label class="sl">PDE-3 <b><span id="vpde">0.0</span></b><input id="gpde" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <div class="sechead" style="margin-top:14px">Gramática ativa</div>
+        <div id="glossbox"></div>
+      </div>
+      <div class="card out">
+        <div class="sechead">Termos movidos</div>
+        <div class="term"><span class="k">RVS (resistência)</span><span class="n" id="oRVS">0</span></div>
+        <div class="term"><span class="k">contratilidade</span><span class="n" id="oIno">0</span></div>
+        <div class="term"><span class="k">FC</span><span class="n" id="oHR">0</span></div>
+        <div class="dom">termo dominante → <b id="oDom">—</b></div>
+        <p class="lead" style="font-size:.84rem;margin-top:12px">Os sinais (↑/↓) são a fisiologia: a magnitude é didática (unidades Wood-ish), o
+          que importa é <b>qual termo</b> cada receptor move e <b>para onde</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-lab" aria-labelledby="tab-lab">
+    <div class="card">
+      <div class="sechead">Carregue um agente (perfil de receptores · mecanismo, sem dose)</div>
+      <div class="presets" id="presets">
+        <button class="preset" data-ag="noradrenalina">noradrenalina</button>
+        <button class="preset" data-ag="adrenalina">adrenalina</button>
+        <button class="preset" data-ag="dobutamina">dobutamina</button>
+        <button class="preset" data-ag="vasopressina">vasopressina</button>
+        <button class="preset" data-ag="fenilefrina">fenilefrina</button>
+        <button class="preset" data-ag="milrinona">milrinona</button>
+      </div>
+      <div id="lab-profile" class="out" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-aval" aria-labelledby="tab-aval">
+    <div id="quiz"></div>
+  </section>
+
+  <div class="sechead">Pontes</div>
+  <div class="pontes" id="pontes">
+    <div>→ <a href="perfunde28.html">M28 · atlas</a> — o hub e a calculadora de referência (§11).</div>
+    <div>→ <a href="perfunde9.html">M9 · PAM = DC × RVS</a> — a equação em que estes termos vivem.</div>
+    <div>→ <a href="perfunde27.html">M27 · os 4 perfis</a> — qual termo está quebrado em cada canto.</div>
+  </div>
+
+  <div class="sechead">Honestidade do modelo</div>
+  <div class="disc" id="disclaimer">
+    <p style="margin:.2em 0"><b>Material educacional · não é suporte à decisão.</b> Esta página ensina a <b>gramática</b>
+      receptor→termo (mecanismo). <b>Nunca</b> exibe dose, titulação ou conduta para um paciente real.</p>
+    <p id="honestidade" style="margin:.4em 0 0">→ Os coeficientes são <b>didáticos</b> (unidades Wood-ish), idênticos aos do
+      engine do M28; o que é exato é o <b>sinal</b> (qual termo sobe/desce por receptor), não a magnitude. → A dose, a
+      diluição e a conversão dose↔mL/h são <b>referência educacional</b> e vivem no hub (M28) sob o <code>SAFETY.md §11</code>;
+      o peso é sempre <b>hipotético</b>. → A escolha do agente "certo" depende do <b>termo quebrado</b> do paciente — apresentada
+      como mecanismo, sem prescrição individualizada. → <b>Confira o protocolo da sua instituição.</b></p>
+  </div>
+
+  <footer>
+    CRM-SP 151.318 · Dr. Matheus M. Coelho · Limeira<br>
+    PERFUNDE · CHOCA — braço 2 do hexápode de medicina crítica · módulo 28A (atlas farmacológico)
+  </footer>
+</div>
+
+<script>
+// ===== GRAM — gramática receptor→termo (inline; espelha build/m28a/model28a.js) =====
+window.GRAM = (function(){
+  var BASE = { kA1_rvs:9.0, kV1_rvs:8.0, kB2_rvs:5.0, kPDE_rvs:5.5, kB1_ino:0.55, kPDE_ino:0.5, kB1_hr:34, kA1_hr:-10 };
+  function clampv(v,a,b){ var n=Number(v); return isNaN(n)?a:(n<a?a:(n>b?b:n)); }
+  function clamp01(v){ return clampv(v,0,1); }
+  function terms(drug){ drug=drug||{}; var B=BASE;
+    var a1=clamp01(drug.a1),b1=clamp01(drug.b1),b2=clamp01(drug.b2),v1=clamp01(drug.v1),pde=clamp01(drug.pde);
+    return { dRVS:B.kA1_rvs*a1+B.kV1_rvs*v1-B.kB2_rvs*b2-B.kPDE_rvs*pde,
+      dInotropy:B.kB1_ino*b1+B.kPDE_ino*pde, dHR:B.kB1_hr*b1+B.kA1_hr*a1, a1:a1,b1:b1,b2:b2,v1:v1,pde:pde }; }
+  function dominantTerm(drug){ var t=terms(drug); var vaso=Math.abs(t.dRVS)/9, ino=t.dInotropy/0.55;
+    if(vaso>=0.5&&ino>=0.5) return 'misto'; if(vaso>=ino) return t.dRVS>=0?'rvs':'vasodilata'; return 'inotropy'; }
+  function gloss(r){ var G={ a1:'α1 → RVS↑ (e pós-carga de VE↑)', b1:'β1 → contratilidade↑ e FC↑ (e demanda de O₂↑)',
+    b2:'β2 → vasodilatação (RVS↓) e demanda metabólica', v1:'V1 → RVS↑ NÃO-adrenérgica (sem taquicardia)',
+    pde:'PDE-3 → inodilatador: contratilidade↑ + RVS↓' }; return G[r]||''; }
+  var AGENTS = { noradrenalina:{a1:0.9,b1:0.3,b2:0,v1:0,pde:0}, adrenalina:{a1:0.8,b1:0.9,b2:0.4,v1:0,pde:0},
+    dobutamina:{a1:0.1,b1:0.9,b2:0.5,v1:0,pde:0}, vasopressina:{a1:0,b1:0,b2:0,v1:1,pde:0},
+    fenilefrina:{a1:1,b1:0,b2:0,v1:0,pde:0}, milrinona:{a1:0,b1:0,b2:0,v1:0,pde:1} };
+  return { terms:terms, dominantTerm:dominantTerm, gloss:gloss, AGENTS:AGENTS };
+})();
+
+// ===== UI =====
+(function(){
+  var byId=function(i){return document.getElementById(i);};
+  var DOM={rvs:'vasopressor (RVS↑)',inotropy:'inotrópico',vasodilata:'vasodilatador (RVS↓)',misto:'misto (vaso + inotrópico)'};
+  function fmt(x){ return (x>=0?'+':'')+x.toFixed(2); }
+  function cls(x){ return x>0.05?'up':(x<-0.05?'down':'flat'); }
+  function arrow(x){ return x>0.05?'↑':(x<-0.05?'↓':'·'); }
+  function readSliders(){ return { a1:+byId('ga1').value, b1:+byId('gb1').value, b2:+byId('gb2').value,
+    v1:+byId('gv1').value, pde:+byId('gpde').value }; }
+  function render(){
+    var d=readSliders();
+    byId('va1').textContent=d.a1.toFixed(2); byId('vb1').textContent=d.b1.toFixed(2);
+    byId('vb2').textContent=d.b2.toFixed(2); byId('vv1').textContent=d.v1.toFixed(2); byId('vpde').textContent=d.pde.toFixed(2);
+    var t=window.GRAM.terms(d);
+    var oR=byId('oRVS'); oR.textContent=fmt(t.dRVS)+' '+arrow(t.dRVS); oR.className='n '+cls(t.dRVS);
+    var oI=byId('oIno'); oI.textContent=fmt(t.dInotropy)+' '+arrow(t.dInotropy); oI.className='n '+cls(t.dInotropy);
+    var oH=byId('oHR'); oH.textContent=fmt(t.dHR)+' '+arrow(t.dHR); oH.className='n '+cls(t.dHR);
+    byId('oDom').textContent=DOM[window.GRAM.dominantTerm(d)]||'—';
+    var gb=byId('glossbox'); gb.innerHTML='';
+    ['a1','b1','b2','v1','pde'].forEach(function(r){ if(d[r]>0){ var e=document.createElement('div'); e.className='gloss'; e.textContent=window.GRAM.gloss(r); gb.appendChild(e); } });
+    if(!gb.innerHTML) gb.innerHTML='<div class="gloss flat">nenhum receptor ativo — mova um slider.</div>';
+  }
+  window.setAgent=function(name){ var a=window.GRAM.AGENTS[name]; if(!a) return;
+    byId('ga1').value=a.a1; byId('gb1').value=a.b1; byId('gb2').value=a.b2; byId('gv1').value=a.v1; byId('gpde').value=a.pde;
+    render();
+    var t=window.GRAM.terms(a);
+    byId('lab-profile').innerHTML='<b>'+name+'</b> — perfil α1 '+a.a1+' · β1 '+a.b1+' · β2 '+a.b2+' · V1 '+a.v1+' · PDE-3 '+a.pde+
+      '<br>move: RVS '+fmt(t.dRVS)+' · contratilidade '+fmt(t.dInotropy)+' · FC '+fmt(t.dHR)+
+      ' &nbsp;→ dominante: <b>'+(DOM[window.GRAM.dominantTerm(a)]||'—')+'</b>';
+  };
+  ['ga1','gb1','gb2','gv1','gpde'].forEach(function(id){ byId(id).addEventListener('input',render); });
+  Array.prototype.forEach.call(document.querySelectorAll('#presets .preset'),function(b){
+    b.addEventListener('click',function(){ window.activateTab('tab-instrumento'); window.setAgent(b.getAttribute('data-ag')); }); });
+
+  // abas
+  window.activateTab=function(tabId){
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){
+      var on=t.id===tabId; t.setAttribute('aria-selected',on?'true':'false');
+      var p=document.getElementById(t.getAttribute('aria-controls')); if(p) p.classList.toggle('active',on); });
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){ t.addEventListener('click',function(){ window.activateTab(t.id); }); });
+
+  // ===== Avaliação =====
+  // Banco: gabarito disproporcional (A2 B4 C1 D2), correta NUNCA a mais longa (cada item
+  // tem um distrator mais longo), SEM dose nem ordem individualizada (firewall §11).
+  window.QUIZ = [
+    { q:'Um agente puramente α1 é dado. Qual termo da equação ele move como efeito primário?',
+      o:['a contratilidade do miocárdio','a frequência cardíaca, por ação direta sobre o nó sinusal e o sistema de condução','a resistência vascular sistêmica','a pré-carga'], a:2,
+      fb:'α1 sobe a RVS (e a pós-carga de VE). A FC, se muda, cai por reflexo — não sobe.' },
+    { q:'Vasopressina e noradrenalina sobem a RVS. A diferença mecanística é que a vasopressina:',
+      o:['age por V1, fora da via adrenérgica','é um agonista β2 que vasoconstringe os territórios esplâncnico e renal de forma seletiva','sobe a RVS apenas na circulação pulmonar','depende de β1 íntegro'], a:0,
+      fb:'V1 é não-adrenérgico → sobe a RVS poupando catecolamina e sem o componente cronotrópico.' },
+    { q:'Por que um inodilatador (PDE-3) pode derrubar a PAM num paciente vasoplégico?',
+      o:['porque bloqueia o receptor β1','sobe a contratilidade mas baixa a RVS; num leito já aberto, a queda de RVS manda na PAM','porque reduz a contratilidade e, ao mesmo tempo, promove forte retenção de volume no interstício pulmonar','porque dilui as catecolaminas'], a:1,
+      fb:'PDE-3 é inodilatador: contratilidade↑ e RVS↓. Se a RVS já está baixa, a vasodilatação domina a PAM.' },
+    { q:'O termo dominante movido pela dobutamina é:',
+      o:['a resistência vascular sistêmica, que ela eleva fortemente por estímulo α1 direto','a contratilidade (inotrópico)','a pré-carga','a saturação arterial de oxigênio'], a:1,
+      fb:'Dobutamina é β1>β2: domina a contratilidade. O β2 ainda baixa um pouco a RVS.' },
+    { q:'Dar um vasoconstritor puro a uma bomba fraca custa caro porque:',
+      o:['sobe a pós-carga e afunda o débito','reduz a resistência vascular sistêmica abaixo do necessário para perfundir os órgãos nobres','bloqueia a vasopressina endógena','não produz efeito hemodinâmico algum'], a:0,
+      fb:'α1 puro sobe a pós-carga; sobre contratilidade baixa, isso afunda o débito (o termo já quebrado).' },
+    { q:'β1 puro move quais termos?',
+      o:['apenas a resistência vascular sistêmica','a contratilidade e a FC','somente a pré-carga, sem qualquer efeito sobre a frequência ou a força de contração','a saturação venosa'], a:1,
+      fb:'β1 sobe contratilidade e FC — e, com elas, a demanda de O₂ do miocárdio (o custo).' },
+    { q:'"Prever pelo receptor, não pelo nome" significa que:',
+      o:['o nome comercial é que define o efeito','mesmo perfil de receptores → mesmos termos movidos','a dose isolada determina todo o comportamento hemodinâmico, independentemente do receptor','o efeito é imprevisível'], a:1,
+      fb:'O efeito hemodinâmico segue o perfil de receptores; o nome é só o rótulo.' },
+    { q:'No choque distributivo (RVS↓), o agente "certo" é o que:',
+      o:['sobe a contratilidade (inotrópico)','baixa a frequência cardíaca para poupar oxigênio miocárdico ao longo do tempo','repõe volume para corrigir a pré-carga','sobe a RVS por α1 ou V1'], a:3,
+      fb:'O termo quebrado é a RVS; quem a recupera (α1/V1) ataca a causa, não um termo intacto.' },
+    { q:'O β2, isoladamente, tende a:',
+      o:['vasoconstringir, igual ao α1','elevar a resistência vascular sistêmica de modo sustentado em todos os leitos','interromper a contratilidade','vasodilatar (RVS↓)'], a:3,
+      fb:'β2 vasodilata (RVS↓) e tem custo metabólico — daí a hiperlactatemia tipo B de agentes β.' }
+  ];
+  (function renderQuiz(){
+    var box=document.getElementById('quiz');
+    window.QUIZ.forEach(function(item,qi){
+      var d=document.createElement('div'); d.className='q';
+      var s=document.createElement('div'); s.className='stem'; s.textContent=(qi+1)+'. '+item.q; d.appendChild(s);
+      item.o.forEach(function(opt,oi){ var b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+        b.addEventListener('click',function(){
+          if(d.getAttribute('data-done')) return; d.setAttribute('data-done','1');
+          var btns=d.querySelectorAll('.opt');
+          btns[item.a].classList.add('ok'); if(oi!==item.a) b.classList.add('no');
+          var fb=d.querySelector('.fb'); fb.classList.add('show');
+          fb.textContent=(oi===item.a?'✓ ':'✗ ')+item.fb;
+        }); d.appendChild(b); });
+      var fb=document.createElement('div'); fb.className='fb'; d.appendChild(fb);
+      box.appendChild(d);
+    });
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -108,11 +108,12 @@ O `pharmacodynamics.js` modela **efeito sobre termos** (mecanismo) e **referênc
 
 Cada submódulo segue o contrato (`MODULE_CONTRACT.md`): caso/abertura, trilha socrática, instrumento vivo, matriz/lab, banco MCQ com gabarito robusto, pontes, honestidade do modelo, rodapé, engine+teste+validador. Banco-alvo sugerido: **20–40 MCQ por submódulo** (28D/28E/28G maiores), no padrão psicométrico do braço (distribuição desproporcional, correta≠mais-longa, armadilhas T01–T16).
 
-### 28A — Gramática farmacodinâmica
+### 28A — Gramática farmacodinâmica · **ENTREGUE** (`perfunde28a.html`)
 **Tese:** droga não é "sobe pressão"; é um operador sobre termos. Receptor → efeito hemodinâmico → consequência clínica.
-**Cobre:** α1, β1, β2, D1, V1, PDE-3, Ca²⁺-sensibilização, NO/cGMP, vasopressina, angiotensina.
-**Instrumento:** seletor de receptor → acende o(s) termo(s) movido(s) na cascata viva.
-**Papel:** fundação do atlas e do motor `pharmacodynamics.js`.
+**Cobre:** α1, β1, β2, V1, PDE-3 (núcleo da gramática; D1/Ca²⁺-sensib./NO-cGMP/angiotensina entram nos submódulos seguintes).
+**Instrumento:** mixer de receptores (sliders α1/β1/β2/V1/PDE-3) → termos movidos ao vivo (dRVS/contratilidade/FC) + termo dominante + glossário. Lab carrega os 6 agentes pelo perfil.
+**Engine:** `build/m28a/model28a.js` — gramática receptor→termo, **conforme `model28`** (test28a: bateria 5⁵ + dominante). Banco de 9 MCQ (A2·B4·C1·D2; correta nunca a mais longa). Firewall §11 (sem dose, sem ordem individualizada).
+**Padrão do submódulo estabelecido:** engine puro + teste Node (conformância) + HTML single-file + validador jsdom + wiring `test:28a`/`validate:28a`.
 
 ### 28B — Vasopressores catecolaminérgicos
 **Drogas:** noradrenalina, adrenalina, dopamina, fenilefrina.
@@ -209,7 +210,8 @@ Cada fase é um PR com portão verde (`npm run check`), respeitando o rito de bu
 PR-0  [ENTREGUE] expansao.md + source/core/pharmacodynamics.js (motor + conformância × pharm28)
 PR-1  [ENTREGUE] reconciliação do modelo receptor→termo (PD × model28) + índice de dois
                  antebraços no guardião (perfunde.html + choca.html)
-PR-2  perfunde28.html vira HUB + 28A (gramática) — estabelece o padrão do submódulo
+PR-2  [ENTREGUE] perfunde28.html vira HUB (atlas-nav) + 28A (gramática) — padrão do submódulo
+                 estabelecido: engine build/m28a (conforma model28) + jsdom + test:28a/validate:28a
 PR-3  28D (inotrópicos) + 28E (dobutamina, a joia integradora)
 PR-4  28B + 28C (só vasopressina)
 PR-5  28F (inodilatadores) + 28G (combinações por fenótipo)
