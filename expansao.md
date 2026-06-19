@@ -11,6 +11,19 @@
 
 ---
 
+## 0.1 Estado real do M28 (achado da construção)
+
+O `perfunde28.html` **já é um dos módulos mais ricos** do braço: 7 abas (Caso, Trilha,
+Instrumento, Lab, Avaliação, **Farmácia**, **Casos V/F**), um engine receptor→termo
+(`build/m28/model28.js`: `terms`, `applyDrug`, `appropriate`, `AGENTS`), a calculadora
+§11 (`pharm28.js`) e 100 assertivas V/F. O "pequeno demais" é de **cobertura conceitual**
+(mais agentes, fenótipos, dobutamina a fundo, Surviving), não de tamanho de arquivo.
+
+Consequência de engenharia: havia o risco de **dois modelos receptor→termo divergentes**
+(`model28.terms` Wood-ish × `source/core/pharmacodynamics`). Por isso a 1ª onda da
+construção **reconcilia** os dois por conformância direcional (mesmo sinal de RVS/contr/FC
+e mesmo termo dominante por agente) antes de erguer qualquer submódulo sobre o motor.
+
 ## 0. Tese da expansão
 
 O M28, hoje, é um **substantivo**: "vasopressores & inotrópicos" como lista anotada. A expansão o torna um **verbo**: a camada que move os termos da equação inteira do braço.
@@ -194,13 +207,15 @@ Cada fase é um PR com portão verde (`npm run check`), respeitando o rito de bu
 
 ```text
 PR-0  [ENTREGUE] expansao.md + source/core/pharmacodynamics.js (motor + conformância × pharm28)
-PR-1  perfunde28.html vira HUB + 28A (gramática) — estabelece o padrão do submódulo
-PR-2  28D (inotrópicos) + 28E (dobutamina, a joia integradora)
-PR-3  28B + 28C (vasopressores catecolaminérgicos e não-catecolaminérgicos)
-PR-4  28F (inodilatadores) + 28G (combinações por fenótipo)
-PR-5  28H (segurança operacional · §11)
-PR-6  M21 abas + Surviving Sepsis
-PR-7  guardião entende hub/submódulos + curriculum.json + docs (reconciliação final)
+PR-1  [ENTREGUE] reconciliação do modelo receptor→termo (PD × model28) + índice de dois
+                 antebraços no guardião (perfunde.html + choca.html)
+PR-2  perfunde28.html vira HUB + 28A (gramática) — estabelece o padrão do submódulo
+PR-3  28D (inotrópicos) + 28E (dobutamina, a joia integradora)
+PR-4  28B + 28C (só vasopressina)
+PR-5  28F (inodilatadores) + 28G (combinações por fenótipo)
+PR-6  28H (segurança operacional · §11)
+PR-7  M21 abas + Surviving Sepsis
+PR-8  guardião entende hub/submódulos + curriculum.json + docs (reconciliação final)
 ```
 
 Racional da ordem: **motor primeiro** (sem ele tudo vira lista); depois a **fundação pedagógica** (28A) e a **joia** (28E) que prova o valor; vasopressores e combinações na sequência; segurança e Surviving por último, já sobre uma base engine-grounded e com o guardião de rede.
