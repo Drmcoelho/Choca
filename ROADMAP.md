@@ -272,15 +272,17 @@ Checadores de plataforma já no portão (`build/qa/qa.js`):
 [x] arquivos de build por módulo (testN.node.js / validateN.js)
 [x] núcleo source/core presente e wired (test:core)
 [x] coerência documental (ranges perfunde0…N, M0…N, build/m0…N; contagem do M30)
+[x] acessibilidade básica (lang=pt-BR, charset, viewport, <title> por módulo)
+[x] andaime de UI (1 role="tablist", ≥4 abas, abas↔painéis pareados, aria-controls)
+[x] tutor socrático presente nos módulos de conteúdo (class="trilha" + .qq/.aa)
+[x] checador M30 fino: letras A–D em 15–35% e correta≠mais-longa <30% no banco real
 ```
 
 Checadores ainda planejados (próxima evolução do guardião):
 
 ```text
-[ ] IDs mínimos de UI por módulo
-[ ] presença de tutor socrático
-[ ] acessibilidade básica
-[ ] checador M30 fino: letras 15–35%, gabarito robusto direto no banco
+[ ] contraste/cor declarados (acessibilidade avançada)
+[ ] rótulos/aria-label em todos os controles interativos (sliders/botões)
 ```
 
 Critério de pronto:

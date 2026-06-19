@@ -80,10 +80,65 @@ ok('todo módulo tem build/mN/testN.node.js', IDS.every(i=>exists('build/m'+i+'/
 ok('todo módulo tem build/mN/validateN.js', IDS.every(i=>exists('build/m'+i+'/validate'+i+'.js')), IDS.filter(i=>!exists('build/m'+i+'/validate'+i+'.js')).map(i=>'M'+i).join(',')||'todos');
 
 console.log('\n— NÚCLEO FISIOLÓGICO COMPARTILHADO (source/core) —');
-(function(){ const coreFiles=['units.js','oxygen.js','hemodynamics.js','guyton.js','ventricle.js','microcirculation.js','shock.js','guards.js','test-core.node.js'];
+(function(){ const coreFiles=['units.js','oxygen.js','hemodynamics.js','guyton.js','ventricle.js','microcirculation.js','shock.js','pharmacodynamics.js','guards.js','test-core.node.js'];
   ok('source/core tem os arquivos do primeiro núcleo', coreFiles.every(f=>exists('source/core/'+f)), coreFiles.filter(f=>!exists('source/core/'+f)).join(',')||'todos');
   ok('test:core existe e está na cadeia agregada "test"', !!sc['test:core'] && ((sc.test||'').indexOf('run test:core ')>=0 || (sc.test||'').endsWith('run test:core')));
   ok('test:core aponta para source/core/test-core.node.js existente', (function(){ const m=(sc['test:core']||'').match(/source\/core\/\S+\.js/); return !!m && exists(m[0]); })());
+})();
+
+console.log('\n— ACESSIBILIDADE BÁSICA (todo módulo) —');
+(function(){ let semLang=[], semCharset=[], semViewport=[], semTitle=[];
+  IDS.forEach(i=>{ const h=read('perfunde'+i+'.html')||'';
+    if(!/<html[^>]*\blang="pt-BR"/i.test(h)) semLang.push('M'+i);
+    if(!/<meta[^>]*charset=["']?utf-8/i.test(h)) semCharset.push('M'+i);
+    if(!/<meta[^>]*name="viewport"/i.test(h)) semViewport.push('M'+i);
+    if(!/<title>[^<]+<\/title>/i.test(h)) semTitle.push('M'+i);
+  });
+  ok('todo módulo declara <html lang="pt-BR">', semLang.length===0, semLang.join(',')||'todos');
+  ok('todo módulo declara <meta charset=utf-8>', semCharset.length===0, semCharset.join(',')||'todos');
+  ok('todo módulo declara viewport responsivo', semViewport.length===0, semViewport.join(',')||'todos');
+  ok('todo módulo tem <title> não-vazio', semTitle.length===0, semTitle.join(',')||'todos');
+})();
+
+console.log('\n— ANDAIME DE UI (abas/painéis ARIA) —');
+(function(){ const cnt=(h,re)=>(h.match(re)||[]).length;
+  let semTablist=[], poucasAbas=[], desparelhado=[], semAriaCtrl=[];
+  IDS.forEach(i=>{ const h=read('perfunde'+i+'.html')||'';
+    const tablist=cnt(h,/role="tablist"/g), tabs=cnt(h,/role="tab"/g),
+          panels=cnt(h,/role="tabpanel"/g), ariaCtrl=cnt(h,/aria-controls=/g);
+    if(tablist!==1) semTablist.push('M'+i+'('+tablist+')');
+    if(tabs<4) poucasAbas.push('M'+i+'('+tabs+')');
+    if(tabs!==panels) desparelhado.push('M'+i+':'+tabs+'≠'+panels);
+    if(ariaCtrl<tabs) semAriaCtrl.push('M'+i);
+  });
+  ok('todo módulo tem exatamente um role="tablist"', semTablist.length===0, semTablist.join(',')||'todos');
+  ok('todo módulo tem ≥4 abas (role="tab")', poucasAbas.length===0, poucasAbas.join(',')||'todos');
+  ok('nº de abas casa com nº de painéis (role="tabpanel")', desparelhado.length===0, desparelhado.join(' ')||'pareados');
+  ok('toda aba tem aria-controls', semAriaCtrl.length===0, semAriaCtrl.join(',')||'todas');
+})();
+
+console.log('\n— TUTOR SOCRÁTICO (módulos de conteúdo) —');
+(function(){ const assess=(curriculum.assessment_spec&&curriculum.assessment_spec.module)||30;
+  const conteudo=IDS.filter(i=>i!==assess);
+  let semTrilha=[], semPasso=[];
+  conteudo.forEach(i=>{ const h=read('perfunde'+i+'.html')||'';
+    if(!/class="trilha"/.test(h)) semTrilha.push('M'+i);
+    else if(!(/class="qq"/.test(h) && /class="aa"/.test(h))) semPasso.push('M'+i);
+  });
+  ok('todo módulo de conteúdo tem a trilha socrática (class="trilha")', semTrilha.length===0, semTrilha.join(',')||'todos');
+  ok('a trilha tem passos pergunta/resposta (.qq + .aa)', semPasso.length===0, semPasso.join(',')||'todos');
+})();
+
+console.log('\n— PSICOMETRIA DO M30 (banco real) —');
+(function(){ const bank=require('../m30/bank30.js').buildBank();
+  const L=['A','B','C','D']; const cnt={A:0,B:0,C:0,D:0}; let n=0, longest=0;
+  bank.forEach(q=>{ if(Array.isArray(q.o) && q.o.length && typeof q.a==='number'){ n++; cnt[L[q.a]]++;
+    const lens=q.o.map(s=>(''+s).length), mx=Math.max.apply(null,lens);
+    if(lens[q.a]===mx) longest++; } });
+  const pct=x=>100*cnt[x]/n;
+  const foraFaixa=L.filter(x=>pct(x)<15 || pct(x)>35);
+  ok('cada letra A–D fica em 15–35% do gabarito', n>0 && foraFaixa.length===0, L.map(x=>x+' '+pct(x).toFixed(1)+'%').join(' · '));
+  ok('correta = a mais longa em <30% dos itens (sem pista de tamanho)', n>0 && (100*longest/n)<30, (100*longest/Math.max(1,n)).toFixed(1)+'%');
 })();
 
 console.log('\n— COERÊNCIA DA DOCUMENTAÇÃO (range × contagem) —');
