@@ -87,6 +87,7 @@ canvas.plot{display:block;width:100%;height:190px;border-radius:8px;background:#
 .scorebar{font-family:var(--mono);font-size:.84rem;color:var(--ink-dim);margin-top:10px}
 .disc{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.28);border-radius:var(--r);padding:14px 18px;font-size:.9rem;color:var(--ink-dim);margin:26px 0} .disc b{color:var(--warn)}
 .pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
+.ssc-item,.ssc-step{border-left:3px solid var(--warn);background:var(--bg-cell);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:10px 14px;margin:0 0 8px;font-size:.92rem} .ssc-item i{color:var(--art);font-style:normal} .ssc-step a{color:var(--ink-dim)}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
 </style>
@@ -114,7 +115,8 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <button class="tab" role="tab" id="tab-trilha"      aria-controls="panel-trilha"      aria-selected="false"><span class="tn">2</span>Trilha</button>
     <button class="tab" role="tab" id="tab-instrumento" aria-controls="panel-instrumento" aria-selected="false"><span class="tn">3</span>Instrumento</button>
     <button class="tab" role="tab" id="tab-lab"         aria-controls="panel-lab"         aria-selected="false"><span class="tn">4</span>Lab</button>
-    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">5</span>Avaliação</button>
+    <button class="tab" role="tab" id="tab-surviving"   aria-controls="panel-surviving"   aria-selected="false"><span class="tn">5</span>Surviving Sepsis</button>
+    <button class="tab" role="tab" id="tab-avaliacao"   aria-controls="panel-avaliacao"   aria-selected="false"><span class="tn">6</span>Avaliação</button>
   </div>
 
   <!-- 1 · CASO -->
@@ -215,6 +217,36 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
     <p class="lead">Cada questão desenha a cascata (ou as intervenções) ao vivo. Leia o paradoxo e a alavanca que fecha o déficit — feedback persistente.</p>
     <div id="tutor"></div>
     <div class="scorebar" id="score">0 / 0 respondidas</div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-surviving" aria-labelledby="tab-surviving">
+    <h2>Surviving Sepsis — uma camada de diretriz sobre o motor</h2>
+    <p class="lead">A Surviving Sepsis Campaign (SSC) é o eixo internacional mais reconhecido para organizar o cuidado na sepse;
+      as diretrizes adultas abrangentes mais citadas foram <b>atualizadas em 2021</b>. Aqui ela aparece <b>ancorada à fisiologia</b>:
+      cada item do bundle aponta para o <b>termo</b> que serve — diretriz <b>sobre</b> o motor, nunca protocolo sem fisiologia.</p>
+    <div class="disc" id="ssc-framing" style="margin:10px 0"><b>Camada de diretriz educacional.</b> Recomendações de diretriz
+      (referência, podem mudar por versão/instituição), <b>ancoradas ao mecanismo</b>. <b>Não é prescrição individualizada</b>;
+      <b>confira o protocolo da sua instituição</b>.</div>
+
+    <div class="sechead">O bundle, ancorado ao termo que serve</div>
+    <div id="ssc-bundle">
+      <div class="ssc-item"><b>Cultura + antibiótico precoce</b> → <i>controle da causa</i>: ataca a fonte que dispara a vasoplegia e a disóxia (não é um termo hemodinâmico, é o gatilho).</div>
+      <div class="ssc-item"><b>Lactato (medir e reavaliar)</b> → <i>marcador de hipoperfusão/disóxia</i>: o lactato é multifatorial (ver M13) — guia a reavaliação, não substitui o exame do tecido.</div>
+      <div class="ssc-item"><b>Fluido (ressuscitação inicial)</b> → <i>pré-carga</i>: volume como droga com janela (responsivo × tolerante — ver M5/M25); não é "quanto mais melhor".</div>
+      <div class="ssc-item"><b>Vasopressor</b> → <i>RVS</i>, o termo quebrado do distributivo: restaura a pressão de perfusão quando o fluido já não basta.</div>
+      <div class="ssc-item"><b>Controle de fonte + reavaliação</b> → <i>causa + alvo de perfusão</i>: drenar/remover o foco e reler o tecido (perfusão, lactato, diurese, mental).</div>
+    </div>
+
+    <div class="sechead">Escada hemodinâmica (SSC 2021 · referência, ancorada ao receptor→termo)</div>
+    <div id="ssc-ladder">
+      <div class="ssc-step"><b>1ª linha · noradrenalina</b> (α1 → RVS) — o vasopressor inicial recomendado; recupera a RVS com mínima taquicardia. <a href="perfunde28b.html">28B</a></div>
+      <div class="ssc-step"><b>Adjuvante · vasopressina</b> (V1 → RVS, não-adrenérgica) — soma RVS por outra via e poupa catecolamina. <a href="perfunde28c.html">28C</a></div>
+      <div class="ssc-step"><b>Adjuvante · adrenalina</b> (α+β) — quando se busca potência ampla. <a href="perfunde28b.html">28B</a></div>
+      <div class="ssc-step"><b>Disfunção cardíaca · dobutamina</b> (β1 → contratilidade) — quando há baixo débito com hipoperfusão persistente apesar de PAM e volume adequados. <a href="perfunde28e.html">28E</a></div>
+      <div class="ssc-step"><b>Refratariedade · corticoide</b> — hidrocortisona como medida em choque refratário ao vasopressor (mecanismo de responsividade vascular).</div>
+    </div>
+    <p class="lead" style="margin-top:12px">O paradoxo do M21 permanece o pano de fundo: normalizar a <b>macro</b> (PAM por vasopressor) <b>não fecha</b> o déficit
+      micro/mito. A diretriz organiza o cuidado; o motor explica por que cada passo move (ou não) o termo certo.</p>
   </section>
 
   <div class="sechead">Honestidade do modelo</div>

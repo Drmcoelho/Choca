@@ -25,9 +25,22 @@ console.log('— ESTRUTURA / ABAS —');
 ['backlink','kicker','disclaimer','honestidade','pontes','tutor','score','cascade','plotInterv','cascadeLab',
  'panel-caso','panel-trilha','panel-instrumento','panel-lab','panel-avaliacao','iCo','iRvs','iShunt','iGlyco','iMito','iDem','presets','lab-veredito'].forEach(id=>ok('#'+id,!!$(id)));
 ok('footer',!!doc.querySelector('footer'));
-['tab-caso','tab-trilha','tab-instrumento','tab-lab','tab-avaliacao'].forEach(t=>ok('aba '+t,!!$(t)));
+['tab-caso','tab-trilha','tab-instrumento','tab-lab','tab-surviving','tab-avaliacao'].forEach(t=>ok('aba '+t,!!$(t)));
 ok('Caso 5 atos',doc.querySelectorAll('#panel-caso .ato').length===5);
 ok('Trilha ≥6',doc.querySelectorAll('#panel-trilha .step').length>=6);
+
+console.log('— ABA SURVIVING SEPSIS (diretriz sobre o motor) —');
+ok('#panel-surviving',!!$('panel-surviving'));
+ok('#ssc-framing + #ssc-bundle + #ssc-ladder',!!$('ssc-framing')&&!!$('ssc-bundle')&&!!$('ssc-ladder'));
+ok('bundle ancorado ao termo (≥5 itens)',doc.querySelectorAll('#ssc-bundle .ssc-item').length>=5);
+ok('bundle cobre antibiótico, lactato, fluido, vasopressor, fonte',(function(){var h=$('ssc-bundle').innerHTML;return /antibi[óo]tico/i.test(h)&&/lactato/i.test(h)&&/fluido/i.test(h)&&/vasopressor/i.test(h)&&/fonte/i.test(h);})());
+ok('escada SSC: nora 1ª linha + vaso/adrenalina adjuvantes + dobutamina (disfunção cardíaca)',(function(){var h=$('ssc-ladder').innerHTML;return /noradrenalina/i.test(h)&&/1[ªa]\s*linha/i.test(h)&&/vasopressina/i.test(h)&&/adrenalina/i.test(h)&&/dobutamina/i.test(h);})());
+ok('escada ancora ao SSC 2021',/2021/.test($('panel-surviving').textContent));
+ok('escada liga aos submódulos do atlas (28B/28C/28E)',['perfunde28b','perfunde28c','perfunde28e'].every(h=>$('ssc-ladder').innerHTML.includes(h)));
+ok('Surviving é DIRETRIZ EDUCACIONAL (não prescrição, confira protocolo)',/diretriz educacional/i.test($('ssc-framing').innerHTML)&&/n[ãa]o é prescri/i.test($('ssc-framing').innerHTML)&&/protocolo da sua institui/i.test($('ssc-framing').innerHTML));
+ok('Surviving mantém o paradoxo: normalizar a macro não fecha o déficit',/normalizar a/i.test($('panel-surviving').textContent)&&/n[ãa]o\s+fecha/i.test($('panel-surviving').textContent));
+window.activateTab('tab-surviving'); ok('troca aba ativa Surviving',$('panel-surviving').classList.contains('active')); window.activateTab('tab-instrumento');
+ok('Surviving SEM ordem imperativa individualizada',!/\b(inicie|administre|titule|prescreva|comece|fa[çc]a)\s+\S+\s+(neste|no|na|para o|para a|para este|para esta|deste|nesta)\s+paciente\b/i.test($('panel-surviving').innerHTML));
 ok('nota de farmacologia (receptor→termo)',!!doc.querySelector('.pharm')&&/α1/.test(doc.querySelector('.pharm').textContent));
 window.activateTab('tab-lab'); ok('troca aba ativa Lab',$('panel-lab').classList.contains('active')); window.activateTab('tab-instrumento');
 

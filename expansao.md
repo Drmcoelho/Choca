@@ -174,6 +174,8 @@ Casos            — quente/vasoplégico, frio/baixo débito, idoso cardiopata, 
 
 **Âncora da Surviving Sepsis Campaign (SSC):** eixo internacional mais reconhecido para organização do cuidado; as diretrizes adultas abrangentes mais citadas foram atualizadas em **2021**. Sustentam **noradrenalina como vasopressor inicial**, **vasopressina/adrenalina como adjuvantes**, e **dobutamina quando há disfunção cardíaca / baixo débito com hipoperfusão persistente**. A aba apresenta isso como **diretriz rotulada**, cada item amarrado ao termo fisiológico que ele move — não como ordem.
 
+**ENTREGUE (`perfunde21.html`):** a aba **Surviving Sepsis** foi adicionada (sem reescrever as abas existentes — Caso/Trilha/Instrumento/Lab/Avaliação seguem; `validate21` cobre a nova aba). Traz o banner de **diretriz educacional** (§11), o **bundle ancorado ao termo** (cultura+antibiótico→causa, lactato→disóxia/M13, fluido→pré-carga/M5·M25, vasopressor→RVS, fonte+reavaliação) e a **escada hemodinâmica SSC 2021** (nora 1ª linha → vasopressina/adrenalina adjuvantes → dobutamina na disfunção cardíaca → corticoide na refratariedade), cada degrau ligado ao submódulo do atlas (28B/28C/28E). Mantém o paradoxo do M21: normalizar a macro **não fecha** o déficit micro/mito.
+
 ---
 
 ## 6. Fronteira SaMD — reconciliação operacional
@@ -225,7 +227,8 @@ PR-5  [ENTREGUE] 28F (inodilatadores · alça PV/m7) + 28G (combinações por fe
                  28F conforma model7; 28G conforma pharmacodynamics; hub linka os dois
 PR-6  [ENTREGUE] 28H (segurança operacional · §11) — calculadora dose↔mL/h (conforma pharm28),
                  diluições/faixas de referência, segurança operacional; hub acende os 8 submódulos
-PR-7  M21 abas + Surviving Sepsis
+PR-7  [ENTREGUE] M21 ganha a aba Surviving Sepsis (diretriz sobre o motor · SSC 2021),
+                 ancorada ao termo de cada item e ligada ao atlas (28B/28C/28E); validate21 cobre
 PR-8  guardião entende hub/submódulos + curriculum.json + docs (reconciliação final)
 ```
 
