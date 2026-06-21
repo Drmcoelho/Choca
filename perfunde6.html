@@ -88,6 +88,14 @@ canvas.plot{display:block;width:100%;height:340px;border-radius:8px;background:#
 .pontes{display:grid;gap:8px;margin-top:8px} .ponte{font-family:var(--mono);font-size:.86rem;color:var(--ink-dim)} .ponte .pend{color:var(--ink-faint);font-style:italic}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+
+/* Figura editorial viva */
+.module-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.module-fig-viva img{display:block;width:100%;height:auto;border-radius:8px;background:#07090d}
+.module-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,#97a3ba)}
+.module-fig-viva figcaption b{color:var(--accent,#ffcf5c)}
+@media(max-width:640px){.module-fig-viva{margin:14px 0 18px;padding:6px}.module-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -104,6 +112,11 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
       <polyline fill="none" stroke="var(--ven)" stroke-width="1.6" stroke-dasharray="5 4" points="0,52 160,49 300,44 430,36 560,26 680,16 800,8 900,4"/>
     </svg>
   </header>
+
+  <figure class="module-fig-viva" data-fig="m6-frank-starling">
+    <img src="assets/m6/figures/m6-frank-starling.jpg" alt="Curvas de Frank-Starling ascendentes até o platô, moduladas pela contratilidade." loading="lazy" decoding="async">
+    <figcaption><b>Fig. 6 · Frank-Starling sem ramo descendente.</b> Depois do platô, mais enchimento produz pouco ganho de volume sistólico e maior pressão de enchimento; a curva não precisa cair.</figcaption>
+  </figure>
 
   <div class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" id="tab-caso"        aria-controls="panel-caso"        aria-selected="true"><span class="tn">1</span>Caso</button>
