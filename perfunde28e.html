@@ -45,6 +45,16 @@ table.cmp .hi{color:var(--ok);font-weight:700} table.cmp .lo{color:var(--art)}
 .disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
 footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)}
 .pontes a{color:var(--dim)}
+
+/* Figuras vivas: padrão editorial Filtra M0+ */
+.m28-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.m28-fig-viva img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:8px;background:#07090d}
+.m28-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,var(--dim,#97a3ba))}
+.m28-fig-viva figcaption b{color:var(--accent,var(--warn,#ffcf5c))}
+.m28-fig-group{margin:18px 0 24px}
+.m28-fig-group .m28-fig-viva+ .m28-fig-viva{margin-top:14px}
+@media(max-width:640px){.m28-fig-viva{margin:14px 0 18px;padding:6px}.m28-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -57,6 +67,11 @@ footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-fa
     Num leito vasoplégico, ela pode <b>ganhar fluxo e perder pressão</b>. É a droga que ensina por que
     <b>débito</b> e <b>PAM</b> não são a mesma coisa — e por que tantas vezes ela precisa do
     <b>chão vascular</b> da noradrenalina. <span class="badge">β1 → DC</span> <span class="badge">β2 → RVS↓</span></p>
+
+  <figure class="m28-fig-viva" data-fig="dobutamina-fluxo-pressao">
+  <img src="assets/m28/figures/dobutamina-fluxo-pressao.svg" alt="Dobutamina com predomínio beta-1, aumento de contratilidade e débito, vasodilatação beta-2 e possível queda da resistência vascular." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28E · Dobutamina como droga de integração.</b> Ganhar fluxo não garante ganhar pressão. Se o leito estiver muito aberto, o inotrópico precisa de chão vascular para que o aumento do débito se converta em perfusão.</figcaption>
+</figure>
 
   <div class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
