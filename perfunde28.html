@@ -117,6 +117,16 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
 .predict .pq{margin-bottom:9px}
 .dif{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:6px;margin-right:8px}
 .dif-b{color:var(--ok);background:rgba(62,199,141,.12)} .dif-i{color:var(--warn);background:rgba(255,180,84,.12)} .dif-a{color:var(--crit);background:rgba(255,93,108,.12)}
+
+/* Figuras vivas: padrão editorial Filtra M0+ */
+.m28-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.m28-fig-viva img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:8px;background:#07090d}
+.m28-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,var(--dim,#97a3ba))}
+.m28-fig-viva figcaption b{color:var(--accent,var(--warn,#ffcf5c))}
+.m28-fig-group{margin:18px 0 24px}
+.m28-fig-group .m28-fig-viva+ .m28-fig-viva{margin-top:14px}
+@media(max-width:640px){.m28-fig-viva{margin:14px 0 18px;padding:6px}.m28-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -136,6 +146,11 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
       <text x="770" y="20" fill="var(--cyan)" font-size="11" font-family="monospace">PDE</text><text x="770" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">→ inodilatador</text>
     </svg>
   </header>
+
+  <figure class="m28-fig-viva" data-fig="atlas-receptores-hemodinamicos">
+  <img src="assets/m28/figures/atlas-receptores-hemodinamicos.svg" alt="Mapa dos receptores alfa-1, beta-1, beta-2, V1a, D1, PDE3, AT1 e NO-cGMP e seus efeitos em resistência, débito e frequência." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28 · Atlas de receptores hemodinâmicos.</b> Leia da esquerda para a direita: receptor, termo hemodinâmico alterado e fármaco representativo. A escolha começa no termo quebrado, não no nome da droga.</figcaption>
+</figure>
 
   <nav id="atlas-nav" aria-label="Atlas farmacológico" style="margin:18px 0 4px;padding:14px;border:1px solid var(--line,#222a3a);border-radius:10px;background:var(--bg-elev,#141926)">
     <div style="font-family:monospace;font-size:.78rem;color:var(--ink-faint,#5e6c87);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Atlas · farmacologia hemodinâmica (este módulo é o hub)</div>
