@@ -124,6 +124,14 @@ canvas{display:block;width:100%;height:84px;margin-top:10px;border-radius:6px;ba
 .ponte .pend{color:var(--ink-faint);font-style:italic}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink-faint);text-align:center;line-height:1.9}
 .sechead{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--art);margin:26px 0 6px}
+
+/* Figura editorial viva */
+.module-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.module-fig-viva img{display:block;width:100%;height:auto;border-radius:8px;background:#07090d}
+.module-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,#97a3ba)}
+.module-fig-viva figcaption b{color:var(--accent,#ffcf5c)}
+@media(max-width:640px){.module-fig-viva{margin:14px 0 18px;padding:6px}.module-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -140,6 +148,11 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-fa
         points="0,40 120,40 150,40 165,8 180,46 200,30 230,40 360,40 390,40 405,8 420,46 440,30 470,40 600,40 630,40 645,8 660,46 680,30 710,40 840,40 900,40"/>
     </svg>
   </header>
+
+  <figure class="module-fig-viva" data-fig="m0-regua-transporte-oxigenio">
+    <img src="assets/m0/figures/m0-regua-transporte-oxigenio.jpg" alt="Mapa causal de CaO2, débito cardíaco, oferta, consumo e extração de oxigênio." loading="lazy" decoding="async">
+    <figcaption><b>Fig. 0 · A régua do transporte de oxigênio.</b> A figura organiza o braço inteiro: conteúdo e fluxo formam a oferta; consumo e extração mostram o que o tecido conseguiu utilizar.</figcaption>
+  </figure>
 
   <!-- ABAS · as cinco frentes -->
   <div class="tabs" role="tablist" id="tabs">
