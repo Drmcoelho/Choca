@@ -37,6 +37,16 @@ table.cx th{color:var(--faint)} table.cx .yes{color:var(--ok)} table.cx .no{colo
 .disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
 footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)}
 .pontes a{color:var(--dim)}
+
+/* Figuras vivas: padrão editorial Filtra M0+ */
+.m28-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.m28-fig-viva img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:8px;background:#07090d}
+.m28-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,var(--dim,#97a3ba))}
+.m28-fig-viva figcaption b{color:var(--accent,var(--warn,#ffcf5c))}
+.m28-fig-group{margin:18px 0 24px}
+.m28-fig-group .m28-fig-viva+ .m28-fig-viva{margin-top:14px}
+@media(max-width:640px){.m28-fig-viva{margin:14px 0 18px;padding:6px}.m28-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -48,6 +58,11 @@ footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-fa
   <p class="lead">A vasopressina sobe a RVS por <b>V1</b> — não por adrenérgico. Por isso é <b>poupadora de catecolamina</b>,
     <b>não taquicardiza</b> e <b>não tem custo β</b> (metabólico/arritmia). E sua dose é <b>fixa</b> (U/min), não por peso.
     <span class="badge">V1 → RVS</span> <span class="badge">sem β</span> <span class="badge">dose fixa</span></p>
+
+  <figure class="m28-fig-viva" data-fig="vasopressina-tonus-fora-catecolamina">
+  <img src="assets/m28/figures/vasopressina-tonus-fora-catecolamina.svg" alt="Vasopressina agindo em V1a vascular e V2 renal, com aumento da resistência e uso adjuvante na vasoplegia." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28C · Vasopressina e o tônus não adrenérgico.</b> O efeito hemodinâmico buscado é V1a: recuperar tônus sem estímulo beta direto. A contrapartida é o risco de fechar leitos regionais.</figcaption>
+</figure>
 
   <div class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
