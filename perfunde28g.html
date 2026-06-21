@@ -35,6 +35,16 @@ h1{font-size:1.7rem;margin:.15em 0 .1em} .lead{color:var(--dim);max-width:64ch}
 .fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
 .disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
 footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)} .pontes a{color:var(--dim)}
+
+/* Figuras vivas: padrão editorial Filtra M0+ */
+.m28-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.m28-fig-viva img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:8px;background:#07090d}
+.m28-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,var(--dim,#97a3ba))}
+.m28-fig-viva figcaption b{color:var(--accent,var(--warn,#ffcf5c))}
+.m28-fig-group{margin:18px 0 24px}
+.m28-fig-group .m28-fig-viva+ .m28-fig-viva{margin-top:14px}
+@media(max-width:640px){.m28-fig-viva{margin:14px 0 18px;padding:6px}.m28-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -46,6 +56,20 @@ footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-fa
   <p class="lead">A pergunta deixa de ser "<b>qual droga?</b>" e vira "<b>qual geometria?</b>". Cada fenótipo é um leito de
     base (DC, RVS) mais um combo — e o motor <b>compõe</b> os vetores de efeito e lê o perfil resultante pela equação
     PAM = DC × RVS. Escolha o fenótipo e veja a geometria se mover. <span class="badge">composição = soma dos vetores</span></p>
+
+  <div class="m28-fig-group" aria-label="Figuras de combinações hemodinâmicas">
+<figure class="m28-fig-viva" data-fig="combinacoes-hemodinamicas">
+  <img src="assets/m28/figures/combinacoes-hemodinamicas.svg" alt="Combinações de noradrenalina, vasopressina, dobutamina, milrinona e vasodilatadores em baixo débito, vasoplegia, congestão e falência direita." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28G · Combinações hemodinâmicas por fenótipo.</b> Combinar não é empilhar: cada agente recompõe um termo diferente da geometria hemodinâmica.</figcaption>
+</figure>
+<figure class="m28-fig-viva" data-fig="ventriculo-direito-suporte-farmacologico">
+  <img src="assets/m28/figures/ventriculo-direito-suporte-farmacologico.svg" alt="Suporte farmacológico do ventrículo direito equilibrando perfusão coronariana, resistência pulmonar, inotropia e pressão sistêmica." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28G.1 · Apoiar o ventrículo direito sem derrubar o sistema.</b> No VD, mantenha pressão sistêmica para a coronária direita e reduza a pós-carga pulmonar sem colapsar a PAM.</figcaption>
+</figure>
+<figure class="m28-fig-viva" data-fig="cardiogenico-escalada-farmacologica-fenotipo">
+  <img src="assets/m28/figures/cardiogenico-escalada-farmacologica-fenotipo.svg" alt="Choque cardiogênico dividido em baixo débito hipotenso, congesto, falência direita e vasoplegia, com estratégias farmacológicas distintas." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28G.2 · Choque cardiogênico por fenótipo farmacológico.</b> A droga vem depois do fenótipo: hipotensão, congestão, VD e vasoplegia pedem combinações diferentes, não uma receita única.</figcaption>
+</figure></div>
 
   <div class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
