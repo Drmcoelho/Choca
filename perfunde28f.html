@@ -36,6 +36,16 @@ label.sl{display:block;font-size:.86rem;margin:10px 0 2px;color:var(--dim)} labe
 .fb{display:none;margin-top:8px;font-size:.9rem;color:var(--dim)} .fb.show{display:block}
 .disc{background:#1a1410;border:1px solid #3a2a12;border-radius:10px;padding:14px;font-size:.88rem;color:#d9c9a8}
 footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.78rem;color:var(--faint)} .pontes a{color:var(--dim)}
+
+/* Figuras vivas: padrão editorial Filtra M0+ */
+.m28-fig-viva{margin:18px 0 22px;background:var(--bg-cell,#11151f);border:1px solid var(--line,#26314a);border-radius:12px;padding:10px;overflow:hidden}
+.m28-fig-viva img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:8px;background:#07090d}
+.m28-fig-viva figcaption{margin:9px 4px 2px;font-size:.86rem;line-height:1.52;color:var(--ink-dim,var(--dim,#97a3ba))}
+.m28-fig-viva figcaption b{color:var(--accent,var(--warn,#ffcf5c))}
+.m28-fig-group{margin:18px 0 24px}
+.m28-fig-group .m28-fig-viva+ .m28-fig-viva{margin-top:14px}
+@media(max-width:640px){.m28-fig-viva{margin:14px 0 18px;padding:6px}.m28-fig-viva figcaption{font-size:.82rem}}
+
 </style>
 </head>
 <body>
@@ -47,6 +57,16 @@ footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);font-fa
   <p class="lead">Quando o problema é <b>pós-carga</b> ou <b>congestão</b>, combina-se inotrópico com vaso/venodilatador.
     A mecânica é a alça PV: <b>baixar a elastância arterial Ea</b> (vasodilatador) <b>sobe o volume sistólico</b> do
     ventrículo fraco; <b>subir a Ees</b> (inotrópico) soma. <span class="badge">Ea ↓ → SV ↑</span> <span class="badge">PDE-3 = inodilatador</span></p>
+
+  <div class="m28-fig-group" aria-label="Figuras de inodilatação e vasodilatação">
+<figure class="m28-fig-viva" data-fig="milrinona-inodilatacao-pde3">
+  <img src="assets/m28/figures/milrinona-inodilatacao-pde3.svg" alt="Milrinona inibindo PDE3, elevando AMP cíclico, contratilidade e vasodilatação sistêmica e pulmonar." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28F.1 · Milrinona como inodilatação via PDE3.</b> A mesma via que melhora fluxo e reduz pós-carga pode remover o chão pressórico. A balança depende de PAM, função renal, ritmo e fenótipo ventricular.</figcaption>
+</figure>
+<figure class="m28-fig-viva" data-fig="vasodilatadores-nitroglicerina-nitroprussiato">
+  <img src="assets/m28/figures/vasodilatadores-nitroglicerina-nitroprussiato.svg" alt="Comparação entre nitroglicerina e nitroprussiato pela via NO-cGMP, com efeitos em pré-carga, pós-carga e pressão." loading="lazy" decoding="async">
+  <figcaption><b>Fig. 28F.2 · Nitroglicerina versus nitroprussiato.</b> Nitroglicerina é predominantemente venodilatadora; nitroprussiato reduz pré e pós-carga. A geometria só ajuda quando existe pressão suficiente para tolerá-la.</figcaption>
+</figure></div>
 
   <div class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" id="tab-caso" aria-controls="panel-caso" aria-selected="true"><span class="tn">1</span>Abertura</button>
